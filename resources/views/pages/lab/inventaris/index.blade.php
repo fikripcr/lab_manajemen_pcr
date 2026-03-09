@@ -10,8 +10,8 @@
 @endsection
 
 @section('content')
-    <div class="card overflow-hidden">
-        <div class="card-header">
+    <x-tabler.card>
+        <x-tabler.card-header>
             <div class="d-flex flex-wrap gap-2">
                 <div>
                     <x-tabler.datatable-page-length dataTableId="inventaris-table" />
@@ -27,10 +27,9 @@
                     </x-tabler.datatable-filter>
                 </div>
             </div>
-        </div>
+        </x-tabler.card-header>
 
-        <div class="card-body p-0">
-            <x-tabler.flash-message />
+        <x-tabler.card-body class="p-0">
             @php
                 $columns = [
                     [
@@ -72,8 +71,8 @@
                 ];
             @endphp
             <x-tabler.datatable id="inventaris-table" :route="route('lab.inventaris.data')" :columns="$columns" />
-        </div>
-    </div>
+        </x-tabler.card-body>
+    </x-tabler.card>
 @endsection
 
 @push('scripts')

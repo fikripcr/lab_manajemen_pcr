@@ -14,8 +14,8 @@
         </div>
     </div>
 
-        <div class="card">
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-body class="p-0">
                 <x-tabler.datatable
                     id="table-assignments"
                     route="{{ route('lab.jadwal.assignments.data', encryptId($jadwal->jadwal_kuliah_id)) }}"
@@ -29,6 +29,6 @@
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                     ]"
                 />
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
 @endsection

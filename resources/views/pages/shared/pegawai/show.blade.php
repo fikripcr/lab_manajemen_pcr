@@ -9,8 +9,8 @@
 @endsection
 
 @section('content')
-        <div class="card">
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-body>
                 <div class="datagrid">
                     <div class="datagrid-item">
                         <div class="datagrid-title">NIP</div>
@@ -29,6 +29,6 @@
                         <div class="datagrid-content">{{ $pegawai->unitKerja->name ?? '-' }}</div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
 @endsection

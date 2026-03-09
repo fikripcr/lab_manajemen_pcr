@@ -13,139 +13,107 @@
     <div class="row row-cards">
         <!-- Test Email Card -->
         <div class="col-md-6 col-lg-4">
-            <div class="card card-sm">
-                <div class="card-body text-center">
+            <x-tabler.card class="mb-3">
+                <x-tabler.card-header title="Test Email" />
+                <x-tabler.card-body class="text-center">
                     <div class="mb-3">
                         <i class="ti ti-mail text-primary icon-lg" style="font-size: 3rem;"></i>
                     </div>
-                    <h3 class="card-title">Test Email</h3>
                     <p class="text-secondary small">Send a notification via email to <strong>{{ auth()->user()->email }}</strong></p>
                     <x-tabler.button type="button" class="btn-primary w-100" onclick="testEmail()" icon="ti ti-send" text="Send Test Email" />
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
         <!-- Test Notification Card -->
         <div class="col-md-6 col-lg-4">
-            <div class="card card-sm">
-                <div class="card-body text-center">
+            <x-tabler.card class="mb-3">
+                <x-tabler.card-header title="Test Notification" />
+                <x-tabler.card-body class="text-center">
                     <div class="mb-3">
                         <i class="ti ti-bell text-success icon-lg" style="font-size: 3rem;"></i>
                     </div>
-                    <h3 class="card-title">Test Notification</h3>
                     <p class="text-secondary small">Send a notification via database to <strong>{{ auth()->user()->email }}</strong></p>
                     <x-tabler.button type="button" class="btn-success w-100" onclick="testNotification()" icon="ti ti-bell-ringing" text="Send Test Notification" />
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
         <!-- Test JS Library Features Card -->
         <div class="col-md-6 col-lg-4">
-            <div class="card card-sm">
-                <div class="card-body text-center">
+            <x-tabler.card class="mb-3">
+                <x-tabler.card-header title="JS Library Features" />
+                <x-tabler.card-body class="text-center">
                     <div class="mb-3">
                         <i class="ti ti-code text-info icon-lg" style="font-size: 3rem;"></i>
                     </div>
-                    <h3 class="card-title">JS Library Features</h3>
                     <p class="text-secondary small">Test various JS library features such as Flatpicker, TinyMCE, etc.</p>
                     <x-tabler.button href="{{ route('sys.test.features') }}" class="w-100" style="info" text="Test Functional Features" icon="ti ti-settings" />
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
-        <!-- Test PDF Export Card -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card card-sm">
-                <div class="card-body text-center">
+            <x-tabler.card class="mb-3">
+                <x-tabler.card-header title="PDF Export" />
+                <x-tabler.card-body class="text-center">
                     <div class="mb-3">
                         <i class="ti ti-file-type-pdf text-danger icon-lg" style="font-size: 3rem;"></i>
                     </div>
-                    <h3 class="card-title">
-                        PDF Export
-                        <a href="https://github.com/barryvdh/laravel-dompdf" target="_blank" class="ms-1 text-muted" title="Documentation">
-                            <i class="ti ti-external-link" style="font-size: 1rem;"></i>
-                        </a>
-                    </h3>
                     <p class="text-secondary small">Generate a test PDF report with sample system data and QR code</p>
                     <x-tabler.button type="button" class="btn-danger w-100" onclick="testPdfExport()" icon="ti ti-download" text="Generate PDF" />
-                </div>
-            </div>
-        </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
 
-        <!-- Test Excel Export Card -->
         <div class="col-md-6 col-lg-4">
-            <div class="card card-sm">
-                <div class="card-body text-center">
+            <x-tabler.card class="mb-3">
+                <x-tabler.card-header title="Excel Export" />
+                <x-tabler.card-body class="text-center">
                     <div class="mb-3">
                         <i class="ti ti-file-type-xls text-success icon-lg" style="font-size: 3rem;"></i>
                     </div>
-                    <h3 class="card-title">
-                        Excel Export
-                        <a href="https://docs.laravel-excel.com/" target="_blank" class="ms-1 text-muted" title="Documentation">
-                            <i class="ti ti-external-link" style="font-size: 1rem;"></i>
-                        </a>
-                    </h3>
                     <p class="text-secondary small">Generate a test Excel report with sample system data and QR code</p>
                     <x-tabler.button type="button" class="btn-success w-100" onclick="testExcelExport()" icon="ti ti-download" text="Generate Excel" />
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
-        <!-- Test Word Export Card -->
         <div class="col-md-6 col-lg-4">
-            <div class="card card-sm">
-                <div class="card-body text-center">
+            <x-tabler.card class="mb-3">
+                <x-tabler.card-header title="Word Export" />
+                <x-tabler.card-body class="text-center">
                     <div class="mb-3">
                         <i class="ti ti-file-type-doc text-primary icon-lg" style="font-size: 3rem;"></i>
                     </div>
-                    <h3 class="card-title">
-                        Word Export
-                        <a href="https://phpword.readthedocs.io/" target="_blank" class="ms-1 text-muted" title="Documentation">
-                            <i class="ti ti-external-link" style="font-size: 1rem;"></i>
-                        </a>
-                    </h3>
                     <p class="text-secondary small">Generate a test Word document with sample system data and QR code</p>
                     <x-tabler.button type="button" class="btn-primary w-100" onclick="testWordExport()" icon="ti ti-download" text="Generate Word" />
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
-        <!-- Test QR Code Generator Card -->
         <div class="col-md-6 col-lg-4">
-            <div class="card card-sm">
-                <div class="card-body text-center">
+            <x-tabler.card class="mb-3">
+                <x-tabler.card-header title="QR Code Generator" />
+                <x-tabler.card-body class="text-center">
                     <div class="mb-3">
                         <i class="ti ti-qrcode text-secondary icon-lg" style="font-size: 3rem;"></i>
                     </div>
-                    <h3 class="card-title">
-                        QR Code Generator
-                        <a href="https://github.com/SimpleSoftwareIO/simple-qrcode" target="_blank" class="ms-1 text-muted" title="Documentation">
-                            <i class="ti ti-external-link" style="font-size: 1rem;"></i>
-                        </a>
-                    </h3>
                     <p class="text-secondary small">Generate QR codes with system data</p>
                     <x-tabler.button href="{{ route('sys.test.qrcode') }}" class="w-100" style="secondary" text="Test QR Code Display" icon="ti ti-qrcode" />
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
-        <!-- Test DOCX Template Card -->
         <div class="col-md-6 col-lg-4">
-            <div class="card card-sm">
-                <div class="card-body text-center">
+            <x-tabler.card class="mb-3">
+                <x-tabler.card-header title="DOCX Template" />
+                <x-tabler.card-body class="text-center">
                     <div class="mb-3">
                         <i class="ti ti-template text-warning icon-lg" style="font-size: 3rem;"></i>
                     </div>
-                    <h3 class="card-title">
-                        DOCX Template
-                        <a href="https://phpword.readthedocs.io/" target="_blank" class="ms-1 text-muted" title="Documentation">
-                            <i class="ti ti-external-link" style="font-size: 1rem;"></i>
-                        </a>
-                    </h3>
                     <p class="text-secondary small">Upload DOCX template with variables</p>
                     <x-tabler.button type="button" class="btn-warning w-100" onclick="testDocxTemplate()" icon="ti ti-upload" text="Process DOCX" />
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
     </div>

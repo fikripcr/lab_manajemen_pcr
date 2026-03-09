@@ -10,39 +10,39 @@
                 {{-- Summary Cards --}}
                 <div class="row mb-3">
                     <div class="col-sm-6 col-lg-4">
-                        <div class="card">
-                            <div class="card-body">
+                        <x-tabler.card>
+                            <x-tabler.card-body>
                                 <div class="d-flex align-items-center">
                                     <div class="subheader">Total Indikator Performa</div>
                                 </div>
                                 <div class="h1 mb-3 text-primary">{{ number_format($totalIndikatorActive) }}</div>
                                 <div class="text-muted small">Indikator performa untuk KPI Pegawai</div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
 
                     <div class="col-sm-6 col-lg-4">
-                        <div class="card">
-                            <div class="card-body">
+                        <x-tabler.card>
+                            <x-tabler.card-body>
                                 <div class="d-flex align-items-center">
                                     <div class="subheader">Total KPI Aktif</div>
                                 </div>
                                 <div class="h1 mb-3 text-success">{{ number_format($kpiTotalPegawai ?? 0) }}</div>
                                 <div class="text-muted small">Pegawai dengan KPI aktif</div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
 
                     <div class="col-sm-6 col-lg-4">
-                        <div class="card">
-                            <div class="card-body">
+                        <x-tabler.card>
+                            <x-tabler.card-body>
                                 <div class="d-flex align-items-center">
                                     <div class="subheader">Avg Score KPI</div>
                                 </div>
                                 <div class="h1 mb-3 text-info">{{ number_format($kpiAvgScore ?? 0, 1) }}</div>
                                 <div class="text-muted small">Rata-rata skor KPI semua pegawai</div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                 </div>
 

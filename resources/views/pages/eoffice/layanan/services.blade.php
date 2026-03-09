@@ -16,9 +16,9 @@
 @section('content')
 <div class="row row-cards">
     {{-- Search & Filter Bar --}}
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
+    <div class="col-12 text-end">
+        <x-tabler.card>
+            <x-tabler.card-body>
                 <div class="row g-3">
                     <div class="col-md-6">
                         <div class="input-group">
@@ -37,8 +37,8 @@
                         </x-tabler.form-select>
                     </div>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     {{-- Services Grid --}}
@@ -54,8 +54,8 @@
 
         @foreach($items as $item)
             <div class="col-md-6 col-lg-4 service-card" data-category="{{ strtolower($category) }}" data-name="{{ strtolower($item->nama_layanan) }}">
-                <div class="card card-stacked card-service h-100">
-                    <div class="card-body d-flex flex-column">
+                <x-tabler.card class="card-stacked card-service h-100">
+                    <x-tabler.card-body class="d-flex flex-column">
                         {{-- Card Header with Icon --}}
                         <div class="d-flex align-items-start mb-3">
                             <div class="service-icon-wrapper me-3">
@@ -134,7 +134,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </x-tabler.card-body>
 
                     {{-- Card Footer with Action --}}
                     <div class="card-footer bg-transparent border-0 pb-3 px-3">
@@ -149,25 +149,23 @@
                             <x-tabler.button class="w-100" style="secondary" disabled="true" text="Layanan Tidak Aktif" />
                         @endif
                     </div>
-                </div>
+                </x-tabler.card>
             </div>
         @endforeach
     @empty
         <div class="col-12">
-            <div class="card">
-                <div class="card-body text-center py-5">
-                    <div class="empty">
-                        <div class="empty-icon text-muted">
-                            <i class="ti ti-mood-empty fs-1"></i>
-                        </div>
-                        <p class="empty-title h3">Belum ada layanan aktif</p>
-                        <p class="empty-subtitle text-muted mb-4">
-                            Silakan hubungi admin untuk informasi lebih lanjut.
-                        </p>
-                        <x-tabler.button href="{{ route('eoffice.dashboard') }}" type="back" />
-                    </div>
-                </div>
-            </div>
+            <x-tabler.card>
+                <x-tabler.card-body class="text-center py-5">
+                    <x-tabler.empty-state 
+                        icon="ti ti-mood-empty" 
+                        title="Belum ada layanan aktif" 
+                        subtitle="Silakan hubungi admin untuk informasi lebih lanjut.">
+                        <x-slot:actions>
+                            <x-tabler.button href="{{ route('eoffice.dashboard') }}" type="back" />
+                        </x-slot:actions>
+                    </x-tabler.empty-state>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     @endforelse
 </div>
@@ -175,8 +173,8 @@
 {{-- Quick Help Card --}}
 <div class="row mt-4">
     <div class="col-12">
-        <div class="card bg-primary-lt border-0">
-            <div class="card-body">
+        <x-tabler.card class="bg-primary-lt border-0">
+            <x-tabler.card-body>
                 <div class="row align-items-center">
                     <div class="col-md-8">
                         <h4 class="card-title mb-2">
@@ -190,8 +188,8 @@
                         <x-tabler.button href="{{ route('eoffice.feedback.index') }}" class="btn-primary" icon="ti ti-message" text="Hubungi Support" />
                     </div>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 </div>
 @endsection

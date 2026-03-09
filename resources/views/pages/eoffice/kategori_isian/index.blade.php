@@ -9,7 +9,7 @@
 @endsection
 
 @section('content')
-<div class="card">
+<x-tabler.card>
     <div class="card-body p-0">
         <x-tabler.datatable
             id="table-kategori-isian"

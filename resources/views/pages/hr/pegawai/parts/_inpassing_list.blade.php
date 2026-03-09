@@ -1,8 +1,7 @@
-<div class="card mb-3">
-    <div class="card-header border-bottom">
-        <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
-            <h3 class="card-title mb-0">Riwayat Inpassing</h3>
-            <div class="ms-auto d-flex gap-2">
+<x-tabler.card class="mb-3">
+    <x-tabler.card-header title="Riwayat Inpassing">
+        <x-slot:actions>
+            <div class="d-flex gap-2">
                 <x-tabler.datatable-page-length dataTableId="inpassing-table" />
                 <x-tabler.datatable-search dataTableId="inpassing-table" />
                 <x-tabler.button 
@@ -10,10 +9,10 @@
                     class="ajax-modal-btn" 
                     data-url="{{ route('hr.pegawai.inpassing.create', $pegawai->encrypted_pegawai_id) }}" 
                     data-modal-title="Tambah Inpassing"
-                    text="Ubah Inpassing" />
+                    text="Tambah Inpassing" />
             </div>
-        </div>
-    </div>
+        </x-slot:actions>
+    </x-tabler.card-header>
     <x-tabler.datatable
         id="inpassing-table"
         route="{{ route('hr.inpassing.data', ['pegawai_id' => $pegawai->encrypted_pegawai_id]) }}"
@@ -27,4 +26,4 @@
             ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-end'],
         ]"
     />
-</div>
+</x-tabler.card>

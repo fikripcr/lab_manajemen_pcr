@@ -5,10 +5,10 @@
 @endsection
 
 @section('content')
-        <div class="card">
+        <x-tabler.card>
             <form class="ajax-form" action="{{ route('shared.personil.store') }}" method="POST">
                 @csrf
-                <div class="card-body">
+                <x-tabler.card-body>
                     <div class="row">
                         <div class="col-md-6">
                             <x-tabler.form-input 
@@ -69,10 +69,10 @@
                             <span class="form-check-label">Personil Aktif</span>
                         </label>
                     </div>
-                </div>
-                <div class="card-footer text-end">
+                </x-tabler.card-body>
+                <x-tabler.card-footer class="text-end">
                     <x-tabler.button type="submit" text="Simpan Personil" />
-                </div>
+                </x-tabler.card-footer>
             </form>
-        </div>
+        </x-tabler.card>
 @endsection

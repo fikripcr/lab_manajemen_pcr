@@ -11,12 +11,11 @@
 @section('content')
         <div class="row justify-content-center">
             <div class="col-md-10">
-                <div class="card">
+                <x-tabler.card>
                     <form class="ajax-form" action="{{ $Kegiatan->exists ? route('Kegiatan.Kegiatans.update', $Kegiatan->encrypted_event_id) : route('Kegiatan.Kegiatans.store') }}" method="POST">
                         @csrf
                         @if($Kegiatan->exists) @method('PUT') @endif
                         <div class="card-body">
-                            <x-tabler.flash-message />
                             
                             <div class="mb-3">
                                 <x-tabler.form-input 

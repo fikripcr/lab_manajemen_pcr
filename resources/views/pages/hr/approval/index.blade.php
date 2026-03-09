@@ -5,8 +5,8 @@
 @endsection
 
 @section('content')
-<div class="card overflow-hidden">
-    <div class="card-header">
+<x-tabler.card class="overflow-hidden">
+    <x-tabler.card-header>
         <div class="d-flex flex-wrap gap-2">
             <div>
                 <x-tabler.datatable-page-length dataTableId="approval-table" />
@@ -23,8 +23,8 @@
                 </x-tabler.datatable-filter>
             </div>
         </div>
-    </div>
-    <div class="card-body p-0">
+    </x-tabler.card-header>
+    <x-tabler.card-body class="p-0">
         <x-tabler.datatable
             id="approval-table"
             route="{{ route('hr.approval.index') }}"
@@ -37,8 +37,8 @@
                 ['data' => 'action',       'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '160px'],
             ]"
         />
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 
 {{-- Modal Keterangan (Tolak / Tangguhkan) --}}
 <x-tabler.form-modal 

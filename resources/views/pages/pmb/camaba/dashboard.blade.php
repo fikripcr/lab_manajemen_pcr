@@ -9,9 +9,9 @@
         <div class="row row-cards">
             @if(!$pendaftaran)
                 <div class="col-12">
-                    <div class="card card-md">
+                    <x-tabler.card class="card-md">
                         <div class="card-status-top bg-primary"></div>
-                        <div class="card-body text-center py-5">
+                        <x-tabler.card-body class="text-center py-5">
                             <img src="{{ asset('static/illustrations/undraw_sign_in_re_o58h.svg') }}" height="128" class="mb-n2" alt="">
                             <h1 class="mt-4">Selamat Datang di Portal PMB!</h1>
                             <p class="text-muted">Anda belum memiliki pendaftaran aktif. Silakan mulai pendaftaran Anda sekarang.</p>
@@ -24,22 +24,21 @@
                                     Mohon maaf, saat ini pendaftaran belum dibuka.
                                 </div>
                             @endif
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                 </div>
             @else
                 {{-- Status Tracker --}}
                 <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Status Pendaftaran: <strong>{{ $pendaftaran->no_pendaftaran }}</strong></h3>
-                            <div class="card-actions">
+                    <x-tabler.card>
+                        <x-tabler.card-header :title="'Status Pendaftaran: <strong>' . $pendaftaran->no_pendaftaran . '</strong>'">
+                            <x-slot:actions>
                                 <span class="badge {{ $pendaftaran->status_terkini == 'Lulus' ? 'bg-success' : ($pendaftaran->status_terkini == 'Tidak_Lulus' ? 'bg-danger' : 'bg-primary') }}">
                                     {{ str_replace('_', ' ', $pendaftaran->status_terkini) }}
                                 </span>
-                            </div>
-                        </div>
-                        <div class="card-body">
+                            </x-slot:actions>
+                        </x-tabler.card-header>
+                        <x-tabler.card-body>
                             <div class="steps steps-green mb-3">
                                 <a href="#" class="step-item active">Registrasi</a>
                                 <a href="#" class="step-item {{ in_array($pendaftaran->status_terkini, ['Draft']) ? '' : 'active' }}">Pembayaran</a>
@@ -70,8 +69,8 @@
                                     @include('pages.pmb.camaba._status_info', ['pendaftaran' => $pendaftaran])
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                 </div>
             @endif
         </div>

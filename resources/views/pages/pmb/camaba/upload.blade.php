@@ -10,11 +10,9 @@
 
 @section('content')
 
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Berkas untuk Jalur: {{ $pendaftaran->jalur->nama_jalur }}</h3>
-            </div>
-            <div class="card-table">
+        <x-tabler.card class="mb-3">
+            <x-tabler.card-header :title="'Berkas untuk Jalur: ' . $pendaftaran->jalur->nama_jalur" />
+            <x-tabler.card-body>
                 <x-tabler.datatable-client
                     id="table-upload"
                     :columns="[

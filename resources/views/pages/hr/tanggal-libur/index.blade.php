@@ -24,39 +24,29 @@
 
 @section('content')
 
-        <x-tabler.flash-message />
-
         @if($data->isEmpty())
-            <div class="empty">
-                <div class="empty-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><line x1="9" y1="10" x2="9.01" y2="10" /><line x1="15" y1="10" x2="15.01" y2="10" /><path d="M9.5 15a3.5 3.5 0 0 0 5 0" /></svg>
-                </div>
-                <p class="empty-title">Tidak ada data</p>
-                <p class="empty-subtitle text-muted"> Belum ada tanggal libur yang terdaftar untuk tahun {{ $tahun }}. </p>
-            </div>
+            <x-tabler.empty-state 
+                title="Tidak ada data" 
+                text="Belum ada tanggal libur yang terdaftar untuk tahun {{ $tahun }}."
+            />
         @else
             <div class="row row-cards">
                 @foreach($data as $item)
                 <div class="col-sm-6 col-lg-3">
-                    <div class="card card-sm">
-                        <div class="card-body">
+                    <x-tabler.card class="card-sm">
+                        <x-tabler.card-body>
                             <div class="d-flex align-items-center mb-2">
                                 <div class="subheader">{{ $item->tgl_libur ? \Carbon\Carbon::parse($item->tgl_libur)->isoFormat('dddd') : '-' }}</div>
                                 <div class="ms-auto">
-                                    <div class="dropdown">
-                                        <a href="#" class="btn-action dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="1" /><circle cx="12" cy="19" r="1" /><circle cx="12" cy="5" r="1" /></svg>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a href="#" class="dropdown-item text-danger ajax-delete" data-url="{{ route('hr.tanggal-libur.destroy', $item->tanggallibur_id) }}">Hapus</a>
-                                        </div>
-                                    </div>
+                                    <x-tabler.dropdown placement="end">
+                                        <x-tabler.dropdown-item type="delete" url="{{ route('hr.tanggal-libur.destroy', $item->tanggallibur_id) }}" />
+                                    </x-tabler.dropdown>
                                 </div>
                             </div>
                             <div class="h1 mb-1">{{ $item->tgl_libur ? \Carbon\Carbon::parse($item->tgl_libur)->format('d M') : '-' }}</div>
                             <div class="text-muted">{{ $item->keterangan }}</div>
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                 </div>
                 @endforeach
             </div>

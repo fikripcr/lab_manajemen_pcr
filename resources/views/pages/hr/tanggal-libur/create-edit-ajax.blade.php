@@ -3,8 +3,6 @@
     :route="route('hr.tanggal-libur.store')"
     method="POST"
 >
-    <x-tabler.flash-message />
-    
     <div class="mb-3">
         <x-tabler.form-select name="tahun" label="Tahun" required="true">
             @for($i = date('Y') - 1; $i <= date('Y') + 2; $i++)

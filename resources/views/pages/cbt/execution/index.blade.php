@@ -51,8 +51,8 @@
                 <div class="col-lg-8">
                     
                     {{-- Card 1: Question Text & Header --}}
-                    <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-3 transition-all" id="question-header-card" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);">
-                        <div class="card-body p-4 position-relative">
+                    <x-tabler.card class="border-0 shadow-lg rounded-4 overflow-hidden mb-3 transition-all" id="question-header-card" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);">
+                        <x-tabler.card-body class="p-4 position-relative">
                             
                             <div class="d-flex align-items-center justify-content-between mb-4">
                                 <span class="badge bg-primary text-white px-4 py-2 rounded-pill fw-bold shadow-sm" id="mata-uji-label">
@@ -69,8 +69,8 @@
                             <div class="text-dark fs-2 fw-medium lh-base" id="question-text" style="font-family: 'Inter', sans-serif; letter-spacing: -0.01em;">
                                 {{-- Rendered via JS --}}
                             </div>
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
 
                     {{-- Card 2: Options / Essay Container --}}
                     <div id="options-container" class="mb-3">
@@ -78,8 +78,8 @@
                     </div>
 
                     {{-- Card 3: Main Navigation Buttons --}}
-                    <div class="card border-0 shadow-sm rounded-3">
-                        <div class="card-body p-2">
+                    <x-tabler.card class="border-0 shadow-sm rounded-3">
+                        <x-tabler.card-body class="p-2">
                             <div class="d-flex align-items-center justify-content-between gap-2">
                                 <x-tabler.button id="btn-prev" onclick="goPrev()" style="ghost-secondary" text="Sebelumnya" icon="ti ti-arrow-left" />
 
@@ -89,26 +89,25 @@
 
                                 <x-tabler.button id="btn-next" onclick="goNext()" style="primary" text="Selanjutnya" icon="ti ti-arrow-right" trailing-icon="true" />
                             </div>
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                 </div>
 
                 {{-- Right: Sidebar --}}
                 <div class="col-lg-4">
                     
                     {{-- Navigator Card with Scroll --}}
-                    <div class="card border-0 shadow-sm mb-3 rounded-3 sticky-top" style="top: 96px; z-index: 10;">
-                        <div class="card-header bg-transparent border-bottom-0 pb-0">
-                            <h3 class="card-title fw-bold">Navigasi Soal</h3>
-                            <div class="card-actions">
+                    <x-tabler.card class="border-0 shadow-sm mb-3 rounded-3 sticky-top" style="top: 96px; z-index: 10;">
+                        <x-tabler.card-header class="bg-transparent border-bottom-0 pb-0" title="Navigasi Soal">
+                            <x-slot:actions>
                                 <span class="badge bg-blue-lt" id="navigator-status">0 / {{ count($paketSoal) }} Terjawab</span>
-                            </div>
-                        </div>
-                        <div class="card-body p-4" style="max-height: 400px; overflow-y: auto;">
+                            </x-slot:actions>
+                        </x-tabler.card-header>
+                        <x-tabler.card-body class="p-4" style="max-height: 400px; overflow-y: auto;">
                             <div class="d-flex flex-wrap gap-2 justify-content-start" id="nav-grid">
                                 {{-- Rendered via JS --}}
                             </div>
-                        </div>
+                        </x-tabler.card-body>
                         <div class="card-footer bg-light border-0 py-3">
                             <div class="d-flex gap-3 justify-content-center">
                                 <div class="d-flex align-items-center gap-2">
@@ -125,14 +124,14 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </x-tabler.card>
 
                     {{-- Action Card --}}
-                    <div class="card border-0 shadow-sm rounded-3 sticky-top" style="top: 550px; z-index: 10;">
-                        <div class="card-body p-3">
+                    <x-tabler.card class="border-0 shadow-sm rounded-3 sticky-top" style="top: 550px; z-index: 10;">
+                        <x-tabler.card-body class="p-3">
                             <x-tabler.button onclick="finishExam()" style="success" size="lg" class="w-100 fw-bold" text="Selesai & Kumpulkan Jawaban" icon="ti ti-check" />
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
 
                 </div>
             </div>

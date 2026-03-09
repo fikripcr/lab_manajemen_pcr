@@ -21,8 +21,8 @@
 
     {{-- Segmented Control Navigation --}}
     <div class="col-12 mb-3">
-        <div class="card">
-            <div class="card-body p-2">
+        <x-tabler.card>
+            <x-tabler.card-body class="p-2">
                 <ul class="nav nav-tabs bg-transparent border-bottom px-3 persist-tabs" id="rapat_tabs" data-bs-toggle="tabs">
                     <li class="nav-item">
                         <a href="#section-info" class="nav-link active rounded-top" data-bs-toggle="tab">
@@ -42,8 +42,8 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     <div class="col-12">
@@ -55,15 +55,15 @@
                 {{-- Kolom Kiri: Info Rapat + Pejabat --}}
                 <div class="col-md-5">
                     {{-- Info Rapat --}}
-                    <div class="card mb-3">
-                        <div class="card-header">
+                    <x-tabler.card class="mb-3">
+                        <x-tabler.card-header>
                             <h3 class="card-title"><i class="ti ti-calendar-event me-2 text-blue"></i>Informasi Meeting</h3>
-                            <div class="card-actions">
+                            <x-slot:actions>
                                 <x-tabler.button href="{{ route('Kegiatan.rapat.edit', $rapat->encrypted_rapat_id) }}"
                                     class="btn-primary btn-sm" icon="ti ti-edit" text="Edit" />
-                            </div>
-                        </div>
-                        <div class="card-body">
+                            </x-slot:actions>
+                        </x-tabler.card-header>
+                        <x-tabler.card-body>
                             <div class="datagrid">
                                 <div class="datagrid-item">
                                     <div class="datagrid-title">Jenis Rapat</div>
@@ -95,20 +95,20 @@
                                 </div>
                                 @endif
                             </div>
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
 
                     {{-- Pejabat Rapat --}}
-                    <div class="card">
-                        <div class="card-header">
+                    <x-tabler.card>
+                        <x-tabler.card-header>
                             <h3 class="card-title"><i class="ti ti-user-star me-2 text-orange"></i>Pejabat Rapat</h3>
-                            <div class="card-actions">
+                            <x-slot:actions>
                                 <x-tabler.button type="warning" class="btn-sm ajax-modal-btn"
                                     data-url="{{ route('Kegiatan.rapat.edit-officials', $rapat->hashid) }}"
                                     icon="ti ti-edit" text="Set" />
-                            </div>
-                        </div>
-                        <div class="card-body">
+                            </x-slot:actions>
+                        </x-tabler.card-header>
+                        <x-tabler.card-body>
                             <div class="d-flex align-items-center mb-3 p-2 rounded bg-blue-lt">
                                 <span class="avatar avatar-sm me-3 rounded-circle bg-blue text-white">
                                     {{ strtoupper(substr($rapat->ketua_user->name ?? '?', 0, 2)) }}
@@ -133,17 +133,17 @@
 
                 {{-- Kolom Kanan: Daftar Peserta + Absensi Switch --}}
                 <div class="col-md-7">
-                    <div class="card h-100">
-                        <div class="card-header">
+                    <x-tabler.card class="h-100">
+                        <x-tabler.card-header>
                             <h3 class="card-title"><i class="ti ti-users me-2 text-green"></i>Daftar Peserta & Absensi</h3>
-                            <div class="card-actions">
+                            <x-slot:actions>
                                 <x-tabler.button type="primary" class="btn-sm ajax-modal-btn"
                                     data-url="{{ route('Kegiatan.rapat.participants.create', $rapat->hashid) }}"
                                     icon="ti ti-user-plus" text="Tambah Peserta" />
                                 <span class="badge bg-green-lt ms-1">{{ $rapat->pesertas->count() }} orang</span>
-                            </div>
-                        </div>
-                        <div class="card-body p-0">
+                            </x-slot:actions>
+                        </x-tabler.card-header>
+                        <x-tabler.card-body class="p-0">
                             <div class="table-responsive">
                                 <table class="table table-vcenter table-borderless mb-0">
                                     <thead class="bg-light">
@@ -205,13 +205,11 @@
                                     </tbody>
                                 </table>
                             </div>
-                            </div>
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                 </div>
-
-            </div>{{-- /row --}}
-        </div>{{-- /#section-info --}}
+            </div>
+        </div>
 
         {{-- ===== SECTION: AGENDA & NOTULEN ===== --}}
         <div id="section-agenda" class="content-section">
@@ -222,7 +220,7 @@
                     data-modal-title="Tambah Agenda" />
             </div>
             <div class="accordion" id="accordion-agenda">
-                <div class="card">
+                <x-tabler.card>
                     @forelse($rapat->agendas as $index => $agenda)
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="ah-{{ $agenda->encrypted_rapatagenda_id }}">
@@ -275,24 +273,24 @@
                         description="Klik Tambah Agenda untuk menambahkan agenda rapat."
                         icon="ti ti-checklist" />
                     @endforelse
-                </div>
+                </x-tabler.card>
             </div>
             
         </div>
 
         {{-- ===== SECTION: ENTITAS TERKAIT ===== --}}
         <div id="section-entitas" class="content-section">
-            <div class="card">
-                <div class="card-header">
+            <x-tabler.card>
+                <x-tabler.card-header>
                     <h3 class="card-title"><i class="ti ti-link me-2 text-cyan"></i>Entitas Terkait</h3>
-                    <div class="card-actions">
+                    <x-slot:actions>
                         <x-tabler.button type="create" class="btn-sm ajax-modal-btn"
                             data-url="{{ route('Kegiatan.rapat.entitas.create', $rapat->encrypted_rapat_id) }}"
                             data-modal-title="Tambah Entitas Terkait"
                             text="Tambah Entitas" />
-                    </div>
-                </div>
-                <div class="card-body">
+                    </x-slot:actions>
+                </x-tabler.card-header>
+                <x-tabler.card-body>
                     @forelse($rapat->entitas as $entitas)
                     <div class="d-flex align-items-md-center flex-column flex-md-row mb-3 p-3 border rounded">
                         <div class="d-flex align-items-center flex-grow-1 min-w-0">
@@ -340,8 +338,8 @@
                         description="Hubungkan rapat ini dengan entitas lain."
                         icon="ti ti-link" />
                     @endforelse
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
     </div>{{-- /col-12 --}}

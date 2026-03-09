@@ -10,8 +10,8 @@
 @endsection
 
 @section('content')
-    <div class="card overflow-hidden">
-        <div class="card-header">
+    <x-tabler.card class="overflow-hidden">
+        <x-tabler.card-header>
             <div class="d-flex flex-wrap gap-2">
                 <div>
                     <x-tabler.datatable-page-length dataTableId="jadwal-table" />
@@ -20,9 +20,8 @@
                     <x-tabler.datatable-search dataTableId="jadwal-table" />
                 </div>
             </div>
-        </div>
-        <div class="card-body p-0">
-            <x-tabler.flash-message />
+        </x-tabler.card-header>
+        <x-tabler.card-body class="p-0">
             <x-tabler.datatable
                 id="jadwal-table"
                 :route="route('lab.jadwal.data')"
@@ -39,6 +38,6 @@
                 ]"
                 :order="[[0, 'desc']]"
             />
-        </div>
-    </div>
+        </x-tabler.card-body>
+    </x-tabler.card>
 @endsection

@@ -8,14 +8,14 @@
 @endsection
 
 @section('content')
-<div class="card">
+<x-tabler.card>
     @include('pages.hr.data-diri.global-tab-nav')
-    <div class="card-body p-0">
+    <x-tabler.card-body class="p-0">
         @if(isset($pegawai))
              @include('pages.hr.pegawai.parts._inpassing_list')
         @else
             {{-- Global Table View for Inpassing --}}
-            <div class="card-header border-bottom">
+            <x-tabler.card-header class="border-bottom">
                 <div class="d-flex flex-wrap gap-2 w-100">
                     <div>
                         <x-tabler.datatable-page-length dataTableId="table-inpassing" />
@@ -31,7 +31,7 @@
                         </x-tabler.datatable-filter>
                     </div>
                 </div>
-            </div>
+            </x-tabler.card-header>
             <div class="card-table">
                  <x-tabler.datatable
                     id="table-inpassing"
@@ -49,6 +49,6 @@
                 />
             </div>
         @endif
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection

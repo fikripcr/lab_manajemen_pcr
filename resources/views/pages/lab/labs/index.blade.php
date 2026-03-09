@@ -9,8 +9,8 @@
 @endsection
 
 @section('content')
-    <div class="card overflow-hidden">
-        <div class="card-header">
+    <x-tabler.card class="overflow-hidden">
+        <x-tabler.card-header>
             <div class="d-flex flex-wrap gap-2">
                 <div>
                     <x-tabler.datatable-page-length dataTableId="labs-table" />
@@ -19,9 +19,9 @@
                     <x-tabler.datatable-search dataTableId="labs-table" />
                 </div>
             </div>
-        </div>
-        <div class="card-body p-0">
-            <x-tabler.flash-message />
+        </x-tabler.card-header>
+        <x-tabler.card-body class="p-0">
+            
             @php
                 $columns = [
                     [
@@ -64,6 +64,6 @@
                 ];
             @endphp
             <x-tabler.datatable id="labs-table" :route="route('lab.labs.data')" :columns="$columns" />
-        </div>
-    </div>
+        </x-tabler.card-body>
+    </x-tabler.card>
 @endsection

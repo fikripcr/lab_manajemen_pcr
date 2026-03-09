@@ -22,15 +22,9 @@
             <div class="row justify-content-center">
                 {{-- KOLOM KIRI: DATA UMUM --}}
                 <div class="{{ $rapat->exists ? 'col-lg-6' : 'col-lg-5' }}">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="ti ti-info-circle me-2"></i>Data Umum
-                            </h3>
-                        </div>
-                        <div class="card-body">
-                            <x-tabler.flash-message />
-
+                    <x-tabler.card>
+                        <x-tabler.card-header title="<i class='ti ti-info-circle me-2'></i>Data Umum" />
+                        <x-tabler.card-body>
                             <div class="mb-3">
                                 <x-tabler.form-input
                                     name="jenis_rapat"
@@ -106,32 +100,25 @@
                                     rows="2"
                                 />
                             </div>
-                        </div>
+                        </x-tabler.card-body>
                         <div class="card-footer text-end">
                             <x-tabler.button type="submit" :text="$rapat->exists ? 'Simpan Perubahan' : 'Jadwalkan Rapat'" icon="ti ti-check" />
                         </div>
-                    </div>
+                    </x-tabler.card>
                 </div>
 
                 @if(!$rapat->exists)
                 {{-- KOLOM KANAN: AGENDA & PESERTA --}}
                 <div class="col-lg-7">
                     {{-- AGENDA CARD --}}
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="ti ti-list-check me-2"></i>Agenda Rapat
-                                @if($rapat->exists)
-                                    <span class="badge bg-primary text-white ms-2">{{ $rapat->agendas->count() }}</span>
-                                @endif
-                            </h3>
-                        </div>
-                        <div class="card-body">
+                    <x-tabler.card class="mb-3">
+                        <x-tabler.card-header title="<i class='ti ti-list-check me-2'></i>Agenda Rapat {{ $rapat->exists ? '<span class=\'badge bg-primary text-white ms-2\'>' . $rapat->agendas->count() . '</span>' : '' }}" />
+                        <x-tabler.card-body>
                             <div id="agenda-container">
                                 @if($rapat->exists && $rapat->agendas->count() > 0)
                                     @foreach($rapat->agendas->sortBy('seq') as $index => $agenda)
-                                        <div class="agenda-item card mb-2">
-                                            <div class="card-body py-2">
+                                        <x-tabler.card class="agenda-item mb-2">
+                                            <x-tabler.card-body class="py-2">
                                                 <div class="row align-items-center">
                                                     <div class="col-auto">
                                                         <span class="badge bg-primary rounded-pill">{{ $loop->iteration }}</span>
@@ -143,12 +130,12 @@
                                                         <x-tabler.button type="button" class="btn-danger remove-agenda" title="Hapus Agenda" iconOnly="true" icon="ti ti-x" />
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
+                                            </x-tabler.card-body>
+                                        </x-tabler.card>
                                     @endforeach
                                 @else
-                                    <div class="agenda-item card mb-2">
-                                        <div class="card-body py-2">
+                                    <x-tabler.card class="agenda-item mb-2">
+                                        <x-tabler.card-body class="py-2">
                                             <div class="row align-items-center">
                                                 <div class="col-auto">
                                                     <span class="badge badge-primary rounded-pill">#1</span>
@@ -164,26 +151,19 @@
                                                     <x-tabler.button type="button" class="btn-danger remove-agenda" title="Hapus Agenda" iconOnly="true" icon="ti ti-x" />
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
+                                        </x-tabler.card-body>
+                                    </x-tabler.card>
                                 @endif
                             </div>
 
                             <x-tabler.button type="create" id="add-agenda-btn" class="mt-2" />
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
 
                     {{-- PESERTA CARD --}}
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="ti ti-users me-2"></i>Peserta Rapat
-                                @if($rapat->exists)
-                                    <span class="badge bg-success text-white ms-2">{{ $rapat->pesertas->count() }}</span>
-                                @endif
-                            </h3>
-                        </div>
-                        <div class="card-body">
+                    <x-tabler.card>
+                        <x-tabler.card-header title="<i class='ti ti-users me-2'></i>Peserta Rapat {{ $rapat->exists ? '<span class=\'badge bg-success text-white ms-2\'>' . $rapat->pesertas->count() . '</span>' : '' }}" />
+                        <x-tabler.card-body>
                             <div class="mb-3">
                                 <label class="form-label">Undang Peserta</label>
                                 <select name="participants[]" 
@@ -216,6 +196,20 @@
                             </div>
 
                             @if($rapat->exists && $rapat->pesertas->count() > 0)
+                                <x-tabler.card>
+                                    <x-tabler.card-header title="Quick Stats" />
+                                    <x-tabler.card-body>
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between mb-1">
+                                                <span class="text-muted">Presence</span>
+                                                <span class="text-muted">0/0</span>
+                                            </div>
+                                            <div class="progress progress-sm">
+                                                <div class="progress-bar bg-primary" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                    </x-tabler.card-body>
+                                </x-tabler.card>
                                 <div class="mt-3">
                                     <h6 class="card-title mb-2">Peserta Terundang</h6>
                                     <div class="table-responsive">
@@ -267,8 +261,8 @@
                                     </div>
                                 </div>
                             @endif
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                 </div>
                 @endif
             </div>
@@ -298,24 +292,26 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('add-agenda-btn')?.addEventListener('click', function() {
         const container = document.getElementById('agenda-container');
         const newAgenda = document.createElement('div');
-        newAgenda.className = 'agenda-item card mb-2';
+        newAgenda.className = 'agenda-item mb-2';
         newAgenda.innerHTML = `
-            <div class="card-body py-2">
-                <div class="row align-items-center">
-                    <div class="col-auto">
-                        <span class="badge bg-primary rounded-pill">${agendaCounter + 1}</span>
-                    </div>
-                    <div class="col">
-                        <input type="text" 
-                               name="agendas[${agendaCounter}][judul_agenda]" 
-                               class="form-control form-control-sm fw-bold" 
-                               placeholder="Judul Agenda"
-                               required>
-                    </div>
-                    <div class="col-auto">
-                        <button type="button" class="btn btn-icon btn-sm btn-danger remove-agenda" title="Hapus Agenda">
-                            <i class="ti ti-x"></i>
-                        </button>
+            <div class="card">
+                <div class="card-body py-2">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="badge bg-primary rounded-pill">${agendaCounter + 1}</span>
+                        </div>
+                        <div class="col">
+                            <input type="text" 
+                                   name="agendas[${agendaCounter}][judul_agenda]" 
+                                   class="form-control form-control-sm fw-bold" 
+                                   placeholder="Judul Agenda"
+                                   required>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-icon btn-sm btn-danger remove-agenda" title="Hapus Agenda">
+                                <i class="ti ti-x"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

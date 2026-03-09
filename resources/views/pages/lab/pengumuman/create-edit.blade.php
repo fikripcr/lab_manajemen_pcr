@@ -18,8 +18,8 @@
 
             <div class="row row-cards">
                 <div class="col-lg-8">
-                    <div class="card">
-                        <div class="card-body">
+                    <x-tabler.card>
+                        <x-tabler.card-body>
                             <x-tabler.form-input
                                 name="judul"
                                 label="Judul"
@@ -38,13 +38,13 @@
                                     :value="old('isi', $pengumuman->isi ?? '')"
                                 />
                             </div>
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                 </div>
 
                 <div class="col-lg-4">
-                    <div class="card">
-                        <div class="card-body">
+                    <x-tabler.card>
+                        <x-tabler.card-body>
                             <div class="mb-3">
                                 <label class="form-label">Status</label>
                                 <div class="form-selectgroup">
@@ -107,8 +107,8 @@
                                     class="w-100"
                                 />
                             </div>
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                 </div>
             </div>
         </form>

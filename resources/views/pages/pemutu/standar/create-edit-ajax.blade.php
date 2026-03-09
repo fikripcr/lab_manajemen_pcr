@@ -11,49 +11,50 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-md-9">
-        <form method="POST" action="{{ route('pemutu.standar.store') }}" class="card ajax-form">
-            @csrf
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <x-tabler.form-select name="type" label="Tipe Indikator" required="true">
-                            <option value="standar">Standard (Indikator Standar)</option>
-                            <option value="performa">Performance (Indikator Performa)</option>
-                        </x-tabler.form-select>
+        <x-tabler.card>
+            <form method="POST" action="{{ route('pemutu.standar.store') }}" class="ajax-form">
+                @csrf
+                <x-tabler.card-body>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <x-tabler.form-select name="type" label="Tipe Indikator" required="true">
+                                <option value="standar">Standard (Indikator Standar)</option>
+                                <option value="performa">Performance (Indikator Performa)</option>
+                            </x-tabler.form-select>
+                        </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <x-tabler.form-select id="dokumen_id" name="dokumen_id_context" label="Dokumen Standar" required="true">
-                            <option value="">Pilih Dokumen...</option>
-                            @foreach($dokumens as $dok)
-                                <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->kode }} - {{ $dok->judul }}</option>
-                            @endforeach
-                        </x-tabler.form-select>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <x-tabler.form-select id="dokumen_id" name="dokumen_id_context" label="Dokumen Standar" required="true">
+                                <option value="">Pilih Dokumen...</option>
+                                @foreach($dokumens as $dok)
+                                    <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->kode }} - {{ $dok->judul }}</option>
+                                @endforeach
+                            </x-tabler.form-select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <x-tabler.form-select name="doksub_id" id="doksub_id" label="Pernyataan Standar (DokSub)" required="true" disabled="true">
+                                <option value="">Pilih Dokumen Terlebih Dahulu...</option>
+                            </x-tabler.form-select>
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <x-tabler.form-select name="doksub_id" id="doksub_id" label="Pernyataan Standar (DokSub)" required="true" disabled="true">
-                            <option value="">Pilih Dokumen Terlebih Dahulu...</option>
-                        </x-tabler.form-select>
+
+                    <div class="mb-3">
+                        <x-tabler.form-textarea name="indikator" label="Isi Indikator" rows="3" required="true" />
                     </div>
-                </div>
 
-                <div class="mb-3">
-                    <x-tabler.form-textarea name="indikator" label="Isi Indikator" rows="3" required="true" />
-                </div>
-
-                <div class="mb-3">
-                    <x-tabler.form-input name="target" label="Target" required="true" placeholder="cth: 100%, 5 Dokumen, dsb." />
-                </div>
-                
-                <input type="hidden" name="parent_id" value="">
-            </div>
-
-            <div class="card-footer text-end">
-                <x-tabler.button type="submit" text="Simpan Indikator" />
-            </div>
-        </form>
+                    <div class="mb-3">
+                        <x-tabler.form-input name="target" label="Target" required="true" placeholder="cth: 100%, 5 Dokumen, dsb." />
+                    </div>
+                    
+                    <input type="hidden" name="parent_id" value="">
+                </x-tabler.card-body>
+                <x-tabler.card-footer class="text-end">
+                    <x-tabler.button type="submit" text="Simpan Pengaturan" />
+                </x-tabler.card-footer>
+            </form>
+        </x-tabler.card>
     </div>
 </div>
 

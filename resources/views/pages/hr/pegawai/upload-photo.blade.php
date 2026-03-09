@@ -6,7 +6,7 @@
 @section('content')
 <div class="row">
     <div class="col-md-8">
-        <div class="card">
+        <x-tabler.card>
             <div class="card-header">
                 <h3 class="card-title">Upload Foto untuk Face Recognition</h3>
             </div>
@@ -47,15 +47,26 @@
                     </div>
                 </form>
             </div>
-        </div>
+        </x-tabler.card>
     </div>
     
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title">Preview</h5>
-            </div>
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-body>
+                <div class="id-info mb-3">
+                    <small class="text-muted uppercase">Nama Pegawai</small>
+                    <div class="h3 mb-0">{{ $pegawai->nama }}</div>
+                </div>
+                <div class="id-info mb-0">
+                    <small class="text-muted uppercase">NIP / NPK</small>
+                    <div class="h3 mb-0">{{ $pegawai->nip }}</div>
+                </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
+
+        <x-tabler.card class="mt-3">
+            <x-tabler.card-header title="Preview" />
+            <x-tabler.card-body>
                 <div id="photoPreview" class="text-center">
                     <div class="avatar avatar-xl rounded-circle" style="background-color: #f3f4f6;">
                         <i class="ti ti-user fs-2 text-muted"></i>
@@ -77,8 +88,8 @@
                         <div>First 5 values: <span id="encodingSample">-</span></div>
                     </small>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 </div>
 

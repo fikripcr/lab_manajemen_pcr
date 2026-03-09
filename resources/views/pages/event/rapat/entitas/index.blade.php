@@ -10,12 +10,11 @@
 @endsection
 
 @section('content')
-    <div class="card">
+    <x-tabler.card>
         <div class="card-header">
             <h3 class="card-title">Daftar Entitas Terkait</h3>
         </div>
         <div class="card-body">
-            <x-tabler.flash-message />
 
             <x-tabler.datatable
                 id="entitas-table" route="{{ route('Kegiatan.rapat.entitas.data', $rapat) }}" :columns="[

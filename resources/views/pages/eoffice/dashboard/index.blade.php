@@ -22,8 +22,8 @@
         <div class="row row-deck row-cards">
             <!-- KPI Cards -->
             <div class="col-sm-6 col-lg-3">
-                <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                    <div class="card-body">
+                <x-tabler.card class="shadow-sm border-0" style="border-radius: 12px;">
+                    <x-tabler.card-body>
                         <div class="d-flex align-items-center mb-3">
                             <div class="subheader">Total Layanan</div>
                         </div>
@@ -34,13 +34,13 @@
                         <div class="progress progress-sm">
                             <div class="progress-bar bg-primary" style="width: 100%"></div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <div class="col-sm-6 col-lg-3">
-                <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                    <div class="card-body">
+                <x-tabler.card class="shadow-sm border-0" style="border-radius: 12px;">
+                    <x-tabler.card-body>
                         <div class="d-flex align-items-center mb-3">
                             <div class="subheader">Menunggu Proses</div>
                             <div class="ms-auto lh-1">
@@ -54,13 +54,13 @@
                         <div class="progress progress-sm">
                             <div class="progress-bar bg-yellow" style="width: {{ $stats['pending_percentage'] ?? 0 }}%"></div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <div class="col-sm-6 col-lg-3">
-                <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                    <div class="card-body">
+                <x-tabler.card class="shadow-sm border-0" style="border-radius: 12px;">
+                    <x-tabler.card-body>
                         <div class="d-flex align-items-center mb-3">
                             <div class="subheader">Selesai Diproses</div>
                             <div class="ms-auto lh-1">
@@ -74,13 +74,13 @@
                         <div class="progress progress-sm">
                             <div class="progress-bar bg-green" style="width: {{ $stats['completed_percentage'] ?? 0 }}%"></div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <div class="col-sm-6 col-lg-3">
-                <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                    <div class="card-body">
+                <x-tabler.card class="shadow-sm border-0" style="border-radius: 12px;">
+                    <x-tabler.card-body>
                         <div class="d-flex align-items-center mb-3">
                             <div class="subheader">Response Time</div>
                         </div>
@@ -91,42 +91,42 @@
                         <div class="progress progress-sm">
                             <div class="progress-bar bg-blue" style="width: 70%"></div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <!-- Charts Section -->
             <div class="col-lg-8">
-                <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                    <div class="card-header bg-transparent border-0 py-3">
+                <x-tabler.card class="shadow-sm border-0" style="border-radius: 12px;">
+                    <x-tabler.card-header class="bg-transparent border-0 py-3">
                         <h3 class="card-title fw-bold"><i class="ti ti-chart-line me-2 text-primary"></i> Trend Layanan 6 Bulan Terakhir</h3>
-                    </div>
-                    <div class="card-body">
+                    </x-tabler.card-header>
+                    <x-tabler.card-body>
                         <div id="chart-layanan-trend" style="height: 300px;"></div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <div class="col-lg-4">
-                <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                    <div class="card-header bg-transparent border-0 py-3">
+                <x-tabler.card class="shadow-sm border-0" style="border-radius: 12px;">
+                    <x-tabler.card-header class="bg-transparent border-0 py-3">
                         <h3 class="card-title fw-bold"><i class="ti ti-chart-pie me-2 text-primary"></i> Distribusi Jenis Layanan</h3>
-                    </div>
-                    <div class="card-body">
+                    </x-tabler.card-header>
+                    <x-tabler.card-body>
                         <div id="chart-jenis-layanan" style="height: 300px;"></div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <!-- Bottom Section: Activities & Top Performers -->
             <div class="col-lg-8">
-                <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                    <div class="card-header bg-transparent border-0 py-3 d-flex align-items-center">
+                <x-tabler.card class="shadow-sm border-0" style="border-radius: 12px;">
+                    <x-tabler.card-header class="bg-transparent border-0 py-3 d-flex align-items-center">
                         <h3 class="card-title fw-bold m-0"><i class="ti ti-activity me-2 text-primary"></i> Aktivitas Terbaru</h3>
-                        <div class="ms-auto">
+                        <x-slot:actions>
                             <x-tabler.button href="{{ route('eoffice.layanan.index') }}" class="btn-ghost-secondary btn-sm" text="Lihat Semua" />
-                        </div>
-                    </div>
+                        </x-slot:actions>
+                    </x-tabler.card-header>
                     <div class="card-table">
                         <x-tabler.datatable-client
                             id="table-aktivitas"
@@ -181,15 +181,15 @@
                             <div class="text-center py-4 text-muted">Tidak ada aktivitas terbaru.</div>
                         @endif
                     </div>
-                </div>
+                </x-tabler.card>
             </div>
 
             <div class="col-lg-4">
-                <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                    <div class="card-header bg-transparent border-0 py-3">
+                <x-tabler.card class="shadow-sm border-0" style="border-radius: 12px;">
+                    <x-tabler.card-header class="bg-transparent border-0 py-3">
                         <h3 class="card-title fw-bold m-0"><i class="ti ti-award me-2 text-warning"></i> Top Performers (PIC)</h3>
-                    </div>
-                    <div class="card-body">
+                    </x-tabler.card-header>
+                    <x-tabler.card-body>
                         <div class="space-y-4">
                             @forelse($topPerformers as $performer)
                             <div class="d-flex align-items-center mb-4">
@@ -212,8 +212,8 @@
                             <p class="text-center text-muted py-3">Belum ada data performer.</p>
                             @endforelse
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
 @endsection

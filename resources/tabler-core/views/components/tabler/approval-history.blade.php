@@ -4,11 +4,9 @@
     'emptyText' => 'Belum ada riwayat approval.',
 ])
 
-<div class="card mb-3">
-    <div class="card-header">
-        <h3 class="card-title">{{ $title }}</h3>
-    </div>
-    <div class="card-body">
+<x-tabler.card class="mb-3">
+    <x-tabler.card-header :title="$title" />
+    <x-tabler.card-body>
 
         @if($approvals->isEmpty())
             <div class="text-center text-muted py-4">
@@ -36,7 +34,7 @@
                         </div>
 
                         <div class="timeline-event-card shadow-none border">
-                            <div class="card-body p-2">
+                            <x-tabler.card-body class="p-2">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
                                         <div class="fw-bold">{{ $approval->pejabat ?? '-' }} {!! getApprovalBadge($approval->status) !!}</div>
@@ -58,12 +56,12 @@
                                         </a>
                                     </div>
                                 @endif
-                            </div>
+                            </x-tabler.card-body>
                         </div>
                     </li>
                 @endforeach
             </ul>
         @endif
 
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>

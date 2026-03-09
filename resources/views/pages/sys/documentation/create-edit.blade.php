@@ -21,13 +21,10 @@
 
     @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
-        <x-tabler.flash-message />
 
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Content Editor</h5>
-            </div>
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-header title="Content Editor" />
+            <x-tabler.card-body>
                 <form method="POST" action="{{ route('sys.documentation.update', $page) }}" class="ajax-form">
                     @csrf
                     @method('PUT')
@@ -39,8 +36,8 @@
                         <x-tabler.button type="submit" />
                     </div>
                 </form>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
     @endsection
 @endif

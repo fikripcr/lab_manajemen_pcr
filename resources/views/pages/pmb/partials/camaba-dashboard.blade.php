@@ -1,9 +1,9 @@
 @if(!$pendaftaran)
     <div class="row row-cards">
         <div class="col-12">
-            <div class="card card-md">
+            <x-tabler.card class="card-md">
                 <div class="card-status-top bg-primary"></div>
-                <div class="card-body text-center py-5">
+                <x-tabler.card-body class="text-center py-5">
                     <img src="{{ asset('static/illustrations/undraw_sign_in_re_o58h.svg') }}" height="128" class="mb-n2" alt="">
                     <h1 class="mt-4">Selamat Datang di Portal PMB!</h1>
                     <p class="text-muted">Anda belum memiliki pendaftaran aktif. Silakan mulai pendaftaran Anda sekarang.</p>
@@ -17,8 +17,8 @@
                             Mohon maaf, saat ini pendaftaran belum dibuka.
                         </div>
                     @endif
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
 @else
@@ -26,8 +26,8 @@
     <div class="row row-cards mb-4">
         {{-- Status Card --}}
         <div class="col-md-6 col-lg-3">
-            <div class="card">
-                <div class="card-body">
+            <x-tabler.card>
+                <x-tabler.card-body>
                     <div class="d-flex align-items-center">
                         <div class="subheader">No. Pendaftaran</div>
                     </div>
@@ -37,27 +37,27 @@
                             {{ str_replace('_', ' ', $pendaftaran->status_terkini) }}
                         </span>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
         {{-- Periode Info --}}
         <div class="col-md-6 col-lg-3">
-            <div class="card">
-                <div class="card-body">
+            <x-tabler.card>
+                <x-tabler.card-body>
                     <div class="d-flex align-items-center">
                         <div class="subheader">Periode</div>
                     </div>
                     <div class="h3 mb-3">{{ $pendaftaran->periode->nama_periode }}</div>
                     <div class="text-muted">{{ $pendaftaran->jalur->nama_jalur }}</div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
         {{-- Payment Status --}}
         <div class="col-md-6 col-lg-3">
-            <div class="card">
-                <div class="card-body">
+            <x-tabler.card>
+                <x-tabler.card-body>
                     <div class="d-flex align-items-center">
                         <div class="subheader">Pembayaran</div>
                     </div>
@@ -69,14 +69,14 @@
                         @endif
                     </div>
                     <div class="text-muted">Rp. {{ number_format($pendaftaran->jalur->biaya_pendaftaran, 0, ',', '.') }}</div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
         {{-- Documents Status --}}
         <div class="col-md-6 col-lg-3">
-            <div class="card">
-                <div class="card-body">
+            <x-tabler.card>
+                <x-tabler.card-body>
                     <div class="d-flex align-items-center">
                         <div class="subheader">Dokumen</div>
                     </div>
@@ -94,22 +94,20 @@
                             Belum Upload
                         @endif
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
 
     {{-- Status Progress --}}
     <div class="row row-cards mb-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Progress Pendaftaran</h3>
-                </div>
-                <div class="card-body">
+            <x-tabler.card>
+                <x-tabler.card-header title="Progress Pendaftaran" />
+                <x-tabler.card-body>
                     @include('pmb.partials.status-tracker', ['pendaftaran' => $pendaftaran])
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
 
@@ -118,11 +116,9 @@
     {{-- Recent Notifications --}}
     <div class="row row-cards">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Notifikasi Terbaru</h3>
-                </div>
-                <div class="card-body">
+            <x-tabler.card>
+                <x-tabler.card-header title="Notifikasi Terbaru" />
+                <x-tabler.card-body class="p-0">
                     @php
                         $riwayat = $pendaftaran->riwayat()->latest()->limit(5)->get();
                     @endphp
@@ -142,14 +138,10 @@
                             @endforeach
                         </div>
                     @else
-                        <div class="empty">
-                            <div class="empty-img"><img src="{{ asset('images/illustrations/undraw_empty_xct9.svg') }}" height="128" alt=""></div>
-                            <p class="empty-title">Belum ada notifikasi</p>
-                            <p class="empty-subtitle text-muted">Status pendaftaran Anda akan muncul di sini.</p>
-                        </div>
+                        <x-tabler.empty-state title="Belum ada notifikasi" text="Status pendaftaran Anda akan muncul di sini." />
                     @endif
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
 @endif

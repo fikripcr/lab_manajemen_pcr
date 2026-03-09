@@ -9,8 +9,8 @@
         </x-slot:actions>
     </x-tabler.page-header>
 
-        <div class="card">
-            <div class="card-header">
+        <x-tabler.card>
+            <x-tabler.card-header>
                 <div class="d-flex flex-wrap gap-2">
                     <div>
                         <x-tabler.datatable-page-length dataTableId="table-software-requests" />
@@ -19,8 +19,8 @@
                         <x-tabler.datatable-search dataTableId="table-software-requests" />
                     </div>
                 </div>
-            </div>
-            <div class="card-body p-0">
+            </x-tabler.card-header>
+            <x-tabler.card-body class="p-0">
                 <x-tabler.datatable
                     id="table-software-requests"
                     route="{{ route('lab.software-requests.data') }}"
@@ -35,8 +35,8 @@
                     ]"
                     :order="[[5, 'desc']]"
                 />
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
 @endsection
 
 

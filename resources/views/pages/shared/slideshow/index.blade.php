@@ -36,7 +36,7 @@
         <div class="row row-cards" id="slideshow-grid">
             @foreach($slideshows as $slide)
                 <div class="col-md-6 col-lg-4" data-id="{{ $slide->encrypted_slideshow_id }}">
-                    <div class="card card-sm">
+                    <x-tabler.card class="card-sm">
                         <div class="d-block position-relative">
                             @if($slide->has_image)
                                 <img src="{{ $slide->thumb_url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ $slide->title }}">
@@ -51,7 +51,7 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="card-body">
+                        <x-tabler.card-body>
                             <div class="d-flex align-items-center mb-2">
                                 <div class="subheader">Urutan: {{ $slide->seq }}</div>
                                 <div class="ms-auto">
@@ -68,7 +68,7 @@
                             @if($slide->caption)
                                 <div class="text-secondary small text-truncate">{{ Str::limit($slide->caption, 50) }}</div>
                             @endif
-                        </div>
+                        </x-tabler.card-body>
                         <div class="card-footer d-flex py-3">
                             <span class="cursor-move text-secondary me-auto" title="Drag to reorder">
                                 <i class="ti ti-grid-dots fs-2"></i>
@@ -92,7 +92,7 @@
                                 />
                             </div>
                         </div>
-                    </div>
+                    </x-tabler.card>
                 </div>
             @endforeach
         </div>

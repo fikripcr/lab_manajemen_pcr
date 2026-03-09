@@ -15,16 +15,15 @@
 
     {{-- ===== DAFTAR SOAL TERPILIH ===== --}}
     <div class="col-lg-7">
-        <div class="card">
-            <div class="card-header">
-                <div>
-                    <h3 class="card-title">Daftar Soal Terpilih</h3>
-                    <div class="card-subtitle text-muted">{{ $paket->komposisi->count() }} soal dalam paket ini</div>
-                </div>
-                <div class="card-actions">
+        <x-tabler.card>
+            <x-tabler.card-header title="Daftar Soal Terpilih">
+                <x-slot:subtitle>
+                    {{ $paket->komposisi->count() }} soal dalam paket ini
+                </x-slot:subtitle>
+                <x-slot:actions>
                     <span class="badge bg-blue-lt fs-6">{{ $paket->komposisi->count() }} Soal</span>
-                </div>
-            </div>
+                </x-slot:actions>
+            </x-tabler.card-header>
 
             <div class="card-body p-0">
                 @if($paket->komposisi->isEmpty())
@@ -69,18 +68,17 @@
                     </div>
                 @endif
             </div>
-        </div>
+        </x-tabler.card>
     </div>
 
     {{-- ===== BANK SOAL TERSEDIA ===== --}}
     <div class="col-lg-5">
-        <div class="card" style="position: sticky; top: 16px;">
-            <div class="card-header">
-                <div>
-                    <h3 class="card-title">Bank Soal Tersedia</h3>
-                    <div class="card-subtitle text-muted" id="soal-count-label">{{ $soalTersedia->count() }} soal tersedia</div>
-                </div>
-            </div>
+        <x-tabler.card style="position: sticky; top: 16px;">
+            <x-tabler.card-header title="Bank Soal Tersedia">
+                <x-slot:subtitle>
+                    <div id="soal-count-label">{{ $soalTersedia->count() }} soal tersedia</div>
+                </x-slot:subtitle>
+            </x-tabler.card-header>
 
             <form id="form-add-soal"
                   action="{{ route('cbt.paket.add-soal', $paket->encrypted_paket_ujian_id) }}"

@@ -1,8 +1,8 @@
 @extends('layouts.auth.app')
 
 @section('content')
-<div class="card card-md">
-    <div class="card-body">
+<x-tabler.card class="card-md">
+    <x-tabler.card-body>
         <h2 class="h2 text-center mb-4">Create new account</h2>
         
         <form action="{{ route('register') }}" method="POST" autocomplete="off">
@@ -67,8 +67,8 @@
                 <x-tabler.button type="submit" class="w-100" text="Create new account" />
             </div>
         </form>
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 
 <div class="text-center text-secondary mt-3">
     Already have account? <a href="{{ route('login') }}" tabindex="-1">Sign in</a>

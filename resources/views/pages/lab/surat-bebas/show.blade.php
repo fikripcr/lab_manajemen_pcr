@@ -11,10 +11,9 @@
 
         <div class="row row-cards">
             <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Informasi Pengajuan</h3>
-                        <div class="card-actions">
+                <x-tabler.card>
+                    <x-tabler.card-header title="Informasi Pengajuan">
+                        <x-slot:actions>
                             @php
                                 $badges = [
                                     'pending' => 'warning',
@@ -25,9 +24,9 @@
                                 $color = $badges[$surat->status] ?? 'secondary';
                             @endphp
                             <span class="badge bg-{{ $color }}">{{ ucfirst($surat->status) }}</span>
-                        </div>
-                    </div>
-                    <div class="card-body">
+                        </x-slot:actions>
+                    </x-tabler.card-header>
+                    <x-tabler.card-body>
                         <div class="datagrid">
                             <div class="datagrid-item">
                                 <div class="datagrid-title">Mahasiswa</div>
@@ -65,16 +64,14 @@
                                 <x-tabler.button href="#" class="btn-success mt-2" icon="bx bx-download" text="Download PDF" />
                             </div>
                         @endif
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Approval Action</h3>
-                    </div>
-                    <div class="card-body">
+                <x-tabler.card>
+                    <x-tabler.card-header title="Approval Action" />
+                    <x-tabler.card-body>
                         @if(in_array($surat->status, ['pending', 'tangguhkan']))
                             <form action="{{ route('lab.surat-bebas.status', encryptId($surat->surat_bebas_lab_id)) }}" method="POST" class="ajax-form">
                                 @csrf
@@ -90,8 +87,8 @@
                                 <p class="text-muted">Status sudah: <strong>{{ ucfirst($surat->status) }}</strong></p>
                             </div>
                         @endif
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
 

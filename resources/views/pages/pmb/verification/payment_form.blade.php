@@ -13,14 +13,18 @@
             </a>
         </div>
         <div class="col-md-7">
-            <h3 class="card-title">Detail Pembayaran</h3>
-            <table class="table table-sm table-borderless">
-                <tr><td>Nama Calon</td><td>: {{ $pembayaran->pendaftaran->user->name }}</td></tr>
-                <tr><td>Bank Asal</td><td>: {{ $pembayaran->bank_asal }}</td></tr>
-                <tr><td>Nama Pengirim</td><td>: {{ $pembayaran->nama_pengirim }}</td></tr>
-                <tr><td>Tanggal Bayar</td><td>: {{ formatTanggalIndo($pembayaran->tanggal_bayar) }}</td></tr>
-                <tr><td>Nominal</td><td>: <strong>Rp {{ number_format($pembayaran->jumlah_bayar, 0, ',', '.') }}</strong></td></tr>
-            </table>
+            <x-tabler.card class="mb-3">
+                <x-tabler.card-header title="Detail Pembayaran" />
+                <x-tabler.card-body>
+                    <table class="table table-sm table-borderless">
+                        <tr><td>Nama Calon</td><td>: {{ $pembayaran->pendaftaran->user->name }}</td></tr>
+                        <tr><td>Bank Asal</td><td>: {{ $pembayaran->bank_asal }}</td></tr>
+                        <tr><td>Nama Pengirim</td><td>: {{ $pembayaran->nama_pengirim }}</td></tr>
+                        <tr><td>Tanggal Bayar</td><td>: {{ formatTanggalIndo($pembayaran->tanggal_bayar) }}</td></tr>
+                        <tr><td>Nominal</td><td>: <strong>Rp {{ number_format($pembayaran->jumlah_bayar, 0, ',', '.') }}</strong></td></tr>
+                    </table>
+                </x-tabler.card-body>
+            </x-tabler.card>
 
             <div class="mt-3">
                 <div class="mb-3">

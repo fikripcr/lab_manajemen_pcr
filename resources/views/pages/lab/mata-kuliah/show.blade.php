@@ -35,10 +35,8 @@
     @section('content')
         <div class="row">
             <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <x-tabler.flash-message />
-
+                <x-tabler.card>
+                    <x-tabler.card-body>
                         <div class="datagrid">
                             <div class="datagrid-item">
                                 <div class="datagrid-title">Kode MK</div>
@@ -61,8 +59,8 @@
                                         data-text="Apakah Anda yakin ingin menghapus mata kuliah ini?"
                                         data-redirect="{{ route('mata-kuliah.index') }}" />
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
     @endsection

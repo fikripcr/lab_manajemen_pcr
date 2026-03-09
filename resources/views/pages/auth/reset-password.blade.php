@@ -4,8 +4,8 @@
 <div class="authentication-wrapper authentication-basic container-p-y">
     <div class="authentication-inner">
         <!-- Reset Password Card -->
-        <div class="card">
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-body>
                 <!-- Logo -->
                 <div class="app-brand justify-content-center mb-4">
                     <a href="{{ url('/') }}" class="app-brand-link gap-2">
@@ -22,15 +22,15 @@
                     <!-- Password Reset Token -->
                     <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" value="{{ old('email', $request->email) }}" required autofocus />
-                        @error('email')
-                            <div class="text-danger mt-1">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
+                    <x-tabler.form-input 
+                        name="email" 
+                        label="Email" 
+                        type="email" 
+                        value="{{ old('email', $request->email) }}" 
+                        placeholder="Enter your email" 
+                        required="true" 
+                        autofocus
+                    />
 
                     <div class="mb-3 form-password-toggle">
                         <label class="form-label" for="password">New Password</label>
@@ -59,8 +59,8 @@
 
                     <x-tabler.button type="submit" class="w-100" text="Reset Password" />
                 </form>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
         <!-- /Reset Password Card -->
     </div>
 </div>

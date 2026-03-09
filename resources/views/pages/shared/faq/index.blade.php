@@ -18,27 +18,27 @@
         <div class="row row-cards">
             @if($faqs->isEmpty())
                 <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
+                    <x-tabler.card>
+                        <x-tabler.card-body>
                             <x-tabler.empty-state
                                 title="Belum ada FAQ"
                                 text="Silakan tambahkan FAQ baru."
                                 icon="ti ti-help-circle"
                             />
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                 </div>
             @else
                 @foreach($faqs as $category => $items)
                     <div class="col-md-6">
-                        <div class="card h-100">
-                            <div class="card-header">
+                        <x-tabler.card class="h-100">
+                            <x-tabler.card-header>
                                 <h3 class="card-title">
                                     {{ $category ?: 'Umum (Tanpa Kategori)' }}
                                     <span class="badge bg-primary-lt ms-2">{{ $items->count() }}</span>
                                 </h3>
-                            </div>
-                            <div class="card-body p-0">
+                            </x-tabler.card-header>
+                            <x-tabler.card-body class="p-0">
                                 <div class="list-group list-group-flush sortable-list" data-category="{{ $category }}">
                                     @foreach($items as $faq)
                                         <div class="list-group-item d-flex justify-content-between align-items-center" data-id="{{ $faq->encrypted_faq_id }}">
@@ -79,8 +79,8 @@
                                         </div>
                                     @endforeach
                                 </div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                 @endforeach
             @endif

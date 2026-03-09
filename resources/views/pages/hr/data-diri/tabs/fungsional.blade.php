@@ -9,9 +9,9 @@
 @endsection
 
 @section('content')
-<div class="card">
+<x-tabler.card>
     @include('pages.hr.data-diri.global-tab-nav')
-    <div class="card-body p-0">
+    <x-tabler.card-body class="p-0">
         <div class="tab-content">
             <div class="tab-pane active show" id="tabs-fungsional">
                 @if(isset($pegawai))
@@ -21,6 +21,6 @@
                 @endif
             </div>
         </div>
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection

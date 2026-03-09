@@ -11,8 +11,8 @@
 @endsection
 
 @section('content')
-<div class="card">
-    <div class="card-header">
+<x-tabler.card>
+    <x-tabler.card-header>
         <ul class="nav nav-tabs card-header-tabs" role="tablist">
             <li class="nav-item">
                 <a class="nav-link {{ Route::is('sys.activity-log*') ? 'active fw-bold' : '' }}" href="{{ route('sys.activity-log.index') }}">
@@ -35,8 +35,8 @@
                 </a>
             </li>
         </ul>
-    </div>
-    <div class="card-body">
+    </x-tabler.card-header>
+    <x-tabler.card-body>
         <div class="row">
             <div class="col-md-3">
                 <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
@@ -211,6 +211,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection

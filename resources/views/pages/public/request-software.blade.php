@@ -13,8 +13,8 @@
         <div class="container" data-aos="fade-up" data-aos-delay="100">
             <div class="row justify-content-center">
                 <div class="col-lg-8">
-                    <div class="card">
-                        <div class="card-body p-5">
+                    <x-tabler.card>
+                        <x-tabler.card-body class="p-5">
                             @include('components.guest.alerts')
 
                             <form id="softwareRequestForm" method="POST">
@@ -56,8 +56,8 @@
                                     </button>
                                 </div>
                             </form>
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                 </div>
             </div>
         </div>

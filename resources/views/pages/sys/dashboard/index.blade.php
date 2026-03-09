@@ -22,9 +22,8 @@
     <div class="row">
 
         <!-- Application Environment & Server Stats -->
-        <div class="col-12 mb-4">
-            <div class="card">
-                <div class="card-body">
+            <x-tabler.card>
+                <x-tabler.card-body>
                     <div class="row">
                         <div class="col-md-6 mb-3 mb-md-0">
                             <div class="d-flex align-items-center">
@@ -75,11 +74,11 @@
 
         <!-- Disk Space and Database Size -->
         <div class="col-12 mb-4">
-            <div class="card">
-                <div class="card-body">
+            <x-tabler.card>
+                <x-tabler.card-body>
                     <div class="row">
                         <div class="col-md-8 ">
-                            <h3 class="card-title mb-2">Disk Space</h3>
+                            <h3 class="mb-2">Disk Space</h3>
                             <div class="d-flex align-items-center">
                                 <div class="progress flex-grow-1 me-3" style="height: 1.2rem;">
                                     @if (isset($serverMonitoringData['disk_space']))
@@ -123,7 +122,7 @@
                     </div>
                     <div class="row  mt-3">
                         <div class="col-md-6  border-end">
-                            <h4 class="mb-2 h3 card-title">Project Size <span class="text-muted">({{ $serverMonitoringData['project_size']['data']['size_formatted'] ?? 'N/A' }})</span></h4>
+                            <h4 class="mb-2 h3">Project Size <span class="text-muted">({{ $serverMonitoringData['project_size']['data']['size_formatted'] ?? 'N/A' }})</span></h4>
                             @if (isset($serverMonitoringData['project_size']))
                                 <div class="row text-start">
                                     <div class="col-3">
@@ -152,7 +151,7 @@
                         </div>
 
                         <div class="col-md-6">
-                            <h4 class="mb-2 h3 card-title">Database Size</h4>
+                            <h4 class="mb-2 h3">Database Size</h4>
                             <div class="d-flex align-items-center">
                                 <div class="flex-grow-1">
                                     @if (isset($serverMonitoringData['database_size']))
@@ -176,8 +175,8 @@
 
         <!-- Stats Cards -->
         <div class="col-xl-3 col-md-6 col-lg-3 mb-4">
-            <div class="card h-100">
-                <div class="card-body">
+            <x-tabler.card class="h-100">
+                <x-tabler.card-body>
                     <div class="row align-items-center">
                         <div class="col">
                             <div class="text-muted mb-1">Total Users</div>
@@ -194,8 +193,8 @@
         </div>
 
         <div class="col-xl-3 col-md-6 col-lg-3 mb-4">
-            <div class="card h-100">
-                <div class="card-body">
+            <x-tabler.card class="h-100">
+                <x-tabler.card-body>
                     <div class="row align-items-center">
                         <div class="col">
                             <div class="text-muted mb-1">Total Roles</div>
@@ -212,8 +211,8 @@
         </div>
 
         <div class="col-xl-3 col-md-6 col-lg-3 mb-4">
-            <div class="card h-100">
-                <div class="card-body">
+            <x-tabler.card class="h-100">
+                <x-tabler.card-body>
                     <div class="row align-items-center">
                         <div class="col">
                             <div class="text-muted mb-1">Total Permissions</div>
@@ -230,8 +229,8 @@
         </div>
 
         <div class="col-xl-3 col-md-6 col-lg-3 mb-4">
-            <div class="card h-100">
-                <div class="card-body">
+            <x-tabler.card class="h-100">
+                <x-tabler.card-body>
                     <div class="row align-items-center">
                         <div class="col">
                             <div class="text-muted mb-1">Today's Activities</div>
@@ -249,7 +248,7 @@
 
         <!-- System Management Menu -->
         <div class="col-12 mb-4">
-            <h3 class="card-title mb-4 text-center">System Management Functions</h3>
+            <h3 class="mb-4 text-center">System Management Functions</h3>
             <div class="row g-4 justify-content-center">
                 <!-- Role & Permissions -->
                 <div class="col-md-6 col-lg-4">
@@ -259,7 +258,7 @@
                                 <i class="ti ti-shield-lock"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h4 class="mb-0 text-reset h3 card-title fs-4">Role & Permissions</h4>
+                                <h4 class="mb-0 text-reset h3 fs-4">Role & Permissions</h4>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
                         </div>
@@ -274,7 +273,7 @@
                                 <i class="ti ti-database"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h4 class="mb-0 text-reset h3 card-title fs-4">Backup Management</h4>
+                                <h4 class="mb-0 text-reset h3 fs-4">Backup Management</h4>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
                         </div>
@@ -289,7 +288,7 @@
                                 <i class="ti ti-settings"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h4 class="mb-0 text-reset h3 card-title fs-4">System Hub</h4>
+                                <h4 class="mb-0 text-reset h3 fs-4">System Hub</h4>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
                         </div>
@@ -304,7 +303,7 @@
                                 <i class="ti ti-book"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h4 class="mb-0 text-reset h3 card-title fs-4">System Documentation</h4>
+                                <h4 class="mb-0 text-reset h3 fs-4">System Documentation</h4>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
                         </div>
@@ -319,7 +318,7 @@
                                 <i class="ti ti-browser-check"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h4 class="mb-0 text-reset h3 card-title fs-4">System Utilities</h4>
+                                <h4 class="mb-0 text-reset h3 fs-4">System Utilities</h4>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
                         </div>
@@ -332,8 +331,8 @@
         <div class="col-12 mb-4">
             <!-- User Role Distribution List -->
             <div class="mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
+            <x-tabler.card class="h-100">
+                <x-tabler.card-body>
                         <h3 class="card-title">User Distribution by Role</h3>
                         <div class="badges-list">
                             @forelse($roleUserCounts as $roleData)
@@ -353,12 +352,14 @@
             <div class="row">
                 <!-- Combined Recent Activity Card -->
                 <div class="col-lg-6 mb-4">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h3 class="card-title mb-0">Recent Activity</h3>
-                            <a href="{{ route('sys.activity-log.index') }}" class="text-primary text-decoration-none small fw-bold">View All <i class="ti ti-chevron-right ms-1"></i></a>
-                        </div>
-                        <div class="card-body">
+                    <x-tabler.card>
+                        <x-tabler.card-header>
+                            <h3 class="mb-0">Recent Activity</h3>
+                            <x-slot:actions>
+                                <a href="{{ route('sys.activity-log.index') }}" class="text-primary text-decoration-none small fw-bold">View All <i class="ti ti-chevron-right ms-1"></i></a>
+                            </x-slot:actions>
+                        </x-tabler.card-header>
+                        <x-tabler.card-body>
                             <!-- Summary stats ommitted for brevity in replacement search matches -->
                             @php
                                 $todayCount = $recentLogs->where('created_at', '>=', now()->startOfDay())->count();
@@ -418,12 +419,11 @@
 
                 <!-- Combined Recent Error Card -->
                 <div class="col-lg-6 mb-4">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h3 class="card-title mb-0">Recent Errors</h3>
-                            <a href="{{ route('sys.error-log.index') }}" class="text-primary text-decoration-none small fw-bold">View All <i class="ti ti-chevron-right ms-1"></i></a>
-                        </div>
-                        <div class="card-body">
+                    <x-tabler.card>
+                        <x-tabler.card-header>
+                            </x-slot:actions>
+                        </x-tabler.card-header>
+                        <x-tabler.card-body>
                             <!-- Summary Stats -->
                             @php
                                 $todayErrorCount = $recentErrors->where('created_at', '>=', now()->startOfDay())->count();

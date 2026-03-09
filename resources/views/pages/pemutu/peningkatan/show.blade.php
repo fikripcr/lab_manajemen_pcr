@@ -350,7 +350,7 @@
 
         {{-- ===== SECTION: TAHAP 1 — DUPLIKASI STANDAR ===== --}}
         <div id="section-duplikasi" class="tab-pane fade" role="tabpanel">
-            <div class="card">
+            <x-tabler.card>
                 <div class="card-header">
                     <h3 class="card-title"><i class="ti ti-copy me-2"></i>Tahap 1 — Duplikasi Standar</h3>
                 </div>

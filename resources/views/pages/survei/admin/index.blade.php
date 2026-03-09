@@ -8,33 +8,33 @@
 </x-tabler.page-header>
 @endsection
 @section('content')
-        <div class="card">
-            <div class="card-header border-bottom">
-                <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
-                    <h3 class="card-title mb-0">Manajemen Survei</h3>
-                    <div class="ms-auto d-flex gap-2 align-items-center">
-                        <div id="bulk-actions" style="display: none;">
-                            <x-tabler.button type="button" class="btn-outline-secondary btn-sm btn-duplicate-bulk" icon="ti ti-copy" text="Duplikasi Terpilih" />
-                        </div>
-                        <x-tabler.datatable-page-length :dataTableId="'table-survei'" />
-                        <x-tabler.datatable-search :dataTableId="'table-survei'" />
+    <x-tabler.card>
+        <x-tabler.card-header border-bottom>
+            <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
+                <h3 class="card-title mb-0">Manajemen Survei</h3>
+                <div class="ms-auto d-flex gap-2 align-items-center">
+                    <div id="bulk-actions" style="display: none;">
+                        <x-tabler.button type="button" class="btn-outline-secondary btn-sm btn-duplicate-bulk" icon="ti ti-copy" text="Duplikasi Terpilih" />
                     </div>
+                    <x-tabler.datatable-page-length :dataTableId="'table-survei'" />
+                    <x-tabler.datatable-search :dataTableId="'table-survei'" />
                 </div>
             </div>
-            <div class="card-body p-0">
-                <x-tabler.datatable
-                id="table-survei"
-                checkbox="true"
-                :columns="[
-                    ['data' => 'judul', 'name' => 'judul', 'title' => 'Judul Survei'],
-                    ['data' => 'periode', 'name' => 'periode', 'title' => 'Periode'],
-                    ['data' => 'pelaksanaan', 'name' => 'pelaksanaan', 'title' => 'Pelaksanaan', 'orderable' => false],
-                    ['data' => 'status', 'name' => 'status', 'title' => 'Status'],
-                    ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
-                ]"
-                :url="route('survei.data')" />
-            </div>
-        </div>
+        </x-tabler.card-header>
+        <x-tabler.card-body class="p-0">
+            <x-tabler.datatable
+            id="table-survei"
+            checkbox="true"
+            :columns="[
+                ['data' => 'judul', 'name' => 'judul', 'title' => 'Judul Survei'],
+                ['data' => 'periode', 'name' => 'periode', 'title' => 'Periode'],
+                ['data' => 'pelaksanaan', 'name' => 'pelaksanaan', 'title' => 'Pelaksanaan', 'orderable' => false],
+                ['data' => 'status', 'name' => 'status', 'title' => 'Status'],
+                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
+            ]"
+            :url="route('survei.data')" />
+        </x-tabler.card-body>
+    </x-tabler.card>
 @endsection
 
 @push('scripts')

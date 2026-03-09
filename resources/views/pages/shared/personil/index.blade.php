@@ -9,8 +9,8 @@
 @endsection
 
 @section('content')
-    <div class="card">
-        <div class="card-header border-bottom py-3">
+    <x-tabler.card>
+        <x-tabler.card-header class="border-bottom py-3">
             <div class="d-flex flex-wrap gap-2 align-items-center">
                 <div>
                     <x-tabler.datatable-page-length :dataTableId="'table-personil'" />
@@ -31,8 +31,8 @@
                     </x-tabler.datatable-filter>
                 </div>
             </div>
-        </div>
-        <div class="card-body">
+        </x-tabler.card-header>
+        <x-tabler.card-body class="p-0">
             <x-tabler.datatable
                 id="table-personil"
                 :columns="[
@@ -46,8 +46,8 @@
                 ]"
                 :route="route('shared.personil.data')"
             />
-        </div>
-    </div>
+        </x-tabler.card-body>
+    </x-tabler.card>
 @endsection
 
 @push('scripts')

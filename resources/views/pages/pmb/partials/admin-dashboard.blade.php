@@ -1,118 +1,125 @@
 <div class="row row-cards mb-4">
     <div class="col-sm-6 col-lg-3">
-        <a href="{{ route('pmb.pendaftaran.index') }}" class="card card-link">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="subheader text-uppercase">Total Pendaftar</div>
-                </div>
-                <div class="h1 mb-3">{{ $stats['total_pendaftar'] }}</div>
-                <div class="d-flex mb-2">
-                    <div class="text-secondary">Pendaftaran baru hari ini</div>
-                    <div class="ms-auto">
-                        <span class="text-green d-inline-flex align-items-center lh-1">
-                            +{{ $stats['pendaftar_hari_ini'] }} <i class="ti ti-trending-up ms-1"></i>
-                        </span>
+        <a href="{{ route('pmb.pendaftaran.index') }}" class="text-decoration-none">
+            <x-tabler.card class="card-link">
+                <x-tabler.card-body>
+                    <div class="d-flex align-items-center">
+                        <div class="subheader text-uppercase">Total Pendaftar</div>
                     </div>
-                </div>
-                <div class="progress progress-sm">
-                    <div class="progress-bar bg-primary" style="width: 100%"></div>
-                </div>
-            </div>
+                    <div class="h1 mb-3">{{ $stats['total_pendaftar'] }}</div>
+                    <div class="d-flex mb-2">
+                        <div class="text-secondary">Pendaftaran baru hari ini</div>
+                        <div class="ms-auto">
+                            <span class="text-green d-inline-flex align-items-center lh-1">
+                                +{{ $stats['pendaftar_hari_ini'] }} <i class="ti ti-trending-up ms-1"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="progress progress-sm">
+                        <div class="progress-bar bg-primary" style="width: 100%"></div>
+                    </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </a>
     </div>
 
     <div class="col-sm-6 col-lg-3">
-        <a href="{{ route('pmb.pendaftaran.index') }}?status=Menunggu_Verifikasi_Berkas" class="card card-link">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="subheader text-uppercase">Menunggu Verifikasi</div>
-                    <div class="ms-auto lh-1">
-                        <span class="badge bg-yellow text-white">{{ $stats['menunggu_verifikasi'] }}</span>
+        <a href="{{ route('pmb.pendaftaran.index') }}?status=Menunggu_Verifikasi_Berkas" class="text-decoration-none">
+            <x-tabler.card class="card-link">
+                <x-tabler.card-body>
+                    <div class="d-flex align-items-center">
+                        <div class="subheader text-uppercase">Menunggu Verifikasi</div>
+                        <div class="ms-auto lh-1">
+                            <span class="badge bg-yellow text-white">{{ $stats['menunggu_verifikasi'] }}</span>
+                        </div>
                     </div>
-                </div>
-                <div class="h1 mb-3">{{ $stats['menunggu_verifikasi'] }}</div>
-                <div class="d-flex mb-2">
-                    <div class="text-secondary">Perlu verifikasi segera</div>
-                    <div class="ms-auto">
-                        <span class="text-yellow d-inline-flex align-items-center lh-1">
-                            <i class="ti ti-clock ms-1"></i>
-                        </span>
+                    <div class="h1 mb-3">{{ $stats['menunggu_verifikasi'] }}</div>
+                    <div class="d-flex mb-2">
+                        <div class="text-secondary">Perlu verifikasi segera</div>
+                        <div class="ms-auto">
+                            <span class="text-yellow d-inline-flex align-items-center lh-1">
+                                <i class="ti ti-clock ms-1"></i>
+                            </span>
+                        </div>
                     </div>
-                </div>
-                <div class="progress progress-sm">
-                    <div class="progress-bar bg-yellow" style="width: {{ $stats['total_pendaftar'] > 0 ? ($stats['menunggu_verifikasi'] / $stats['total_pendaftar']) * 100 : 0 }}%"></div>
-                </div>
-            </div>
+                    <div class="progress progress-sm">
+                        <div class="progress-bar bg-yellow" style="width: {{ $stats['total_pendaftar'] > 0 ? ($stats['menunggu_verifikasi'] / $stats['total_pendaftar']) * 100 : 0 }}%"></div>
+                    </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </a>
     </div>
 
     <div class="col-sm-6 col-lg-3">
-        <a href="{{ route('pmb.pendaftaran.index') }}?status=Siap_Ujian" class="card card-link">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="subheader text-uppercase">Siap Ujian</div>
-                    <div class="ms-auto lh-1">
-                        <span class="badge bg-blue text-white">{{ $stats['siap_ujian'] }}</span>
+        <a href="{{ route('pmb.pendaftaran.index') }}?status=Siap_Ujian" class="text-decoration-none">
+            <x-tabler.card class="card-link">
+                <x-tabler.card-body>
+                    <div class="d-flex align-items-center">
+                        <div class="subheader text-uppercase">Siap Ujian</div>
+                        <div class="ms-auto lh-1">
+                            <span class="badge bg-blue text-white">{{ $stats['siap_ujian'] }}</span>
+                        </div>
                     </div>
-                </div>
-                <div class="h1 mb-3">{{ $stats['siap_ujian'] }}</div>
-                <div class="d-flex mb-2">
-                    <div class="text-secondary">Peserta siap ujian</div>
-                    <div class="ms-auto">
-                        <span class="text-blue d-inline-flex align-items-center lh-1">
-                            <i class="ti ti-school ms-1"></i>
-                        </span>
+                    <div class="h1 mb-3">{{ $stats['siap_ujian'] }}</div>
+                    <div class="d-flex mb-2">
+                        <div class="text-secondary">Peserta siap ujian</div>
+                        <div class="ms-auto">
+                            <span class="text-blue d-inline-flex align-items-center lh-1">
+                                <i class="ti ti-school ms-1"></i>
+                            </span>
+                        </div>
                     </div>
-                </div>
-                <div class="progress progress-sm">
-                    <div class="progress-bar bg-blue" style="width: {{ $stats['total_pendaftar'] > 0 ? ($stats['siap_ujian'] / $stats['total_pendaftar']) * 100 : 0 }}%"></div>
-                </div>
-            </div>
+                    <div class="progress progress-sm">
+                        <div class="progress-bar bg-blue" style="width: {{ $stats['total_pendaftar'] > 0 ? ($stats['siap_ujian'] / $stats['total_pendaftar']) * 100 : 0 }}%"></div>
+                    </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </a>
     </div>
 
     <div class="col-sm-6 col-lg-3">
-        <a href="{{ route('pmb.pendaftaran.index') }}?status=Lulus" class="card card-link">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="subheader text-uppercase">Lulus Seleksi</div>
-                    <div class="ms-auto lh-1">
-                        <span class="badge bg-green text-white">{{ $stats['lulus'] }}</span>
+        <a href="{{ route('pmb.pendaftaran.index') }}?status=Lulus" class="text-decoration-none">
+            <x-tabler.card class="card-link">
+                <x-tabler.card-body>
+                    <div class="d-flex align-items-center">
+                        <div class="subheader text-uppercase">Lulus Seleksi</div>
+                        <div class="ms-auto lh-1">
+                            <span class="badge bg-green text-white">{{ $stats['lulus'] }}</span>
+                        </div>
                     </div>
-                </div>
-                <div class="h1 mb-3">{{ $stats['lulus'] }}</div>
-                <div class="d-flex mb-2">
-                    <div class="text-secondary">Tingkat kelulusan</div>
-                    <div class="ms-auto">
-                        <span class="text-green d-inline-flex align-items-center lh-1">
-                            @if($stats['lulus'] + $stats['tidak_lulus'] > 0)
-                                {{ round(($stats['lulus'] / ($stats['lulus'] + $stats['tidak_lulus'])) * 100, 1) }}%
-                            @else
-                                0%
-                            @endif
-                            <i class="ti ti-trophy ms-1"></i>
-                        </span>
+                    <div class="h1 mb-3">{{ $stats['lulus'] }}</div>
+                    <div class="d-flex mb-2">
+                        <div class="text-secondary">Tingkat kelulusan</div>
+                        <div class="ms-auto">
+                            <span class="text-green d-inline-flex align-items-center lh-1">
+                                @if($stats['lulus'] + $stats['tidak_lulus'] > 0)
+                                    {{ round(($stats['lulus'] / ($stats['lulus'] + $stats['tidak_lulus'])) * 100, 1) }}%
+                                @else
+                                    0%
+                                @endif
+                                <i class="ti ti-trophy ms-1"></i>
+                            </span>
+                        </div>
                     </div>
-                </div>
-                <div class="progress progress-sm">
-                    <div class="progress-bar bg-green" style="width: {{ $stats['lulus'] + $stats['tidak_lulus'] > 0 ? ($stats['lulus'] / ($stats['lulus'] + $stats['tidak_lulus'])) * 100 : 0 }}%"></div>
-                </div>
-            </div>
-        </div>
+                    <div class="progress progress-sm">
+                        <div class="progress-bar bg-green" style="width: {{ $stats['lulus'] + $stats['tidak_lulus'] > 0 ? ($stats['lulus'] / ($stats['lulus'] + $stats['tidak_lulus'])) * 100 : 0 }}%"></div>
+                    </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
+        </a>
     </div>
 </div>
 
 <div class="row row-deck row-cards mb-4">
     {{-- Recent Registrations --}}
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Pendaftaran Terbaru</h3>
-                <div class="card-actions">
+        <x-tabler.card class="mb-3">
+            <x-tabler.card-header title="Pendaftaran Terbaru">
+                <x-slot:actions>
                     <a href="{{ route('pmb.pendaftaran.index') }}" class="btn-action">Lihat Semua</a>
-                </div>
-            </div>
-            <div class="card-table">
+                </x-slot:actions>
+            </x-tabler.card-header>
+            <x-tabler.card-body class="p-0">
                 <x-tabler.datatable-client
                     id="table-recent-registrations"
                     :columns="[
@@ -145,20 +152,19 @@
                         </tr>
                     @endforeach
                 </x-tabler.datatable-client>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     {{-- Statistics by Jalur --}}
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Statistik per Jalur</h3>
-                <div class="card-actions">
+        <x-tabler.card>
+            <x-tabler.card-header title="Statistik per Jalur">
+                <x-slot:actions>
                     <a href="{{ route('pmb.jalur.index') }}" class="btn-action">Kelola</a>
-                </div>
-            </div>
-            <div class="card-body">
+                </x-slot:actions>
+            </x-tabler.card-header>
+            <x-tabler.card-body>
                 @if($statsByJalur->count() > 0)
                     <div class="datagrid">
                         @foreach($statsByJalur as $stat)
@@ -171,14 +177,10 @@
                         @endforeach
                     </div>
                 @else
-                    <div class="empty">
-                        <div class="empty-img"><img src="{{ asset('images/illustrations/undraw_empty_xct9.svg') }}" height="128" alt=""></div>
-                        <p class="empty-title">Belum ada data</p>
-                        <p class="empty-subtitle text-muted">Belum ada pendaftar pada periode ini.</p>
-                    </div>
+                    <x-tabler.empty-state title="Belum ada data" text="Belum ada pendaftar pada periode ini." />
                 @endif
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 </div>
 

@@ -10,8 +10,8 @@
 @endsection
 
 @section('content')
-<div class="card overflow-hidden">
-    <div class="card-header">
+<x-tabler.card>
+    <x-tabler.card-header>
         <div class="d-flex flex-wrap gap-2">
             <div>
                 <x-tabler.datatable-page-length dataTableId="pegawai-table" />
@@ -28,10 +28,9 @@
                 </x-tabler.datatable-filter>
             </div>
         </div>
-    </div>
+    </x-tabler.card-header>
 
-    <div class="card-body p-0">
-        <x-tabler.flash-message />
+    <x-tabler.card-body class="p-0">
         <x-tabler.datatable
             id="pegawai-table"
             route="{{ route('hr.pegawai.index') }}"
@@ -43,6 +42,6 @@
                 ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
             ]"
         />
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection

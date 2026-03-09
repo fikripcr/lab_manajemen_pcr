@@ -4,8 +4,6 @@
     :method="$slideshow->exists ? 'PUT' : 'POST'"
     enctype="multipart/form-data"
 >
-    <x-tabler.flash-message />
-    
     <div class="mb-3">
         <x-tabler.form-input 
             name="slideshow_image" 

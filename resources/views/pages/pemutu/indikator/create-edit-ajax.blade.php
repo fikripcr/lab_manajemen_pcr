@@ -34,8 +34,8 @@
         <div class="row row-cards">
             <!-- INFORMASI UMUM & SKALA (KIRI) -->
             <div class="col-lg-7">
-                <div class="card">
-                    <div class="card-header border-bottom-0">
+                <x-tabler.card>
+                    <x-tabler.card-header class="border-bottom-0">
                         <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
                             <li class="nav-item">
                                 <a href="#tab-informasi-umum" class="nav-link active" data-bs-toggle="tab">
@@ -50,9 +50,9 @@
                             </li>
                             @endif
                         </ul>
-                    </div>
+                    </x-tabler.card-header>
                     
-                    <div class="card-body">
+                    <x-tabler.card-body>
                         <div class="tab-content">
                             <!-- TAB: INFORMASI UMUM -->
                             <div class="tab-pane active show" id="tab-informasi-umum">
@@ -170,11 +170,9 @@
                                     <div class="row g-2">
                                     @foreach([0,1,2,3,4] as $level)
                                     <div class="col-12 mb-2">
-                                        <div class="card card-sm border-blue-lt mb-0">
-                                            <div class="card-header bg-blue-lt py-2">
-                                                <h4 class="card-title text-blue mb-0">Level Skala {{ $level }}</h4>
-                                            </div>
-                                            <div class="card-body p-2">
+                                        <x-tabler.card class="card-sm border-blue-lt mb-0">
+                                            <x-tabler.card-header class="bg-blue-lt py-2" title="Level Skala {{ $level }}" />
+                                            <x-tabler.card-body class="p-2">
                                                 <x-tabler.form-textarea
                                                     id="skala-{{ $level }}"
                                                     name="skala[{{ $level }}]"
@@ -182,8 +180,8 @@
                                                     height="180"
                                                     :value="old('skala.' . $level, ($indikator->skala[$level] ?? ($indikator->skala ? ($indikator->skala[$level] ?? '') : '')))"
                                                 />
-                                            </div>
-                                        </div>
+                                            </x-tabler.card-body>
+                                        </x-tabler.card>
                                     </div>
                                     @endforeach
                                     </div>
@@ -199,11 +197,9 @@
             <div class="col-lg-5">
                 @if($isPerforma)
                 <!-- CARD: KPI ASSIGN -->
-                <div class="card" id="card-performa">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="ti ti-users me-2"></i>Penugasan KPI (Performa)</h3>
-                    </div>
-                    <div class="card-body">
+                <x-tabler.card id="card-performa">
+                    <x-tabler.card-header title="<i class='ti ti-users me-2'></i>Penugasan KPI (Performa)" />
+                    <x-tabler.card-body>
                         <div class="row mb-4">
                             <div class="col-md-12">
                                 <x-tabler.form-select name="parent_id" id="parent-id-selector" label="Indikator Standar Terkait (Induk)" type="select2" :required="true" required="required">
@@ -269,11 +265,9 @@
 
                 @if($isStandar)
                 <!-- CARD: TARGET & UNIT -->
-                <div class="card" id="card-target">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="ti ti-target me-2"></i>Target & Unit Kerja</h3>
-                    </div>
-                    <div class="card-body">
+                <x-tabler.card id="card-target">
+                    <x-tabler.card-header title="<i class='ti ti-target me-2'></i>Target & Unit Kerja" />
+                    <x-tabler.card-body>
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label required">Unit Kerja Penanggung Jawab & Target</label>
@@ -353,11 +347,11 @@
                 @endif
 
                 <!-- Submit Button moved to bottom of right col or as a separate card -->
-                <div class="card mt-3">
-                    <div class="card-body">
+                <x-tabler.card class="mt-3">
+                    <x-tabler.card-body>
                         <x-tabler.button type="submit" :text="$isEdit ? 'Update Indikator' : 'Simpan Indikator'" />
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
     </form>

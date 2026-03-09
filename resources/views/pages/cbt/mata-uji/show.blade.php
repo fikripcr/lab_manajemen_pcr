@@ -19,11 +19,9 @@
 @section('content')
         <div class="row row-cards">
             <div class="col-md-3">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Informasi Mata Uji</h3>
-                    </div>
-                    <div class="card-body">
+                <x-tabler.card>
+                    <x-tabler.card-header title="Informasi Mata Uji" />
+                    <x-tabler.card-body>
                         <div class="mb-3">
                             <label class="form-label text-muted">Nama Mata Uji</label>
                             <div class="fw-bold">{{ $mu->nama_mata_uji }}</div>
@@ -36,17 +34,18 @@
                             <label class="form-label text-muted">Deskripsi</label>
                             <div>{{ $mu->deskripsi ?? '-' }}</div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <div class="col-md-9">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between">
-                        <h3 class="card-title">Daftar Soal</h3>
-                        <span class="badge bg-green-lt">{{ $mu->soal->count() }} Soal</span>
-                    </div>
-                    <div class="card-table">
+                <x-tabler.card>
+                    <x-tabler.card-header title="Daftar Soal">
+                        <x-slot:actions>
+                            <span class="badge bg-green-lt">{{ $mu->soal->count() }} Soal</span>
+                        </x-slot:actions>
+                    </x-tabler.card-header>
+                    <x-tabler.card-body class="p-0">
                         <x-tabler.datatable-client
                             id="table-soal-mu"
                             :columns="[
@@ -86,8 +85,8 @@
                             </tr>
                             @endforeach
                         </x-tabler.datatable-client>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
 @endsection

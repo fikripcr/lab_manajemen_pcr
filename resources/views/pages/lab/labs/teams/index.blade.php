@@ -14,10 +14,8 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <x-tabler.card>
                 <div class="card-body">
-                    <x-tabler.flash-message />
-
                     <x-tabler.datatable-client
                         id="table-lab-teams"
                         :columns="[

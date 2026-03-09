@@ -1,8 +1,7 @@
-<div class="card mb-3">
-    <div class="card-header border-bottom">
-        <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
-            <h3 class="card-title mb-0">Riwayat Jabatan Fungsional</h3>
-            <div class="ms-auto d-flex gap-2">
+<x-tabler.card class="mb-3">
+    <x-tabler.card-header title="Riwayat Jabatan Fungsional">
+        <x-slot:actions>
+            <div class="d-flex gap-2">
                 <x-tabler.datatable-page-length dataTableId="jabatan-fungsional-table" />
                 <x-tabler.datatable-search dataTableId="jabatan-fungsional-table" />
                 <x-tabler.button 
@@ -13,8 +12,8 @@
                     icon="ti ti-edit"
                     text="Ubah Jafung" />
             </div>
-        </div>
-    </div>
+        </x-slot:actions>
+    </x-tabler.card-header>
     <x-tabler.datatable
         id="jabatan-fungsional-table"
         route="{{ route('hr.jabatan-fungsional-history.data', ['pegawai_id' => $pegawai->encrypted_pegawai_id]) }}"
@@ -27,4 +26,4 @@
             ['data' => 'approval_status', 'name' => 'approval_status', 'title' => 'Status', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
         ]"
     />
-</div>
+</x-tabler.card>

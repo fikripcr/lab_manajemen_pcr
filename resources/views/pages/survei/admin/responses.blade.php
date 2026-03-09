@@ -12,34 +12,32 @@
         {{-- Summary Cards --}}
         <div class="row row-cards mb-4">
             <div class="col-sm-4">
-                <div class="card">
-                    <div class="card-body">
+                <x-tabler.card>
+                    <x-tabler.card-body>
                         <div class="d-flex align-items-center">
                             <div class="subheader">Total Responden</div>
                         </div>
                         <div class="h1 mb-0 mt-2">{{ $survei->pengisian->count() }}</div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
             <div class="col-sm-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="subheader">Selesai</div>
-                        </div>
+                <x-tabler.card class="mb-3">
+                    <x-tabler.card-header title="Selesai" />
+                    <x-tabler.card-body>
                         <div class="h1 mb-0 mt-2">{{ $survei->pengisian->where('status', 'selesai')->count() }}</div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
             <div class="col-sm-4">
-                <div class="card">
-                    <div class="card-body">
+                <x-tabler.card>
+                    <x-tabler.card-body>
                         <div class="d-flex align-items-center">
                             <div class="subheader">Total Pertanyaan</div>
                         </div>
                         <div class="h1 mb-0 mt-2">{{ $survei->halaman->sum(fn($h) => $h->pertanyaan->count()) }}</div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
 
@@ -50,17 +48,7 @@
                 icon="ti ti-mood-empty" />
         @else
             {{-- Responses Table --}}
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Daftar Jawaban</h3>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-vcenter card-table table-striped">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Responden</th>
-                                <th>Waktu</th>
+            <x-tabler.card>
                                 <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
@@ -104,8 +92,8 @@
                                     <div class="row g-2">
                                         @foreach($pengisian->jawaban as $jawaban)
                                         <div class="col-md-6">
-                                            <div class="card card-sm">
-                                                <div class="card-body p-2">
+                                            <x-tabler.card class="card-sm">
+                                                <x-tabler.card-body class="p-2">
                                                     <div class="fw-bold text-muted small mb-1">
                                                         {{ $jawaban->pertanyaan->teks_pertanyaan ?? 'Pertanyaan tidak ditemukan' }}
                                                     </div>
@@ -124,8 +112,8 @@
                                                             <span class="text-muted">-</span>
                                                         @endif
                                                     </div>
-                                                </div>
-                                            </div>
+                                                </x-tabler.card-body>
+                                            </x-tabler.card>
                                         </div>
                                         @endforeach
                                     </div>
@@ -135,6 +123,6 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </x-tabler.card>
         @endif
 @endsection

@@ -1,7 +1,7 @@
 <div class="row row-cards mb-4">
     <div class="col-sm-6 col-lg-3">
-        <div class="card">
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-body>
                 <div class="d-flex align-items-center">
                     <div class="subheader">Ujian Aktif</div>
                     <div class="ms-auto lh-1">
@@ -25,8 +25,8 @@
     </div>
 
     <div class="col-sm-6 col-lg-3">
-        <div class="card">
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-body>
                 <div class="d-flex align-items-center">
                     <div class="subheader">Peserta Ujian</div>
                     <div class="ms-auto lh-1">
@@ -50,8 +50,8 @@
     </div>
 
     <div class="col-sm-6 col-lg-3">
-        <div class="card">
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-body>
                 <div class="d-flex align-items-center">
                     <div class="subheader">Ujian Hari Ini</div>
                     <div class="ms-auto lh-1">
@@ -77,8 +77,8 @@
     </div>
 
     <div class="col-sm-6 col-lg-3">
-        <div class="card">
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-body>
                 <div class="d-flex align-items-center">
                     <div class="subheader">Selesai Hari Ini</div>
                     <div class="ms-auto lh-1">
@@ -105,20 +105,17 @@
 <div class="row row-deck row-cards mb-4">
     {{-- Active Exams --}}
     <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Ujian Sedang Berlangsung</h3>
-                <div class="card-actions">
-                    <a href="{{ route('cbt.jadwal.index') }}" class="btn-action">Kelola Semua</a>
-                </div>
-            </div>
-            <div class="card-table">
+        <x-tabler.card>
+            <x-tabler.card-header title="Ujian Sedang Berlangsung">
+                <x-slot:actions>
+                    <a href="{{ route('cbt.execution.index') }}" class="btn-action" title="View All Exams">
+                        <i class="ti ti-arrow-right"></i>
+                    </a>
+                </x-slot:actions>
+            </x-tabler.card-header>
+            <x-tabler.card-body class="p-0">
                 @if($activeExams->isEmpty())
-                    <div class="empty">
-                        <div class="empty-img"><img src="{{ asset('images/illustrations/undraw_empty_xct9.svg') }}" height="128" alt=""></div>
-                        <p class="empty-title">Tidak ada ujian aktif</p>
-                        <p class="empty-subtitle text-muted">Tidak ada ujian yang sedang berlangsung saat ini.</p>
-                    </div>
+                    <x-tabler.empty-state title="Tidak ada ujian aktif" text="Tidak ada ujian yang sedang berlangsung saat ini." />
                 @else
                     <x-tabler.datatable-client
                         id="table-active-exams"
@@ -166,19 +163,18 @@
                         @endforeach
                     </x-tabler.datatable-client>
                 @endif
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     {{-- Recent Violations --}}
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Pelanggaran Terbaru</h3>
-                <div class="card-actions">
+        <x-tabler.card>
+            <x-tabler.card-header title="Pelanggaran Terbaru">
+                <x-slot:actions>
                     <span class="badge bg-red text-white">{{ $recentViolations->count() }}</span>
-                </div>
-            </div>
+                </x-slot:actions>
+            </x-tabler.card-header>
             <div class="card-body">
                 @if($recentViolations->count() > 0)
                     <div class="timeline">
@@ -199,14 +195,10 @@
                         @endforeach
                     </div>
                 @else
-                    <div class="empty">
-                        <div class="empty-img"><img src="{{ asset('images/illustrations/undraw_security_o890.svg') }}" height="128" alt=""></div>
-                        <p class="empty-title">Aman</p>
-                        <p class="empty-subtitle text-muted">Tidak ada pelanggaran yang terdeteksi.</p>
-                    </div>
+                    <x-tabler.empty-state title="Aman" text="Tidak ada pelanggaran yang terdeteksi." />
                 @endif
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 </div>
 

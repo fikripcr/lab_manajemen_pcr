@@ -10,15 +10,16 @@
 
 @section('content')
 
-        <div class="card">
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-header title="Registration Form" />
+            <x-tabler.card-body>
                 <form action="{{ route('pmb.camaba.store') }}" method="POST" class="ajax-form" data-redirect="true">
                     @csrf
                     <input type="hidden" name="periode_id" value="{{ $periodeAktif->encrypted_periode_id }}">
                     
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h3 class="card-title">Informasi Pendaftaran</h3>
+                    <x-tabler.card class="mb-3">
+                        <x-tabler.card-header title="Informasi Pendaftaran" />
+                        <x-tabler.card-body>
                             <x-tabler.form-input label="Periode" value="{{ $periodeAktif->nama_periode }}" readonly="true" />
                             
                             <div class="mb-3">
@@ -38,10 +39,12 @@
                                 </x-tabler.form-select>
                                 <small class="text-muted">Tekan Ctrl untuk memilih lebih dari satu (Jika jalur mengijinkan).</small>
                             </div>
-                        </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
 
-                        <div class="col-md-6">
-                            <h3 class="card-title">Data Diri Singkat</h3>
+                    <x-tabler.card class="mb-3">
+                        <x-tabler.card-header title="Data Diri Singkat" />
+                        <x-tabler.card-body>
                             <x-tabler.form-input name="nik" label="NIK (Nomor Induk Kependudukan)" value="{{ $profil->nik ?? '' }}" required="true" maxlength="16" />
                             <x-tabler.form-input name="no_hp" label="No. WhatsApp/HP" value="{{ $profil->no_hp ?? '' }}" required="true" />
                             

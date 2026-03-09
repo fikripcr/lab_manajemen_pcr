@@ -9,8 +9,8 @@
 @endsection
 
 @section('content')
-<div class="card">
-    <div class="card-body p-0">
+<x-tabler.card>
+    <x-tabler.card-body class="p-0">
         <x-tabler.datatable
             id="table-jenis-layanan"
             route="{{ route('eoffice.jenis-layanan.data') }}"
@@ -23,8 +23,8 @@
                 ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '15%']
             ]"
         />
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection
 
 @push('scripts')

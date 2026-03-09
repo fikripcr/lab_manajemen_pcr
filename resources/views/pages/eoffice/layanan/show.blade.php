@@ -29,9 +29,9 @@
     <div class="col-lg-8">
         
         {{-- 1. Status Summary Card --}}
-        <div class="card mb-3">
+        <x-tabler.card class="mb-3">
             <div class="card-status-top bg-{{ statusLayananColor($layanan->latestStatus->status_layanan ?? 'Diajukan')['color'] }}"></div>
-            <div class="card-body">
+            <x-tabler.card-body>
                 <div class="row align-items-center">
                     <div class="col-auto">
                         <span class="avatar avatar-lg rounded bg-{{ statusLayananColor($layanan->latestStatus->status_layanan ?? 'Diajukan')['color'] }}-lt">
@@ -51,13 +51,13 @@
                         </div>
                     @endif
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
 
         {{-- Feedback Section --}}
         @if($layanan->jenisLayanan->is_feedback && in_array($layanan->latestStatus->status_layanan, ['Selesai', 'Selesai (Otomatis)']))
-            <div class="card mb-3 {{ $layanan->feedback ? 'bg-success-lt' : 'bg-warning-lt' }}">
-                <div class="card-body">
+            <x-tabler.card class="mb-3 {{ $layanan->feedback ? 'bg-success-lt' : 'bg-warning-lt' }}">
+                <x-tabler.card-body>
                     <div class="d-flex align-items-center">
                         <div class="subheader">Feedback Layanan</div>
                         @if($layanan->feedback)
@@ -84,13 +84,13 @@
                             data-url="{{ route('eoffice.layanan.feedback.create', $layanan->hashid) }}"
                             icon="ti ti-star" text="Beri Nilai Layanan" />
                     @endif
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         @endif
 
         {{-- 2. Data Isian Display --}}
-        <div class="card mb-3">
-            <div class="card-header">
+        <x-tabler.card class="mb-3">
+            <x-tabler.card-header>
                 <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
                     <li class="nav-item">
                         <a href="#tab-pemohon" class="nav-link active" data-bs-toggle="tab">Data Pemohon</a>
@@ -102,8 +102,8 @@
                         <a href="#tab-history" class="nav-link" data-bs-toggle="tab">Log Pengolahan</a>
                     </li>
                 </ul>
-            </div>
-            <div class="card-body">
+            </x-tabler.card-header>
+            <x-tabler.card-body>
                 <div class="tab-content">
                     {{-- Tab Pemohon --}}
                     <div class="tab-pane active show" id="tab-pemohon">
@@ -177,8 +177,8 @@
                         </ul>
                     </div>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     {{-- Right Column: Actions, Entities & Discussion --}}
@@ -186,11 +186,11 @@
         
         {{-- 3. Action Section (Workflow) --}}
         @if($canAction)
-            <div class="card mb-3 bg-primary-lt border-primary shadow-sm hover-shadow">
-                <div class="card-header">
+            <x-tabler.card class="mb-3 bg-primary-lt border-primary shadow-sm hover-shadow">
+                <x-tabler.card-header>
                     <h3 class="card-title"><i class="ti ti-bolt me-1"></i> Aksi Pengolahan</h3>
-                </div>
-                <div class="card-body">
+                </x-tabler.card-header>
+                <x-tabler.card-body>
                     <div class="row g-2">
                         @if($layanan->latestStatus->status_layanan === 'Diajukan')
                             <div class="col-12">
@@ -273,16 +273,17 @@
                             </div>
                         @endif
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
+        @endif
         @endif
 
         {{-- 4. Entities (Applicant & PIC) --}}
-        <div class="card mb-3">
-            <div class="card-header border-0 pb-0">
+        <x-tabler.card class="mb-3">
+            <x-tabler.card-header class="border-0 pb-0">
                 <h3 class="card-title">Pihak Terlibat</h3>
-            </div>
-            <div class="card-body">
+            </x-tabler.card-header>
+            <x-tabler.card-body>
                 <div class="mb-3">
                     <div class="text-muted small uppercase fw-bold mb-2">Pemohon</div>
                     <div class="d-flex align-items-center">
@@ -318,19 +319,19 @@
                         </div>
                     @endforeach
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
 
         {{-- 5. Discussion Forum (Moved to Right Column) --}}
         @if($layanan->jenisLayanan->is_diskusi)
-        <div class="card mb-3" style="max-height: 600px;">
-            <div class="card-header">
+        <x-tabler.card class="mb-3" style="max-height: 600px;">
+            <x-tabler.card-header>
                 <h3 class="card-title">Diskusi & Komentar</h3>
-                <div class="card-actions">
+                <x-slot:actions>
                     <span class="badge bg-purple-lt">{{ $layanan->diskusi->count() }} Pesan</span>
-                </div>
-            </div>
-            <div class="card-body scrollable py-2" id="chat-container" style="height: 400px; overflow-y: auto;">
+                </x-slot:actions>
+            </x-tabler.card-header>
+            <x-tabler.card-body class="scrollable py-2" id="chat-container" style="height: 400px; overflow-y: auto;">
                 <div class="chat-messages p-2">
                     @forelse($layanan->diskusi->sortBy('created_at') as $chat)
                         <div class="mb-3 {{ $chat->created_by == auth()->id() ? 'text-end' : '' }}">
@@ -360,7 +361,7 @@
                         </div>
                     @endforelse
                 </div>
-            </div>
+            </x-tabler.card-body>
             <div class="card-footer border-top p-2">
                 <form action="{{ route('eoffice.layanan.diskusi.store') }}" method="POST" class="ajax-form" enctype="multipart/form-data">
                     @csrf
@@ -371,7 +372,7 @@
                     </div>
                 </form>
             </div>
-        </div>
+        </x-tabler.card>
         @endif
     </div>
 </div>

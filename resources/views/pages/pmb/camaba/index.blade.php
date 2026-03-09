@@ -9,7 +9,7 @@
 @endsection
 
 @section('content')
-<div class="card">
+<x-tabler.card>
     <div class="card-header border-bottom">
         <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
             <h3 class="card-title mb-0">Calon Mahasiswa Baru</h3>

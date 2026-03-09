@@ -10,8 +10,8 @@
     <!-- Stats Widgets -->
     <div class="row row-cards mb-4">
         <div class="col-sm-6 col-lg-2">
-            <div class="card card-sm shadow-sm border-0">
-                <div class="card-body">
+            <x-tabler.card class="card-sm shadow-sm border-0">
+                <x-tabler.card-body>
                     <div class="row align-items-center">
                         <div class="col-auto">
                             <span class="bg-primary text-white avatar shadow-sm"><i class="ti ti-devices fs-2"></i></span>
@@ -29,8 +29,8 @@
             </div>
         </div>
         <div class="col-sm-6 col-lg-2">
-            <div class="card card-sm shadow-sm border-0">
-                <div class="card-body">
+            <x-tabler.card class="card-sm shadow-sm border-0">
+                <x-tabler.card-body>
                     <div class="row align-items-center">
                         <div class="col-auto">
                             <span class="bg-danger text-white avatar shadow-sm"><i class="ti ti-tool fs-2"></i></span>
@@ -48,8 +48,8 @@
             </div>
         </div>
         <div class="col-sm-6 col-lg-3">
-            <div class="card card-sm shadow-sm border-0">
-                <div class="card-body">
+            <x-tabler.card class="card-sm shadow-sm border-0">
+                <x-tabler.card-body>
                     <div class="row align-items-center">
                         <div class="col-auto">
                             <span class="bg-warning text-white avatar shadow-sm"><i class="ti ti-download fs-2"></i></span>
@@ -67,8 +67,8 @@
             </div>
         </div>
         <div class="col-sm-6 col-lg-2">
-            <div class="card card-sm shadow-sm border-0">
-                <div class="card-body">
+            <x-tabler.card class="card-sm shadow-sm border-0">
+                <x-tabler.card-body>
                     <div class="row align-items-center">
                         <div class="col-auto">
                             <span class="bg-info text-white avatar shadow-sm"><i class="ti ti-calendar-event fs-2"></i></span>
@@ -86,8 +86,8 @@
             </div>
         </div>
         <div class="col-sm-6 col-lg-3">
-            <div class="card card-sm shadow-sm border-0">
-                <div class="card-body">
+            <x-tabler.card class="card-sm shadow-sm border-0">
+                <x-tabler.card-body>
                     <div class="row align-items-center">
                         <div class="col-auto">
                             <span class="bg-green text-white avatar shadow-sm"><i class="ti ti-archive fs-2"></i></span>
@@ -115,8 +115,8 @@
     <div class="row g-2 mb-3">
         @foreach($labs as $lab)
         <div class="col-md-3">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body p-3 d-flex flex-column">
+            <x-tabler.card class="shadow-sm border-0 h-100">
+                <x-tabler.card-body class="p-3 d-flex flex-column">
                     <div class="d-flex align-items-center mb-2">
                         <span class="avatar avatar-sm bg-blue-lt shadow-sm me-2"><i class="ti ti-building"></i></span>
                         <div class="text-truncate">
@@ -160,10 +160,10 @@
     <div class="row row-cards">
         <!-- Latest Laporan Kerusakan -->
         <div class="col-lg-6">
-            <div class="card">
-                <div class="card-header">
+            <x-tabler.card>
+                <x-tabler.card-header>
                     <h3 class="card-title">Laporan Kerusakan Terbaru</h3>
-                </div>
+                </x-tabler.card-header>
                 <div class="table-responsive">
                     <table class="table card-table table-vcenter">
                         <thead>
@@ -210,10 +210,10 @@
 
         <!-- Upcoming Activities -->
         <div class="col-lg-6">
-            <div class="card">
-                <div class="card-header">
+            <x-tabler.card>
+                <x-tabler.card-header>
                     <h3 class="card-title">Kegiatan Mendatang</h3>
-                </div>
+                </x-tabler.card-header>
                 <div class="list-group list-group-flush list-group-hoverable">
                     @forelse($latest_kegiatan as $kegiatan)
                     <div class="list-group-item">

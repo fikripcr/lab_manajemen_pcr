@@ -11,11 +11,9 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Formulir Daftar Ulang</h3>
-            </div>
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-header title="Formulir Daftar Ulang" />
+            <x-tabler.card-body>
                 <div class="alert alert-success">
                     <h4><i class="ti ti-check"></i> Selamat!</h4>
                     <p>Anda dinyatakan <strong>LULUS</strong> seleksi. Silakan lengkapi data untuk daftar ulang.</p>

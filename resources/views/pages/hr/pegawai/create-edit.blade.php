@@ -15,7 +15,7 @@
         @method('PUT')
     @endif
     
-    <div class="card">
+    <x-tabler.card>
         @if(isset($pegawai) && $pegawai->exists)
             <div class="alert alert-info m-3 py-2">
                 <i class="ti ti-info-circle me-1"></i>

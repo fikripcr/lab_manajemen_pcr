@@ -14,8 +14,8 @@
 
 @section('content')
 
-        <div class="card">
-            <div class="card-header border-bottom">
+        <x-tabler.card>
+            <x-tabler.card-header class="border-bottom">
                 <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
                     <h3 class="card-title mb-0">Data Lembur</h3>
                     <div class="ms-auto d-flex gap-2">
@@ -29,8 +29,8 @@
                         </x-tabler.datatable-filter>
                     </div>
                 </div>
-            </div>
-            <div class="card-body">
+            </x-tabler.card-header>
+            <x-tabler.card-body class="p-0">
                 <x-tabler.datatable
                     id="table-lembur"
                     route="{{ route('hr.lembur.data') }}"
@@ -46,6 +46,6 @@
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '10%'],
                     ]"
                 />
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
 @endsection

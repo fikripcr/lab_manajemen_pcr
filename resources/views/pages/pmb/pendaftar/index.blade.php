@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-<div class="card">
+<x-tabler.card>
     <div class="card-header">
         <div class="d-flex flex-wrap gap-2">
             <div>
@@ -16,7 +16,7 @@
             </div>
         </div>
     </div>
-    <div class="card-body">
+    <x-tabler.card-body class="p-0">
         <x-tabler.datatable
             id="table-pendaftar"
             :columns="[
@@ -30,7 +30,7 @@
             ]"
             :route="route('pmb.pendaftar.data')"
         />
-    </div>
+    </x-tabler.card-body>
 </div>
 
 

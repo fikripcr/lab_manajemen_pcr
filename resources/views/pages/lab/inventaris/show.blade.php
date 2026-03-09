@@ -47,10 +47,8 @@
     @section('content')
         <div class="row">
             <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <x-tabler.flash-message />
-
+                <x-tabler.card>
+                    <x-tabler.card-body>
                         <div class="datagrid">
                             <div class="datagrid-item">
                                 <div class="datagrid-title">Equipment Name</div>
@@ -85,8 +83,8 @@
                                         data-text="Apakah Anda yakin ingin menghapus item inventaris ini? Data terkait akan ikut terhapus."
                                         data-redirect="{{ route('lab.inventaris.index') }}" />
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
     @endsection

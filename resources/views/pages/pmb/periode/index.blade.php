@@ -10,20 +10,20 @@
 
 @section('content')
 
-        <div class="card">
-            <div class="card-body">
-                <x-tabler.datatable
-                    id="table-periode"
-                    :columns="[
-                        ['data' => 'DT_RowIndex', 'name' => 'id', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
-                        ['data' => 'nama_periode', 'name' => 'nama_periode', 'title' => 'Nama Periode'],
-                        ['data' => 'tanggal_mulai', 'name' => 'tanggal_mulai', 'title' => 'Mulai'],
-                        ['data' => 'tanggal_selesai', 'name' => 'tanggal_selesai', 'title' => 'Selesai'],
-                        ['data' => 'is_aktif', 'name' => 'is_aktif', 'title' => 'Status'],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
-                    ]"
-                    :url="route('pmb.periode.data')"
-                />
-            </div>
-        </div>
+    <x-tabler.card>
+        <x-tabler.card-body class="p-0">
+            <x-tabler.datatable
+                id="table-periode"
+                :columns="[
+                    ['data' => 'DT_RowIndex', 'name' => 'id', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
+                    ['data' => 'nama_periode', 'name' => 'nama_periode', 'title' => 'Nama Periode'],
+                    ['data' => 'tanggal_mulai', 'name' => 'tanggal_mulai', 'title' => 'Mulai'],
+                    ['data' => 'tanggal_selesai', 'name' => 'tanggal_selesai', 'title' => 'Selesai'],
+                    ['data' => 'is_aktif', 'name' => 'is_aktif', 'title' => 'Status'],
+                    ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
+                ]"
+                :url="route('pmb.periode.data')"
+            />
+        </x-tabler.card-body>
+    </x-tabler.card>
 @endsection

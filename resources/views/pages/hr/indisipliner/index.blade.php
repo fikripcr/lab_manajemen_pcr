@@ -35,7 +35,6 @@
         </div>
     </div>
     <div class="card-body p-0">
-        <x-tabler.flash-message />
         <x-tabler.datatable
             id="indisipliner-table"
             route="{{ route('hr.indisipliner.data') }}"

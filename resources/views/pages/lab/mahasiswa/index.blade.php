@@ -9,8 +9,8 @@
 @endsection
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
+    <x-tabler.card>
+        <x-tabler.card-header>
             <div class="d-flex flex-wrap gap-2">
                 <div>
                     <x-tabler.datatable-page-length :dataTableId="'mahasiswa-table'" />
@@ -19,10 +19,8 @@
                     <x-tabler.datatable-search :dataTableId="'mahasiswa-table'" />
                 </div>
             </div>
-        </div>
-        <div class="card-body">
-            <x-tabler.flash-message />
-
+        </x-tabler.card-header>
+        <x-tabler.card-body class="p-0">
             <x-tabler.datatable
                 id="mahasiswa-table" route="{{ route('lab.mahasiswa.data') }}" :columns="[
                 [
@@ -55,8 +53,8 @@
                     'searchable' => false,
                 ],
             ]" />
-        </div>
-    </div>
+        </x-tabler.card-body>
+    </x-tabler.card>
 @endsection
 
 @push('scripts')

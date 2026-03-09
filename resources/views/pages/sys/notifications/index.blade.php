@@ -12,8 +12,8 @@
 @endsection
 
 @section('content')
-<div class="card">
-    <div class="card-header">
+<x-tabler.card>
+    <x-tabler.card-header>
         <ul class="nav nav-tabs card-header-tabs" role="tablist">
             <li class="nav-item">
                 <a class="nav-link {{ Route::is('sys.activity-log.*') ? 'active fw-bold' : '' }}" href="{{ route('sys.activity-log.index') }}">
@@ -36,13 +36,13 @@
                 </a>
             </li>
         </ul>
-    </div>
-    <div class="card-body">
+    </x-tabler.card-header>
+    <x-tabler.card-body>
 
     <div class="row mb-4">
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
+            <x-tabler.card>
+                <x-tabler.card-body>
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3 bg-label-primary rounded">
                             <i class="bx bx-bell bx-lg"></i>
@@ -52,12 +52,12 @@
                             <h4 class="mb-0" id="totalNotifications">0</h4>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
+            <x-tabler.card>
+                <x-tabler.card-body>
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3 bg-label-warning rounded">
                             <i class="bx bx-envelope bx-lg"></i>
@@ -67,12 +67,12 @@
                             <h4 class="mb-0" id="unreadNotifications">{{ auth()->user()->unreadNotifications->count() }}</h4>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
         <div class="col-md-4">
-            <div class="card overflow-hidden">
-                <div class="card-body">
+            <x-tabler.card class="overflow-hidden">
+                <x-tabler.card-body>
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3 bg-label-success rounded">
                             <i class="bx bx-check-circle bx-lg"></i>
@@ -82,13 +82,13 @@
                             <h4 class="mb-0" id="readNotifications">{{ auth()->user()->notifications()->count() - auth()->user()->unreadNotifications->count() }}</h4>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-header">
+    <x-tabler.card>
+        <x-tabler.card-header>
             <div class="d-flex flex-wrap justify-content-between">
                 <div class="d-flex flex-wrap gap-2 mb-2 mb-sm-0">
                     <div>
@@ -102,8 +102,8 @@
                     <x-tabler.button type="create" id="markSelectedAsReadBtn" class="btn-sm" icon="ti ti-check-double" text="Mark Selected as Read" disabled />
                 </div>
             </div>
-        </div>
-        <div class="card-body p-0">
+        </x-tabler.card-header>
+        <x-tabler.card-body class="p-0">
             <x-tabler.datatable id="notifications-table" route="{{ route('sys.notifications.data') }}" checkbox="true"
             :columns="[
                 [
@@ -137,8 +137,10 @@
                     'class' => 'text-center',
                 ],
             ]" :order="[[3, 'desc']]" />
-        </div>
-    </div>
+        </x-tabler.card-body>
+    </x-tabler.card>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection
 
 @push('scripts')

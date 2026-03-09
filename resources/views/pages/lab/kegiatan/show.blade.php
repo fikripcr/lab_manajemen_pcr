@@ -11,10 +11,9 @@
 
         <div class="row row-cards">
             <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Informasi Kegiatan</h3>
-                        <div class="card-actions">
+                <x-tabler.card>
+                    <x-tabler.card-header title="Informasi Kegiatan">
+                        <x-slot:actions>
                             @php
                                 $badges = [
                                     'pending' => 'warning',
@@ -26,9 +25,9 @@
                                 $color = $badges[$kegiatan->status] ?? 'secondary';
                             @endphp
                             <span class="badge bg-{{ $color }}">{{ ucfirst($kegiatan->status) }}</span>
-                        </div>
-                    </div>
-                    <div class="card-body">
+                        </x-slot:actions>
+                    </x-tabler.card-header>
+                    <x-tabler.card-body>
                         <div class="datagrid">
                             <div class="datagrid-item">
                                 <div class="datagrid-title">Nama Kegiatan</div>
@@ -65,16 +64,14 @@
                                 </div>
                             </div>
                         @endif
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Approval Action</h3>
-                    </div>
-                    <div class="card-body">
+                <x-tabler.card>
+                    <x-tabler.card-header title="Approval Action" />
+                    <x-tabler.card-body>
                         @if(in_array($kegiatan->status, ['pending', 'tangguhkan']))
                             <form action="{{ route('lab.kegiatan.status', encryptId($kegiatan->kegiatan_id)) }}" method="POST" class="ajax-form">
                                 @csrf
@@ -95,8 +92,8 @@
                                 @endif
                             </div>
                         @endif
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
 

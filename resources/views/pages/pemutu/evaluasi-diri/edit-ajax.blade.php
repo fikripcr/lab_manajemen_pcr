@@ -106,9 +106,9 @@
                     @foreach($skalaData as $level => $desc)
                     @php $isChosen = (isset($pivot->ed_skala) && (int)$pivot->ed_skala === (int)$level); @endphp
                     <div class="col-12">
-                        <div class="card mb-0 skala-card border cursor-pointer {{ $isChosen ? 'border-primary bg-primary-lt border-2' : 'border' }}"
+                        <x-tabler.card class="mb-0 skala-card border cursor-pointer {{ $isChosen ? 'border-primary bg-primary-lt border-2' : 'border' }}"
                              data-level="{{ $level }}" role="button">
-                            <div class="card-body p-2">
+                            <x-tabler.card-body class="p-2">
                                 <div class="row align-items-center">
                                     <div class="col-auto pe-3 border-end">
                                         <div class="fs-2 fw-bold {{ $isChosen ? 'text-primary' : 'text-muted' }} mb-0">{{ $level }}</div>
@@ -119,8 +119,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                     @endforeach
                 </div>

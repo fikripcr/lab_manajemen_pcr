@@ -64,8 +64,8 @@
                 {{-- Summary Cards --}}
                 <div class="row mb-4">
                     <div class="col-sm-6 col-lg-3">
-                        <div class="card bg-light-lt border-0 shadow-none">
-                            <div class="card-body">
+                        <x-tabler.card class="bg-light-lt border-0 shadow-none">
+                            <x-tabler.card-body>
                                 <div class="d-flex align-items-center">
                                     <div class="subheader" title="Total penugasan indikator ke unit" data-bs-toggle="tooltip">Total Indikator Standar Unit</div>
                                 </div>
@@ -78,8 +78,8 @@
                     </div>
 
                     <div class="col-sm-6 col-lg-3">
-                        <div class="card bg-success-lt border-0 shadow-none">
-                            <div class="card-body">
+                        <x-tabler.card class="bg-success-lt border-0 shadow-none">
+                            <x-tabler.card-body>
                                 <div class="d-flex align-items-center">
                                     <div class="subheader">Isi Evaluasi Diri</div>
                                 </div>
@@ -94,8 +94,8 @@
                     </div>
 
                     <div class="col-sm-6 col-lg-3">
-                        <div class="card bg-primary-lt border-0 shadow-none">
-                            <div class="card-body">
+                        <x-tabler.card class="bg-primary-lt border-0 shadow-none">
+                            <x-tabler.card-body>
                                 <div class="d-flex align-items-center">
                                     <div class="subheader">Pelaksanaan AMI</div>
                                 </div>
@@ -110,8 +110,8 @@
                     </div>
 
                     <div class="col-sm-6 col-lg-3">
-                        <div class="card bg-info-lt border-0 shadow-none">
-                            <div class="card-body">
+                        <x-tabler.card class="bg-info-lt border-0 shadow-none">
+                            <x-tabler.card-body>
                                 <div class="d-flex align-items-center">
                                     <div class="subheader">Pengendalian</div>
                                 </div>

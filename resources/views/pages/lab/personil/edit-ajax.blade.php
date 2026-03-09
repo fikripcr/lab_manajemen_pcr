@@ -4,8 +4,6 @@
     method="PUT"
     submitText="Simpan Perubahan"
 >
-    <x-tabler.flash-message />
-    
     @if($personil->user)
     <div class="alert alert-info">
         <strong>Info User Terkoneksi:</strong> {{ $personil->user->name }} ({{ $personil->user->email }})

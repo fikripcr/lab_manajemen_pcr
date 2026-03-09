@@ -4,15 +4,12 @@
 @section('header')
 <x-tabler.page-header title="Dashboard HR" pretitle="Human Resources Management">
     <x-slot:actions>
-        <div class="btn-group">
-            <x-tabler.button class="btn-sm dropdown-toggle" data-bs-toggle="dropdown" icon="ti ti-calendar" text="{{ now()->format('F Y') }}" />
-            <div class="dropdown-menu">
-                <a href="#" class="dropdown-item" onclick="changePeriod('today')">Hari Ini</a>
-                <a href="#" class="dropdown-item" onclick="changePeriod('week')">Minggu Ini</a>
-                <a href="#" class="dropdown-item" onclick="changePeriod('month')">Bulan Ini</a>
-                <a href="#" class="dropdown-item" onclick="changePeriod('year')">Tahun Ini</a>
-            </div>
-        </div>
+        <x-tabler.dropdown icon="ti ti-calendar" text="{{ now()->format('F Y') }}" trigger="button" button-class="btn btn-sm btn-primary">
+            <x-tabler.dropdown-item label="Hari Ini" onclick="changePeriod('today')" />
+            <x-tabler.dropdown-item label="Minggu Ini" onclick="changePeriod('week')" />
+            <x-tabler.dropdown-item label="Bulan Ini" onclick="changePeriod('month')" />
+            <x-tabler.dropdown-item label="Tahun Ini" onclick="changePeriod('year')" />
+        </x-tabler.dropdown>
         <x-tabler.button type="button" icon="ti ti-refresh" class="btn-sm" onclick="refreshDashboard()" />
     </x-slot:actions>
 </x-tabler.page-header>
@@ -22,8 +19,8 @@
         <div class="row row-deck row-cards">
             <!-- KPI Cards -->
             <div class="col-sm-6 col-lg-3">
-                <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                    <div class="card-body">
+                <x-tabler.card class="shadow-sm border-0" style="border-radius: 12px;">
+                    <x-tabler.card-body>
                         <div class="d-flex align-items-center mb-3">
                             <div class="subheader text-uppercase fw-bold text-muted">Total Pegawai</div>
                             <div class="ms-auto lh-1">
@@ -40,8 +37,8 @@
             </div>
 
             <div class="col-sm-6 col-lg-3">
-                <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                    <div class="card-body">
+                <x-tabler.card class="shadow-sm border-0" style="border-radius: 12px;">
+                    <x-tabler.card-body>
                         <div class="d-flex align-items-center mb-3">
                             <div class="subheader text-uppercase fw-bold text-muted">Hadir Hari Ini</div>
                             <div class="ms-auto lh-1">
@@ -58,8 +55,8 @@
             </div>
 
             <div class="col-sm-6 col-lg-3">
-                <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                    <div class="card-body">
+                <x-tabler.card class="shadow-sm border-0" style="border-radius: 12px;">
+                    <x-tabler.card-body>
                         <div class="d-flex align-items-center mb-3">
                             <div class="subheader text-uppercase fw-bold text-muted">Cuti Aktif</div>
                             <div class="ms-auto lh-1">
@@ -76,8 +73,8 @@
             </div>
 
             <div class="col-sm-6 col-lg-3">
-                <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                    <div class="card-body">
+                <x-tabler.card class="shadow-sm border-0" style="border-radius: 12px;">
+                    <x-tabler.card-body>
                         <div class="d-flex align-items-center mb-3">
                             <div class="subheader text-uppercase fw-bold text-muted">Approval Pending</div>
                             <div class="ms-auto lh-1">
@@ -95,22 +92,22 @@
 
             <!-- Charts Row -->
             <div class="col-lg-8">
-                <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                    <div class="card-header bg-transparent border-0 py-3">
+                <x-tabler.card class="shadow-sm border-0" style="border-radius: 12px;">
+                    <x-tabler.card-header class="bg-transparent border-0 py-3">
                         <h3 class="card-title fw-bold"><i class="ti ti-chart-area-line me-2 text-primary"></i> Trend Kehadiran 30 Hari Terakhir</h3>
-                    </div>
-                    <div class="card-body">
+                    </x-tabler.card-header>
+                    <x-tabler.card-body>
                         <div id="chart-attendance-trend" style="height: 300px;"></div>
                     </div>
                 </div>
             </div>
 
             <div class="col-lg-4">
-                <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                    <div class="card-header bg-transparent border-0 py-3">
+                <x-tabler.card class="shadow-sm border-0" style="border-radius: 12px;">
+                    <x-tabler.card-header class="bg-transparent border-0 py-3">
                         <h3 class="card-title fw-bold"><i class="ti ti-chart-pie me-2 text-primary"></i> Distribusi Pegawai per Unit</h3>
-                    </div>
-                    <div class="card-body">
+                    </x-tabler.card-header>
+                    <x-tabler.card-body>
                         <div id="chart-department-distribution" style="height: 300px;"></div>
                     </div>
                 </div>
@@ -118,14 +115,14 @@
 
             <!-- Bottom Section: Approvals & Stats -->
             <div class="col-lg-8">
-                <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                    <div class="card-header bg-transparent border-0 py-3 d-flex align-items-center">
+                <x-tabler.card class="shadow-sm border-0" style="border-radius: 12px;">
+                    <x-tabler.card-header class="bg-transparent border-0 py-3 d-flex align-items-center">
                         <h3 class="card-title fw-bold m-0"><i class="ti ti-clipboard-check me-2 text-primary"></i> Menunggu Persetujuan</h3>
-                        <div class="ms-auto">
+                        <x-slot:actions>
                             <x-tabler.button href="{{ route('hr.approval.index') }}" class="btn-ghost-secondary btn-sm" text="Lihat Semua" />
-                        </div>
-                    </div>
-                    <div class="card-body pb-0">
+                        </x-slot:actions>
+                    </x-tabler.card-header>
+                    <x-tabler.card-body class="pb-0">
                         <div class="table-responsive">
                             <table class="table table-vcenter table-nowrap card-table border-top">
                                 <thead>
@@ -176,11 +173,11 @@
             </div>
 
             <div class="col-lg-4">
-                <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                    <div class="card-header bg-transparent border-0 py-3">
+                <x-tabler.card class="shadow-sm border-0" style="border-radius: 12px;">
+                    <x-tabler.card-header class="bg-transparent border-0 py-3">
                         <h3 class="card-title fw-bold m-0"><i class="ti ti-list-details me-2 text-primary"></i> Ringkasan Statistik</h3>
-                    </div>
-                    <div class="card-body">
+                    </x-tabler.card-header>
+                    <x-tabler.card-body>
                         <div class="space-y-4">
                             <div class="d-flex align-items-center p-3 rounded bg-blue-lt">
                                 <div class="avatar avatar-sm rounded bg-blue text-white me-3">

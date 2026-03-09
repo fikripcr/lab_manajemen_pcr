@@ -9,7 +9,7 @@
 @endsection
 
 @section('content')
-<div class="card">
+<x-tabler.card>
     @include('pages.hr.data-diri.global-tab-nav')
     <div class="card-body p-0">
         <div class="tab-content">

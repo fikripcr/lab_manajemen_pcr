@@ -9,23 +9,20 @@
         <div class="row">
             {{-- Left Panel: OrgUnit Tree --}}
             <div class="col-lg-5">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Struktur Organisasi</h3>
-                    </div>
-                    <div class="card-body p-2">
+                <x-tabler.card>
+                    <x-tabler.card-header title="Update Jabatans Struktural Masal" />
+                    <x-tabler.card-body class="p-2">
                         <ul class="list-group list-group-flush" id="org-tree-list">
                             @foreach($units as $unit)
                                 @include('pages.hr.pegawai._mass_tree_item', ['unit' => $unit])
                             @endforeach
                         </ul>
-                    </div>
                 </div>
             </div>
 
             {{-- Right Panel: Assignment Panel --}}
             <div class="col-lg-7">
-                <div class="card" id="assignment-panel">
+                <x-tabler.card id="assignment-panel">
                     <div class="card-body text-center py-5 text-muted">
                         <i class="ti ti-hand-click" style="font-size: 3rem;"></i>
                         <p class="mt-3">Pilih unit/jabatan di sebelah kiri untuk mengelola struktural</p>

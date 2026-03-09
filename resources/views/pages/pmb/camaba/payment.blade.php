@@ -12,40 +12,63 @@
 
         <div class="row row-cards">
             <div class="col-md-7">
-                <div class="card">
-                    <div class="card-header"><h3 class="card-title">Instruksi Pembayaran</h3></div>
-                    <div class="card-body">
+                <x-tabler.card>
+                    <x-tabler.card-header title="Metode Pembayaran" icon="ti ti-credit-card" />
+                    <x-tabler.card-body>
                         <div class="mb-4">
-                            <p>Silakan lakukan transfer biaya pendaftaran ke rekening berikut:</p>
-                            <div class="p-3 bg-light rounded text-center mb-3">
-                                <h2 class="mb-1 text-primary">Bank Mandiri (VA)</h2>
-                                <h1 class="mb-0">88998 {{ Auth::user()->id }}</h1>
-                                <div class="text-muted">A.N. {{ Auth::user()->name }}</div>
-                            </div>
-                            <div class="row text-center mb-3">
-                                <div class="col">
-                                    <div class="text-muted small">Total Tagihan</div>
-                                    <h2 class="text-danger">Rp {{ number_format($pendaftaran->jalur->biaya_pendaftaran, 0, ',', '.') }}</h2>
+                            <h4 class="mb-2">Biaya Pendaftaran</h4>
+                            <div class="h3 text-primary">Rp {{ number_format($pendaftaran->total_bayar, 0, ',', '.') }}</div>
+                            <p class="text-muted small">Silakan pilih metode pembayaran di bawah ini untuk melanjutkan pendaftaran.</p>
+                        </div>
+
+                        {{-- Virtual Account Options --}}
+                        <div class="mb-3">
+                            <label class="form-label">Virtual Account</label>
+                            <div class="row g-2">
+                                <div class="col-6 col-sm-4 col-md-3">
+                                    <label class="form-selectgroup-item w-100">
+                                        <input type="radio" name="payment_method" value="briva" class="form-selectgroup-input">
+                                        <span class="form-selectgroup-label d-flex align-items-center p-3">
+                                            <span class="me-3">
+                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/BRI_Logo.svg/1200px-BRI_Logo.svg.png" height="20" alt="BRI">
+                                            </span>
+                                            <span>BRIVA</span>
+                                        </span>
+                                    </label>
                                 </div>
+                                {{-- Add more banks as needed --}}
                             </div>
                         </div>
 
-                        <h4>Langkah-langkah:</h4>
-                        <ol>
-                            <li>Gunakan ATM/Mobile Banking Bank Mandiri atau Bank Lain.</li>
-                            <li>Pilih menu Bayar > Pendidikan > Politeknik Caltex Riau.</li>
-                            <li>Masukkan Nomor Virtual Account di atas.</li>
-                            <li>Pastikan nominal dan nama sesuai.</li>
-                            <li>Simpan struk/bukti transfer Anda.</li>
-                        </ol>
-                    </div>
-                </div>
+                        <div class="mt-4 d-grid">
+                            <button type="button" class="btn btn-primary btn-lg" id="pay-button">
+                                <i class="ti ti-lock me-2"></i>Bayar Sekarang
+                            </button>
+                        </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
+
+                <x-tabler.card class="mt-4">
+                    <x-tabler.card-header title="Butuh Bantuan?" />
+                    <x-tabler.card-body>
+                        <p class="text-muted small">Jika Anda mengalami kendala saat melakukan pembayaran, silakan hubungi pusat bantuan kami.</p>
+                        <div class="d-flex align-items-center mt-3">
+                            <span class="avatar avatar-sm bg-success-lt me-3">
+                                <i class="ti ti-brand-whatsapp fs-2"></i>
+                            </span>
+                            <div>
+                                <div class="font-weight-medium">WhatsApp Support</div>
+                                <div class="text-muted small">+62 812-3456-7890</div>
+                            </div>
+                        </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <div class="col-md-5">
-                <div class="card">
-                    <div class="card-header"><h3 class="card-title">Konfirmasi Pembayaran</h3></div>
-                    <div class="card-body">
+                <x-tabler.card>
+                    <x-tabler.card-header title="Konfirmasi Pembayaran" />
+                    <x-tabler.card-body>
                         <form action="{{ route('pmb.camaba.confirm-payment', $pendaftaran->encrypted_pendaftaran_id) }}" method="POST" class="ajax-form" enctype="multipart/form-data" data-redirect="true">
                             @csrf
                             
@@ -61,8 +84,8 @@
                                 <x-tabler.button type="success" class="w-100" text="Kirim Konfirmasi" />
                             </div>
                         </form>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
 @endsection

@@ -4,8 +4,8 @@
 <div class="authentication-wrapper authentication-basic container-p-y">
     <div class="authentication-inner py-4">
         <!-- Verify Email -->
-        <div class="card">
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-body>
                 <!-- Logo -->
                 <div class="app-brand justify-content-center mb-4">
                     <a href="{{ url('/') }}" class="app-brand-link gap-2">
@@ -33,8 +33,8 @@
                         <x-tabler.button type="submit" style="link" class="text-muted" text="Log Out" />
                     </form>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
         <!-- /Verify Email -->
     </div>
 </div>

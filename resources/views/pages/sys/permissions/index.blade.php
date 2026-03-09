@@ -4,7 +4,7 @@
 
 @section('header')
 {{-- Page Header Content --}}
-    <x-tabler.page-header title="Hak Akses" pretitle="Access Control">
+<x-tabler.page-header title="Hak Akses" pretitle="Access Control">
         <x-slot:actions>
             <x-tabler.button href="{{ route('sys.dashboard') }}" type="back" />
             <x-tabler.button type="create" :modal-url="route('sys.permissions.create')" modal-title="Tambah Hak Akses" />
@@ -14,8 +14,8 @@
 
 @section('content')
 {{-- Page Body Content --}}
-<div class="card overflow-hidden">
-    <div class="card-header">
+<x-tabler.card class="overflow-hidden">
+    <x-tabler.card-header>
         <div class="d-flex flex-wrap gap-2">
             <div>
                 <x-tabler.datatable-page-length :dataTableId="'permissions-table'" />
@@ -36,7 +36,7 @@
         </div>
     </div>
 
-    <div class="card-body p-0">
+    <x-tabler.card-body class="p-0">
 
         <x-tabler.datatable id="permissions-table" route="{{ route('sys.permissions.data') }}" checkbox="true"  :columns="[
             [
@@ -79,6 +79,6 @@
                 'searchable' => false,
             ],
         ]" :order="[[4, 'desc']]" />
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection

@@ -15,7 +15,7 @@
 @section('content')
 <div class="row row-cards">
     <div class="col-12">
-        <div class="card">
+        <x-tabler.card>
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
                     <li class="nav-item">
@@ -43,7 +43,6 @@
                             <div><x-tabler.datatable-page-length :dataTableId="'jenis-layanan-table'" /></div>
                             <div><x-tabler.datatable-search :dataTableId="'jenis-layanan-table'" /></div>
                         </div>
-                        <x-tabler.flash-message />
                         <x-tabler.datatable
                             id="jenis-layanan-table"
                             route="{{ route('eoffice.jenis-layanan.data') }}"
@@ -70,7 +69,6 @@
                             <div><x-tabler.datatable-page-length :dataTableId="'kategori-isian-table'" /></div>
                             <div><x-tabler.datatable-search :dataTableId="'kategori-isian-table'" /></div>
                         </div>
-                        <x-tabler.flash-message />
                         <x-tabler.datatable
                             id="kategori-isian-table"
                             route="{{ route('eoffice.kategori-isian.data') }}"

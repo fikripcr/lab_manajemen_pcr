@@ -10,16 +10,16 @@
 @section('content')
             <div class="row row-cards mt-3">
                 <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-header">
+                    <x-tabler.card>
+                        <x-tabler.card-header>
                             <h3 class="card-title">Informasi Jadwal</h3>
-                            <div class="card-actions">
+                            <x-slot:actions>
                                 <x-tabler.button :href="route('lab.jadwal.edit', encryptId($jadwal->jadwal_kuliah_id))" class="btn-primary" icon="ti ti-edit" text="Edit" />
                                 <x-tabler.button :href="route('lab.jadwal.assignments.index', encryptId($jadwal->jadwal_kuliah_id))" class="btn-info ms-2" icon="ti ti-desktop" text="Atur PC" />
                                 <x-tabler.button :href="route('lab.jadwal.index')" class="btn-light ms-2" type="back" />
-                            </div>
-                        </div>
-                        <div class="card-body">
+                            </x-slot:actions>
+                        </x-tabler.card-header>
+                        <x-tabler.card-body>
                             <div class="datagrid">
                                 <div class="datagrid-item">
                                     <div class="datagrid-title">Tahun Ajaran</div>
@@ -61,8 +61,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                 </div>
             </div>
 @endsection

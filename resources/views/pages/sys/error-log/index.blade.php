@@ -12,8 +12,8 @@
 @endsection
 
 @section('content')
-<div class="card">
-    <div class="card-header">
+<x-tabler.card>
+    <x-tabler.card-header>
         <ul class="nav nav-tabs card-header-tabs" role="tablist">
             <li class="nav-item">
                 <a class="nav-link {{ Route::is('sys.activity-log.*') ? 'active fw-bold' : '' }}" href="{{ route('sys.activity-log.index') }}">
@@ -36,63 +36,34 @@
                 </a>
             </li>
         </ul>
-    </div>
-    <div class="card-body">
-        <div class="card shadow-none border">
-            <div class="card-header border-bottom-0">
+    </x-tabler.card-header>
+    <x-tabler.card-body>
+        <x-tabler.card class="shadow-none border">
+            <x-tabler.card-header class="border-bottom-0">
                 <div class="d-flex flex-wrap justify-content-between p-2 w-100">
-            <div class="d-flex flex-wrap gap-2 mb-2 mb-sm-0">
-                <div>
-                    <x-tabler.datatable-page-length :dataTableId="'error-logs-table'" />
+                    <div class="d-flex flex-wrap gap-2 mb-2 mb-sm-0">
+                        <div>
+                            <x-tabler.datatable-page-length :dataTableId="'error-logs-table'" />
+                        </div>
+                        <div>
+                            <x-tabler.datatable-search :dataTableId="'error-logs-table'" />
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <x-tabler.datatable-search :dataTableId="'error-logs-table'" />
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="card-body">
-        <x-tabler.datatable id="error-logs-table" route="{{ route('sys.error-log.data') }}" :columns="[
-            [
-                'title' => '#',
-                'data' => 'DT_RowIndex',
-                'name' => 'id',
-                'orderable' => false,
-                'searchable' => false,
-                'class' => 'text-center',
-            ],
-            [
-                'title' => 'Message',
-                'data' => 'message',
-                'name' => 'message',
-            ],
-            [
-                'title' => 'Error Type',
-                'data' => 'error_type',
-                'name' => 'exception_class',
-            ],
-            [
-                'title' => 'User',
-                'data' => 'user_info',
-                'name' => 'user.name',
-            ],
-            [
-                'title' => 'Date',
-                'data' => 'created_at',
-                'name' => 'created_at',
-            ],
-            [
-                'title' => 'Actions',
-                'data' => 'action',
-                'name' => 'action',
-                'orderable' => false,
-                'searchable' => false,
-            ],
-        ]" :order="[[4, 'desc']]" />
-        </div>
-    </div>
-</div>
-</div>
+            </x-tabler.card-header>
+            <x-tabler.card-body class="p-0">
+                <x-tabler.datatable id="error-logs-table" route="{{ route('sys.error-log.data') }}" :columns="[
+                    ['title' => '#', 'data' => 'DT_RowIndex', 'name' => 'id', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
+                    ['title' => 'Message', 'data' => 'message', 'name' => 'message'],
+                    ['title' => 'Error Type', 'data' => 'error_type', 'name' => 'exception_class'],
+                    ['title' => 'User', 'data' => 'user_info', 'name' => 'user.name'],
+                    ['title' => 'Date', 'data' => 'created_at', 'name' => 'created_at'],
+                    ['title' => 'Actions', 'data' => 'action', 'name' => 'action', 'orderable' => false, 'searchable' => false],
+                ]" :order="[[4, 'desc']]" />
+            </x-tabler.card-body>
+        </x-tabler.card>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection
 
 @push('scripts')

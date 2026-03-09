@@ -12,8 +12,8 @@
 @section('content')
     <div class="row">
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-body text-center">
+            <x-tabler.card>
+                <x-tabler.card-body class="text-center">
                     @if($mahasiswa->user && $mahasiswa->user->avatar_url)
                         <span class="avatar avatar-xl mb-3" style="background-image: url('{{ $mahasiswa->user->avatar_url }}')"></span>
                     @else
@@ -21,15 +21,15 @@
                     @endif
                     <h3 class="m-0">{{ $mahasiswa->nama }}</h3>
                     <div class="text-muted">{{ $mahasiswa->nim }}</div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
+            <x-tabler.card>
+                <x-tabler.card-header>
                     <h3 class="card-title">Informasi Mahasiswa</h3>
-                </div>
-                <div class="card-body">
+                </x-tabler.card-header>
+                <x-tabler.card-body>
                     <div class="datagrid">
                         <div class="datagrid-item">
                             <div class="datagrid-title">NIM</div>
@@ -70,8 +70,8 @@
                             <div class="datagrid-content">{{ formatTanggalIndo($mahasiswa->updated_at) }}</div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
 @endsection

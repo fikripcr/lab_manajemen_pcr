@@ -23,8 +23,8 @@
 @section('content')
 <div class="row row-cards">
     <div class="col-12">
-        <div class="card">
-            <div class="card-header">
+        <x-tabler.card>
+            <x-tabler.card-header>
                 <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
                     <li class="nav-item">
                         <a href="{{ route('hr.status-pegawai.index', ['tab' => 'status-pegawai']) }}" class="nav-link {{ $activeTab == 'status-pegawai' ? 'active' : '' }}">
@@ -67,7 +67,6 @@
                             <div><x-tabler.datatable-page-length :dataTableId="'status-pegawai-table'" /></div>
                             <div><x-tabler.datatable-search :dataTableId="'status-pegawai-table'" /></div>
                         </div>
-                        <x-tabler.flash-message />
                         <x-tabler.datatable
                             id="status-pegawai-table"
                             route="{{ route('hr.status-pegawai.data') }}"
@@ -90,7 +89,6 @@
                             <div><x-tabler.datatable-page-length :dataTableId="'status-aktifitas-table'" /></div>
                             <div><x-tabler.datatable-search :dataTableId="'status-aktifitas-table'" /></div>
                         </div>
-                        <x-tabler.flash-message />
                         <x-tabler.datatable
                             id="status-aktifitas-table"
                             route="{{ route('hr.status-aktifitas.data') }}"
@@ -112,7 +110,6 @@
                             <div><x-tabler.datatable-page-length :dataTableId="'jabatan-fungsional-table'" /></div>
                             <div><x-tabler.datatable-search :dataTableId="'jabatan-fungsional-table'" /></div>
                         </div>
-                        <x-tabler.flash-message />
                         <x-tabler.datatable
                             id="jabatan-fungsional-table"
                             route="{{ route('hr.jabatan-fungsional.data') }}"
@@ -135,7 +132,6 @@
                             <div><x-tabler.datatable-page-length :dataTableId="'table-jenis-izin'" /></div>
                             <div><x-tabler.datatable-search :dataTableId="'table-jenis-izin'" /></div>
                         </div>
-                        <x-tabler.flash-message />
                         <x-tabler.datatable
                             id="table-jenis-izin"
                             route="{{ route('hr.jenis-izin.data') }}"
@@ -158,7 +154,6 @@
                             <div><x-tabler.datatable-page-length :dataTableId="'jenis-indisipliner-table'" /></div>
                             <div><x-tabler.datatable-search :dataTableId="'jenis-indisipliner-table'" /></div>
                         </div>
-                        <x-tabler.flash-message />
                         <x-tabler.datatable
                             id="jenis-indisipliner-table"
                             route="{{ route('hr.jenis-indisipliner.data') }}"
@@ -178,7 +173,6 @@
                             <div><x-tabler.datatable-page-length :dataTableId="'jenis-shift-table'" /></div>
                             <div><x-tabler.datatable-search :dataTableId="'jenis-shift-table'" /></div>
                         </div>
-                        <x-tabler.flash-message />
                         <x-tabler.datatable
                             id="jenis-shift-table"
                             route="{{ route('hr.jenis-shift.data') }}"
@@ -194,8 +188,8 @@
                     </div>
                     @endif
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 </div>
 @endsection

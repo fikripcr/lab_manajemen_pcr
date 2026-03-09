@@ -9,7 +9,8 @@
         <!-- Kolom Kiri: Informasi Utama -->
         <div class="col-md-7">
             <h3 class="card-title mb-3">Informasi Utama</h3>
-            <div class="card card-body">
+            <x-tabler.card>
+                <x-tabler.card-body>
                 <x-tabler.form-input 
                     name="name" 
                     label="Nama Lab" 
@@ -45,13 +46,15 @@
                         height="300" 
                     />
                 </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
         <!-- Kolom Kanan: Media & Lampiran -->
         <div class="col-md-5">
             <h3 class="card-title mb-3">Media & Lampiran</h3>
-            <div class="card card-body">
+            <x-tabler.card>
+                <x-tabler.card-body>
                 @if($lab->exists)
                     <!-- Existing Media Section -->
                     <div class="mb-3">
@@ -60,9 +63,9 @@
                             <div class="row g-2">
                                 @foreach ($lab->getMedia('lab_images') as $media)
                                     <div class="col-md-6">
-                                        <div class="card h-100 shadow-none border">
+                                        <x-tabler.card class="h-100 shadow-none border">
                                             <img src="{{ $media->getUrl() }}" class="card-img-top" alt="{{ $media->name }}" style="height: 100px; object-fit: cover;">
-                                        </div>
+                                        </x-tabler.card>
                                     </div>
                                 @endforeach
                             </div>
@@ -95,7 +98,8 @@
                     data-allow-multiple="true" 
                     help="Unggah dokumen atau lampiran lainnya (bisa lebih dari satu)." 
                 />
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
 </x-tabler.form-modal>

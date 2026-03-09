@@ -9,8 +9,8 @@
 @endsection
 
 @section('content')
-<div class="card">
-    <div class="card-header">
+<x-tabler.card>
+    <x-tabler.card-header>
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
             {{-- Kiri: Page Length & Filter --}}
             <div class="d-flex gap-2">
@@ -49,9 +49,9 @@
                 <x-tabler.datatable-search dataTableId="table-layanan" />
             </div>
         </div>
-    </div>
+    </x-tabler.card-header>
 
-    <div class="card-body p-0">
+    <x-tabler.card-body class="p-0">
         <x-tabler.datatable
             id="table-layanan"
             route="{{ route('eoffice.layanan.data') }}"
@@ -65,8 +65,8 @@
                 ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '10%']
             ]"
         />
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 
 @push('scripts')
 <script>

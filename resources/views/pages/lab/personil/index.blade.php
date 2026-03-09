@@ -9,8 +9,8 @@
 @endsection
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
+    <x-tabler.card>
+        <x-tabler.card-header>
             <div class="d-flex flex-wrap gap-2">
                 <div>
                     <x-tabler.datatable-page-length :dataTableId="'personil-table'" />
@@ -31,10 +31,8 @@
                     </x-tabler.datatable-filter>
                 </div>
             </div>
-        </div>
-        <div class="card-body">
-            <x-tabler.flash-message />
-
+        </x-tabler.card-header>
+        <x-tabler.card-body class="p-0">
             <x-tabler.datatable
                 id="personil-table" route="{{ route('lab.personil.data') }}" :columns="[
                 [
@@ -66,6 +64,6 @@
                     'class' => 'text-center',
                 ],
             ]" />
-        </div>
-    </div>
+        </x-tabler.card-body>
+    </x-tabler.card>
 @endsection

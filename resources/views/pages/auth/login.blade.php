@@ -12,8 +12,8 @@
 @extends('layouts.auth.app')
 
 @section('content')
-<div class="card card-md">
-    <div class="card-body">
+<x-tabler.card class="card-md">
+    <x-tabler.card-body>
         <h2 class="h2 text-center mb-4">Login to your account</h2>
         <form action="{{ route('login') }}" method="POST" autocomplete="off" novalidate>
             @csrf
@@ -75,18 +75,18 @@
                 <x-tabler.button type="submit" class="w-100" text="Sign in" />
             </div>
         </form>
-    </div>
+    </x-tabler.card-body>
 
     <div class="hr-text">or</div>
 
-    <div class="card-body">
+    <x-tabler.card-body>
         <div class="row">
             <div class="col">
                 <x-tabler.button href="{{ route('auth.google') }}" class="btn-white w-100" icon="brand-google" text="Login with Google" />
             </div>
         </div>
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 
 <div class="text-center text-secondary mt-3">
     Don't have account yet? <a href="{{ route('register') }}" tabindex="-1">Sign up</a>

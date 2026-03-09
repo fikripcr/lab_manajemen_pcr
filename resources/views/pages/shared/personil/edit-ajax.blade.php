@@ -4,8 +4,6 @@
     method="PUT"
     submitText="Simpan Perubahan"
 >
-    <x-tabler.flash-message />
-    
     @if($personil->user)
     <div class="alert alert-info py-2">
         <div class="d-flex align-items-center">

@@ -11,13 +11,9 @@
 @section('content')
     <div class="row">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Daftar Agenda</h3>
-                </div>
-                <div class="card-body">
-                    <x-tabler.flash-message />
-
+            <x-tabler.card>
+                <x-tabler.card-header title="Daftar Agenda" />
+                <x-tabler.card-body>
                     <x-tabler.datatable
                         id="agenda-table" route="{{ route('Kegiatan.rapat.agenda.data', $rapat) }}" :columns="[
                         [
@@ -38,17 +34,13 @@
                             'searchable' => false,
                         ],
                     ]" />
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Tambah Agenda</h3>
-                </div>
-                <div class="card-body">
-                    <x-tabler.flash-message />
-
+            <x-tabler.card>
+                <x-tabler.card-header title="Tambah Agenda" />
+                <x-tabler.card-body>
                     <form class="ajax-form" action="{{ route('Kegiatan.rapat.agenda.store', $rapat) }}" method="POST">
                         @csrf
                         
@@ -97,8 +89,8 @@
                             <x-tabler.button type="submit" text="Simpan Agenda" />
                         </div>
                     </form>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
 @endsection

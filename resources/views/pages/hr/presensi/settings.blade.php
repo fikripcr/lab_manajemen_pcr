@@ -10,11 +10,9 @@
 @section('content')
 <div class="row row-cards">
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Konfigurasi Lokasi Kantor</h3>
-            </div>
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-header title="Konfigurasi Lokasi Kantor" />
+            <x-tabler.card-body>
                 <form action="#" method="POST" class="ajax-form">
                     @csrf
                     <div class="mb-3">
@@ -45,16 +43,14 @@
                         <x-tabler.button type="submit" text="Simpan Pengaturan" class="w-100" />
                     </div>
                 </form>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
     
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Test Akurasi Lokasi</h3>
-            </div>
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-header title="Test Akurasi Lokasi" />
+            <x-tabler.card-body>
                 <p class="text-muted">Gunakan fitur ini untuk mengetes apakah koordinat kantor sudah sesuai dengan lokasi fisik saat ini.</p>
                 
                 <div class="p-3 border rounded bg-light mb-3">
@@ -69,8 +65,8 @@
                 </div>
                 
                 <x-tabler.button id="btn-test-location" class="btn-outline-primary w-100" icon="ti ti-map-pin" text="Ambil Lokasi Sekarang & Hitung Jarak" />
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 </div>
 

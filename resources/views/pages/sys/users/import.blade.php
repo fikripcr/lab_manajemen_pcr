@@ -11,10 +11,8 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            <x-tabler.flash-message />
-
-            <div class="card mb-4">
-                <div class="card-body">
+            <x-tabler.card class="mb-4">
+                <x-tabler.card-body>
                     <div class="alert alert-info border-0 shadow-sm mb-4">
                         <div class="d-flex">
                             <div>
@@ -63,8 +61,8 @@
                             <x-tabler.button type="cancel" :href="route('sys.users.index')" />
                         </div>
                     </form>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
 @endsection

@@ -11,19 +11,19 @@
 
 @section('content')
 
-        <div class="card">
-            <div class="card-body">
-                <x-tabler.datatable
-                    id="table-jalur"
-                    :columns="[
-                        ['data' => 'DT_RowIndex', 'name' => 'id', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
-                        ['data' => 'nama_jalur', 'name' => 'nama_jalur', 'title' => 'Nama Jalur'],
-                        ['data' => 'biaya_pendaftaran', 'name' => 'biaya_pendaftaran', 'title' => 'Biaya Pendaftaran'],
-                        ['data' => 'is_aktif', 'name' => 'is_aktif', 'title' => 'Status'],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
-                    ]"
-                    :url="route('pmb.jalur.data')"
-                />
-            </div>
-        </div>
+    <x-tabler.card>
+        <x-tabler.card-body class="p-0">
+            <x-tabler.datatable
+                id="table-jalur"
+                :columns="[
+                    ['data' => 'DT_RowIndex', 'name' => 'id', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
+                    ['data' => 'nama_jalur', 'name' => 'nama_jalur', 'title' => 'Nama Jalur'],
+                    ['data' => 'biaya_pendaftaran', 'name' => 'biaya_pendaftaran', 'title' => 'Biaya Pendaftaran'],
+                    ['data' => 'is_aktif', 'name' => 'is_aktif', 'title' => 'Status'],
+                    ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
+                ]"
+                :url="route('pmb.jalur.data')"
+            />
+        </x-tabler.card-body>
+    </x-tabler.card>
 @endsection

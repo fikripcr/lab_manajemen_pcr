@@ -12,8 +12,8 @@
 
 @section('content')
 
-        <div class="card">
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-body class="p-0">
                 <x-tabler.datatable
                     id="table-log-lab"
                     route="{{ route('lab.log-lab.data') }}"
@@ -26,6 +26,6 @@
                         ['data' => 'kondisi', 'name' => 'kondisi', 'title' => 'Kondisi PC/Alat']
                     ]"
                 />
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
 @endsection

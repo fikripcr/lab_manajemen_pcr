@@ -39,8 +39,8 @@
 @endsection
 
 @section('content')
-<div class="card">
-    <div class="card-header">
+<x-tabler.card>
+    <x-tabler.card-header>
         <div class="d-flex flex-wrap gap-2">
             <div>
                 <x-tabler.datatable-page-length :dataTableId="'presensi-history-table'" />
@@ -49,9 +49,8 @@
                 <x-tabler.datatable-search :dataTableId="'presensi-history-table'" />
             </div>
         </div>
-    </div>
-    <div class="card-body">
-        <x-tabler.flash-message />
+    </x-tabler.card-header>
+    <x-tabler.card-body class="p-0">
         <x-tabler.datatable
             id="presensi-history-table"
             route="{{ route('hr.presensi.history-data') }}"
@@ -66,8 +65,8 @@
                 ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
             ]"
         />
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 
 {{-- Modal is now loaded via AJAX --}}
 

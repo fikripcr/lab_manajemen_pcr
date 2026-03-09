@@ -14,8 +14,8 @@
 
 @section('content')
 
-<div class="card overflow-hidden">
-    <div class="card-header">
+<x-tabler.card class="overflow-hidden">
+    <x-tabler.card-header>
         <div class="d-flex flex-wrap gap-2">
             <div>
                 <x-tabler.datatable-page-length :dataTableId="'backups-table'" />
@@ -24,9 +24,9 @@
                 <x-tabler.datatable-search :dataTableId="'backups-table'" />
             </div>
         </div>
-    </div>
+    </x-tabler.card-header>
 
-    <div class="card-body p-0">
+    <x-tabler.card-body class="p-0">
         @if (count($backups) > 0)
             <x-tabler.datatable-client
                 id="backups-table"
@@ -58,8 +58,8 @@
                 <p class="text-muted">Create your first backup using the button above.</p>
             </div>
         @endif
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection
 
 @push('scripts')

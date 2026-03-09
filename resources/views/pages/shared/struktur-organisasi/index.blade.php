@@ -10,8 +10,8 @@
 @endsection
 
 @section('content')
-<div class="card">
-    <div class="card-body">
+<x-tabler.card>
+    <x-tabler.card-body>
         <div class="row row-cards">
             <!-- Tree View -->
             <div class="col-lg-7">
@@ -30,8 +30,8 @@
             <!-- Detail Panel -->
             <div class="col-lg-5">
                 <div id="detail-panel-container">
-                    <div class="card shadow-none border">
-                        <div class="card-body py-5 text-center">
+                    <x-tabler.card class="shadow-none border">
+                        <x-tabler.card-body class="py-5 text-center">
                             <div class="text-center py-5">
                                 <i class="ti ti-click fs-1 text-muted opacity-25"></i>
                                 <p class="text-muted mt-2">Pilih unit di sebelah kiri untuk melihat detail informasi.</p>
@@ -44,13 +44,13 @@
                                     <span class="badge bg-secondary-lt">{{ $label }}</span>
                                 @endforeach
                             </div>
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection
 
 @push('scripts')
@@ -126,13 +126,13 @@
 
             const url = $(this).data('url');
             const container = $('#detail-panel-container');
-            container.html('<div class="card"><div class="card-body text-center py-5"><div class="spinner-border text-primary" role="status"></div></div></div>');
+            container.html('<x-tabler.card><x-tabler.card-body class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></x-tabler.card-body></x-tabler.card>');
 
             axios.get(url)
                 .then(res => container.html(res.data))
                 .catch(err => {
                     console.error(err);
-                    container.html('<div class="card"><div class="card-body text-danger">Gagal memuat detail.</div></div>');
+                    container.html('<x-tabler.card><x-tabler.card-body class="text-danger">Gagal memuat detail.</x-tabler.card-body></x-tabler.card>');
                 });
         });
     });

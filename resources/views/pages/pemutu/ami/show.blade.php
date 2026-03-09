@@ -11,7 +11,7 @@
 
 @section('content')
 <x-tabler.card>
-    <x-tabler.card-header>
+    <x-tabler.card-header class="bg-primary-lt" title="Detail Kegiatan">
         <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <a href="#tab-ami" class="nav-link active" data-bs-toggle="tab" aria-selected="true" role="tab">

@@ -89,10 +89,8 @@
     @section('content')
         <div class="row">
             <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <x-tabler.flash-message />
-
+                <x-tabler.card>
+                    <x-tabler.card-body>
                         <div class="datagrid">
                             <div class="datagrid-item">
                                 <div class="datagrid-title">Title</div>
@@ -173,8 +171,8 @@
                                         data-redirect="{{ route('lab.'.$pengumuman->jenis.'.index') }}"
                                         icon="ti ti-trash" />
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
     @endsection

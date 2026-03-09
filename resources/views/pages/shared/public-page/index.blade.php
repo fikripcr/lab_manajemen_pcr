@@ -13,28 +13,8 @@
 @section('content')
         <div class="row row-cards">
             <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Daftar Halaman</h3>
-                    </div>
-                    <div class="card-body border-bottom py-3">
-                         <div class="d-flex">
-                            <div class="text-muted">
-                                Show
-                                <div class="mx-2 d-inline-block">
-                                    <x-tabler.form-input type="text" class="form-control-sm" value="10" size="3" aria-label="Invoices count" />
-                                </div>
-                                entries
-                            </div>
-                            <div class="ms-auto text-muted">
-                                Search:
-                                <div class="ms-2 d-inline-block">
-                                    <x-tabler.form-input type="text" class="form-control-sm" aria-label="Search invoice" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
+                <x-tabler.card>
+                    <x-tabler.card-body class="p-0">
                         <x-tabler.datatable
                             id="table-public-pages"
                             route="{{ route('shared.public-page.data') }}"
@@ -47,8 +27,8 @@
                                 ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                             ]"
                         />
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
 @endsection

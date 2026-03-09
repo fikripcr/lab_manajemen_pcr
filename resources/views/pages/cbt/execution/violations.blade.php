@@ -9,10 +9,9 @@
     </x-slot:actions>
 </x-tabler.page-header>
 
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Daftar Pelanggaran Terbaru</h3>
-            </div>
+    <x-tabler.card>
+            <x-tabler.card-header title="Daftar Pelanggaran Terbaru" />
+            <x-tabler.card-body class="p-0">
             <x-tabler.datatable-client
                 id="table-violations"
                 :columns="[
@@ -68,5 +67,6 @@
                     {{ $violations->links() }}
                 </div>
             @endif
-        </div>
+            </x-tabler.card-body>
+    </x-tabler.card>
 @endsection

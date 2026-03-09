@@ -20,29 +20,27 @@
 @endsection
 
 @section('content')
-<x-tabler.flash-message />
-
 {{-- Project Info Cards --}}
 <div class="row row-deck row-cards mb-4">
     <div class="col-sm-6 col-lg-3">
-        <div class="card">
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-body>
                 <div class="d-flex align-items-center">
                     <div class="subheader">Total Tasks</div>
                 </div>
                 <div class="d-flex align-items-baseline">
                     <div class="h1 mb-0 me-2">{{ $statistics['total_tasks'] }}</div>
                 </div>
-            </div>
+            </x-tabler.card-body>
             <div class="progress progress-sm">
                 <div class="progress-bar bg-primary" style="width: 100%"></div>
             </div>
-        </div>
+        </x-tabler.card>
     </div>
 
     <div class="col-sm-6 col-lg-3">
-        <div class="card">
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-body>
                 <div class="d-flex align-items-center">
                     <div class="subheader">Completed</div>
                 </div>
@@ -52,49 +50,49 @@
                         {{ number_format($statistics['progress_percentage'], 1) }}%
                     </div>
                 </div>
-            </div>
+            </x-tabler.card-body>
             <div class="progress progress-sm">
                 <div class="progress-bar bg-success" style="width: {{ $statistics['progress_percentage'] }}%"></div>
             </div>
-        </div>
+        </x-tabler.card>
     </div>
 
     <div class="col-sm-6 col-lg-3">
-        <div class="card">
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-body>
                 <div class="d-flex align-items-center">
                     <div class="subheader">In Progress</div>
                 </div>
                 <div class="d-flex align-items-baseline">
                     <div class="h1 mb-0 me-2">{{ $statistics['in_progress_tasks'] }}</div>
                 </div>
-            </div>
+            </x-tabler.card-body>
             <div class="progress progress-sm">
                 <div class="progress-bar bg-warning" style="width: {{ $statistics['total_tasks'] > 0 ? ($statistics['in_progress_tasks'] / $statistics['total_tasks'] * 100) : 0 }}%"></div>
             </div>
-        </div>
+        </x-tabler.card>
     </div>
 
     <div class="col-sm-6 col-lg-3">
-        <div class="card">
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-body>
                 <div class="d-flex align-items-center">
                     <div class="subheader">Total Cost</div>
                 </div>
                 <div class="d-flex align-items-baseline">
                     <div class="h1 mb-0 me-2">Rp {{ number_format($statistics['total_cost'], 0, ',', '.') }}</div>
                 </div>
-            </div>
+            </x-tabler.card-body>
             <div class="progress progress-sm">
                 <div class="progress-bar bg-success" style="width: 100%"></div>
             </div>
-        </div>
+        </x-tabler.card>
     </div>
 </div>
 
 {{-- Segmented Control Tabs --}}
-<div class="card">
-    <div class="card-header">
+<x-tabler.card>
+    <x-tabler.card-header>
         <ul class="nav nav-pills card-header-pills" role="tablist" id="projectTabs">
             <li class="nav-item">
                 <a class="nav-link active" data-bs-toggle="tab" href="#project-overview" role="tab" data-tab-id="overview">
@@ -117,8 +115,8 @@
                 </a>
             </li>
         </ul>
-    </div>
-    <div class="card-body">
+    </x-tabler.card-header>
+    <x-tabler.card-body>
         <div class="tab-content">
             
             {{-- Overview Tab --}}
@@ -134,8 +132,8 @@
                         <div class="row row-cards">
                             @if($project->project_desc)
                             <div class="col-md-12 mb-3">
-                                <div class="card card-sm">
-                                    <div class="card-body">
+                                <x-tabler.card class="card-sm">
+                                    <x-tabler.card-body>
                                         <div class="d-flex align-items-center">
                                             <span class="bg-primary text-white avatar"><i class="ti ti-file-description"></i></span>
                                             <div class="ms-3">
@@ -143,14 +141,14 @@
                                                 <div class="text-muted small mt-1">{!! nl2br(e($project->project_desc ?: 'No description provided.')) !!}</div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
+                                    </x-tabler.card-body>
+                                </x-tabler.card>
                             </div>
                             @endif
                             
                             <div class="col-md-6 mb-3">
-                                <div class="card card-sm">
-                                    <div class="card-body">
+                                <x-tabler.card class="card-sm">
+                                    <x-tabler.card-body>
                                         <div class="d-flex align-items-center">
                                             <span class="bg-info text-white avatar"><i class="ti ti-calendar"></i></span>
                                             <div class="ms-3">
@@ -161,13 +159,13 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
+                                    </x-tabler.card-body>
+                                </x-tabler.card>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <div class="card card-sm">
-                                    <div class="card-body">
+                                <x-tabler.card class="card-sm">
+                                    <x-tabler.card-body>
                                         <div class="d-flex align-items-center">
                                             <span class="bg-{{ $project->status_badge_class }} text-white avatar"><i class="ti ti-activity"></i></span>
                                             <div class="ms-3">
@@ -175,13 +173,13 @@
                                                 <div class="text-muted small mt-1">{{ ucfirst(str_replace('_', ' ', $project->status)) }}</div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
+                                    </x-tabler.card-body>
+                                </x-tabler.card>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <div class="card card-sm">
-                                    <div class="card-body">
+                                <x-tabler.card class="card-sm">
+                                    <x-tabler.card-body>
                                         <div class="d-flex align-items-center">
                                             <span class="bg-{{ $project->is_agile ? 'success' : 'secondary' }} text-white avatar"><i class="ti ti-refresh"></i></span>
                                             <div class="ms-3">
@@ -189,14 +187,14 @@
                                                 <div class="text-muted small mt-1">{{ $project->is_agile ? 'Enabled' : 'Disabled' }}</div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
+                                    </x-tabler.card-body>
+                                </x-tabler.card>
                             </div>
                             
                             @if($project->is_agile)
                             <div class="col-md-6 mb-3">
-                                <div class="card card-sm">
-                                    <div class="card-body">
+                                <x-tabler.card class="card-sm">
+                                    <x-tabler.card-body>
                                         <div class="d-flex align-items-center">
                                             <span class="bg-purple text-white avatar"><i class="ti ti-layers-intersect"></i></span>
                                             <div class="ms-3">
@@ -206,19 +204,17 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
+                                    </x-tabler.card-body>
+                                </x-tabler.card>
                             </div>
                             @endif
                         </div>
                     </div>
 
                     <div class="col-lg-4">
-                        <div class="card">
-                            <div class="card-header border-0 pb-0">
-                                <h3 class="card-title">Quick Stats</h3>
-                            </div>
-                            <div class="card-body">
+                        <x-tabler.card>
+                            <x-tabler.card-header title="Quick Stats" />
+                            <x-tabler.card-body>
                                 <div class="mb-3">
                                     <div class="d-flex justify-content-between mb-1">
                                         <span class="text-muted">Task Completion</span>
@@ -243,8 +239,8 @@
                                         <span class="badge bg-green-lt">{{ $statistics['completed_tasks'] ?? 0 }}</span>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                 </div>
             </div>
@@ -271,8 +267,8 @@
                 <div class="row row-cards">
                     @foreach($project->members as $member)
                     <div class="col-sm-6 col-lg-4">
-                        <div class="card">
-                            <div class="card-body">
+                        <x-tabler.card>
+                            <x-tabler.card-body>
                                 <div class="d-flex align-items-center">
                                     <div class="avatar avatar-md me-3">
                                         {{ substr(($member->user->name ?? 'U'), 0, 1) }}
@@ -302,8 +298,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                     @endforeach
                 </div>
@@ -331,8 +327,8 @@
                 </div>
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <div class="card bg-primary-lt">
-                            <div class="card-body">
+                        <x-tabler.card class="bg-primary-lt">
+                            <x-tabler.card-body>
                                 <div class="d-flex align-items-center">
                                     <div class="flex-grow-1">
                                         <div class="text-muted">Total Cost</div>
@@ -340,12 +336,12 @@
                                     </div>
                                     <i class="ti ti-cash text-primary fs-1"></i>
                                 </div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                     <div class="col-md-6">
-                        <div class="card bg-success-lt">
-                            <div class="card-body">
+                        <x-tabler.card class="bg-success-lt">
+                            <x-tabler.card-body>
                                 <div class="d-flex align-items-center">
                                     <div class="flex-grow-1">
                                         <div class="text-muted">Approved Costs</div>
@@ -353,8 +349,8 @@
                                     </div>
                                     <i class="ti ti-check text-success fs-1"></i>
                                 </div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                 </div>
 

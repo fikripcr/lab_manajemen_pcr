@@ -43,8 +43,8 @@
     ];
 @endphp
 
-<div class="card">
-    <div class="card-body">
+<x-tabler.card>
+    <x-tabler.card-body>
         <div class="d-flex justify-content-between align-items-start mb-1">
             <div>
                 @if($type === 'dokumen')
@@ -161,9 +161,9 @@
                             data-url="{{ route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id]) }}"
                             data-modal-title="Ubah Dokumen" />
                     </div>
-                    <div class="card card-body markdown">
+                    <x-tabler.card class="card-body markdown">
                         {!! $item->isi ?: '<span class="text-muted fst-italic">Belum ada konten dokumen.</span>' !!}
-                    </div>
+                    </x-tabler.card>
                 </div>
 
                 <div class="mb-4">
@@ -172,7 +172,7 @@
                         <x-tabler.button class="btn-sm btn-outline-secondary" icon="ti ti-upload" text="Upload" data-bs-toggle="modal" data-bs-target="#modal-upload-file" />
                     </div>
                     @if($item->getMedia('dokumen_pendukung')->count() > 0)
-                    <div class="card card-body p-0">
+                    <x-tabler.card class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-vcenter table-nowrap mb-0">
                                 <thead>
@@ -224,21 +224,22 @@
 
             @if($type === 'dokumen')
                 <div class="tab-pane" id="tab-subdokumen" role="tabpanel">
-                    <div class="card bg-transparent shadow-none border">
-                        <div class="card-header border-0 d-flex justify-content-between align-items-center">
-                            <h2 class="card-title">Daftar {{ $childLabel ?? 'Turunan' }}</h2>
-                            <x-tabler.button type="create" class="ajax-modal-btn"
-                                text="Tambah {{ $childLabel ?? 'Turunan' }}"
-                                data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => $isDokSubBased ? 'poin' : 'dokumen', 'parent_id' => $item->encrypted_dok_id]) }}"
-                                data-modal-title="Tambah {{ $childLabel ?? 'Turunan' }}"
-                                size="sm" />
-                        </div>
+                    <x-tabler.card class="bg-transparent shadow-none border">
+                        <x-tabler.card-header title="Daftar {{ $childLabel ?? 'Turunan' }}">
+                            <x-slot:actions>
+                                <x-tabler.button type="create" class="ajax-modal-btn"
+                                    text="Tambah {{ $childLabel ?? 'Turunan' }}"
+                                    data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => $isDokSubBased ? 'poin' : 'dokumen', 'parent_id' => $item->encrypted_dok_id]) }}"
+                                    data-modal-title="Tambah {{ $childLabel ?? 'Turunan' }}"
+                                    size="sm" />
+                            </x-slot:actions>
+                        </x-tabler.card-header>
                         <x-tabler.datatable
                             id="children-table"
                             :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id])"
                             :columns="$childrenColumns"
                             ajax-load />
-                    </div>
+                    </x-tabler.card>
                 </div>
             @elseif($type === 'poin')
                 {{-- ============================================= --}}
@@ -246,15 +247,15 @@
                 {{-- ============================================= --}}
                 @if($isKebijakan && $mappableJenis)
                     <div class="tab-pane {{ (!$isRenopPoint) ? 'active show' : '' }}" id="tab-mapping" role="tabpanel">
-                        <div class="card bg-transparent shadow-none border mb-3">
-                            <div class="card-header border-0 d-flex justify-content-between align-items-center">
-                                <h2 class="card-title">
+                        <x-tabler.card class="bg-transparent shadow-none border mb-3">
+                            <x-tabler.card-header>
+                                <x-slot:title>
                                     <i class="ti ti-link icon me-1"></i>
                                     Mapping ke Poin {{ pemutuJenisLabel($mappableJenis) }}
                                     <span class="badge bg-muted-lt ms-2">{{ $item->mappedTo->count() }}</span>
-                                </h2>
-                            </div>
-                            <div class="card-body pt-0">
+                                </x-slot:title>
+                            </x-tabler.card-header>
+                            <x-tabler.card-body class="pt-0">
                                 {{-- Add mapping form --}}
                                 <div class="row mb-3">
                                     <div class="col">
@@ -304,8 +305,8 @@
                                         <i class="ti ti-link-off"></i> Belum ada mapping ke poin {{ pemutuJenisLabel($mappableJenis) }}.
                                     </div>
                                 @endif
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                 @endif
                 
@@ -314,24 +315,26 @@
                 {{-- ============================================= --}}
                 @if($isRenopPoint)
                     <div class="tab-pane active show" id="tab-indikator" role="tabpanel">
-                        <div class="card bg-transparent shadow-none border mb-3">
-                            <div class="card-header border-0 d-flex justify-content-between align-items-center">
-                                <h2 class="card-title">
+                        <x-tabler.card class="bg-transparent shadow-none border mb-3">
+                            <x-tabler.card-header>
+                                <x-slot:title>
                                     Daftar Indikator Renop
                                     <span class="badge bg-muted-lt ms-2">{{ $item->indikators->count() }}</span>
-                                </h2>
-                                @if($item->is_hasilkan_indikator)
-                                <x-tabler.button type="create" class="btn-success"
-                                    href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'renop', 'is_renop_context' => 1, 'redirect_to' => url()->current()]) }}"
-                                    text="Tambah Indikator" size="sm" />
-                                @endif
-                            </div>
+                                </x-slot:title>
+                                <x-slot:actions>
+                                    @if($item->is_hasilkan_indikator)
+                                    <x-tabler.button type="create" class="btn-success"
+                                        href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'renop', 'is_renop_context' => 1, 'redirect_to' => url()->current()]) }}"
+                                        text="Tambah Indikator" size="sm" />
+                                    @endif
+                                </x-slot:actions>
+                            </x-tabler.card-header>
                             <x-tabler.datatable
                                 id="indikator-table"
                                 :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'poin_indikator', 'id' => $item->encrypted_doksub_id])"
                                 :columns="$indikatorColumns"
                                 ajax-load />
-                        </div>
+                        </x-tabler.card>
                     </div>
                 @endif
 
@@ -341,40 +344,43 @@
                 @if(!$isKebijakan)
                     <div class="tab-pane active show" id="tab-subdokumen" role="tabpanel">
                         @if($item->is_hasilkan_indikator)
-                            <div class="card bg-transparent shadow-none border mb-3">
-                                <div class="card-header border-0 d-flex justify-content-between align-items-center">
-                                    <h2 class="card-title">
+                            <x-tabler.card class="bg-transparent shadow-none border mb-3">
+                                <x-tabler.card-header>
+                                    <x-slot:title>
                                         Indikator Terlampir
                                         <span class="badge bg-muted-lt ms-2">{{ $item->indikators->count() }}</span>
-                                    </h2>
-                                    <x-tabler.button type="create"
-                                        text="Tambah Indikator"
-                                        href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'spmi', 'is_renop_context' => 0, 'redirect_to' => url()->current()]) }}"
-                                        size="sm" />
-                                </div>
+                                    </x-slot:title>
+                                    <x-slot:actions>
+                                        <x-tabler.button type="create"
+                                            text="Tambah Indikator"
+                                            href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'spmi', 'is_renop_context' => 0, 'redirect_to' => url()->current()]) }}"
+                                            size="sm" />
+                                    </x-slot:actions>
+                                </x-tabler.card-header>
                                 <x-tabler.datatable
                                     id="indikators-table"
                                     :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'poin_indikator', 'id' => $item->encrypted_doksub_id])"
                                     :columns="$indikatorColumns"
                                     ajax-load />
-                            </div>
+                            </x-tabler.card>
                         @endif
 
                         @if(!$item->is_hasilkan_indikator)
-                            <div class="card bg-transparent shadow-none border">
-                                <div class="card-header border-0 d-flex justify-content-between align-items-center">
-                                    <h2 class="card-title">Poin ini memiliki beberapa Dokumen Turunan:</h2>
-                                    <x-tabler.button type="create" class="ajax-modal-btn"
-                                        text="Tambah Dokumen Turunan"
-                                        data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'parent_doksub_id' => $item->encrypted_doksub_id, 'parent_id' => $item->encrypted_dok_id]) }}"
-                                        data-modal-title="Tambah Dokumen Turunan" size="sm" />
-                                </div>
+                            <x-tabler.card class="bg-transparent shadow-none border">
+                                <x-tabler.card-header title="Poin ini memiliki beberapa Dokumen Turunan:">
+                                    <x-slot:actions>
+                                        <x-tabler.button type="create" class="ajax-modal-btn"
+                                            text="Tambah Dokumen Turunan"
+                                            data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'parent_doksub_id' => $item->encrypted_doksub_id, 'parent_id' => $item->encrypted_dok_id]) }}"
+                                            data-modal-title="Tambah Dokumen Turunan" size="sm" />
+                                    </x-slot:actions>
+                                </x-tabler.card-header>
                                 <x-tabler.datatable
                                     id="poin-children-table"
                                     :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'poin_dokumen', 'id' => $item->encrypted_doksub_id])"
                                     :columns="$poinChildrenColumns"
                                     ajax-load />
-                            </div>
+                            </x-tabler.card>
                         @endif
                     </div>
                 @endif
@@ -394,8 +400,8 @@
 
         </div>
 
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 
 {{-- File Upload AJAX Script --}}
 @if($type === 'dokumen')

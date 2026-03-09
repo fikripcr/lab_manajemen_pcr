@@ -1,8 +1,7 @@
-<div class="card mb-3">
-    <div class="card-header border-bottom">
-        <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
-            <h3 class="card-title mb-0">Daftar File Pegawai</h3>
-            <div class="ms-auto d-flex gap-2">
+<x-tabler.card class="mb-3">
+    <x-tabler.card-header title="Daftar File Pegawai">
+        <x-slot:actions>
+            <div class="d-flex gap-2">
                 <x-tabler.datatable-page-length dataTableId="files-table" />
                 <x-tabler.datatable-search dataTableId="files-table" />
                 <x-tabler.button 
@@ -13,8 +12,8 @@
                     icon="ti ti-upload"
                     text="Upload" />
             </div>
-        </div>
-    </div>
+        </x-slot:actions>
+    </x-tabler.card-header>
     <x-tabler.datatable
         id="files-table"
         route="{{ route('hr.pegawai.files.data', $pegawai->encrypted_pegawai_id) }}"
@@ -27,4 +26,4 @@
             ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-end'],
         ]"
     />
-</div>
+</x-tabler.card>

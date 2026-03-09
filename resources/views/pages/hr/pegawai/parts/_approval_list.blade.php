@@ -1,7 +1,5 @@
-<div class="card mb-3">
-    <div class="card-header">
-        <h3 class="card-title">Riwayat Approval</h3>
-    </div>
+<x-tabler.card class="mb-3">
+    <x-tabler.card-header title="Riwayat Approval" />
     <x-tabler.datatable
         id="approval-table"
         route="{{ route('hr.approval.index', ['pegawai_id' => $pegawai->encrypted_pegawai_id]) }}"
@@ -13,4 +11,4 @@
             ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-end'],
         ]"
     />
-</div>
+</x-tabler.card>

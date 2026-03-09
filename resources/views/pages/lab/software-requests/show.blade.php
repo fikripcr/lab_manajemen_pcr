@@ -90,10 +90,8 @@
     @section('content')
         <div class="row row-cards">
             <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-body">
-                        <x-tabler.flash-message />
-
+                <x-tabler.card>
+                    <x-tabler.card-body>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <h6 class="text-muted">Nama Software:</h6>
@@ -174,16 +172,14 @@
                                 {!! $softwareRequest->deskripsi !!}
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Approval Action</h3>
-                    </div>
-                    <div class="card-body">
+                <x-tabler.card>
+                    <x-tabler.card-header title="Approval Action" />
+                    <x-tabler.card-body>
                         @if(in_array($softwareRequest->status, ['pending', 'menunggu_approval', 'tangguhkan']))
                             <form class="ajax-form" action="{{ route('lab.software-requests.approve', $softwareRequest->id) }}" method="POST">
                                 @csrf
@@ -202,8 +198,8 @@
                                 <p class="text-muted">Status sudah diproses: <strong>{{ $statusText ?? ucfirst(str_replace('_', ' ', $softwareRequest->status)) }}</strong></p>
                             </div>
                         @endif
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
 

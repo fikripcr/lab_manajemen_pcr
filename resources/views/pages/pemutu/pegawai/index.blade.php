@@ -25,7 +25,6 @@
             </div>
         </x-tabler.card-header>
         <x-tabler.card-body class="p-0">
-            <x-tabler.flash-message />
             <x-tabler.datatable
                 id="pegawai-table"
                 :route="route('pemutu.pegawai.data')"

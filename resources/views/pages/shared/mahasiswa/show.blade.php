@@ -9,8 +9,8 @@
 @endsection
 
 @section('content')
-        <div class="card">
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-body>
                 <div class="datagrid">
                     <div class="datagrid-item">
                         <div class="datagrid-title">NIM</div>
@@ -33,6 +33,6 @@
                         <div class="datagrid-content">{{ $mahasiswa->angkatan ?? '-' }}</div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
 @endsection

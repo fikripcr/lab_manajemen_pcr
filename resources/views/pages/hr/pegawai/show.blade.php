@@ -32,8 +32,8 @@
 <div class="row">
     {{-- Top Navigation (Segmented Control) --}}
     <div class="col-12 mb-3">
-        <div class="card">
-            <div class="card-body p-2">
+        <x-tabler.card>
+            <x-tabler.card-body class="p-2">
                 <div class="nav nav-pills">
                     <a href="#section-datadiri" class="nav-link active" data-section="datadiri">
                         <i class="ti ti-user me-2"></i> Data Diri
@@ -66,8 +66,8 @@
                         <i class="ti ti-history me-2"></i> Approval
                     </a>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     {{-- Main Content Area --}}
@@ -77,10 +77,8 @@
         <div id="section-datadiri" class="content-section">
             
             @if($pendingChange)
-            <div class="card mb-3 border-info">
-                <div class="card-header">
-                    <h3 class="card-title text-info">Perbandingan Perubahan Data</h3>
-                </div>
+            <x-tabler.card class="mb-3 border-info">
+                <x-tabler.card-header title="Perbandingan Perubahan Data" class="text-info" />
                 <div class="table-responsive">
                     <table class="table table-vcenter card-table">
                         <thead>
@@ -104,16 +102,14 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </x-tabler.card>
             @endif
 
             <div class="row row-cards">
                     <div class="col-md-6">
-                        <div class="card card-sm">
-                            <div class="card-header">
-                                <h3 class="card-title">Informasi Pribadi</h3>
-                            </div>
-                            <div class="card-body">
+                        <x-tabler.card class="card-sm">
+                            <x-tabler.card-header title="Informasi Pribadi" />
+                            <x-tabler.card-body>
                                 <div class="datagrid">
                                     <div class="datagrid-item">
                                         <div class="datagrid-title">Nama Lengkap</div>
@@ -148,15 +144,13 @@
                                         <div class="datagrid-content">{{ $pegawai->latestDataDiri->posisi->name ?? '-' }}</div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                     <div class="col-md-6">
-                        <div class="card card-sm">
-                            <div class="card-header">
-                                <h3 class="card-title">Kontak & Identitas</h3>
-                            </div>
-                            <div class="card-body">
+                        <x-tabler.card class="card-sm">
+                            <x-tabler.card-header title="Kontak & Identitas" />
+                            <x-tabler.card-body>
                                 <div class="datagrid">
                                     <div class="datagrid-item">
                                         <div class="datagrid-title">NIP / NIK</div>
@@ -183,8 +177,8 @@
                                         <div class="datagrid-content">{{ $pegawai->latestDataDiri->npwp ?? '-' }}</div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                 </div>
             </div>

@@ -11,7 +11,7 @@
 
 @section('content')
 
-        <div class="card">
+        <x-tabler.card>
             <div class="card-body">
                 <x-tabler.datatable
                     id="table-jenis-dokumen"

@@ -19,8 +19,8 @@
 @endsection
 
 @section('content')
-        <div class="card">
-            <div class="card-header">
+        <x-tabler.card>
+            <x-tabler.card-header>
                 <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
                     <li class="nav-item">
                         <a href="#tabs-page" class="nav-link active" data-bs-toggle="tab">
@@ -33,12 +33,12 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-            <div class="card-body">
+            </x-tabler.card-header>
+            <x-tabler.card-body>
                 <div class="tab-content">
                     {{-- TAB 1: MANAJEMEN HALAMAN (DEFAULT) --}}
                     <div class="tab-pane active show" id="tabs-page">
-                        <div class="table-responsive">
+                        <x-tabler.card-body class="p-0">
                             <x-tabler.datatable
                                 id="pages-table"
                                 route="{{ route('shared.public-page.data') }}"
@@ -51,7 +51,7 @@
                                     ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                                 ]"
                             />
-                        </div>
+                        </x-tabler.card-body>
                     </div>
 
                     {{-- TAB 2: MANAJEMEN MENU --}}
@@ -71,8 +71,8 @@
                         @endif
                     </div>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
 @endsection
 
 @push('styles')

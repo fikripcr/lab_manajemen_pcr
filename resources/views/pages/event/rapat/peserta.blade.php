@@ -9,13 +9,9 @@
 @endsection
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Daftar Peserta Rapat</h3>
-        </div>
-        <div class="card-body">
-            <x-tabler.flash-message />
-
+    <x-tabler.card>
+        <x-tabler.card-header title="Daftar Peserta" />
+        <x-tabler.card-body class="p-0">
             <x-tabler.datatable
                 id="peserta-table" route="{{ route('Kegiatan.rapat.peserta.data', $rapat) }}" :columns="[
                 [

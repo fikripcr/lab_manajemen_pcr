@@ -5,11 +5,9 @@
     <x-tabler.page-header title="QR Code Display" pretitle="System Test" />
 @endsection
 
-<div class="card">
-    <div class="card-header">
-        <h5 class="card-title">QR Code for: {{ $text }}</h5>
-    </div>
-    <div class="card-body text-center">
+<x-tabler.card>
+    <x-tabler.card-header title="QR Code for: {{ $text }}" />
+    <x-tabler.card-body class="text-center">
         <div class="qr-container" style="display: inline-block; padding: 20px; background: white; border: 1px solid #ddd;">
             <img src="data:image/png;base64,{{ base64_encode($qrCodeSvg) }}" alt="QR Code" style="max-width: 100%; height: auto;">
         </div>

@@ -25,9 +25,7 @@
 @endsection
 
 @section('content')
-<x-tabler.flash-message />
-
-<div class="card">
+<x-tabler.card>
     <div class="card-body p-0">
         <div id="fullKanban"></div>
     </div>

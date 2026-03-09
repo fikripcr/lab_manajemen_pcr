@@ -36,8 +36,8 @@
             @endif
 
             <div class="col-12 d-none">
-                <div class="card card-md border-0 shadow-sm overflow-hidden" style="background: linear-gradient(135deg, #1e3a5f 0%, #2c3e50 50%, #34495e 100%); color: white; border-radius: 12px;">
-                    <div class="card-body d-flex align-items-center py-5 position-relative">
+                <x-tabler.card class="card-md border-0 shadow-sm overflow-hidden" style="background: linear-gradient(135deg, #1e3a5f 0%, #2c3e50 50%, #34495e 100%); color: white; border-radius: 12px;">
+                    <x-tabler.card-body class="d-flex align-items-center py-5 position-relative">
                         <div class="me-4 d-none d-md-block">
                             <span class="avatar avatar-xl rounded-circle border border-2 border-white-50 shadow-sm" style="background-image: url(https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=0054a6&color=fff&size=128)"></span>
                         </div>
@@ -52,16 +52,16 @@
                         <div class="ms-auto d-none d-lg-block opacity-10 position-absolute end-0 me-4">
                             <i class="ti ti-school" style="font-size: 10rem;"></i>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <div class="col-lg-5 mt-4">
                 <div class="d-flex align-items-center mb-3">
                     <h3 class="m-0 fw-bold"><i class="ti ti-speakerphone me-2 text-primary"></i> Pengumuman</h3>
                 </div>
-                <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                    <div class="card-body">
+                <x-tabler.card class="shadow-sm border-0" style="border-radius: 12px;">
+                    <x-tabler.card-body>
                         <ul class="timeline">
                             @forelse($recentAnnouncements as $announcement)
                             <li class="timeline-event">
@@ -89,8 +89,8 @@
                                <i class="ti ti-chevron-right me-1"></i> Lihat Semua
                             </a>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <div class="col-lg-7 mt-4">
@@ -99,7 +99,7 @@
                 </div>
                 <div class="vstack gap-3">
                     @forelse($recentNews as $news)
-                    <div class="card border-0 shadow-sm hover-shadow-lg transition-shadow" style="border-radius: 12px; overflow: hidden;">
+                    <x-tabler.card class="border-0 shadow-sm hover-shadow-lg transition-shadow" style="border-radius: 12px; overflow: hidden;">
                         <div class="row g-0">
                             @if($news->cover_medium_url)
                             <div class="col-md-3 col-lg-2">
@@ -111,7 +111,7 @@
                             </div>
                             @endif
                             <div class="col-md-9 col-lg-10">
-                                <div class="card-body p-3 p-md-4">
+                                <x-tabler.card-body class="p-3 p-md-4">
                                     <div class="d-flex align-items-center mb-2">
                                         <i class="ti ti-calendar-event me-1 text-muted"></i>
                                         <span class="text-muted small">{{ $news->created_at->diffForHumans() }}</span>
@@ -123,17 +123,17 @@
                                     <div class="d-flex align-items-center">
                                         <span class="small fw-bold text-primary">Baca Lengkap <i class="ti ti-arrow-right ms-1"></i></span>
                                     </div>
-                                </div>
+                                </x-tabler.card-body>
                             </div>
                         </div>
-                    </div>
+                    </x-tabler.card>
                     @empty
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body text-center py-5">
+                    <x-tabler.card class="border-0 shadow-sm">
+                        <x-tabler.card-body class="text-center py-5">
                             <i class="ti ti-news text-muted mb-3" style="font-size: 3rem;"></i>
                             <p class="text-muted mb-0">Tidak ada berita terbaru.</p>
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                     @endforelse
                 </div>
             </div>

@@ -2,44 +2,44 @@
     <x-tabler.form-modal title="{{ $lab->name }}" method="none">
         <div class="row g-2 mb-3">
             <div class="col-6 col-sm-3">
-                <div class="card card-sm">
-                    <div class="card-body">
+                <x-tabler.card class="card-sm">
+                    <x-tabler.card-body>
                         <div class="d-flex align-items-center">
                             <span class="bg-primary text-white avatar avatar-xs me-2"><i class="ti ti-users"></i></span>
                             <div class="font-weight-medium small">{{ $lab->capacity }} Org</div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
             <div class="col-6 col-sm-3">
-                <div class="card card-sm">
-                    <div class="card-body">
+                <x-tabler.card class="card-sm">
+                    <x-tabler.card-body>
                         <div class="d-flex align-items-center">
                             <span class="bg-green text-white avatar avatar-xs me-2"><i class="ti ti-package"></i></span>
                             <div class="font-weight-medium small">{{ $lab->labInventaris->count() }} Item</div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
             <div class="col-6 col-sm-3">
-                <div class="card card-sm">
-                    <div class="card-body">
+                <x-tabler.card class="card-sm">
+                    <x-tabler.card-body>
                         <div class="d-flex align-items-center">
                             <span class="bg-yellow text-white avatar avatar-xs me-2"><i class="ti ti-calendar"></i></span>
                             <div class="font-weight-medium small">{{ $lab->jadwals->count() }} Sesi</div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
             <div class="col-6 col-sm-3">
-                <div class="card card-sm">
-                    <div class="card-body">
+                <x-tabler.card class="card-sm">
+                    <x-tabler.card-body>
                         <div class="d-flex align-items-center">
                             <span class="bg-blue text-white avatar avatar-xs me-2"><i class="ti ti-user-shield"></i></span>
                             <div class="font-weight-medium small">{{ $lab->labTeams->count() }} Tm</div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
 
@@ -92,8 +92,8 @@
         <div class="row row-cards">
             <!-- Top Stats Row -->
             <div class="col-sm-6 col-lg-3">
-                <div class="card card-sm">
-                    <div class="card-body">
+                <x-tabler.card class="card-sm">
+                    <x-tabler.card-body>
                         <div class="row align-items-center">
                             <div class="col-auto">
                                 <span class="bg-primary text-white avatar">
@@ -105,12 +105,12 @@
                                 <div class="text-muted">{{ $lab->capacity }} Orang</div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
             <div class="col-sm-6 col-lg-3">
-                <div class="card card-sm">
-                    <div class="card-body">
+                <x-tabler.card class="card-sm">
+                    <x-tabler.card-body>
                         <div class="row align-items-center">
                             <div class="col-auto">
                                 <span class="bg-green text-white avatar">
@@ -122,12 +122,12 @@
                                 <div class="text-muted">{{ $lab->labInventaris->count() }} Item</div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
             <div class="col-sm-6 col-lg-3">
-                <div class="card card-sm">
-                    <div class="card-body">
+                <x-tabler.card class="card-sm">
+                    <x-tabler.card-body>
                         <div class="row align-items-center">
                             <div class="col-auto">
                                 <span class="bg-yellow text-white avatar">
@@ -139,12 +139,12 @@
                                 <div class="text-muted">{{ $lab->jadwals->count() }} Sesi</div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
             <div class="col-sm-6 col-lg-3">
-                <div class="card card-sm">
-                    <div class="card-body">
+                <x-tabler.card class="card-sm">
+                    <x-tabler.card-body>
                         <div class="row align-items-center">
                             <div class="col-auto">
                                 <span class="bg-blue text-white avatar">
@@ -156,20 +156,19 @@
                                 <div class="text-muted">{{ $lab->labTeams->count() }} Anggota</div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <!-- Main Content (Left) -->
             <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Informasi Laboratorium</h3>
-                        <div class="card-actions">
+                <x-tabler.card>
+                    <x-tabler.card-header title="Informasi Laboratorium">
+                        <x-slot:actions>
                             <span class="badge bg-muted-lt"><i class="ti ti-map-pin me-1"></i> {{ $lab->location }}</span>
-                        </div>
-                    </div>
-                    <div class="card-body">
+                        </x-slot:actions>
+                    </x-tabler.card-header>
+                    <x-tabler.card-body>
                         <div class="markdown">
                             {!! $lab->description ?: '<em class="text-muted">Tidak ada deskripsi.</em>' !!}
                         </div>
@@ -210,18 +209,17 @@
                                 </div>
                             </div>
                         @endif
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
 
                 <!-- Inventaris Terbaru -->
-                <div class="card mt-3">
-                    <div class="card-header">
-                        <h3 class="card-title">Inventaris Terbaru</h3>
-                        <div class="card-actions btn-group">
+                <x-tabler.card class="mt-3">
+                    <x-tabler.card-header title="Inventaris Terbaru">
+                        <x-slot:actions>
                             <x-tabler.button type="create" class="btn-sm ajax-modal-btn" 
                                 data-url="{{ route('lab.labs.inventaris.create', $lab->encrypted_lab_id) }}" />
-                        </div>
-                    </div>
+                        </x-slot:actions>
+                    </x-tabler.card-header>
                     <div class="list-group list-group-flush">
                         @forelse ($lab->labInventaris()->with('inventaris')->orderBy('tanggal_penempatan', 'desc')->take(10)->get() as $item)
                             <div class="list-group-item">
@@ -243,17 +241,15 @@
                             </div>
                         @endforelse
                     </div>
-                </div>
+                </x-tabler.card>
             </div>
 
             <!-- Sidebar Content (Right) -->
             <div class="col-lg-4">
                 <!-- Schedule Widget -->
-                <div class="card mb-3">
-                    <div class="card-header">
-                        <h3 class="card-title">Jadwal Mendatang</h3>
-                    </div>
-                    <div class="card-body card-body-scrollable card-body-scrollable-shadow" style="max-height: 300px;">
+                <x-tabler.card class="mb-3">
+                    <x-tabler.card-header title="Jadwal Mendatang" />
+                    <x-tabler.card-body class="card-body-scrollable card-body-scrollable-shadow" style="max-height: 300px;">
                         <div class="divide-y">
                             @forelse ($lab->jadwals->sortBy('hari_id')->take(5) as $jadwal)
                                 <div>
@@ -274,23 +270,22 @@
                                 <div class="text-center text-muted small py-3">Tidak ada jadwal.</div>
                             @endforelse
                         </div>
-                    </div>
+                    </x-tabler.card-body>
                     @if($lab->jadwals->count() > 5)
                         <div class="card-footer p-2 text-center">
                             <a href="{{ route('lab.jadwal.index') }}" class="small">Lihat Semua</a>
                         </div>
                     @endif
-                </div>
+                </x-tabler.card>
 
                 <!-- Team Widget -->
-                <div class="card mb-3">
-                    <div class="card-header">
-                        <h3 class="card-title">Tim Lab</h3>
-                        <div class="card-actions btn-group">
+                <x-tabler.card class="mb-3">
+                    <x-tabler.card-header title="Tim Lab">
+                        <x-slot:actions>
                             <x-tabler.button type="create" class="btn-sm ajax-modal-btn" 
                                 data-url="{{ route('lab.labs.teams.create', $lab->encrypted_lab_id) }}" />
-                        </div>
-                    </div>
+                        </x-slot:actions>
+                    </x-tabler.card-header>
                     <div class="list-group list-group-flush">
                         @forelse ($lab->getActiveTeamMembers()->take(5) as $teamMember)
                             <div class="list-group-item">
@@ -315,7 +310,7 @@
                             </div>
                         @endforelse
                     </div>
-                </div>
+                </x-tabler.card>
 
             </div>
         </div>

@@ -13,13 +13,9 @@
         <div class="col-lg-6">
             
             {{-- Flatpickr Date Picker --}}
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="ti ti-calendar me-2"></i> Flatpickr Date Picker
-                    </h3>
-                </div>
-                <div class="card-body">
+            <x-tabler.card class="mb-3">
+                <x-tabler.card-header title="Flatpickr Date Picker" icon="ti ti-calendar" />
+                <x-tabler.card-body>
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <x-tabler.form-input type="date" name="datePicker" label="Basic Date Picker" placeholder="Select date" />
@@ -36,17 +32,13 @@
                             <x-tabler.form-input type="multiple" name="multiplePicker" label="Multiple Dates" placeholder="Select multiple" />
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
 
             {{-- Choices.js Test --}}
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="ti ti-list-check me-2"></i> Select2 Advanced Select
-                    </h3>
-                </div>
-                <div class="card-body">
+            <x-tabler.card class="mb-3">
+                <x-tabler.card-header title="Select2 Advanced Select" icon="ti ti-list-check" />
+                <x-tabler.card-body>
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <x-tabler.form-select 
@@ -92,35 +84,27 @@
                             No values selected yet.
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
 
         </div>
 
         <div class="col-lg-6">
 
             {{-- FilePond Section --}}
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="ti ti-upload me-2"></i> FilePond Upload
-                    </h3>
-                </div>
-                <div class="card-body">
+            <x-tabler.card class="mb-3">
+                <x-tabler.card-header title="FilePond Upload" icon="ti ti-upload" />
+                <x-tabler.card-body>
                     <label for="filepond" class="form-label">Upload Files</label>
                     <input type="file" id="filepond" class="form-control" multiple>
                     <div class="form-hint">Supports multiple file upload with preview.</div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
 
             {{-- HugeRTE Editor Test --}}
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="ti ti-edit me-2"></i> HugeRTE Editor
-                    </h3>
-                </div>
-                <div class="card-body">
+            <x-tabler.card class="mb-3">
+                <x-tabler.card-header title="HugeRTE Editor" icon="ti ti-edit" />
+                <x-tabler.card-body>
                     <form id="tinymceTestForm">
                         <div class="mb-3">
                             <x-tabler.form-textarea type="editor" id="editorContent" name="isi" label="Content" :value="old('isi')" height="250" required="true" />
@@ -135,19 +119,15 @@
                         <div class="form-label">Content Preview</div>
                         <div id="contentPreview" class="border p-3 bg-light rounded" style="min-height: 100px;"></div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
 
         </div>
 
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="ti ti-bell me-2"></i> SweetAlert2 Utilities
-                    </h3>
-                </div>
-                <div class="card-body">
+            <x-tabler.card>
+                <x-tabler.card-header title="SweetAlert2 Utilities" icon="ti ti-bell" />
+                <x-tabler.card-body>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <h4 class="card-subtitle mb-3">Basic Alerts</h4>
@@ -171,8 +151,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
 @endsection

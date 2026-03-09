@@ -11,13 +11,11 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            <x-tabler.flash-message />
-
             <div class="row g-4">
                 <!-- Profile Card -->
                 <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body text-center">
+                    <x-tabler.card>
+                        <x-tabler.card-body class="text-center">
                             <div class="mb-3">
                                 <a href="{{$user->avatar_url}}" target="_blank">
                                     <img src="{{ $user->avatar_medium_url }}" 
@@ -49,19 +47,15 @@
                                 
                                 <x-tabler.button type="button" class="btn-warning ajax-modal-btn" data-url="{{ route('sys.users.change-password') }}" icon="ti ti-key" text="Change Password" />
                             </div>
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                 </div>
 
                 <!-- Account Information Card -->
                 <div class="col-md-9">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="ti ti-info-circle me-2"></i>Account Information
-                            </h3>
-                        </div>
-                        <div class="card-body">
+                    <x-tabler.card>
+                        <x-tabler.card-header title="Account Information" icon="ti ti-info-circle" />
+                        <x-tabler.card-body>
                             <div class="row g-3">
                                 <!-- Email Verification -->
                                 <div class="col-md-4">
@@ -165,13 +159,13 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                 </div>
                 <!-- User Logs Tabs -->
                 <div class="col-12 mt-4">
-                    <div class="card">
-                        <div class="card-header">
+                    <x-tabler.card>
+                        <x-tabler.card-header>
                             <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
                                 <li class="nav-item">
                                     <a href="#tabs-activity" class="nav-link active" data-bs-toggle="tab" data-dt-id="dt-activity">
@@ -189,8 +183,8 @@
                                     </a>
                                 </li>
                             </ul>
-                        </div>
-                        <div class="card-body">
+                        </x-tabler.card-header>
+                        <x-tabler.card-body>
                             <div class="tab-content">
                                 <!-- Activity Tab -->
                                 <div class="tab-pane active show" id="tabs-activity">
@@ -254,8 +248,8 @@
                                     />
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                 </div>
 
             </div>

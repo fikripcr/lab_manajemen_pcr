@@ -14,13 +14,13 @@
         <div class="row g-4">
             <!-- Sidebar: Halaman -->
             <div class="col-md-3">
-                <div class="card sticky-top">
-                    <div class="card-header">
+                <x-tabler.card class="sticky-top">
+                    <x-tabler.card-header>
                         <h3 class="card-title">Halaman</h3>
-                        <div class="card-actions">
+                        <x-slot:actions>
                             <x-tabler.button type="create" class="btn-icon py-1 px-1 bg-primary-lt" id="btn-add-halaman" title="Tambah Halaman" />
-                        </div>
-                    </div>
+                        </x-slot:actions>
+                    </x-tabler.card-header>
                     <div class="list-group list-group-flush" id="list-halaman">
                         @foreach($survei->halaman as $halaman)
                         <div class="list-group-item list-group-item-action d-flex align-items-center {{ $loop->first ? 'active' : '' }}"
@@ -42,9 +42,8 @@
                                 </div>
                             </div>
                         </div>
-                        @endforeach
                     </div>
-                </div>
+                </x-tabler.card>
             </div>
 
             <!-- Content: Pertanyaan -->
@@ -52,8 +51,8 @@
                 <div id="halaman-content-wrapper">
                     @foreach($survei->halaman as $halaman)
                     <div class="halaman-pane {{ $loop->first ? '' : 'd-none' }}" id="halaman-{{ $halaman->encrypted_halaman_id }}">
-                        <div class="card">
-                            <div class="card-header">
+                        <x-tabler.card>
+                            <x-tabler.card-header>
                                 <div>
                                     <h3 class="card-title mb-0">Pertanyaan di <span class="fw-bold halaman-title-display">{{ $halaman->judul_halaman }}</span></h3>
                                     @if($halaman->deskripsi_halaman)
@@ -62,7 +61,7 @@
                                     <div class="text-muted small mt-1 halaman-deskripsi-display"></div>
                                     @endif
                                 </div>
-                                <div class="card-actions">
+                                <x-slot:actions>
                                     <div class="dropdown">
                                         <x-tabler.button type="create" class="bg-primary-lt text-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" text="Tambah" />
                                         <div class="dropdown-menu dropdown-menu-end">
@@ -73,21 +72,19 @@
                                             @endforeach
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="card-body">
+                                </x-slot:actions>
+                            </x-tabler.card-header>
+                            <x-tabler.card-body>
                                 <div class="pertanyaan-list" data-halaman-id="{{ $halaman->encrypted_halaman_id }}">
                                     @foreach($halaman->pertanyaan as $pertanyaan)
                                         @include('pages.survei.admin.partials.question_card', ['pertanyaan' => $pertanyaan])
                                     @endforeach
                                 </div>
-                                <div class="p-3 text-center text-muted empty-state {{ $halaman->pertanyaan->count() > 0 ? 'd-none' : '' }}">
-                                    <i class="ti ti-mood-empty" style="font-size:2rem;"></i>
-                                    <p class="mt-2 mb-0">Belum ada pertanyaan di halaman ini.</p>
-                                    <p class="small">Klik <strong>"Tambah"</strong> untuk menambahkan pertanyaan.</p>
+                                <div class="empty-state {{ $halaman->pertanyaan->count() > 0 ? 'd-none' : '' }}">
+                                    <x-tabler.empty-state title="Belum ada pertanyaan" text="Klik 'Tambah' untuk menambahkan pertanyaan." />
                                 </div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                     @endforeach
                 </div>

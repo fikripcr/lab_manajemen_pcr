@@ -28,11 +28,7 @@
     <div class="col-lg-4">
         {{-- Event Card --}}
         <div class="card shadow-sm">
-            <div class="card-header bg-primary-lt">
-                <h3 class="card-title text-primary">
-                    <i class="ti ti-info-circle me-2"></i>Informasi Kegiatan
-                </h3>
-            </div>
+            <x-tabler.card-header title="Informasi Kegiatan" class="bg-primary-lt text-primary" icon="ti ti-info-circle" />
             <div class="card-body">
                 <div class="mb-4">
                     <label class="form-label text-muted small text-uppercase fw-bold">

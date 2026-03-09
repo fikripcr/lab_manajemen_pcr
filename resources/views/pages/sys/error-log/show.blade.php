@@ -85,8 +85,8 @@
     @section('content')
         <div class="row">
             <div class="col-md-12">
-                <div class="card mb-4">
-                    <div class="card-body">
+                <x-tabler.card class="mb-4">
+                    <x-tabler.card-body>
                         <div class="table-responsive">
                             <table class="table table-striped table-borderless">
                                 <tr>
@@ -149,29 +149,26 @@
                                 </tr>
                             </table>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
 
-                <div class="card mb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Stack Trace</h5>
-                    </div>
-                    <div class="card-body">
+                <x-tabler.card class="mb-4">
+                    <x-tabler.card-header title="Stack Trace" class="d-flex justify-content-between align-items-center" />
+                    <x-tabler.card-body>
                         <pre class="bg-dark text-light p-3 rounded" style="max-height: 400px; overflow-y: auto; white-space: pre-wrap;">
                             {{ $errorLog->formatted_trace }}
                         </pre>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
 
                 @if ($errorLog->context)
                     <div class="card mb-4">
-                        <div class="card-header">
-                            <h5 class="mb-0">Context Information</h5>
-                        </div>
-                        <div class="card-body">
+                    <x-tabler.card class="mb-4">
+                        <x-tabler.card-header title="Context Information" />
+                        <x-tabler.card-body>
                             <pre class="bg-light text-dark p-3 rounded">{{ json_encode($errorLog->context, JSON_PRETTY_PRINT) }}</pre>
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                 @endif
             </div>
         </div>

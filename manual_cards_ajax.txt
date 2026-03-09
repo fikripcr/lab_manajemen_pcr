@@ -1,0 +1,7 @@
+resources/views/pages/pemutu/evaluasi-diri/edit-ajax.blade.php
+resources/views/pages/pemutu/indikator/create-edit-ajax.blade.php
+resources/views/pages/pemutu/standar/create-edit-ajax.blade.php
+resources/views/pages/lab/labs/create-edit-ajax.blade.php
+resources/views/pages/event/rapat/create-edit-ajax.blade.php
+resources/views/pages/eoffice/layanan/create-edit-ajax.blade.php
+resources/views/pages/shared/personil/create-edit-ajax.blade.php

@@ -12,9 +12,9 @@
 
         <div class="row row-cards">
             <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header"><h3 class="card-title">Tambah Syarat</h3></div>
-                    <div class="card-body">
+                <x-tabler.card class="mb-3">
+                    <x-tabler.card-header title="Tambah Syarat" />
+                    <x-tabler.card-body>
                         <form action="{{ route('pmb.syarat-jalur.store') }}" method="POST" class="ajax-form" data-redirect="true">
                             @csrf
                             <input type="hidden" name="jalur_id" value="{{ $jalur->encrypted_jalur_id }}">
@@ -32,12 +32,13 @@
                                 <x-tabler.button type="submit" class="w-100" text="Tambah Syarat" />
                             </div>
                         </form>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
             <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header"><h3 class="card-title">Daftar Syarat Dokumen</h3></div>
+                <x-tabler.card>
+                    <x-tabler.card-header title="Daftar Syarat Dokumen" />
+                    <x-tabler.card-body class="p-0">
                     <x-tabler.datatable-client
                         id="table-syarat"
                         :columns="[
@@ -78,7 +79,7 @@
                             Belum ada syarat dokumen.
                         </div>
                     @endif
-                </div>
-            </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
         </div>
 @endsection

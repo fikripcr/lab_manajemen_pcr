@@ -21,7 +21,6 @@
         </div>
     </div>
     <div class="card-body p-0">
-         <x-tabler.flash-message />
         <x-tabler.datatable
             id="jenis-shift-table"
             route="{{ route('hr.jenis-shift.data') }}"

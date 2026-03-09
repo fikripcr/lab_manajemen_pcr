@@ -3,8 +3,6 @@
     :route="$faq->exists ? route('shared.faq.update', $faq->encrypted_faq_id) : route('shared.faq.store')"
     :method="$faq->exists ? 'PUT' : 'POST'"
 >
-    <x-tabler.flash-message />
-    
     <x-tabler.form-input 
         name="question" 
         label="Pertanyaan" 

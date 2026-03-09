@@ -5,8 +5,8 @@
 @endsection
 
 @section('content')
-        <div class="card">
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-body class="p-0">
                 <x-tabler.datatable
                     id="table-pegawai"
                     route="{{ route('shared.pegawai.data') }}"
@@ -19,6 +19,6 @@
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                     ]"
                 />
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
 @endsection

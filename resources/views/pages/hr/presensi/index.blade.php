@@ -34,11 +34,9 @@ window.addEventListener('load', function() {
 <div class="row row-deck row-cards">
     <!-- Main Status Card -->
     <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Presensi Hari Ini</h3>
-            </div>
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-header title="Presensi Hari Ini" />
+            <x-tabler.card-body>
                 <div class="d-flex align-items-center mb-4">
                     <div class="me-3">
                         <div class="avatar avatar-xl rounded-circle" style="background-color: #f3f4f6;">
@@ -132,17 +130,15 @@ window.addEventListener('load', function() {
                         <x-tabler.button id="btn-cancel-camera" class="btn-link text-muted" text="Batal" />
                     </div>
                 </div>
-            </div>
-        </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
     </div>
     
     <!-- Quick Info Card -->
     <div class="col-md-4">
-        <div class="card mb-3">
-            <div class="card-header">
-                <h3 class="card-title">Informasi Jabatan</h3>
-            </div>
-            <div class="card-body">
+        <x-tabler.card class="mb-3">
+            <x-tabler.card-header title="Informasi Jabatan" />
+            <x-tabler.card-body>
                 <div class="mb-3">
                     <label class="form-label text-muted small uppercase">Jabatan Utama</label>
                     <div class="fw-bold">{{ auth()->user()->pegawai->jabatan_terakhir ?? 'Staf' }}</div>
@@ -157,14 +153,12 @@ window.addEventListener('load', function() {
                         <span class="badge bg-blue-lt">Tetap</span>
                     </div>
                 </div>
-            </div>
-        </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Jadwal Kerja</h3>
-            </div>
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-header title="Jadwal Kerja" />
+            <x-tabler.card-body>
                 <div class="list-group list-group-flush">
                     <div class="list-group-item px-0">
                         <div class="row align-items-center">
@@ -179,8 +173,8 @@ window.addEventListener('load', function() {
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
     </div>
 </div>
 

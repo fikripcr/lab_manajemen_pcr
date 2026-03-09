@@ -1,16 +1,10 @@
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">
-            <i class="ti ti-clock me-2"></i>
-            Persetujuan Pending
-        </h3>
-        <div class="card-actions">
-            <a href="{{ route('hr.approval.index') }}" class="btn btn-sm btn-primary">
-                Lihat Semua
-            </a>
-        </div>
-    </div>
-    <div class="card-body">
+<x-tabler.card>
+    <x-tabler.card-header title="Persetujuan Pending" icon="ti ti-clock">
+        <x-slot:actions>
+            <x-tabler.button href="{{ route('hr.approval.index') }}" class="btn-primary btn-sm" text="Lihat Semua" />
+        </x-slot:actions>
+    </x-tabler.card-header>
+    <x-tabler.card-body>
         @if($pendingCount > 0)
             <div class="alert alert-warning mb-3">
                 <i class="ti ti-alert-triangle me-2"></i>
@@ -32,9 +26,7 @@
                                 </div>
                             </div>
                             <div class="ms-3">
-                                <a href="{{ route('hr.approval.index') }}" class="btn btn-sm btn-outline-primary">
-                                    Review
-                                </a>
+                                <x-tabler.button href="{{ route('hr.approval.index') }}" class="btn-outline-primary btn-sm" text="Review" />
                             </div>
                         </div>
                     @endforeach
@@ -49,5 +41,5 @@
                 </div>
             </div>
         @endif
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>

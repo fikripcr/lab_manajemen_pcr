@@ -9,8 +9,8 @@
 @endsection
 
 @section('content')
-<div class="card overflow-hidden">
-    <div class="card-header">
+<x-tabler.card class="overflow-hidden">
+    <x-tabler.card-header>
         <div class="d-flex flex-wrap gap-2">
             <div>
                 <x-tabler.datatable-page-length :dataTableId="'status-aktifitas-table'" />
@@ -19,9 +19,8 @@
                 <x-tabler.datatable-search :dataTableId="'status-aktifitas-table'" />
             </div>
         </div>
-    </div>
-    <div class="card-body p-0">
-         <x-tabler.flash-message />
+    </x-tabler.card-header>
+    <x-tabler.card-body class="p-0">
         <x-tabler.datatable
             id="status-aktifitas-table"
             route="{{ route('hr.status-aktifitas.data') }}"
@@ -32,6 +31,6 @@
                 ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
             ]"
         />
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection

@@ -119,13 +119,12 @@
         <button type="button" class="btn btn-outline-secondary">Peningkatan</button>
     </x-slot:actions>
 </x-tabler.page-header>
-
 @endsection
 
 @section('content')
     {{-- FILTERS ROW --}}
-    <div class="card mb-3 metric-card">
-        <div class="card-body py-2">
+    <x-tabler.card class="mb-3 metric-card">
+        <x-tabler.card-body class="py-2">
             <form method="GET" action="{{ route('pemutu.dashboard') }}" class="row g-3" id="filter-form">
                 <div class="col-md-3 form-col-filter">
                     <label class="form-label mb-1">Tahun</label>
@@ -158,15 +157,15 @@
                     <a href="{{ route('pemutu.dashboard') }}" class="btn btn-sm btn-light w-100">Reset Filters</a>
                 </div>
             </form>
-        </div>
-    </div>
+        </x-tabler.card-body>
+    </x-tabler.card>
 
     {{-- TOP ROW: 8 KPI CARDS (2 rows of 4) --}}
     <div class="row g-3 mb-3">
         {{-- Row 1: Totals & Primary Metrics --}}
         <div class="col-md-3">
-            <div class="card metric-card">
-                <div class="card-body d-flex flex-column">
+            <x-tabler.card class="metric-card">
+                <x-tabler.card-body class="d-flex flex-column">
                     <div class="metric-title">Total Indikator</div>
                     <div class="d-flex align-items-center mb-1">
                         <div class="metric-value me-3">{{ end($trendData['indikator']) }}</div>
@@ -174,12 +173,12 @@
                     <div class="mt-auto">
                         <div id="sparkline-indikator" style="min-height: 35px;"></div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
         <div class="col-md-3">
-            <div class="card metric-card">
-                <div class="card-body d-flex flex-column">
+            <x-tabler.card class="metric-card">
+                <x-tabler.card-body class="d-flex flex-column">
                     <div class="metric-title">Total Standar SPMI</div>
                     <div class="d-flex align-items-center mb-1">
                         <div class="metric-value me-3">{{ end($trendData['standar']) }}</div>
@@ -187,8 +186,8 @@
                     <div class="mt-auto">
                         <div id="sparkline-standar" style="min-height: 35px;"></div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
         @php
             $topMetrics = [
@@ -199,8 +198,8 @@
         @foreach($topMetrics as $c)
         @php $m = $metrics[$c['id']]; @endphp
         <div class="col-md-3">
-            <div class="card metric-card">
-                <div class="card-body">
+            <x-tabler.card class="metric-card">
+                <x-tabler.card-body>
                     <div class="metric-title">{{ $c['title'] }}</div>
                     <div class="metric-value">{{ number_format($m['val']) }}</div>
                     <div class="metric-trend text-{{ $m['color'] }}">
@@ -209,8 +208,8 @@
                         @endif
                         {{ $m['pct'] }}% <span class="text-muted ms-1">vs Last Year</span>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
         @endforeach
 
@@ -226,8 +225,8 @@
         @foreach($statusMetrics as $c)
         @php $m = $metrics[$c['id']]; @endphp
         <div class="col-md-3">
-            <div class="card metric-card">
-                <div class="card-body">
+            <x-tabler.card class="metric-card">
+                <x-tabler.card-body>
                     <div class="metric-title">{{ $c['title'] }}</div>
                     <div class="metric-value">{{ number_format($m['val']) }}</div>
                     <div class="metric-trend text-{{ $m['color'] }}">
@@ -236,8 +235,8 @@
                         @endif
                         {{ $m['pct'] }}% <span class="text-muted ms-1">vs Last Year</span>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
         @endforeach
     </div>
@@ -246,21 +245,21 @@
     <div class="row g-3 mb-3">
         {{-- Donut Chart Column --}}
         <div class="col-lg-4">
-            <div class="card metric-card">
-                <div class="card-body">
-                    <h6 class="fw-bold mb-3 border-bottom pb-2">Penetapan Jenis Kriteria</h6>
+            <x-tabler.card class="metric-card">
+                <x-tabler.card-header title="Penetapan Jenis Kriteria" />
+                <x-tabler.card-body>
                     <div id="chart-kriteria" style="min-height: 280px;"></div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
         {{-- Unit Rankings Column --}}
         <div class="col-lg-4">
-            <div class="card metric-card">
-                <div class="card-body">
-                    <h6 class="fw-bold mb-3 border-bottom pb-2">Top 3 Unit/Prodi</h6>
+            <x-tabler.card class="metric-card">
+                <x-tabler.card-header title="Top 3 Unit/Prodi" />
+                <x-tabler.card-body>
                     <div class="mb-4">
-                        <div class="text-success fw-bold mb-2Small" style="font-size: 0.7rem;">TERTINGGI</div>
+                        <div class="text-success fw-bold mb-2" style="font-size: 0.7rem;">TERTINGGI</div>
                         @foreach($top3Units as $u)
                             <div class="hbar-row">
                                 <div class="hbar-label" title="{{ $u->unit_name }}">{{ $u->unit_name }}</div>
@@ -281,15 +280,15 @@
                             </div>
                         @endforeach
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
         {{-- Standar Rankings Column --}}
         <div class="col-lg-4">
-            <div class="card metric-card">
-                <div class="card-body">
-                    <h6 class="fw-bold mb-3 border-bottom pb-2">Top 3 Standar</h6>
+            <x-tabler.card class="metric-card">
+                <x-tabler.card-header title="Top 3 Standar" />
+                <x-tabler.card-body>
                     <div class="mb-4">
                         <div class="text-success fw-bold mb-2" style="font-size: 0.7rem;">TERTINGGI</div>
                         @foreach($top3Standar as $s)
@@ -312,17 +311,17 @@
                             </div>
                         @endforeach
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
 
     {{-- BOTTOM ROW: Eisenhower Matrix --}}
     <div class="row">
         <div class="col-12">
-            <div class="card metric-card">
-                <div class="card-body">
-                    <h6 class="fw-bold mb-3 border-bottom pb-2">Prioritas Pengendalian (Eisenhower Matrix)</h6>
+            <x-tabler.card class="metric-card">
+                <x-tabler.card-header title="Prioritas Pengendalian (Eisenhower Matrix)" />
+                <x-tabler.card-body>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="row g-2">
@@ -358,11 +357,10 @@
                                         <div class="subtitle">Indikator Terdeteksi</div>
                                     </div>
                                 </div>
-                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
 

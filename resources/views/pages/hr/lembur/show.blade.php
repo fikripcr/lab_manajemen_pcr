@@ -7,11 +7,10 @@
 @section('content')
     <div class="row row-cards">
         <div class="col-lg-8">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h3 class="card-title">Informasi Lembur</h3>
-                    <div class="card-actions">
-                         @php 
+                <x-tabler.card class="mb-3">
+                    <x-tabler.card-header title="Informasi Lembur">
+                        <x-slot:actions>
+                         @php
                             $status = strtolower($lembur->status_approval);
                             $badgeColor = [
                                 'approved' => 'success',
@@ -23,9 +22,9 @@
                          <span class="badge bg-{{ $badgeColor }} text-white">
                             {{ ucfirst($lembur->status_approval) }}
                         </span>
-                    </div>
-                </div>
-                <div class="card-body">
+                        </x-slot:actions>
+                    </x-tabler.card-header>
+                    <x-tabler.card-body>
                     <table class="table table-borderless table-vcenter">
                         <tr>
                             <th width="150" class="text-secondary">Judul</th>
@@ -52,13 +51,13 @@
                             <td>: {{ $lembur->alasan ?? '-' }}</td>
                         </tr>
                     </table>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
 
-            <div class="card">
-                <div class="card-header font-weight-bold">
+            <x-tabler.card>
+                <x-tabler.card-header class="font-weight-bold">
                     <h3 class="card-title">Pegawai yang Lembur</h3>
-                </div>
+                </x-tabler.card-header>
                 <div class="card-table">
                     <x-tabler.datatable-client
                         id="table-pegawai-lembur"
@@ -86,15 +85,14 @@
                         @endforelse
                     </x-tabler.datatable-client>
                 </div>
-            </div>
+            </x-tabler.card>
         </div>
 
         <div class="col-lg-4">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h3 class="card-title">Riwayat Approval</h3>
-                </div>
-                <div class="list-group list-group-flush" style="max-height: 320px; overflow-y: auto;">
+                <x-tabler.card>
+                    <x-tabler.card-header title="Riwayat Approval" />
+                    <x-tabler.card-body class="p-0">
+                    <div class="list-group list-group-flush" style="max-height: 320px; overflow-y: auto;">
                     @forelse($lembur->approvals as $approval)
                         @php
                             $hStatus = strtolower($approval->status);
@@ -131,8 +129,8 @@
             </div>
 
             @if($lembur->status_approval == 'Diajukan' || $lembur->status_approval == 'pending')
-            <div class="card shadow-sm">
-                <div class="card-body">
+            <x-tabler.card class="shadow-sm">
+                <x-tabler.card-body>
                     <h4 class="card-title mb-3">Proses Approval</h4>
                     <form class="ajax-form" action="{{ route('hr.lembur.approve', $lembur->encrypted_lembur_id) }}" method="POST">
                         @csrf
@@ -157,8 +155,8 @@
                              </div>
                         </div>
                     </form>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
             @endif
         </div>
     </div>

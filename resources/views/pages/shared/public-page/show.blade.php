@@ -14,8 +14,8 @@
 @section('content')
         <div class="row row-cards">
             <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-body">
+                <x-tabler.card>
+                    <x-tabler.card-body>
                         @if($page->hasMedia('main_image'))
                             <div class="mb-3">
                                 <img src="{{ $page->getFirstMediaUrl('main_image') }}" alt="{{ $page->title }}" class="img-fluid rounded w-100 object-cover" style="max-height: 400px;">
@@ -25,16 +25,16 @@
                         <div class="typography">
                             {!! $page->content !!}
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <div class="col-lg-4">
-                <div class="card mb-3">
-                    <div class="card-header">
+                <x-tabler.card class="mb-3">
+                    <x-tabler.card-header>
                         <h3 class="card-title">Informasi Halaman</h3>
-                    </div>
-                    <div class="card-body">
+                    </x-tabler.card-header>
+                    <x-tabler.card-body>
                         <div class="mb-3">
                             <label class="form-label">Status</label>
                             @if($page->is_published)
@@ -54,14 +54,14 @@
                             <div class="form-control-plaintext">{{ $page->updated_at->format('d M Y H:i') }}</div>
                             <small class="text-muted">Oleh: {{ $page->updated_by ?? '-' }}</small>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
 
                 @if($page->hasMedia('attachments'))
-                <div class="card">
-                    <div class="card-header">
+                <x-tabler.card>
+                    <x-tabler.card-header>
                         <h3 class="card-title">File Pendukung</h3>
-                    </div>
+                    </x-tabler.card-header>
                     <div class="list-group list-group-flush">
                         @foreach($page->getMedia('attachments') as $media)
                         <div class="list-group-item d-flex justify-content-between align-items-center">
@@ -75,7 +75,7 @@
                         </div>
                         @endforeach
                     </div>
-                </div>
+                </x-tabler.card>
                 @endif
             </div>
         </div>

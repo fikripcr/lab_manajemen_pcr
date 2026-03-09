@@ -5,8 +5,8 @@
 @endsection
 
 @section('content')
-<div class="card overflow-hidden">
-    <div class="card-header">
+<x-tabler.card class="overflow-hidden">
+    <x-tabler.card-header>
         <div class="d-flex flex-wrap gap-2">
             <div>
                 <x-tabler.datatable-page-length :dataTableId="'table-tamus'" />
@@ -15,8 +15,8 @@
                 <x-tabler.datatable-search :dataTableId="'table-tamus'" />
             </div>
         </div>
-    </div>
-    <div class="card-body p-0">
+    </x-tabler.card-header>
+    <x-tabler.card-body class="p-0">
         <x-tabler.datatable
             id="table-tamus"
             :columns="[
@@ -31,6 +31,6 @@
             ]"
             :route="route('Kegiatan.tamus.data')"
         />
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection

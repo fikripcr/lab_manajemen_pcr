@@ -22,18 +22,17 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-md-8">
-        <form action="{{ $isEdit ? route('eoffice.layanan.update', $layanan->encrypted_layanan_id) : route('eoffice.layanan.store') }}" 
-              method="POST" class="card ajax-form" enctype="multipart/form-data">
+        <x-tabler.card>
+            <form action="{{ $isEdit ? route('eoffice.layanan.update', $layanan->encrypted_layanan_id) : route('eoffice.layanan.store') }}" 
+                  method="POST" class="ajax-form" enctype="multipart/form-data">
             @csrf
             @if($isEdit) @method('PUT') @endif
             
             <input type="hidden" name="jenislayanan_id" value="{{ $jenisLayanan->jenislayanan_id }}">
             
-            <div class="card-header">
-                <h3 class="card-title">{{ $isEdit ? 'Form Revisi Data' : 'Formulir Pengajuan' }}</h3>
-            </div>
+            <x-tabler.card-header title="{{ $isEdit ? 'Form Revisi Data' : 'Formulir Pengajuan' }}" />
             
-            <div class="card-body">
+            <x-tabler.card-body>
                 <div class="row">
                     <div class="col-md-{{ $isEdit ? '12' : '12' }}">
                         @foreach($jenisLayanan->isians->sortBy('seq') as $item)
@@ -99,25 +98,26 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </x-tabler.card-body>
             
             <div class="card-footer text-end">
                 <x-tabler.button type="submit" icon="{{ $isEdit ? 'ti ti-device-floppy' : 'ti ti-send' }}" text="{{ $isEdit ? 'Simpan Perubahan & Ajukan Ulang' : 'Ajukan' }}" />
             </div>
         </form>
-    </div>
+    </x-tabler.card>
+</div>
     
     @if($isEdit)
     <div class="col-md-4">
-        <div class="card bg-warning-lt">
-            <div class="card-body">
+        <x-tabler.card class="bg-warning-lt">
+            <x-tabler.card-body>
                 <h4 class="card-title text-warning">Status: {{ $layanan->latestStatus->status_layanan }}</h4>
                 <p>Data pengajuan ini dikembalikan oleh petugas untuk diperbaiki.</p>
                 <hr>
                 <strong>Catatan Petugas:</strong>
                 <p class="mb-0">{{ $layanan->latestStatus->keterangan }}</p>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
     @endif
 </div>

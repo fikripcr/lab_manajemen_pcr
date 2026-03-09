@@ -3,11 +3,9 @@
 @if(!$hasPendaftaran)
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Sesi Ujian Tersedia (Mode Testing)</h3>
-                </div>
-                <div class="card-body">
+            <x-tabler.card class="mb-3">
+                <x-tabler.card-header title="Sesi Ujian Tersedia (Mode Testing)" />
+                <x-tabler.card-body>
                     <div class="alert alert-info">
                         <i class="ti ti-info-circle me-2"></i>
                         Anda belum memiliki pendaftaran ujian yang aktif. Untuk kebutuhan testing, Anda dapat mencoba sesi ujian di bawah ini.
@@ -43,30 +41,30 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
 @else
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-body text-center py-5">
+            <x-tabler.card>
+                <x-tabler.card-body class="text-center py-5">
                     <img src="{{ asset('static/illustrations/undraw_access_denied_re_awnf.svg') }}" height="128" class="mb-n2" alt="">
                     <h3 class="mt-4">Akses Ditolak</h3>
                     <p class="text-muted">Anda tidak memiliki akses ke ujian saat ini.</p>
                     <x-tabler.button href="{{ route('pmb.camaba.dashboard') }}" class="btn-primary" text="Kembali ke Dashboard" />
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
-@else
+@endif
     {{-- EXAM INTERFACE --}}
     <div class="row">
         {{-- Exam Header --}}
         <div class="col-12 mb-4">
-            <div class="card">
-                <div class="card-body">
+            <x-tabler.card>
+                <x-tabler.card-body>
                     <div class="row align-items-center">
                         <div class="col-md-3">
                             <div class="text-center">
@@ -105,16 +103,16 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
 
     {{-- Questions --}}
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-body p-0">
+            <x-tabler.card>
+                <x-tabler.card-body class="p-0">
                     @foreach($questions as $index => $komposisi)
                         <div class="question-card p-4" data-soal-id="{{ $komposisi->soal->encrypted_soal_id }}" style="display: {{ $index === 0 ? 'block' : 'none' }};">
                             <div class="d-flex justify-content-between align-items-start mb-3">
@@ -197,7 +195,7 @@
                             @endif
                         </div>
                     @endforeach
-                </div>
+                </x-tabler.card-body>
 
                 {{-- Navigation --}}
                 <div class="card-footer">
@@ -211,18 +209,16 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </x-tabler.card>
         </div>
     </div>
 
     {{-- Question Navigation Panel --}}
     <div class="row mt-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Navigasi Soal</h3>
-                </div>
-                <div class="card-body">
+            <x-tabler.card class="mb-3">
+                <x-tabler.card-header title="Navigasi Soal" />
+                <x-tabler.card-body>
                     <div class="row g-2">
                         @foreach($questions as $index => $komposisi)
                             <div class="col-auto">
@@ -236,8 +232,8 @@
                             </div>
                         @endforeach
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
 @endif

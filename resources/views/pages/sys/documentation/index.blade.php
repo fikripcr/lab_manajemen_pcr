@@ -46,8 +46,8 @@
 
     @forelse($mainDocs as $doc)
         <div class="col-sm-6 col-lg-4 col-xl-3">
-            <a href="{{ route('sys.documentation.show', $doc['name']) }}" class="card card-link card-link-pop h-100 doc-card">
-                <div class="card-body">
+            <x-tabler.card tag="a" href="{{ route('sys.documentation.show', $doc['name']) }}" class="card-link card-link-pop h-100 doc-card">
+                <x-tabler.card-body>
                     <div class="d-flex align-items-start mb-3">
                         <div class="icon icon-lg text-primary me-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><path d="M9 9l1 0" /><path d="M9 13l6 0" /><path d="M9 17l6 0" /></svg>
@@ -71,15 +71,14 @@
                             <i class="ti ti-external-link me-1"></i> View Docs
                         </span>
                     </div>
-                </div>
-            </a>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     @empty
         <div class="col-12">
-            <div class="empty">
-                <div class="empty-icon">
+            <x-tabler.empty>
+                <x-slot:icon>
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="64" height="64" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /></svg>
-                </div>
                 <p class="empty-title">No documentation found</p>
                 <p class="empty-subtitle text-muted">
                     Documentation files should be placed in the <code>docs/</code> directory.
@@ -110,8 +109,8 @@
     <div class="row row-cards">
         @foreach($archiveDocs as $doc)
             <div class="col-sm-6 col-lg-4 col-xl-3">
-                <a href="{{ route('sys.documentation.show', $doc['name']) }}" class="card card-link card-link-pop h-100 doc-card archive-section">
-                    <div class="card-body">
+                <x-tabler.card tag="a" href="{{ route('sys.documentation.show', $doc['name']) }}" class="card-link card-link-pop h-100 doc-card archive-section">
+                    <x-tabler.card-body>
                         <div class="d-flex align-items-start mb-3">
                             <div class="icon icon-lg text-muted me-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><path d="M9 9l1 0" /><path d="M9 13l6 0" /><path d="M9 17l6 0" /></svg>
@@ -131,8 +130,8 @@
                                 <i class="ti ti-archive me-1"></i> Archived
                             </span>
                         </div>
-                    </div>
-                </a>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         @endforeach
     </div>
@@ -141,14 +140,9 @@
 
 <!-- Quick Reference Section -->
 <div class="mt-5">
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9h2m0 4c.01 .01 0 0 0 0s-2 -.01 -2 0m0 4c.01 .01 0 0 0 0s-2 -.01 -2 0" /><path d="M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" /></svg>
-                Quick Reference
-            </h3>
-        </div>
-        <div class="card-body">
+    <x-tabler.card>
+        <x-tabler.card-header title="Quick Reference" icon="ti ti-info-circle" />
+        <x-tabler.card-body>
             <div class="row g-3">
                 <div class="col-md-4">
                     <div class="d-flex align-items-center p-3 bg-surface-secondary rounded">
@@ -178,8 +172,8 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </x-tabler.card-body>
+    </x-tabler.card>
 </div>
 @endsection
 

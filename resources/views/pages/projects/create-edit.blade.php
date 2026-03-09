@@ -12,7 +12,7 @@
 @endsection
 
 @section('content')
-<div class="card">
+<x-tabler.card>
     <div class="card-body">
         <form action="{{ $project->exists ? route('projects.update', $project) : route('projects.store') }}" method="POST">
             @csrf

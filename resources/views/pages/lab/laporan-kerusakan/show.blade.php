@@ -11,10 +11,10 @@
 
         <div class="row row-cards">
             <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">
+                <x-tabler.card>
+                    <x-tabler.card-header>
                         <h3 class="card-title">Informasi Kerusakan</h3>
-                        <div class="card-actions">
+                        <x-slot:actions>
                             @php
                                 $badges = [
                                     'open' => 'danger',
@@ -25,9 +25,9 @@
                                 $color = $badges[$laporan->status] ?? 'secondary';
                             @endphp
                             <span class="badge bg-{{ $color }}">{{ $laporan->status }}</span>
-                        </div>
-                    </div>
-                    <div class="card-body">
+                        </x-slot:actions>
+                    </x-tabler.card-header>
+                    <x-tabler.card-body>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label text-muted">Lab</label>
@@ -56,8 +56,8 @@
                             </div>
                         </div>
                         @endif
-                    </div>
-                    <div class="card-footer">
+                    </x-tabler.card-body>
+                    <x-tabler.card-footer>
                         <div class="row">
                             <div class="col">
                                 <small class="text-muted">Dilaporkan oleh: {{ $laporan->pelapor ? $laporan->pelapor->name : 'Unknown' }}</small>
@@ -66,16 +66,16 @@
                                 <small class="text-muted">{{ $laporan->created_at->format('d M Y H:i') }}</small>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-footer>
+                </x-tabler.card>
             </div>
 
             <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header">
+                <x-tabler.card>
+                    <x-tabler.card-header>
                         <h3 class="card-title">Tindak Lanjut Teknisi</h3>
-                    </div>
-                    <div class="card-body">
+                    </x-tabler.card-header>
+                    <x-tabler.card-body>
                         @if($laporan->teknisi_id)
                             <div class="mb-3">
                                 <label class="form-label text-muted">Teknisi</label>
@@ -94,8 +94,8 @@
                                 </p>
                             </div>
                         @endif
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
 @endsection

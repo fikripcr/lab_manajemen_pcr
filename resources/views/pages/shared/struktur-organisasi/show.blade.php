@@ -1,7 +1,6 @@
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">{{ $orgUnit->name }}</h3>
-        <div class="card-actions">
+<x-tabler.card>
+    <x-tabler.card-header title="{{ $orgUnit->name }}">
+        <x-slot:actions>
             <div class="dropdown">
                 <a href="#" class="btn-action dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="ti ti-dots-vertical fs-3"></i>
@@ -20,9 +19,9 @@
                     </a>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="card-body">
+        </x-slot:actions>
+    </x-tabler.card-header>
+    <x-tabler.card-body>
         <div class="datagrid">
             <div class="datagrid-item">
                 <div class="datagrid-title">Nama Unit</div>
@@ -92,5 +91,5 @@
                 </div>
             </div>
         @endif
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>

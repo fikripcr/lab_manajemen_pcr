@@ -14,9 +14,9 @@
         <div class="row row-cards">
             {{-- Profile Info --}}
             <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header"><h3 class="card-title">Profil Calon Mahasiswa</h3></div>
-                    <div class="card-body">
+                <x-tabler.card class="mb-3">
+                    <x-tabler.card-header title="Profil Calon Mahasiswa" />
+                    <x-tabler.card-body>
                         <div class="row g-3">
                             <div class="col-12 text-center">
                                 <span class="avatar avatar-xl rounded" style="background-image: url(https://ui-avatars.com/api/?name={{ urlencode($pendaftaran->user->name) }})"></span>
@@ -34,15 +34,15 @@
                                 <div class="form-control-plaintext">{{ $pendaftaran->profil->asal_sekolah ?? '-' }}</div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             {{-- Documents --}}
             <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header"><h3 class="card-title">Berkas Persyaratan</h3></div>
-                    <div class="card-table">
+                <x-tabler.card class="mb-3">
+                    <x-tabler.card-header title="Berkas Persyaratan" />
+                    <x-tabler.card-body class="p-0">
                         <x-tabler.datatable-client
                             id="table-documents"
                             :columns="[
@@ -71,16 +71,16 @@
                             </tr>
                             @endforeach
                         </x-tabler.datatable-client>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
 
                 {{-- Verification History --}}
                 <x-tabler.approval-history :approvals="$pendaftaran->approvals" title="Riwayat Verifikasi" />
 
                 {{-- History Status (Legacy timeline) --}}
-                <div class="card mt-3">
-                    <div class="card-header"><h3 class="card-title">Riwayat Status</h3></div>
-                    <div class="card-body">
+                <x-tabler.card class="mt-3">
+                    <x-tabler.card-header><h3 class="card-title">Riwayat Status</h3></x-tabler.card-header>
+                    <x-tabler.card-body>
                         <ul class="list list-timeline">
                             @foreach($pendaftaran->riwayat as $r)
                             <li>
@@ -93,8 +93,8 @@
                             </li>
                             @endforeach
                         </ul>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
 @endsection

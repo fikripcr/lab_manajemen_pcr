@@ -7,35 +7,31 @@
         <x-slot:actions>
             <x-tabler.button href="{{ route('sys.roles.index') }}" type="back" />
 
-            <div class="dropdown d-none d-sm-inline-block">
-                <x-tabler.button type="create" class="dropdown-toggle shadow-sm" data-bs-toggle="dropdown" aria-expanded="false" text="Aksi Tambah" />
-                <div class="dropdown-menu dropdown-menu-end shadow-lg" style="border-radius: 12px; border: none;">
-                    <a class="dropdown-item ajax-modal-btn py-2" href="javascript:void(0)" data-url="{{ route('sys.roles.create') }}" data-title="Tambah Peran Baru">
-                        <i class="ti ti-shield-plus me-2 text-primary"></i> Tambah Role
-                    </a>
-                    <a class="dropdown-item ajax-modal-btn py-2" href="javascript:void(0)" data-url="{{ route('sys.permissions.create') }}" data-title="Tambah Perizinan Baru">
-                        <i class="ti ti-lock-plus me-2 text-azure"></i> Tambah Perizinan
-                    </a>
-                </div>
+            <div class="d-none d-sm-inline-block">
+                <x-tabler.dropdown icon="ti ti-plus" text="Aksi Tambah" trigger="button" buttonClass="btn btn-primary shadow-sm" placement="end">
+                    <x-tabler.dropdown-item href="javascript:void(0)" url="{{ route('sys.roles.create') }}" icon="ti ti-shield-plus text-primary" label="Tambah Role" class="ajax-modal-btn py-2" data-title="Tambah Peran Baru" />
+                    <x-tabler.dropdown-item href="javascript:void(0)" url="{{ route('sys.permissions.create') }}" icon="ti ti-lock-plus text-azure" label="Tambah Perizinan" class="ajax-modal-btn py-2" data-title="Tambah Perizinan Baru" />
+                </x-tabler.dropdown>
             </div>
             
-            <div class="dropdown d-none d-sm-inline-block">
-                <x-tabler.button type="button" class="btn-azure dropdown-toggle shadow-sm px-3" data-bs-toggle="dropdown" aria-expanded="false" icon="ti ti-category" text="Ganti Sistem" />
-                <div class="dropdown-menu dropdown-menu-end shadow-lg" style="min-width: 250px; border-radius: 12px; border: none;">
+            <div class="d-none d-sm-inline-block">
+                <x-tabler.dropdown icon="ti ti-category" text="Ganti Sistem" trigger="button" buttonClass="btn btn-azure shadow-sm px-3" placement="end">
                     <div class="dropdown-header text-muted small text-uppercase fw-bold p-3">Pilih Modul / Sistem</div>
-                    <div class="dropdown-divider m-0"></div>
+                    <x-tabler.dropdown-divider />
                     @foreach($allCategories as $category)
-                        <a class="dropdown-item d-flex align-items-center py-3 {{ $activeCategory == $category ? 'active' : '' }}" 
-                           href="{{ route('sys.roles.matrix', ['system' => $category]) }}">
+                        <x-tabler.dropdown-item 
+                            href="{{ route('sys.roles.matrix', ['system' => $category]) }}"
+                            class="d-flex align-items-center py-3 {{ $activeCategory == $category ? 'active' : '' }}"
+                        >
                             <div class="icon-box me-3 {{ $activeCategory == $category ? 'bg-primary text-white' : 'bg-light text-primary' }} rounded" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
                                 <i class="ti ti-package fs-2"></i>
                             </div>
                             <div>
                                 <div class="fw-bold">{{ $category }}</div>
                             </div>
-                        </a>
+                        </x-tabler.dropdown-item>
                     @endforeach
-                </div>
+                </x-tabler.dropdown>
             </div>
         </x-slot:actions>
     </x-tabler.page-header>
@@ -44,17 +40,17 @@
 @section('content')
 <div class="row row-cards">
     <div class="col-12">
-        <div class="card shadow-sm border-0">
-            <div class="card-header py-3 bg-primary-lt">
+        <x-tabler.card class="shadow-sm border-0">
+            <x-tabler.card-header class="py-3 bg-primary-lt">
                 <h3 class="card-title text-primary fw-bold mb-0">
                     <i class="ti ti-layers-intersect me-1"></i> 
                     Sistem: <span class="text-uppercase">{{ $activeCategory }}</span>
                 </h3>
-            </div>
+            </x-tabler.card-header>
             
             <form action="{{ route('sys.roles.update-matrix') }}" method="POST" id="matrixForm" class="ajax-form">
                 @csrf
-                <div class="card-body p-0">
+                <x-tabler.card-body class="p-0">
                     <div class="table-responsive" style="max-height: 65vh; overflow-y: auto;">
                         <table class="table table-sm table-vcenter table-nowrap table-bordered table-hover card-table sticky-header mb-0">
                             <thead class="bg-light sticky-top" style="z-index: 20;">
@@ -133,7 +129,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </x-tabler.card-body>
                 <div class="card-footer d-flex justify-content-between align-items-center bg-light-lt border-top">
                     <div class="text-muted small">
                         <i class="ti ti-info-circle me-1"></i> Centang kotak untuk memberikan hak akses. 
@@ -142,7 +138,7 @@
                     <x-tabler.button type="submit" text="Simpan Perubahan Matriks" />
                 </div>
             </form>
-        </div>
+        </x-tabler.card>
     </div>
 </div>
 

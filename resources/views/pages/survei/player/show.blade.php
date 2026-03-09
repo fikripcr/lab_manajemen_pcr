@@ -14,13 +14,13 @@
     @endif
 
     {{-- Survey Header --}}
-    <div class="card mb-4 border-0 shadow-sm">
-        <div class="card-body py-3 px-4">
+    <x-tabler.card class="mb-4 border-0 shadow-sm">
+        <x-tabler.card-body class="py-3 px-4">
             <h3 class="mb-1">{{ $survei->judul }}</h3>
             @if($survei->deskripsi)
                 <p class="text-muted mb-0 small">{{ $survei->deskripsi }}</p>
             @endif
-        </div>
+        </x-tabler.card-body>
         {{-- Progress Bar --}}
         @php $totalHalaman = $survei->halaman->count(); @endphp
         @if($totalHalaman > 1)
@@ -31,7 +31,7 @@
             <small class="text-muted">Halaman <span id="current-page-num">1</span> dari {{ $totalHalaman }}</small>
         </div>
         @endif
-    </div>
+    </x-tabler.card>
 
     {{-- Form --}}
     <form action="{{ route('survei.public.store', $survei->slug) }}" method="POST" id="survei-form">
@@ -52,11 +52,11 @@
 
             @foreach($halaman->pertanyaan as $qIndex => $pertanyaan)
             @php $isLinear = ($survei->mode ?? 'Linear') !== 'Bercabang'; @endphp
-                <div class="card mb-1 p-2 my-3 border-0 shadow-sm pertanyaan-item"
+                <x-tabler.card class="mb-1 p-2 my-3 border-0 shadow-sm pertanyaan-item"
                      data-wajib="{{ $pertanyaan->wajib_diisi ? '1' : '0' }}"
                      @if(!$isLinear) data-next="{{ $pertanyaan->next_pertanyaan_id }}" @endif
                      id="pertanyaan-{{ $pertanyaan->id }}">
-                     <div class="card-body px-3 py-2">
+                     <x-tabler.card-body class="px-3 py-2">
                     <label class="form-label fw-semibold mb-1">
                         <span class="text-muted small me-1">{{ $loop->iteration }}.</span>
                         {{ $pertanyaan->teks_pertanyaan }}
@@ -179,8 +179,8 @@
 
                         <p class="text-muted small">Tipe pertanyaan belum didukung.</p>
                     @endif
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
             @endforeach
 
             {{-- Page Navigation --}}

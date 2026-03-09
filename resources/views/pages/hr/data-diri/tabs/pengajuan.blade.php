@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-<div class="card">
+<x-tabler.card>
     @include('pages.hr.data-diri.global-tab-nav')
     <div class="card-body">
         <div class="table-responsive">

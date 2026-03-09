@@ -5,10 +5,18 @@
 @endsection
 
 @section('content')
-<div class="card">
-    <div class="card-header">
+<x-tabler.card>
+    <x-tabler.card-header>
         <h3 class="card-title">Daftar Feedback</h3>
-        <div class="card-actions">
+        <x-slot:actions>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="ti ti-download me-2"></i> Export Data
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    {{-- Export options would go here --}}
+                </ul>
+            </div>
             <x-tabler.datatable-filter :dataTableId="'tbl-feedback'" :useCollapse="true">
                 <div class="row g-2">
                     <div class="col-12">
@@ -27,21 +35,23 @@
                     </div>
                 </div>
             </x-tabler.datatable-filter>
-        </div>
-    </div>
-    <x-tabler.datatable
-        id="tbl-feedback"
-        route="{{ route('eoffice.feedback.data') }}"
-        :columns="[
-            ['data' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'title' => '#', 'class' => 'text-center', 'width' => '5%'],
-            ['data' => 'no_layanan', 'title' => 'No Layanan'],
-            ['data' => 'nama_layanan', 'title' => 'Jenis Layanan'],
-            ['data' => 'rating_stars', 'title' => 'Rating'],
-            ['data' => 'feedback', 'title' => 'Feedback'],
-            ['data' => 'tanggal', 'title' => 'Tanggal']
-        ]"
-    />
-</div>
+        </x-slot:actions>
+    </x-tabler.card-header>
+    <x-tabler.card-body class="p-0">
+        <x-tabler.datatable
+            id="tbl-feedback"
+            route="{{ route('eoffice.feedback.data') }}"
+            :columns="[
+                ['data' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'title' => '#', 'class' => 'text-center', 'width' => '5%'],
+                ['data' => 'no_layanan', 'title' => 'No Layanan'],
+                ['data' => 'nama_layanan', 'title' => 'Jenis Layanan'],
+                ['data' => 'rating_stars', 'title' => 'Rating'],
+                ['data' => 'feedback', 'title' => 'Feedback'],
+                ['data' => 'tanggal', 'title' => 'Tanggal']
+            ]"
+        />
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection
 
 @push('scripts')

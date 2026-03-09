@@ -5,8 +5,6 @@
     method="{{ $inventaris->exists ? 'PUT' : 'POST' }}"
     submitText="{{ $inventaris->exists ? 'Update' : 'Create' }}"
 >
-    <x-tabler.flash-message />
-
     <x-tabler.form-select 
         name="lab_id" 
         label="Lab" 

@@ -12,8 +12,8 @@
 
 @section('content')
 
-    <div class="card">
-        <div class="card-header">
+    <x-tabler.card>
+        <x-tabler.card-header>
             <div class="d-flex flex-wrap gap-2">
                 <div>
                     <x-tabler.datatable-page-length :dataTableId="'users-table'" />
@@ -22,19 +22,19 @@
                     <x-tabler.datatable-search :dataTableId="'users-table'" />
                 </div>
             </div>
-            <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
-                <div class="d-flex flex-wrap gap-2">
-
-                    <!-- Action buttons for selected users -->
-                    <div id="bulk-actions-users-table" class="d-none">
-                        <x-tabler.button type="button" class="btn-sm btn-primary" onclick="bulkAction('send-notification')" icon="bx bx-envelope" text="Send Notification" />
-                        <x-tabler.button type="button" class="btn-sm btn-danger" onclick="bulkAction('delete')" icon="bx bx-trash" text="Delete" />
+            <x-slot:actions>
+                <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
+                    <div class="d-flex flex-wrap gap-2">
+                        <!-- Action buttons for selected users -->
+                        <div id="bulk-actions-users-table" class="d-none">
+                            <x-tabler.button type="button" class="btn-sm btn-primary" onclick="bulkAction('send-notification')" icon="bx bx-envelope" text="Send Notification" />
+                            <x-tabler.button type="button" class="btn-sm btn-danger" onclick="bulkAction('delete')" icon="bx bx-trash" text="Delete" />
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="card-body">
-            <x-tabler.flash-message />
+            </x-slot:actions>
+        </x-tabler.card-header>
+        <x-tabler.card-body class="p-0">
 
             <x-tabler.datatable
                 id="users-table" route="{{ route('sys.users.data') }}" :columns="[
@@ -67,8 +67,8 @@
                     'class' => 'text-center',
                 ],
             ]" with-checkbox="true" checkbox-key="id"/>
-        </div>
-    </div>
+        </x-tabler.card-body>
+    </x-tabler.card>
 @endsection
 
 @push('scripts')

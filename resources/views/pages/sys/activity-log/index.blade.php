@@ -11,8 +11,8 @@
 @endsection
 
 @section('content')
-<div class="card">
-    <div class="card-header">
+<x-tabler.card>
+    <x-tabler.card-header>
         <ul class="nav nav-tabs card-header-tabs" role="tablist">
             <li class="nav-item">
                 <a class="nav-link {{ Route::is('sys.activity-log.*') ? 'active fw-bold' : '' }}" href="{{ route('sys.activity-log.index') }}">
@@ -35,8 +35,8 @@
                 </a>
             </li>
         </ul>
-    </div>
-    <div class="card-header border-bottom-0">
+    </x-tabler.card-header>
+    <x-tabler.card-header class="border-bottom-0">
         <div class="d-flex flex-wrap justify-content-between w-100">
             <div class="d-flex flex-wrap gap-2 mb-2 mb-sm-0">
                 <div>
@@ -47,9 +47,9 @@
                 </div>
             </div>
         </div>
-    </div>
+    </x-tabler.card-header>
 
-    <div class="card-body p-0">
+    <x-tabler.card-body class="p-0">
         <x-tabler.datatable
             id="activity-log-table"
             route="{{ route('sys.activity-log.data') }}"
@@ -93,8 +93,8 @@
             ]"
             :order="[[1, 'desc']]"
         />
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 
 {{-- Modal is now loaded via AJAX --}}
 

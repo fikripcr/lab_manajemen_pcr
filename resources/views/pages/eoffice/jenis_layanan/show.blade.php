@@ -12,16 +12,15 @@
 <div class="row row-cards">
     <!-- PIC Section -->
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Manajemen PIC (Petugas)</h3>
-                <div class="card-actions">
+        <x-tabler.card class="mb-3">
+            <x-tabler.card-header title="Manajemen PIC (Petugas)">
+                <x-slot:actions>
                     <x-tabler.button type="create" class="btn-sm ajax-modal-btn"
                         data-url="{{ route('eoffice.jenis-layanan.create-pic', $layanan->hashid) }}"
                         text="Tambah PIC" />
-                </div>
-            </div>
-            <div class="card-table">
+                </x-slot:actions>
+            </x-tabler.card-header>
+            <x-tabler.card-body class="card-table">
                 <x-tabler.datatable-client
                     id="table-pic"
                     :columns="[
@@ -54,22 +53,21 @@
                 @if($layanan->pics->isEmpty())
                     <div class="text-center text-muted p-3">Belum ada PIC yang ditugaskan.</div>
                 @endif
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     <!-- Fields Section -->
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Form Isian (Fields)</h3>
-                <div class="card-actions">
+        <x-tabler.card class="mb-3">
+            <x-tabler.card-header title="Form Isian (Fields)">
+                <x-slot:actions>
                     <x-tabler.button type="create" class="btn-sm ajax-modal-btn"
                         data-url="{{ route('eoffice.jenis-layanan.create-isian', $layanan->hashid) }}"
                         text="Tambah Field" />
-                </div>
-            </div>
-            <div class="table-responsive">
+                </x-slot:actions>
+            </x-tabler.card-header>
+            <x-tabler.card-body class="table-responsive">
                 <table class="table table-vcenter card-table" id="tbl-isian">
                     <thead>
                         <tr>
@@ -128,22 +126,21 @@
                         @endforelse
                     </tbody>
                 </table>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     <!-- Disposisi Chain Section -->
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Alur Disposisi</h3>
-                <div class="card-actions">
+        <x-tabler.card class="mb-3">
+            <x-tabler.card-header title="Alur Disposisi">
+                <x-slot:actions>
                     <x-tabler.button type="create" class="btn-sm ajax-modal-btn"
                         data-url="{{ route('eoffice.jenis-layanan.disposisi.create', $layanan->hashid) }}"
                         text="Tambah Disposisi" />
-                </div>
-            </div>
-            <div class="table-responsive">
+                </x-slot:actions>
+            </x-tabler.card-header>
+            <x-tabler.card-body class="table-responsive">
                 <table class="table table-vcenter card-table" id="tbl-disposisi">
                     <thead>
                         <tr>
@@ -189,22 +186,21 @@
                         @endforelse
                     </tbody>
                 </table>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     <!-- Periode Section -->
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Periode Pengajuan</h3>
-                <div class="card-actions">
+        <x-tabler.card class="mb-0">
+            <x-tabler.card-header title="Periode Pengajuan">
+                <x-slot:actions>
                     <x-tabler.button type="create" class="btn-sm ajax-modal-btn"
                         data-url="{{ route('eoffice.jenis-layanan.periode.create', $layanan->hashid) }}"
                         text="Tambah Periode" />
-                </div>
-            </div>
-            <div class="card-table">
+                </x-slot:actions>
+            </x-tabler.card-header>
+            <x-tabler.card-body class="card-table">
                 <x-tabler.datatable-client
                     id="table-periode"
                     :columns="[
@@ -244,7 +240,7 @@
                     <div class="text-center text-muted p-3">Belum ada periode pengajuan.</div>
                 @endif
             </div>
-        </div>
+        </x-tabler.card>
     </div>
 </div>
 @endsection

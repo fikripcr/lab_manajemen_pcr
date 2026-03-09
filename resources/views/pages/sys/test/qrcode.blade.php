@@ -59,9 +59,9 @@
         <div class="row">
             <!-- QR Code Generator Column -->
             <div class="col-xl-6">
-                <div class="card mb-4">
-                    <h5 class="card-header">QR Code Generator</h5>
-                    <div class="card-body">
+                <x-tabler.card class="mb-4">
+                    <x-tabler.card-header title="QR Code Generator" />
+                    <x-tabler.card-body>
                         <div class="mb-3">
                             <x-tabler.form-input id="qrTextInput" placeholder="Enter text or URL to encode" />
                         </div>
@@ -80,15 +80,15 @@
                                 <x-tabler.button type="button" class="btn-outline-secondary btn-sm" id="downloadQrPngBtn" text="Download PNG" />
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <!-- QR Code Scanner Column -->
             <div class="col-xl-6">
-                <div class="card mb-4">
-                    <h5 class="card-header">QR Code Scanner</h5>
-                    <div class="card-body">
+                <x-tabler.card class="mb-4">
+                    <x-tabler.card-header title="QR Code Scanner" />
+                    <x-tabler.card-body>
                         <div class="mb-4">
                             <div class="d-grid">
                                 <x-tabler.button type="button" class="btn-outline-primary" id="turnOnCameraBtn" icon="bx bx-camera" text="Activate Camera Scanner" />
@@ -109,13 +109,12 @@
                                 <p id="qrContent" class="mb-0 text-muted fst-italic">Scanned content will appear here</p>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
 
-                <!-- HTML5 QR & Barcode Scanner Card -->
-                <div class="card mb-4">
-                    <h5 class="card-header">HTML5 QR & Barcode Scanner</h5>
-                    <div class="card-body">
+                <x-tabler.card class="mb-4">
+                    <x-tabler.card-header title="HTML5 QR & Barcode Scanner" />
+                    <x-tabler.card-body>
                         <div id="html5qr-code-container"></div>
                         <div class="mt-3">
                             <x-tabler.button type="button" class="btn-primary w-100" id="startHtml5QrScanner" icon="bx bx-qr-scan" text="Start HTML5 Scanner" />
@@ -127,8 +126,8 @@
                                 <p id="html5qr-content" class="mb-0 text-muted fst-italic">Scanned content will appear here</p>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
     </div>

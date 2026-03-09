@@ -13,11 +13,9 @@
 <div class="row">
     {{-- Info Umum Indikator --}}
     <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="ti ti-info-circle me-2"></i>Informasi Umum</h3>
-            </div>
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-header title="Informasi Umum" icon="ti ti-info-circle" />
+            <x-tabler.card-body>
                 <div class="row">
                     <div class="col-md-6">
                         <table class="table table-sm table-borderless">
@@ -91,18 +89,16 @@
                         @endif
                     </div>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     {{-- Labels & DokSub --}}
     @if($indikator->all_labels || $indikator->all_doksub_judul)
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="ti ti-tag me-2"></i>Labels</h3>
-            </div>
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-header title="Labels" icon="ti ti-tag" />
+            <x-tabler.card-body>
                 @if($indikator->all_labels)
                     @php
                         $labels = explode(', ', $indikator->all_labels);
@@ -118,16 +114,14 @@
                 @else
                     <span class="text-muted">Tidak ada label</span>
                 @endif
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="ti ti-files me-2"></i>Dokumen Terkait</h3>
-            </div>
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-header title="Dokumen Terkait" icon="ti ti-files" />
+            <x-tabler.card-body>
                 @if($indikator->all_doksub_judul)
                     @php
                         $judul = explode(' || ', $indikator->all_doksub_judul);
@@ -143,18 +137,16 @@
                 @else
                     <span class="text-muted">Tidak ada dokumen terkait</span>
                 @endif
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
     @endif
 
     {{-- Summary Statistics --}}
     <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="ti ti-chart-bar me-2"></i>Ringkasan Statistik</h3>
-            </div>
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-header title="Ringkasan Statistik" icon="ti ti-chart-bar" />
+            <x-tabler.card-body>
                 <div class="row text-center">
                     <div class="col-md-3">
                         <div class="mb-3">
@@ -188,17 +180,15 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     {{-- ED Details --}}
     <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="ti ti-file-check me-2"></i>Evaluasi Diri (ED)</h3>
-            </div>
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-header title="Evaluasi Diri (ED)" icon="ti ti-file-check" />
+            <x-tabler.card-body>
                 @if($edDetails->count() > 0)
                     <div class="table-responsive">
                         <table class="table table-hover table-sm">
@@ -234,7 +224,7 @@
                                             data-bs-toggle="collapse" data-bs-target="#ed-analisis-{{ $loop->index }}"
                                             text="Lihat Analisis" />
                                         <div class="collapse" id="ed-analisis-{{ $loop->index }}">
-                                            <div class="card card-body small bg-light">
+                                            <x-tabler.card-body small bg-light">
                                                 {{ $ed->ed_analisis ?? '-' }}
                                             </div>
                                         </div>
@@ -267,17 +257,15 @@
                         <p class="text-muted mt-2">Belum ada data Evaluasi Diri</p>
                     </div>
                 @endif
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     {{-- AMI Details --}}
     <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="ti ti-user-search me-2"></i>Audit Mutu Internal (AMI)</h3>
-            </div>
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-header title="Audit Mutu Internal (AMI)" icon="ti ti-user-search" />
+            <x-tabler.card-body>
                 @if($amiDetails->count() > 0)
                     <div class="table-responsive">
                         <table class="table table-hover table-sm">
@@ -312,7 +300,7 @@
                                                 data-bs-toggle="collapse" data-bs-target="#ami-temuan-{{ $loop->index }}"
                                                 text="Lihat Temuan" />
                                             <div class="collapse" id="ami-temuan-{{ $loop->index }}">
-                                                <div class="card card-body small bg-light">{{ $ami->ami_hasil_temuan }}</div>
+                                                <x-tabler.card-body small bg-light">{{ $ami->ami_hasil_temuan }}</div>
                                             </div>
                                         @else
                                             <span class="text-muted">-</span>
@@ -324,7 +312,7 @@
                                                 data-bs-toggle="collapse" data-bs-target="#ami-sebab-{{ $loop->index }}"
                                                 text="Lihat Sebab" />
                                             <div class="collapse" id="ami-sebab-{{ $loop->index }}">
-                                                <div class="card card-body small bg-light">{{ $ami->ami_hasil_temuan_sebab }}</div>
+                                                <x-tabler.card-body small bg-light">{{ $ami->ami_hasil_temuan_sebab }}</div>
                                             </div>
                                         @else
                                             <span class="text-muted">-</span>
@@ -336,7 +324,7 @@
                                                 data-bs-toggle="collapse" data-bs-target="#ami-akibat-{{ $loop->index }}"
                                                 text="Lihat Akibat" />
                                             <div class="collapse" id="ami-akibat-{{ $loop->index }}">
-                                                <div class="card card-body small bg-light">{{ $ami->ami_hasil_temuan_akibat }}</div>
+                                                <x-tabler.card-body small bg-light">{{ $ami->ami_hasil_temuan_akibat }}</div>
                                             </div>
                                         @else
                                             <span class="text-muted">-</span>
@@ -348,7 +336,7 @@
                                                 data-bs-toggle="collapse" data-bs-target="#ami-rekom-{{ $loop->index }}"
                                                 text="Lihat Rekom" />
                                             <div class="collapse" id="ami-rekom-{{ $loop->index }}">
-                                                <div class="card card-body small bg-light">{{ $ami->ami_hasil_temuan_rekom }}</div>
+                                                <x-tabler.card-body small bg-light">{{ $ami->ami_hasil_temuan_rekom }}</div>
                                             </div>
                                         @else
                                             <span class="text-muted">-</span>
@@ -366,17 +354,15 @@
                         <p class="text-muted mt-2">Belum ada data AMI</p>
                     </div>
                 @endif
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     {{-- Pengendalian Details --}}
     <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="ti ti-settings me-2"></i>Pengendalian</h3>
-            </div>
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-header title="Pengendalian" icon="ti ti-settings" />
+            <x-tabler.card-body>
                 @if($pengendDetails->count() > 0)
                     <div class="table-responsive">
                         <table class="table table-hover table-sm">
@@ -416,7 +402,7 @@
                                                 data-bs-toggle="collapse" data-bs-target="#pengend-analisis-{{ $loop->index }}"
                                                 text="Lihat Analisis" />
                                             <div class="collapse" id="pengend-analisis-{{ $loop->index }}">
-                                                <div class="card card-body small bg-light">{{ $pengend->pengend_analisis }}</div>
+                                                <x-tabler.card-body small bg-light">{{ $pengend->pengend_analisis }}</div>
                                             </div>
                                         @else
                                             <span class="text-muted">-</span>
@@ -428,7 +414,7 @@
                                                 data-bs-toggle="collapse" data-bs-target="#pengend-penyesuaian-{{ $loop->index }}"
                                                 text="Lihat Penyesuaian" />
                                             <div class="collapse" id="pengend-penyesuaian-{{ $loop->index }}">
-                                                <div class="card card-body small bg-light">{{ $pengend->pengend_penyesuaian }}</div>
+                                                <x-tabler.card-body small bg-light">{{ $pengend->pengend_penyesuaian }}</div>
                                             </div>
                                         @else
                                             <span class="text-muted">-</span>
@@ -460,8 +446,8 @@
                         <p class="text-muted mt-2">Belum ada data Pengendalian</p>
                     </div>
                 @endif
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 </div>
 @endsection

@@ -37,48 +37,48 @@
                 {{-- Stats Cards --}}
                 <div class="row g-3 mb-4">
                     <div class="col-4">
-                        <div class="stat-card card border-0 shadow-sm h-100">
-                            <div class="card-body text-center p-3">
+                        <x-tabler.card class="stat-card border-0 shadow-sm h-100">
+                            <x-tabler.card-body class="text-center p-3">
                                 <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
                                     <i class="ti ti-question-mark text-success fs-1"></i>
                                 </div>
                                 <div class="h2 mb-0 text-success fw-bold">{{ $totalPertanyaan }}</div>
                                 <div class="text-muted small text-uppercase fw-semibold">Pertanyaan</div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                     <div class="col-4">
-                        <div class="stat-card card border-0 shadow-sm h-100">
-                            <div class="card-body text-center p-3">
+                        <x-tabler.card class="stat-card border-0 shadow-sm h-100">
+                            <x-tabler.card-body class="text-center p-3">
                                 <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
                                     <i class="ti ti-clock text-success fs-1"></i>
                                 </div>
                                 <div class="h2 mb-0 text-success fw-bold">{{ $estimatedTime }}</div>
                                 <div class="text-muted small text-uppercase fw-semibold">Menit (Est.)</div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                     <div class="col-4">
-                        <div class="stat-card card border-0 shadow-sm h-100">
-                            <div class="card-body text-center p-3">
+                        <x-tabler.card class="stat-card border-0 shadow-sm h-100">
+                            <x-tabler.card-body class="text-center p-3">
                                 <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
                                     <i class="ti ti-calendar text-success fs-1"></i>
                                 </div>
                                 <div class="h6 mb-0 text-success fw-bold">{{ $tanggalMulai ? $tanggalMulai->format('d M') : '-' }}</div>
                                 <div class="text-muted small text-uppercase fw-semibold">Mulai</div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                 </div>
 
                 {{-- Survey Details --}}
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-transparent border-0 pt-4 px-4">
+                <x-tabler.card class="border-0 shadow-sm mb-4">
+                    <x-tabler.card-header class="bg-transparent border-0 pt-4 px-4">
                         <h3 class="card-title text-uppercase small text-muted fw-bold mb-0">
                             <i class="ti ti-info-circle me-2"></i>Detail Survei
                         </h3>
-                    </div>
-                    <div class="card-body px-4 pb-4">
+                    </x-tabler.card-header>
+                    <x-tabler.card-body class="px-4 pb-4">
                         <div class="table-responsive">
                             <table class="table table-borderless table-vcenter mb-0">
                                 <tbody>
@@ -123,15 +123,15 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             {{-- Right Column - Guidelines & Action --}}
             <div class="col-lg-5">
                 {{-- Panduan Pengisian --}}
-                <div class="card border-0 shadow-sm mb-4 bg-azure-lt">
-                    <div class="card-body p-4">
+                <x-tabler.card class="border-0 shadow-sm mb-4 bg-azure-lt">
+                    <x-tabler.card-body class="p-4">
                         <h4 class="card-title text-uppercase small text-azure fw-bold mb-3">
                             <i class="ti ti-info-circle me-2"></i>Panduan Pengisian
                         </h4>
@@ -157,12 +157,12 @@
                                 Klik <strong>Kirim Jawaban</strong> setelah semua pertanyaan terisi.
                             </li>
                         </ul>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
 
                 {{-- Action Button --}}
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body p-4">
+                <x-tabler.card class="border-0 shadow-sm">
+                    <x-tabler.card-body class="p-4">
                         <form action="{{ route('survei.public.start', $survei->slug) }}" method="POST">
                             @csrf
                             <x-tabler.button type="submit" class="btn-success btn-lg w-100 py-3 mb-3" icon="ti ti-player-play" text="Mulai Isi Survei" />
@@ -173,8 +173,8 @@
                             <i class="ti ti-shield-lock me-1"></i>
                             Data Anda aman dan terjaga kerahasiaannya
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
 
                 {{-- Contact Info --}}
                 @if(auth()->user() && auth()->user()->hasRole('admin'))

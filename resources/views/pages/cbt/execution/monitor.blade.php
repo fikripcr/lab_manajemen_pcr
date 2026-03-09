@@ -20,8 +20,8 @@
             <div class="col-12">
                 <div class="row row-cards">
                     <div class="col-md-3">
-                        <div class="card card-sm">
-                            <div class="card-body">
+                        <x-tabler.card class="card-sm">
+                            <x-tabler.card-body>
                                 <div class="row align-items-center">
                                     <div class="col-auto">
                                         <span class="bg-blue text-white avatar"><i class="ti ti-users"></i></span>
@@ -31,12 +31,12 @@
                                         <div class="text-muted">{{ $jadwal->riwayatSiswa->count() }} Orang</div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                     <div class="col-md-3">
-                        <div class="card card-sm">
-                            <div class="card-body">
+                        <x-tabler.card class="card-sm">
+                            <x-tabler.card-body>
                                 <div class="row align-items-center">
                                     <div class="col-auto">
                                         <span class="bg-green text-white avatar"><i class="ti ti-player-play"></i></span>
@@ -46,12 +46,12 @@
                                         <div class="text-muted">{{ $jadwal->riwayatSiswa->where('status', 'Sedang_Mengerjakan')->count() }} Orang</div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                     <div class="col-md-3">
-                        <div class="card card-sm">
-                            <div class="card-body">
+                        <x-tabler.card class="card-sm">
+                            <x-tabler.card-body>
                                 <div class="row align-items-center">
                                     <div class="col-auto">
                                         <span class="bg-success text-white avatar"><i class="ti ti-check"></i></span>
@@ -61,12 +61,12 @@
                                         <div class="text-muted">{{ $jadwal->riwayatSiswa->where('status', 'Selesai')->count() }} Orang</div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                     <div class="col-md-3">
-                        <div class="card card-sm">
-                            <div class="card-body">
+                        <x-tabler.card class="card-sm">
+                            <x-tabler.card-body>
                                 <div class="row align-items-center">
                                     <div class="col-auto">
                                         <span class="bg-red text-white avatar"><i class="ti ti-alert-triangle"></i></span>
@@ -76,16 +76,16 @@
                                         <div class="text-muted">{{ \App\Models\Cbt\LogPelanggaran::whereIn('riwayat_id', $jadwal->riwayatSiswa->pluck('id'))->count() }} Kejadian</div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
                 </div>
             </div>
 
             {{-- Participant Table --}}
             <div class="col-12">
-                <div class="card">
-                    <div class="card-table">
+                <x-tabler.card>
+                    <x-tabler.card-body class="p-0">
                         <x-tabler.datatable-client
                             id="table-peserta"
                             :columns="[
@@ -160,8 +160,8 @@
                         @if($jadwal->riwayatSiswa->isEmpty())
                             <div class="text-center py-4 text-muted">Belum ada peserta yang memulai ujian.</div>
                         @endif
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
 

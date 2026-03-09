@@ -16,16 +16,6 @@
 
 <div class="row row-cards">
     <div class="col-lg-7">
-        <div class="card mb-3">
-            <div class="card-header">
-                <h3 class="card-title">Informasi Pengajuan</h3>
-                <div class="card-actions">
-                    @php 
-                        $status = $perizinan->status;
-                        $badgeColor = [
-                            'Draft'    => 'secondary',
-                            'Diajukan' => 'warning',
-                            'Pending'  => 'warning',
                             'Approved' => 'success',
                             'Rejected' => 'danger',
                         ][$status] ?? 'secondary';

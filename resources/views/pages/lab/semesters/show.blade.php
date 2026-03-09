@@ -50,8 +50,6 @@
     @endsection
 
     @section('content')
-        <x-tabler.flash-message />
-
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <h6 class="text-muted">Tahun Ajaran:</h6>

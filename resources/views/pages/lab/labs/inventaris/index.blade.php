@@ -14,9 +14,8 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <x-tabler.card>
                 <div class="card-body">
-                    <x-tabler.flash-message />
             <x-tabler.datatable
                 id="inventaris-table"
                 route="{{ route('lab.labs.inventaris.data', $lab->encrypted_lab_id) }}"
