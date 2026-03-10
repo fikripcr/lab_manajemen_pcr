@@ -57,6 +57,7 @@
 </head>
 
 <body class="{{ $layoutData['bodyClass'] ?? '' }}" 
+      data-container-width="{{ $layoutData['containerWidth'] ?? 'standard' }}"
       data-theme-density="{{ $themeData['themeDensity'] ?? 'standard' }}"
       data-theme-font-size="{{ $themeData['themeFontSize'] ?? '14px' }}"
       data-theme-icon-weight="{{ $themeData['themeIconWeight'] ?? '1.5' }}"
@@ -164,7 +165,7 @@
     <x-tabler.modal-global-search />
 
     {{-- Global Generic Modal --}}
-    <div class="modal modal-blur fade" id="modalAction" tabindex="-1" aria-hidden="true" data-bs-focus="false" style="z-index: 99999;">
+    <div class="modal modal-blur fade" id="modalAction" tabindex="-1" aria-hidden="true" data-bs-focus="false" style="z-index: 1055;">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content" id="modalContent">
                 <div class="modal-header">

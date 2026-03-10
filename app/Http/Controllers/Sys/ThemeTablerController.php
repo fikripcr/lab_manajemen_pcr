@@ -46,15 +46,27 @@ class ThemeTablerController extends Controller
     public function getLayoutData(string $mode = 'sys'): array
     {
         $config = $this->loadConfig($mode);
+        $layout = $config['layout'] ?? 'vertical';
+        $width  = $config['container_width'] ?? 'standard';
+
+        $classes = ["layout-{$layout}"];
+        if ($layout === 'horizontal') {
+            $classes[] = 'layout-horizontal';
+        }
+        if ($width === 'boxed') {
+            $classes[] = 'layout-boxed';
+        }
 
         return [
-            'containerWidth'        => $config['container_width'] ?? 'standard',
-            'layout'                => $config['layout'] ?? 'vertical',
-            'layoutSidebar'         => ! in_array($config['layout'] ?? 'vertical', ['condensed', 'horizontal']),
+            'containerWidth'        => $width,
+            'containerClass'        => $width === 'fluid' ? 'container-fluid' : 'container-xl',
+            'bodyClass'             => implode(' ', $classes),
+            'layout'                => $layout,
+            'layoutSidebar'         => ! in_array($layout, ['condensed', 'horizontal']),
             'layoutHideTopbar'      => ($config['header_sticky'] ?? 'false') === 'hidden',
             'layoutNavbarSticky'    => ($config['header_sticky'] ?? 'false') === 'true',
-            'layoutNavbarCondensed' => ($config['layout'] ?? 'vertical') === 'condensed',
-            'layoutNavbarClass'     => ($config['layout'] ?? 'vertical') === 'condensed' ? 'navbar-overlap' : '',
+            'layoutNavbarCondensed' => $layout === 'condensed',
+            'layoutNavbarClass'     => $layout === 'condensed' ? 'navbar-overlap' : '',
         ];
     }
 

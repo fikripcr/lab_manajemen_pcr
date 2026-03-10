@@ -276,8 +276,8 @@
                                     @csrf
                                     <div class="accordion" id="accordion-agenda">
                                         @forelse($rapat->agendas as $index => $agenda)
-                                        <div class="accordion-item" style="overflow: visible;">
-                                            <h4 class="accordion-header d-flex align-items-center" id="ah-{{ $agenda->encrypted_rapatagenda_id }}" style="z-index: 10;">
+                                        <div class="accordion-item">
+                                            <h4 class="accordion-header d-flex align-items-center" id="ah-{{ $agenda->encrypted_rapatagenda_id }}">
                                                 <button class="accordion-button {{ $index === 0 ? '' : 'collapsed' }} flex-fill" type="button"
                                                     data-bs-toggle="collapse"
                                                     data-bs-target="#ac-{{ $agenda->encrypted_rapatagenda_id }}"

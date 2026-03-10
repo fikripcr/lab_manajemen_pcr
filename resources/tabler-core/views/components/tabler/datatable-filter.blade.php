@@ -11,7 +11,7 @@
             <span id="{{ $dataTableId }}-filter-count" class="badge bg-primary text-white ms-1" style="display: none;">0</span>
         </button>
         
-        <div class="dropdown-menu dropdown-menu-end p-3 shadow-lg" style="min-width: 400px; position: absolute; z-index: 1050;">
+        <div class="dropdown-menu dropdown-menu-end p-3 shadow-lg" style="min-width: 400px; position: absolute;">
             <form id="{{ $dataTableId }}-filter">
                 <div class="row g-3">
                     {{$slot}}

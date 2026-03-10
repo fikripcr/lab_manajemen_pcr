@@ -136,10 +136,19 @@ export default class CustomDataTables {
                 if (form && state.customFilter) {
                     for (const [key, value] of Object.entries(state.customFilter)) {
                         const el = form.querySelector(`[name="${key}"]`);
-                        if (el) el.value = value;
+                        if (el) {
+                            el.value = value;
+                            // Trigger native change event for UI sync (counts, badges)
+                            el.dispatchEvent(new Event('change', { bubbles: true }));
+                            // Special handling for Select2 if used
+                            if (window.jQuery && $(el).data('select2')) {
+                                $(el).trigger('change.select2');
+                            }
+                        }
                     }
+                    this.updateActiveFilters();
                 }
-            }, 0);
+            }, 50);
         } else {
             callback(null);
         }
