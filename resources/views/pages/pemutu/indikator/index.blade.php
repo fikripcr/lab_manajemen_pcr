@@ -37,7 +37,7 @@
             </x-tabler.datatable-filter>
         </div>
     </x-tabler.card-header>
-    <x-tabler.card-body class="p-0 table-responsive">
+    <x-tabler.card-body class="p-0">
         <x-tabler.datatable
             id="indikator-table"
             route="{{ route('pemutu.indikator.data', ['type' => $activeType]) }}"

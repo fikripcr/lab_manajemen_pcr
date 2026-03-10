@@ -57,24 +57,14 @@ class AmiController extends Controller
         $query  = $this->IndikatorService->getUnifiedSpmiQuery($periode, $unitId);
 
         return datatables()->of($query)
-            ->addIndexColumn()
-            ->addColumn('indikator_info', function ($row) {
-                $kode   = $row->no_indikator ?? '-';
-                $nama   = $row->indikator ?? '-';
-                $labels = pemutuLabelBadges($row->labels);
-
-                $html = '<div class="indicator-scroll">
-                    <div class="fw-bold text-primary">' . e($kode) . '</div>
-                    <div class="text-wrap">' . e($nama) . '</div>';
-
-                if (! empty($row->keterangan)) {
-                    $html .= '<div class="text-secondary small mt-1">Keterangan: ' . \Str::limit(strip_tags($row->keterangan), 200) . '</div>';
-                }
-
-                $html .= '<div class="mt-1">' . $labels . '</div>
-                </div>';
-
-                return $html;
+            ->addColumn('no', function ($row) {
+                return pemutuDtColNo($row);
+            })
+            ->addColumn('indikator_full', function ($row) {
+                return pemutuDtColIndikator($row);
+            })
+            ->addColumn('target', function ($row) {
+                return pemutuDtColTarget($row);
             })
             ->addColumn('status_ed', function ($row) {
                 $pivot = $row->orgUnits->first()?->pivot;
@@ -134,7 +124,7 @@ class AmiController extends Controller
                         ->orWhere('no_indikator', 'like', "%{$keyword}%");
                 });
             })
-            ->rawColumns(['indikator_info', 'status_ed', 'status_ami', 'action', 'rtp'])
+            ->rawColumns(['no', 'indikator_full', 'target', 'status_ed', 'status_ami', 'action', 'rtp'])
             ->make(true);
     }
 
@@ -197,15 +187,20 @@ class AmiController extends Controller
         ]);
 
         return DataTables::of($query)
-            ->addIndexColumn()
-            ->addColumn('indikator_info', function ($row) {
-                return '<strong>' . ($row->no_indikator ?? '-') . '</strong><br>' . $row->indikator;
+            ->addColumn('no', function ($row) {
+                return pemutuDtColNo($row);
+            })
+            ->addColumn('indikator_full', function ($row) {
+                return pemutuDtColIndikator($row);
+            })
+            ->addColumn('target', function ($row) {
+                return pemutuDtColTarget($row);
             })
             ->addColumn('rtp', function ($row) {
-                return $row->orgUnits->first()->pivot->ami_rtp_isi ?? '<span class="text-muted fst-italic">Tidak ada RTP</span>';
+                return $row->orgUnits->first()->pivot->ami_rtp_isi ?? '<span class="text-muted fst-italic">-</span>';
             })
             ->addColumn('ptp', function ($row) {
-                return $row->orgUnits->first()->pivot->ed_ptp_isi ?? '<span class="text-muted fst-italic">Belum diisi</span>';
+                return $row->orgUnits->first()->pivot->ed_ptp_isi ?? '<span class="text-muted fst-italic">-</span>';
             })
             ->addColumn('te', function ($row) {
                 return $row->orgUnits->first()->pivot->ami_te_isi ?? '<span class="text-muted fst-italic">Belum ditinjau</span>';
@@ -218,9 +213,9 @@ class AmiController extends Controller
                     data-modal-title="Isi Tinjauan Efektivitas (TE)"
                     data-modal-size="modal-lg">
                     <i class="ti ti-check me-1"></i>Isi
-                    </button>';
+                </button>';
             })
-            ->rawColumns(['indikator_info', 'rtp', 'ptp', 'te', 'action'])
+            ->rawColumns(['no', 'indikator_full', 'target', 'rtp', 'ptp', 'te', 'action'])
             ->make(true);
     }
 

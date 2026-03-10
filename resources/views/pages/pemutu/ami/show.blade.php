@@ -51,12 +51,13 @@
                     id="table-ami"
                     route="{{ route('pemutu.ami.data', $periode->encrypted_periodespmi_id) }}"
                     :columns="[
-                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                        ['data' => 'indikator_info', 'name' => 'indikator_info', 'title' => 'Indikator'],
-                        ['data' => 'status_ed', 'name' => 'status_ed', 'title' => 'Status ED', 'width' => '12%', 'class' => 'text-center', 'orderable' => false],
-                        ['data' => 'status_ami', 'name' => 'status_ami', 'title' => 'Status AMI', 'width' => '12%', 'class' => 'text-center', 'orderable' => false],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'AMI', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                        ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                        ['data' => 'indikator_full', 'name' => 'indikator_full', 'title' => 'Indikator'],
+                        ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%', 'class' => 'text-left'],
+                        ['data' => 'status_ed', 'name' => 'status_ed', 'title' => 'Status ED', 'width' => '10%', 'class' => 'text-center', 'orderable' => false],
+                        ['data' => 'status_ami', 'name' => 'status_ami', 'title' => 'Status AMI', 'width' => '10%', 'class' => 'text-center', 'orderable' => false],
                         ['data' => 'rtp', 'name' => 'rtp', 'title' => 'RTP', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                        ['data' => 'action', 'name' => 'action', 'title' => 'AMI', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                     ]"
                 />
             </x-tabler.card-body>
@@ -72,12 +73,13 @@
                     id="table-te"
                     route="{{ route('pemutu.ami.te-data', $periode->encrypted_periodespmi_id) }}"
                     :columns="[
-                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                        ['data' => 'indikator_info', 'name' => 'indikator_info', 'title' => 'Indikator'],
-                        ['data' => 'rtp', 'name' => 'rtp', 'title' => 'Rencana (RTP)', 'width' => '20%'],
-                        ['data' => 'ptp', 'name' => 'ptp', 'title' => 'Pelaksanaan (PTP)', 'width' => '20%'],
-                        ['data' => 'te', 'name' => 'te', 'title' => 'Tinjauan (TE)', 'width' => '20%'],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                        ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                        ['data' => 'indikator_full', 'name' => 'indikator_full', 'title' => 'Indikator'],
+                        ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%', 'class' => 'text-left'],
+                        ['data' => 'rtp', 'name' => 'rtp', 'title' => 'Rencana (RTP)', 'width' => '15%'],
+                        ['data' => 'ptp', 'name' => 'ptp', 'title' => 'Pelaksanaan (PTP)', 'width' => '15%'],
+                        ['data' => 'te', 'name' => 'te', 'title' => 'Tinjauan (TE)', 'width' => '15%'],
+                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                     ]"
                 />
             </x-tabler.card-body>

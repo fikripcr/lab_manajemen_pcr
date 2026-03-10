@@ -64,12 +64,12 @@
                     id="table-ed"
                     route="{{ route('pemutu.evaluasi-diri.data', $periode->encrypted_periodespmi_id) }}"
                     :columns="[
-                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                        ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                         ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator / Pernyataan Standar'],
-                        ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%','class' => 'text-left' ],
+                        ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '15%','class' => 'text-left' ],
                         ['data' => 'capaian', 'name' => 'capaian', 'title' => 'Capaian', 'width' => '15%','class' => 'text-center'  ],
-                        ['data' => 'analisis', 'name' => 'analisis', 'title' => 'Analisis', 'width' => '30%'],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                        ['data' => 'analisis', 'name' => 'analisis', 'title' => 'Analisis', 'width' => '25%'],
+                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                     ]"
                 />
             </x-tabler.card-body>
@@ -93,11 +93,11 @@
                     id="table-ptp"
                     route="{{ route('pemutu.evaluasi-diri.ptp-data', $periode->encrypted_periodespmi_id) }}"
                     :columns="[
-                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                        ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                         ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator / Pernyataan Standar'],
                         ['data' => 'rtp_isi', 'name' => 'rtp_isi', 'title' => 'RTP (Tahun Lalu)', 'width' => '25%'],
                         ['data' => 'ptp_isi', 'name' => 'ptp_isi', 'title' => 'Pelaksanaan (PTP)', 'width' => '25%'],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                     ]"
                 />
             </x-tabler.card-body>

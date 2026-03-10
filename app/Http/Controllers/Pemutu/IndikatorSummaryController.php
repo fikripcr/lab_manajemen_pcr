@@ -206,14 +206,14 @@ class IndikatorSummaryController extends Controller
         }
 
         return DataTables::of($query)
-            ->addIndexColumn()
+            ->addColumn('no', function ($row) {
+                return pemutuDtColNo($row);
+            })
             ->addColumn('indikator_full', function ($row) {
-                $html  = '<div class="d-flex flex-column">';
-                $html .= '<strong class="text-primary">' . e($row->no_indikator ?? '-') . '</strong>';
-                $html .= '<p class="mb-1">' . e($row->indikator ?? '-') . '</p>';
-                $html .= '<div><span class="status status-azure">' . e($row->unit_name ?? $row->unit_code ?? '-') . '</span></div>';
-                $html .= '</div>';
-                return $html;
+                return pemutuDtColIndikator($row);
+            })
+            ->addColumn('target', function ($row) {
+                return pemutuDtColTarget($row);
             })
             ->addColumn('parent_info', function ($row) {
                 if ($row->parent_no_indikator) {
@@ -297,7 +297,9 @@ class IndikatorSummaryController extends Controller
                 return $html;
             })
             ->rawColumns([
+                'no',
                 'indikator_full',
+                'target',
                 'parent_info',
                 'labels',
                 'ed_detail',
@@ -348,13 +350,14 @@ class IndikatorSummaryController extends Controller
         }
 
         return DataTables::of($query)
-            ->addIndexColumn()
+            ->addColumn('no', function ($row) {
+                return pemutuDtColNo($row);
+            })
             ->addColumn('indikator_full', function ($row) {
-                $html  = '<div class="d-flex flex-column">';
-                $html .= '<strong class="text-primary">' . e($row->no_indikator ?? '-') . '</strong>';
-                $html .= '<p class="mb-0">' . e($row->indikator ?? '-') . '</p>';
-                $html .= '</div>';
-                return $html;
+                return pemutuDtColIndikator($row);
+            })
+            ->addColumn('target', function ($row) {
+                return pemutuDtColTarget($row);
             })
             ->addColumn('parent_info', function ($row) {
                 if ($row->parent_no_indikator) {
@@ -430,7 +433,9 @@ class IndikatorSummaryController extends Controller
                 return $html;
             })
             ->rawColumns([
+                'no',
                 'indikator_full',
+                'target',
                 'parent_info',
                 'labels',
                 'kpi_detail',

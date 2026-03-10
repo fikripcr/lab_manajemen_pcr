@@ -18,7 +18,7 @@ return new class extends Migration
             CREATE OR REPLACE VIEW vw_pemutu_summary_indikator_standar AS
             WITH ed_data AS (
                 -- Ambil ED data per indikator (GROUP_CONCAT untuk multiple units)
-                SELECT 
+                SELECT
                     io.indikator_id,
                     GROUP_CONCAT(DISTINCT CONCAT(so.name, '|', COALESCE(io.ed_capaian, '-')) SEPARATOR ' ;; ') AS ed_capaian_detail,
                     GROUP_CONCAT(DISTINCT CONCAT(so.name, '|', COALESCE(io.ed_analisis, '-')) SEPARATOR ' ;; ') AS ed_analisis_detail,
@@ -29,14 +29,14 @@ return new class extends Migration
             ),
             ami_data AS (
                 -- Ambil AMI hasil per indikator
-                SELECT 
+                SELECT
                     io.indikator_id,
-                    GROUP_CONCAT(DISTINCT CONCAT(so.name, '|', 
-                        CASE io.ami_hasil_akhir 
-                            WHEN 0 THEN 'KTS' 
-                            WHEN 1 THEN 'Terpenuhi' 
-                            WHEN 2 THEN 'Terlampaui' 
-                            ELSE '-' 
+                    GROUP_CONCAT(DISTINCT CONCAT(so.name, '|',
+                        CASE io.ami_hasil_akhir
+                            WHEN 0 THEN 'KTS'
+                            WHEN 1 THEN 'Terpenuhi'
+                            WHEN 2 THEN 'Terlampaui'
+                            ELSE '-'
                         END, '|',
                         COALESCE(io.ami_hasil_temuan, '-')
                     ) SEPARATOR ' ;; ') AS ami_hasil_detail,
@@ -48,7 +48,7 @@ return new class extends Migration
             ),
             pengend_data AS (
                 -- Ambil Pengendalian status per indikator
-                SELECT 
+                SELECT
                     io.indikator_id,
                     GROUP_CONCAT(DISTINCT CONCAT(so.name, '|', COALESCE(io.pengend_status, '-'), '|', COALESCE(io.pengend_analisis, '-')) SEPARATOR ' ;; ') AS pengend_status_detail
                 FROM pemutu_indikator_orgunit io
@@ -57,14 +57,14 @@ return new class extends Migration
                 GROUP BY io.indikator_id
             ),
             label_data AS (
-                SELECT 
+                SELECT
                     il.indikator_id,
                     GROUP_CONCAT(DISTINCT CONCAT(l.name, '|', l.color) SEPARATOR ', ') AS label_details
                 FROM pemutu_indikator_label il
                 LEFT JOIN pemutu_label l ON il.label_id = l.label_id
                 GROUP BY il.indikator_id
             )
-            SELECT 
+            SELECT
                 i.indikator_id,
                 i.parent_id,
                 i.type,
@@ -86,55 +86,57 @@ return new class extends Migration
                 i.keterangan,
                 i.created_at AS indikator_created_at,
                 i.updated_at AS indikator_updated_at,
-                
+
                 -- Parent Indikator Info
                 pi.no_indikator AS parent_no_indikator,
                 pi.indikator AS parent_indikator,
-                
+
                 -- ED Detail (capaian & analisis per unit)
                 COALESCE(ed.ed_capaian_detail, '-') AS ed_capaian_detail,
                 COALESCE(ed.ed_analisis_detail, '-') AS ed_analisis_detail,
-                
+
                 -- AMI Detail (hasil & rekomendasi per unit)
                 COALESCE(ami.ami_hasil_detail, '-') AS ami_hasil_detail,
                 COALESCE(ami.ami_rekomendasi_detail, '-') AS ami_rekomendasi_detail,
-                
+
                 -- Pengendalian Detail (status & analisis per unit)
                 COALESCE(pengend.pengend_status_detail, '-') AS pengend_status_detail,
-                
+
                 -- Unit Names (untuk badge)
                 COALESCE(ed.all_unit_names, '-') AS all_unit_names,
-                
+
                 -- Labels
                 COALESCE(lbl.label_details, '-') AS label_details,
-                
+
                 -- DokSub terkait
                 COALESCE((
-                    SELECT GROUP_CONCAT(DISTINCT CONCAT(ds.judul, '|', ds.kode) SEPARATOR ' ;; ')
+                    SELECT GROUP_CONCAT(DISTINCT CONCAT(COALESCE(dp.judul, d.judul), '|', COALESCE(dp.kode, d.kode)) SEPARATOR ' ;; ')
                     FROM pemutu_indikator_doksub ids
                     LEFT JOIN pemutu_dok_sub ds ON ids.doksub_id = ds.doksub_id
+                    LEFT JOIN pemutu_dokumen d ON ds.dok_id = d.dok_id
+                    LEFT JOIN pemutu_dokumen dp ON d.parent_id = dp.dok_id
                     WHERE ids.indikator_id = i.indikator_id
                 ), '-') AS doksub_details
-                
+
             FROM pemutu_indikator i
-            
+
             -- Parent Indikator (self-join)
             LEFT JOIN pemutu_indikator pi ON i.parent_id = pi.indikator_id
-            
+
             -- ED Data
             LEFT JOIN ed_data ed ON i.indikator_id = ed.indikator_id
-            
+
             -- AMI Data
             LEFT JOIN ami_data ami ON i.indikator_id = ami.indikator_id
-            
+
             -- Pengendalian Data
             LEFT JOIN pengend_data pengend ON i.indikator_id = pengend.indikator_id
-            
+
             -- Labels
             LEFT JOIN label_data lbl ON i.indikator_id = lbl.indikator_id
-            
+
             WHERE i.type = 'standar'
-            
+
             ORDER BY i.seq ASC
         ");
 
@@ -146,7 +148,7 @@ return new class extends Migration
             CREATE OR REPLACE VIEW vw_pemutu_summary_indikator_performa AS
             WITH kpi_data AS (
                 -- Ambil KPI detail per pegawai
-                SELECT 
+                SELECT
                     ip.indikator_id,
                     GROUP_CONCAT(DISTINCT CONCAT(
                         COALESCE(rd.nama, CONCAT('Pegawai ID:', ip.pegawai_id)), '|',
@@ -168,7 +170,7 @@ return new class extends Migration
                 GROUP BY ip.indikator_id
             ),
             label_data AS (
-                SELECT 
+                SELECT
                     il.indikator_id,
                     GROUP_CONCAT(DISTINCT CONCAT(l.name, '|', l.color) SEPARATOR ', ') AS label_details
                 FROM pemutu_indikator_label il
@@ -176,14 +178,14 @@ return new class extends Migration
                 GROUP BY il.indikator_id
             ),
             unit_data AS (
-                SELECT 
+                SELECT
                     io.indikator_id,
                     GROUP_CONCAT(DISTINCT so.name SEPARATOR ' ;; ') AS all_unit_names
                 FROM pemutu_indikator_orgunit io
                 LEFT JOIN struktur_organisasi so ON io.org_unit_id = so.orgunit_id
                 GROUP BY io.indikator_id
             )
-            SELECT 
+            SELECT
                 i.indikator_id,
                 i.parent_id,
                 i.type,
@@ -205,11 +207,11 @@ return new class extends Migration
                 i.keterangan,
                 i.created_at AS indikator_created_at,
                 i.updated_at AS indikator_updated_at,
-                
+
                 -- Parent Indikator Info
                 pi.no_indikator AS parent_no_indikator,
                 pi.indikator AS parent_indikator,
-                
+
                 -- KPI Detail (per pegawai)
                 COALESCE(kpi.kpi_pegawai_detail, '-') AS kpi_pegawai_detail,
                 COALESCE(kpi.total_pegawai, 0) AS total_pegawai,
@@ -220,37 +222,39 @@ return new class extends Migration
                 COALESCE(kpi.kpi_avg_score, 0) AS kpi_avg_score,
                 COALESCE(kpi.kpi_min_score, 0) AS kpi_min_score,
                 COALESCE(kpi.kpi_max_score, 0) AS kpi_max_score,
-                
+
                 -- Labels
                 COALESCE(lbl.label_details, '-') AS label_details,
-                
+
                 -- Unit Names (untuk badge)
                 COALESCE(uni.all_unit_names, '-') AS all_unit_names,
-                
+
                 -- DokSub terkait
                 COALESCE((
-                    SELECT GROUP_CONCAT(DISTINCT CONCAT(ds.judul, '|', ds.kode) SEPARATOR ' ;; ')
+                    SELECT GROUP_CONCAT(DISTINCT CONCAT(COALESCE(dp.judul, d.judul), '|', COALESCE(dp.kode, d.kode)) SEPARATOR ' ;; ')
                     FROM pemutu_indikator_doksub ids
                     LEFT JOIN pemutu_dok_sub ds ON ids.doksub_id = ds.doksub_id
+                    LEFT JOIN pemutu_dokumen d ON ds.dok_id = d.dok_id
+                    LEFT JOIN pemutu_dokumen dp ON d.parent_id = dp.dok_id
                     WHERE ids.indikator_id = i.indikator_id
                 ), '-') AS doksub_details
-                
+
             FROM pemutu_indikator i
-            
+
             -- Parent Indikator (self-join)
             LEFT JOIN pemutu_indikator pi ON i.parent_id = pi.indikator_id
-            
+
             -- KPI Data
             LEFT JOIN kpi_data kpi ON i.indikator_id = kpi.indikator_id
-            
+
             -- Labels
             LEFT JOIN label_data lbl ON i.indikator_id = lbl.indikator_id
-            
+
             -- Units
             LEFT JOIN unit_data uni ON i.indikator_id = uni.indikator_id
-            
+
             WHERE i.type = 'performa'
-            
+
             ORDER BY i.seq ASC
         ");
     }

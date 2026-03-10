@@ -120,9 +120,9 @@
                 id="table-standar"
                 route="{{ route('pemutu.indikator-summary.data-standar') }}"
                 :columns="[
-                    ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                    ['data' => 'indikator_full', 'name' => 'no_indikator', 'title' => 'Indikator & Unit', 'width' => '25%'],
-                    ['data' => 'parent_info', 'name' => 'parent_no_indikator', 'title' => 'Parent', 'width' => '8%'],
+                    ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                    ['data' => 'indikator_full', 'name' => 'no_indikator', 'title' => 'Indikator & Unit', 'width' => '20%'],
+                    ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%'],
                     ['data' => 'labels', 'name' => 'label_details', 'title' => 'Label', 'width' => '10%'],
                     ['data' => 'ed_detail', 'name' => 'ed_capaian', 'title' => 'Capaian', 'width' => '10%', 'class' => 'text-center'],
                     ['data' => 'ed_analisis', 'name' => 'ed_analisis', 'title' => 'Analisis', 'width' => '15%'],

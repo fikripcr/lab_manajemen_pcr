@@ -94,9 +94,9 @@
                 id="table-performa"
                 route="{{ route('pemutu.indikator-summary.data-performa') }}"
                 :columns="[
-                    ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                    ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator Performa', 'width' => '30%'],
-                    ['data' => 'parent_info', 'name' => 'parent_no_indikator', 'title' => 'Parent', 'width' => '10%'],
+                    ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                    ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator Performa', 'width' => '25%'],
+                    ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%'],
                     ['data' => 'labels', 'name' => 'all_labels', 'title' => 'Label', 'width' => '12%'],
                     ['data' => 'kpi_detail', 'name' => 'pegawai_name', 'title' => 'Pegawai (Unit)', 'width' => '20%'],
                     ['data' => 'kpi_score', 'name' => 'kpi_score', 'title' => 'Score', 'width' => '10%', 'class' => 'text-center'],

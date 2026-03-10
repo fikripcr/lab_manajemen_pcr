@@ -235,6 +235,15 @@ class PeningkatanController extends Controller
         $query = $this->IndikatorService->getPeningkatanReviewQuery($periode);
 
         return DataTables::of($query)
+            ->addColumn('no', function ($row) {
+                return pemutuDtColNo($row);
+            })
+            ->addColumn('indikator_full', function ($row) {
+                return pemutuDtColIndikator($row);
+            })
+            ->addColumn('target', function ($row) {
+                return pemutuDtColTarget($row);
+            })
             ->addColumn('status_badge', function ($row) {
                 if (! $row->prev_pengend_status) {
                     return '<span class="badge bg-blue-lt">Dilanjutkan</span>';
@@ -264,7 +273,7 @@ class PeningkatanController extends Controller
 
                 return $parts ? implode('<br>', $parts) : '<span class="text-muted">—</span>';
             })
-            ->rawColumns(['status_badge', 'keterangan_perubahan', 'dokumen_standar', 'nama_indikator'])
+            ->rawColumns(['no', 'indikator_full', 'target', 'status_badge', 'keterangan_perubahan'])
             ->make(true);
     }
 

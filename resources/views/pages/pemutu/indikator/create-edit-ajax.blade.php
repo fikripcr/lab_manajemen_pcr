@@ -85,13 +85,26 @@
                                     <div class="col-md-4">
                                         <x-tabler.form-select
                                             name="kelompok_indikator"
-                                            label="Kelompok Indikator"
+                                            label="Kelompok"
                                             :required="true"
                                             :options="[
                                                 'Akademik' => 'Akademik',
                                                 'Non Akademik' => 'Non Akademik'
                                             ]"
                                             :selected="old('kelompok_indikator', $indikator->kelompok_indikator)"
+                                        />
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <x-tabler.form-select
+                                            name="jenis_data"
+                                            label="Jenis Data"
+                                            :required="false"
+                                            :options="[
+                                                'Kualitatif' => 'Kualitatif',
+                                                'Kuantitatif' => 'Kuantitatif'
+                                            ]"
+                                            :selected="old('jenis_data', $indikator->jenis_data)"
                                         />
                                     </div>
                                 </div>

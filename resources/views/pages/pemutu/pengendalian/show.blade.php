@@ -366,8 +366,9 @@
                         id="table-pengendalian"
                         route="{{ route('pemutu.pengendalian.data', $periode->encrypted_periodespmi_id) }}"
                         :columns="[
-                            ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '4%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                            ['data' => 'indikator_info', 'name' => 'indikator', 'title' => 'Indikator'],
+                            ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                            ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator'],
+                            ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%'],
                             ['data' => 'analisis', 'name' => 'analisis', 'title' => 'Analisis', 'orderable' => false, 'searchable' => false],
                             ['data' => 'status_ami', 'name' => 'status_ami', 'title' => 'AMI', 'width' => '8%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                             ['data' => 'status_pengend', 'name' => 'status_pengend', 'title' => 'Status', 'width' => '9%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],

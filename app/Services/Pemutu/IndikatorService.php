@@ -329,7 +329,7 @@ class IndikatorService
                 'pengend_urgent_matrix',
                 'prev_indikorgunit_id',
             ]);
-        }, 'labels.type', 'parent']);
+        }, 'labels.type', 'parent', 'dokSubs.dokumen.parent']);
 
         $query->whereHas('orgUnits', function ($q) use ($unitId, $additionalFilters) {
             if ($unitId) {
@@ -407,7 +407,7 @@ class IndikatorService
                 'pemutu_indikator.no_indikator',
                 DB::raw('CONCAT("<div class=\"indicator-scroll\">", pemutu_indikator.indikator, "</div>") as nama_indikator'),
                 'pemutu_indikator.type',
-                'org.name as nama_prodi',
+                'org.name as unit_name',
                 'pemutu_indikator_orgunit.target as target_baru',
                 'prev_ou.target as target_lama',
                 'prev_ou.pengend_status as prev_pengend_status',

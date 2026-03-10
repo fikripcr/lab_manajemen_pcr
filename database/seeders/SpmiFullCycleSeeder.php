@@ -83,7 +83,6 @@ class SpmiFullCycleSeeder extends Seeder
                 'no_indikator'       => '24' . str_pad($idx + 1, 4, '0', STR_PAD_LEFT),
                 'indikator'          => "Ketercapaian IKU pada $namaStandar",
                 'target'             => rand(80, 100) . '%',
-                'jenis_indikator'    => 'Utama',
                 'periode_mulai'      => 2024,
                 'periode_selesai'    => 2024,
                 'created_by'         => 1,

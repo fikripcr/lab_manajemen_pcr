@@ -481,11 +481,9 @@
                             id="table-review"
                             route="{{ route('pemutu.peningkatan.review-data', $periode->encrypted_periodespmi_id) }}"
                             :columns="[
-                                ['data' => 'no_indikator', 'name' => 'pemutu_indikator.no_indikator', 'title' => 'No.', 'width' => '5%'],
-                                ['data' => 'nama_indikator', 'name' => 'pemutu_indikator.indikator', 'title' => 'Nama Indikator'],
-                                ['data' => 'dokumen_standar', 'name' => 'd.judul', 'title' => 'Standar / Dokumen'],
-                                ['data' => 'nama_prodi', 'name' => 'org.nama', 'title' => 'Prodi/Unit', 'width' => '10%'],
-                                ['data' => 'target_baru', 'name' => 'pemutu_indikator_orgunit.target', 'title' => 'Target Baru', 'width' => '5%', 'class' => 'text-center'],
+                                ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                                ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator'],
+                                ['data' => 'target', 'name' => 'target', 'title' => 'Target Baru', 'width' => '10%', 'class' => 'text-center'],
                                 ['data' => 'status_badge', 'name' => 'status_badge', 'title' => 'Status Thn Lalu', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                                 ['data' => 'keterangan_perubahan', 'name' => 'keterangan_perubahan', 'title' => 'Keterangan Perubahan', 'orderable' => false, 'searchable' => false]
                             ]"

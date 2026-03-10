@@ -75,16 +75,14 @@ class EvaluasiDiriController extends Controller
         $query = $this->IndikatorService->getUnifiedSpmiQuery($periode, $unitId);
 
         return DataTables::of($query)
-            ->addIndexColumn()
+            ->addColumn('no', function ($row) {
+                return pemutuDtColNo($row);
+            })
             ->addColumn('indikator_full', function ($row) {
-                $html = '<strong>' . ($row->no_indikator ?? '-') . '</strong><br>' . e($row->indikator);
-                if (! empty($row->keterangan)) {
-                    $html .= '<div class="text-secondary small mt-1">Keterangan: ' . \Str::limit(strip_tags($row->keterangan), 200) . '</div>';
-                }
-                return $html;
+                return pemutuDtColIndikator($row);
             })
             ->addColumn('target', function ($row) {
-                return $row->orgUnits->first()->pivot->target ?? '<span class="text-muted">-</span>';
+                return pemutuDtColTarget($row);
             })
             ->addColumn('capaian', function ($row) {
                 return $row->orgUnits->first()->pivot->ed_capaian ?? '<span class="text-muted fst-italic">Belum diisi</span>';
@@ -150,7 +148,7 @@ class EvaluasiDiriController extends Controller
                     Isi
                     </button>';
             })
-            ->rawColumns(['indikator_full', 'target', 'capaian', 'file', 'action', 'analisis'])
+            ->rawColumns(['no', 'indikator_full', 'target', 'capaian', 'analisis', 'action'])
             ->make(true);
     }
 
@@ -325,9 +323,11 @@ class EvaluasiDiriController extends Controller
         ]);
 
         return DataTables::of($query)
-            ->addIndexColumn()
+            ->addColumn('no', function ($row) {
+                return pemutuDtColNo($row);
+            })
             ->addColumn('indikator_full', function ($row) {
-                return '<strong>' . ($row->no_indikator ?? '-') . '</strong><br>' . $row->indikator;
+                return pemutuDtColIndikator($row);
             })
             ->addColumn('rtp_isi', function ($row) {
                 return $row->orgUnits->first()->pivot->ami_rtp_isi ?? '<span class="text-muted fst-italic">Tidak ada RTP</span>';
@@ -343,9 +343,9 @@ class EvaluasiDiriController extends Controller
                     data-modal-title="Isi Pelaksanaan Tindakan Perbaikan (PTP)"
                     data-modal-size="modal-lg">
                     Isi PTP
-                    </button>';
+                </button>';
             })
-            ->rawColumns(['indikator_full', 'rtp_isi', 'ptp_isi', 'action'])
+            ->rawColumns(['no', 'indikator_full', 'rtp_isi', 'ptp_isi', 'action'])
             ->make(true);
     }
 
