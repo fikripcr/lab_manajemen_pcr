@@ -2,7 +2,10 @@
 namespace App\Services\Pemutu;
 
 use App\Models\Pemutu\Indikator;
+use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeKpi;
+use App\Models\Pemutu\PeriodeSpmi;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class IndikatorService
@@ -290,5 +293,142 @@ class IndikatorService
         $nextSequence = str_pad($sequence + 1, 4, '0', STR_PAD_LEFT);
 
         return $prefix . $nextSequence;
+    }
+    /**
+     * Get a unified query for Indicators and their OrgUnit pivot data.
+     * Standardized for ED, AMI, and Pengendalian.
+     */
+    public function getUnifiedSpmiQuery(PeriodeSpmi $periode, ?int $unitId = null, array $additionalFilters = []): Builder
+    {
+        $query = Indikator::with(['orgUnits' => function ($q) use ($unitId) {
+            if ($unitId) {
+                $q->where('pemutu_indikator_orgunit.org_unit_id', $unitId);
+            }
+            $q->withPivot([
+                'indikorgunit_id',
+                'target',
+                'ed_capaian',
+                'ed_analisis',
+                'ed_attachment',
+                'ed_links',
+                'ed_skala',
+                'ed_ptp_isi',
+                'ami_hasil_akhir',
+                'ami_hasil_temuan',
+                'ami_hasil_temuan_sebab',
+                'ami_hasil_temuan_akibat',
+                'ami_hasil_temuan_rekom',
+                'ami_rtp_isi',
+                'ami_rtp_tgl_pelaksanaan',
+                'ami_te_isi',
+                'pengend_status',
+                'pengend_target',
+                'pengend_analisis',
+                'pengend_penyesuaian',
+                'pengend_important_matrix',
+                'pengend_urgent_matrix',
+                'prev_indikorgunit_id',
+            ]);
+        }, 'labels.type', 'parent']);
+
+        $query->whereHas('orgUnits', function ($q) use ($unitId, $additionalFilters) {
+            if ($unitId) {
+                $q->where('pemutu_indikator_orgunit.org_unit_id', $unitId);
+            }
+
+            // Status ED: 'isi' or 'kosong'
+            if (! empty($additionalFilters['ed_status'])) {
+                if ($additionalFilters['ed_status'] === 'isi') {
+                    $q->whereNotNull('ed_capaian')->where('ed_capaian', '!=', '');
+                } elseif ($additionalFilters['ed_status'] === 'kosong') {
+                    $q->where(function ($sq) {
+                        $sq->whereNull('ed_capaian')->orWhere('ed_capaian', '');
+                    });
+                }
+            }
+
+            // Filter by ED Skala (exact or array)
+            if (isset($additionalFilters['ed_skala'])) {
+                $val = $additionalFilters['ed_skala'];
+                is_array($val) ? $q->whereIn('ed_skala', $val) : $q->where('ed_skala', $val);
+            }
+
+            // Filter by AMI Hasil Akhir (exact or array)
+            if (isset($additionalFilters['ami_hasil_akhir'])) {
+                $val = $additionalFilters['ami_hasil_akhir'];
+                is_array($val) ? $q->whereIn('ami_hasil_akhir', $val) : $q->where('ami_hasil_akhir', $val);
+            }
+
+            // Filter Pengendalian Status
+            if (! empty($additionalFilters['pengend_status'])) {
+                $val = $additionalFilters['pengend_status'];
+                is_array($val) ? $q->whereIn('pengend_status', $val) : $q->where('pengend_status', $val);
+            }
+        });
+
+        // Current Periode Context
+        $query->where('kelompok_indikator', $periode->jenis_periode);
+
+        $query->whereHas('dokSubs.dokumen', function ($q) use ($periode, $additionalFilters) {
+            $q->where('periode', $periode->periode);
+
+            // Filter specific document (Standar/Root) if provided
+            if (! empty($additionalFilters['dok_id'])) {
+                $dokId = decryptIdIfEncrypted($additionalFilters['dok_id']);
+                // Check if it matches dok_id or its parents (if we want to filter by root)
+                // For simplicity, we filter by the specific dok_id linked to the indicator
+                $q->where('dok_id', $dokId);
+            }
+        });
+
+        // Filter by Indikator Type
+        if (! empty($additionalFilters['indikator_type'])) {
+            $query->where('type', $additionalFilters['indikator_type']);
+        }
+
+        return $query->orderBy('no_indikator', 'asc');
+    }
+
+    /**
+     * Get data for Peningkatan (Review Duplication).
+     */
+    public function getPeningkatanReviewQuery(PeriodeSpmi $periode): Builder
+    {
+        return IndikatorOrgUnit::query()
+            ->join('pemutu_indikator', 'pemutu_indikator.indikator_id', '=', 'pemutu_indikator_orgunit.indikator_id')
+            ->leftJoin('pemutu_indikator_orgunit as prev_ou', 'pemutu_indikator_orgunit.prev_indikorgunit_id', '=', 'prev_ou.indikorgunit_id')
+            ->leftJoin('struktur_organisasi as org', 'pemutu_indikator_orgunit.org_unit_id', '=', 'org.orgunit_id')
+            ->leftJoin('pemutu_indikator_doksub as ids', 'pemutu_indikator.indikator_id', '=', 'ids.indikator_id')
+            ->leftJoin('pemutu_dok_sub as ds', 'ds.doksub_id', '=', 'ids.doksub_id')
+            ->leftJoin('pemutu_dokumen as d', 'd.dok_id', '=', 'ds.dok_id')
+            ->where('pemutu_indikator.origin_from', 'peningkatan_' . $periode->periode)
+            ->select([
+                'pemutu_indikator_orgunit.indikorgunit_id',
+                'pemutu_indikator.no_indikator',
+                DB::raw('CONCAT("<div class=\"indicator-scroll\">", pemutu_indikator.indikator, "</div>") as nama_indikator'),
+                'pemutu_indikator.type',
+                'org.name as nama_prodi',
+                'pemutu_indikator_orgunit.target as target_baru',
+                'prev_ou.target as target_lama',
+                'prev_ou.pengend_status as prev_pengend_status',
+                'prev_ou.pengend_target as prev_pengend_target',
+                'prev_ou.pengend_penyesuaian as prev_pengend_penyesuaian',
+                'd.judul as dokumen_judul',
+            ])
+            ->groupBy([
+                'pemutu_indikator_orgunit.indikorgunit_id',
+                'pemutu_indikator.no_indikator',
+                'pemutu_indikator.indikator',
+                'pemutu_indikator.type',
+                'org.name',
+                'pemutu_indikator_orgunit.target',
+                'prev_ou.target',
+                'prev_ou.pengend_status',
+                'prev_ou.pengend_target',
+                'prev_ou.pengend_penyesuaian',
+                'd.judul',
+            ])
+            ->orderBy('pemutu_indikator.no_indikator')
+            ->orderBy('org.name');
     }
 }

@@ -224,9 +224,9 @@
                                             data-bs-toggle="collapse" data-bs-target="#ed-analisis-{{ $loop->index }}"
                                             text="Lihat Analisis" />
                                         <div class="collapse" id="ed-analisis-{{ $loop->index }}">
-                                            <x-tabler.card-body small bg-light">
+                                            <x-tabler.card-body small bg-light>
                                                 {{ $ed->ed_analisis ?? '-' }}
-                                            </div>
+                                            </x-tabler.card-body>
                                         </div>
                                     </td>
                                     <td>
@@ -300,7 +300,7 @@
                                                 data-bs-toggle="collapse" data-bs-target="#ami-temuan-{{ $loop->index }}"
                                                 text="Lihat Temuan" />
                                             <div class="collapse" id="ami-temuan-{{ $loop->index }}">
-                                                <x-tabler.card-body small bg-light">{{ $ami->ami_hasil_temuan }}</div>
+                                                <x-tabler.card-body small bg-light>{{ $ami->ami_hasil_temuan }}</x-tabler.card-body>
                                             </div>
                                         @else
                                             <span class="text-muted">-</span>
@@ -312,7 +312,7 @@
                                                 data-bs-toggle="collapse" data-bs-target="#ami-sebab-{{ $loop->index }}"
                                                 text="Lihat Sebab" />
                                             <div class="collapse" id="ami-sebab-{{ $loop->index }}">
-                                                <x-tabler.card-body small bg-light">{{ $ami->ami_hasil_temuan_sebab }}</div>
+                                                <x-tabler.card-body small bg-light">{{ $ami->ami_hasil_temuan_sebab }}</x-tabler.card-body>
                                             </div>
                                         @else
                                             <span class="text-muted">-</span>
@@ -324,7 +324,7 @@
                                                 data-bs-toggle="collapse" data-bs-target="#ami-akibat-{{ $loop->index }}"
                                                 text="Lihat Akibat" />
                                             <div class="collapse" id="ami-akibat-{{ $loop->index }}">
-                                                <x-tabler.card-body small bg-light">{{ $ami->ami_hasil_temuan_akibat }}</div>
+                                                <x-tabler.card-body small bg-light">{{ $ami->ami_hasil_temuan_akibat }}</x-tabler.card-body>
                                             </div>
                                         @else
                                             <span class="text-muted">-</span>
@@ -336,7 +336,7 @@
                                                 data-bs-toggle="collapse" data-bs-target="#ami-rekom-{{ $loop->index }}"
                                                 text="Lihat Rekom" />
                                             <div class="collapse" id="ami-rekom-{{ $loop->index }}">
-                                                <x-tabler.card-body small bg-light">{{ $ami->ami_hasil_temuan_rekom }}</div>
+                                                <x-tabler.card-body small bg-light">{{ $ami->ami_hasil_temuan_rekom }}</x-tabler.card-body>
                                             </div>
                                         @else
                                             <span class="text-muted">-</span>
@@ -402,7 +402,7 @@
                                                 data-bs-toggle="collapse" data-bs-target="#pengend-analisis-{{ $loop->index }}"
                                                 text="Lihat Analisis" />
                                             <div class="collapse" id="pengend-analisis-{{ $loop->index }}">
-                                                <x-tabler.card-body small bg-light">{{ $pengend->pengend_analisis }}</div>
+                                                <x-tabler.card-body small bg-light">{{ $pengend->pengend_analisis }}</x-tabler.card-body>
                                             </div>
                                         @else
                                             <span class="text-muted">-</span>
@@ -414,7 +414,7 @@
                                                 data-bs-toggle="collapse" data-bs-target="#pengend-penyesuaian-{{ $loop->index }}"
                                                 text="Lihat Penyesuaian" />
                                             <div class="collapse" id="pengend-penyesuaian-{{ $loop->index }}">
-                                                <x-tabler.card-body small bg-light">{{ $pengend->pengend_penyesuaian }}</div>
+                                                <x-tabler.card-body small bg-light">{{ $pengend->pengend_penyesuaian }}</x-tabler.card-body>
                                             </div>
                                         @else
                                             <span class="text-muted">-</span>

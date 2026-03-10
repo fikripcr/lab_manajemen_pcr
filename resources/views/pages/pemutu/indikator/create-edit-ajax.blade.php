@@ -14,12 +14,13 @@
     <x-tabler.page-header :title="$title" pretitle="SPMI / Indikator">
         <x-slot:actions>
             <x-tabler.button href="javascript:history.back()" type="back" />
+            <x-tabler.button type="submit" :text="$isEdit ? 'Update Indikator' : 'Simpan Indikator'" form="form-indikator" />
         </x-slot:actions>
     </x-tabler.page-header>
     @endsection
 
     @section('content')
-    <form action="{{ $route }}" method="POST" class="ajax-form" novalidate>
+    <form action="{{ $route }}" method="POST" class="ajax-form" id="form-indikator" novalidate>
         @csrf
         @if($isEdit) @method('PUT') @endif
         <input type="hidden" name="redirect_to" value="{{ old('redirect_to', request('redirect_to', url()->previous())) }}">
@@ -35,7 +36,7 @@
             <!-- INFORMASI UMUM & SKALA (KIRI) -->
             <div class="col-lg-7">
                 <x-tabler.card>
-                    <x-tabler.card-header class="border-bottom-0">
+                    <x-tabler.card-header>
                         <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
                             <li class="nav-item">
                                 <a href="#tab-informasi-umum" class="nav-link active" data-bs-toggle="tab">
@@ -58,10 +59,8 @@
                             <div class="tab-pane active show" id="tab-informasi-umum">
                                 <input type="hidden" name="type" value="{{ $type }}">
                                 
-                                <input type="hidden" name="type" value="{{ $type }}">
-                                
-                                <div class="row">
-                                    <div class="col-md-4 mb-3">
+                                <div class="row  mb-3">
+                                    <div class="col-md-4">
                                         <label class="form-label text-muted small">Tipe Indikator</label>
                                         <div class="form-control-plaintext fw-bold text-primary">
                                             <i class="ti ti-tag me-1"></i> 
@@ -72,7 +71,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-4">
                                         <label class="form-label text-muted small">No Indikator</label>
                                         <div class="form-control-plaintext">
                                             @if($isEdit)
@@ -83,7 +82,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-4">
                                         <x-tabler.form-select
                                             name="kelompok_indikator"
                                             label="Kelompok Indikator"
@@ -97,31 +96,23 @@
                                     </div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <x-tabler.form-textarea name="indikator" label="Nama Indikator" rows="2" placeholder="Masukkan nama indikator..." value="{{ old('indikator', $indikator->indikator) }}" />
-                                    </div>
-                                </div>
+                                <x-tabler.form-textarea name="indikator" label="Nama Indikator" rows="2" placeholder="Masukkan nama indikator..." value="{{ old('indikator', $indikator->indikator) }}" />
 
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <x-tabler.form-select name="doksub_ids" label="Dokumen Terkait" class="select2-ajax" multiple="true" data-placeholder="Cari & pilih dokumen penjaminan mutu..." data-ajax-url="{{ route('pemutu.indikator.search-doksub') }}">
-                                            @if(isset($selectedDokSubs))
-                                                @foreach($selectedDokSubs as $ds)
-                                                    @if($ds instanceof \App\Models\Pemutu\DokSub)
-                                                        <option value="{{ $ds->encrypted_doksub_id }}" selected>
-                                                            [{{ strtoupper($ds->dokumen?->jenis ?? 'DOC') }}] {{ $ds->dokumen?->judul ?? '-' }} &raquo; {{ $ds->judul }}
-                                                        </option>
-                                                    @endif
-                                                @endforeach
+                                <x-tabler.form-select name="doksub_ids" label="Dokumen Terkait" class="select2-ajax mb-3" multiple="true" data-placeholder="Cari & pilih dokumen penjaminan mutu..." data-ajax-url="{{ route('pemutu.indikator.search-doksub') }}">
+                                    @if(isset($selectedDokSubs))
+                                        @foreach($selectedDokSubs as $ds)
+                                            @if($ds instanceof \App\Models\Pemutu\DokSub)
+                                                <option value="{{ $ds->encrypted_doksub_id }}" selected>
+                                                    [{{ strtoupper($ds->dokumen?->jenis ?? 'DOC') }}] {{ $ds->dokumen?->judul ?? '-' }} &raquo; {{ $ds->judul }}
+                                                </option>
                                             @endif
-                                        </x-tabler.form-select>
-                                    </div>
-                                </div>
+                                        @endforeach
+                                    @endif
+                                </x-tabler.form-select>
 
-                                <div class="row">
+                                <div class="row mb-3">
                                     @foreach($labelTypes as $type)
-                                    <div class="col-md-4 mb-1">
+                                    <div class="col-md-4">
                                         <x-tabler.form-select name="labels" id="label-{{ $type->labeltype_id }}" type="select2" label="{{ $type->name }}" multiple="true" data-placeholder="Pilih {{ $type->name }}...">
                                             @php
                                                 $selectedLabelIds = $isEdit ? $indikator->labels->where('type_id', $type->labeltype_id)->pluck('label_id')->toArray() : [];
@@ -134,11 +125,7 @@
                                     @endforeach
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-md-12 mb-3">
-                                        <x-tabler.form-textarea id="keterangan" name="keterangan" label="Definisi / Keterangan" height="300" :value="old('keterangan', $indikator->keterangan)" />
-                                    </div>
-                                </div>
+                                <x-tabler.form-textarea id="keterangan" name="keterangan" label="Definisi / Keterangan" height="300" :value="old('keterangan', $indikator->keterangan)" />
                             </div>
                             <!-- END TAB: INFORMASI UMUM -->
 
@@ -189,9 +176,9 @@
                             </div>
                             <!-- END TAB: PENILAIAN SKALA -->
                         </div>
-                    </div>
-                </div>
-            </div>{{-- end col-lg-7 --}}
+                    </x-tabler.card-body>
+                </x-tabler.card>
+            </div>
 
             <!-- ASSIGNMENTS (KANAN) -->
             <div class="col-lg-5">
@@ -210,7 +197,7 @@
                                         </option>
                                     @endforeach
                                 </x-tabler.form-select>
-                                <div class="form-hint">Indikator Performa HARUS merujuk pada satu Indikator Standar.</div>
+                                <div class="font-small text-muted">Indikator Performa HARUS merujuk pada satu Indikator Standar.</div>
                             </div>
                         </div>
 
@@ -259,8 +246,8 @@
                                 <x-tabler.button type="create" id="btn-add-kpi" class="btn-outline-danger btn-sm w-100" text="Tambah Sasaran" />
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
                 @endif
 
                 @if($isStandar)
@@ -268,97 +255,84 @@
                 <x-tabler.card id="card-target">
                     <x-tabler.card-header title="<i class='ti ti-target me-2'></i>Target & Unit Kerja" />
                     <x-tabler.card-body>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label class="form-label required">Unit Kerja Penanggung Jawab & Target</label>
-                                
-                                <div class="d-flex align-items-center mb-2 gap-2">
-                                    <div class="input-icon flex-fill">
-                                        <span class="input-icon-addon"><i class="ti ti-search"></i></span>
-                                        <input type="text" id="unit-search" class="form-control" placeholder="Cari unit atau kode...">
-                                    </div>
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-outline-primary active btn-unit-filter" data-filter="all">Semua</button>
-                                        <button type="button" class="btn btn-outline-primary btn-unit-filter" data-filter="selected">Terpilih</button>
-                                    </div>
-                                </div>
-
-
-                                <div class="table-responsive border rounded" style="max-height: 500px; overflow-y: auto;">
-                                    <table class="table table-vcenter card-table table-striped" id="unit-selection-table">
-                                        <thead>
-                                            <tr>
-                                                <th width="50%">Unit</th>
-                                                <th width="50%">Target Unit</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php
-                                                if(!function_exists('renderUnitRow')){
-                                                    function renderUnitRow($unit, $level = 0, $assignedMap, &$visited = []) {
-                                                        if (isset($visited[$unit->orgunit_id])) return; // Circuit breaker for circular dependencies
-                                                        $visited[$unit->orgunit_id] = true;
-
-                                                        $padding = $level * 20;
-                                                        $isBold = $level < 2 ? 'fw-bold' : '';
-                                                        $bg = '';
-
-                                                        $isChecked = $assignedMap->has($unit->orgunit_id);
-                                                        $targetVal = $isChecked ? $assignedMap->get($unit->orgunit_id)->pivot->target : '';
-                                                        $isDisabled = !$isChecked ? 'disabled' : '';
-
-                                                         $rowClasses = "unit-row " . ($isChecked ? "is-assigned" : "");
-                                                         $rowAttributes = "data-title='".strtolower($unit->name)."' data-code='".strtolower($unit->code)."'";
-                                                         echo "<tr class='$rowClasses' $rowAttributes>";
-                                                        echo '<td>';
-                                                        echo '<div style="padding-left: '.$padding.'px">';
-                                                        echo '<label class="form-check form-check-inline mb-0">';
-                                                        echo '<input class="form-check-input unit-checkbox" type="checkbox" name="assignments['.$unit->encrypted_org_unit_id.'][selected]" value="1" data-id="'.$unit->encrypted_org_unit_id.'" '.($isChecked ? 'checked' : '').'>';
-                                                        echo '<span class="form-check-label '.$isBold.'">'.$unit->name.'</span>';
-                                                        echo '</label>';
-                                                        echo '</div>';
-                                                        echo '</td>';
-                                                        echo '<td>';
-                                                        echo '<input type="text" class="form-control form-control-sm" name="assignments['.$unit->encrypted_org_unit_id.'][target]" id="target-'.$unit->encrypted_org_unit_id.'" placeholder="Target..." value="'.$targetVal.'" '.$isDisabled.'>';
-                                                        echo '</td>';
-                                                        echo '</tr>';
-
-                                                        if ($unit->children && $unit->children->count()) {
-                                                            foreach($unit->children as $child) {
-                                                                renderUnitRow($child, $level + 1, $assignedMap, $visited);
-                                                            }
-                                                        }
-                                                    }
-                                                }
-
-                                                $visited = [];
-                                            @endphp
-
-                                            @foreach($orgUnits as $rootUnit)
-                                                {{ renderUnitRow($rootUnit, 0, $assignedMap, $visited) }}
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
+                        <div class="d-flex align-items-center mb-2 gap-2">
+                            <div class="input-icon flex-fill">
+                                <span class="input-icon-addon"><i class="ti ti-search"></i></span>
+                                <input type="text" id="unit-search" class="form-control" placeholder="Cari unit atau kode...">
+                            </div>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-outline-primary active btn-unit-filter" data-filter="all">Semua</button>
+                                <button type="button" class="btn btn-outline-primary btn-unit-filter" data-filter="selected">Terpilih</button>
                             </div>
                         </div>
-                    </div>
-                </div>
-                @endif
 
-                <!-- Submit Button moved to bottom of right col or as a separate card -->
-                <x-tabler.card class="mt-3">
-                    <x-tabler.card-body>
-                        <x-tabler.button type="submit" :text="$isEdit ? 'Update Indikator' : 'Simpan Indikator'" />
+                        <div class="table-responsive border rounded" style="max-height: 500px; overflow-y: auto;">
+                            <table class="table table-vcenter card-table table-striped" id="unit-selection-table">
+                                <thead>
+                                    <tr>
+                                        <th width="50%">Unit</th>
+                                        <th width="50%">Target Unit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        if(!function_exists('renderUnitRow')){
+                                            function renderUnitRow($unit, $level = 0, $assignedMap, &$visited = []) {
+                                                if (isset($visited[$unit->orgunit_id])) return; // Circuit breaker for circular dependencies
+                                                $visited[$unit->orgunit_id] = true;
+
+                                                $padding = $level * 20;
+                                                $isBold = $level < 2 ? 'fw-bold' : '';
+                                                $bg = '';
+
+                                                $isChecked = $assignedMap->has($unit->orgunit_id);
+                                                $targetVal = $isChecked ? $assignedMap->get($unit->orgunit_id)->pivot->target : '';
+                                                $isDisabled = !$isChecked ? 'disabled' : '';
+
+                                                    $rowClasses = "unit-row " . ($isChecked ? "is-assigned" : "");
+                                                    $rowAttributes = "data-title='".strtolower($unit->name)."' data-code='".strtolower($unit->code)."'";
+                                                    echo "<tr class='$rowClasses' $rowAttributes>";
+                                                echo '<td>';
+                                                echo '<div style="padding-left: '.$padding.'px">';
+                                                echo '<label class="form-check form-check-inline mb-0">';
+                                                echo '<input class="form-check-input unit-checkbox" type="checkbox" name="assignments['.$unit->encrypted_org_unit_id.'][selected]" value="1" data-id="'.$unit->encrypted_org_unit_id.'" '.($isChecked ? 'checked' : '').'>';
+                                                echo '<span class="form-check-label '.$isBold.'">'.$unit->name.'</span>';
+                                                echo '</label>';
+                                                echo '</div>';
+                                                echo '</td>';
+                                                echo '<td>';
+                                                echo '<input type="text" class="form-control form-control-sm" name="assignments['.$unit->encrypted_org_unit_id.'][target]" id="target-'.$unit->encrypted_org_unit_id.'" placeholder="Target..." value="'.$targetVal.'" '.$isDisabled.'>';
+                                                echo '</td>';
+                                                echo '</tr>';
+
+                                                if ($unit->children && $unit->children->count()) {
+                                                    foreach($unit->children as $child) {
+                                                        renderUnitRow($child, $level + 1, $assignedMap, $visited);
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        $visited = [];
+                                    @endphp
+
+                                    @foreach($orgUnits as $rootUnit)
+                                        {{ renderUnitRow($rootUnit, 0, $assignedMap, $visited) }}
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </x-tabler.card-body>
                 </x-tabler.card>
+                @endif
+
+
             </div>
         </div>
     </form>
     @endsection
     @push('scripts')
     <script type="module">
-    // Logic form ada di resources/js/helpers/pemutu-indikator.js
     window.initPemutuIndikatorForm({
         kpiInitialIndex: {{ isset($indikator) && $indikator->pegawai ? $indikator->pegawai->count() : 0 }},
         pegawaiOptionsHtml: `@foreach($pegawais as $p)<option value="{{ $p->encrypted_pegawai_id }}">{{ $p->nama }}</option>@endforeach`

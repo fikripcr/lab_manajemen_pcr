@@ -340,20 +340,19 @@ class IndikatorSummaryController extends Controller
         }
 
         // Search - integrated with DataTable search
-        if (! empty($filters['search'])) {
-            $query->search($filters['search']);
+        $searchValue = $request->input('search.value') ?? $request->input('search');
+        $search      = is_array($searchValue) ? ($searchValue['value'] ?? '') : (string) $searchValue;
+
+        if ($search) {
+            $query->search($search);
         }
 
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('indikator_full', function ($row) {
-                $html  = '<div class="row">';
-                $html .= '<div class="col-12">';
+                $html  = '<div class="d-flex flex-column">';
                 $html .= '<strong class="text-primary">' . e($row->no_indikator ?? '-') . '</strong>';
-                $html .= '</div>';
-                $html .= '<div class="col-12">';
-                $html .= '<p class="mb-0 small text-muted">' . e($row->indikator ?? '-') . '</p>';
-                $html .= '</div>';
+                $html .= '<p class="mb-0">' . e($row->indikator ?? '-') . '</p>';
                 $html .= '</div>';
                 return $html;
             })
@@ -612,6 +611,45 @@ class IndikatorSummaryController extends Controller
                 'amiTerpenuhi'          => $allData->filter(fn($r) => $r->ami_hasil_akhir == 1)->count(),
                 'amiTerlampaui'         => $allData->filter(fn($r) => $r->ami_hasil_akhir == 2)->count(),
                 'pengendFilled'         => $allData->filter(fn($r) => ! empty($r->pengend_status))->count(),
+            ],
+        ]);
+    }
+    /**
+     * Get summary counts for Performa cards based on filters.
+     */
+    public function summaryCountPerforma(Request $request)
+    {
+        $query = \App\Models\Pemutu\IndikatorSummaryPerforma::query();
+
+        // Apply same filters as dataPerforma
+        if ($request->filled('kelompok_indikator')) {
+            $query->ofKelompok($request->kelompok_indikator);
+        }
+        if ($request->filled('year')) {
+            $query->ofYear($request->year);
+        }
+        if ($request->filled('pegawai_id')) {
+            $query->ofPegawai($request->pegawai_id);
+        }
+        if ($request->filled('unit_id')) {
+            $query->ofUnit($request->unit_id);
+        }
+        if ($request->filled('search')) {
+            $searchValue = $request->input('search.value') ?? $request->input('search');
+            $search      = is_array($searchValue) ? ($searchValue['value'] ?? '') : (string) $searchValue;
+            if ($search) {
+                $query->search($search);
+            }
+        }
+
+        $allData = $query->get();
+
+        return response()->json([
+            'success' => true,
+            'data'    => [
+                'totalIndikatorActive' => $allData->count(),
+                'kpiTotalPegawai'      => $allData->pluck('pegawai_id')->unique()->count(),
+                'kpiAvgScore'          => $allData->avg('kpi_score') ?? 0,
             ],
         ]);
     }

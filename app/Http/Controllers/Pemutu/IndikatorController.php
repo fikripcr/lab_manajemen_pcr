@@ -62,17 +62,6 @@ class IndikatorController extends Controller
                     return $ds->dokumen?->judul ?? '-';
                 })->unique()->implode(', ') ?: '-';
             })
-            ->addColumn('tipe', function ($row) {
-                $typeInfo = pemutuIndikatorTypeInfo($row->type);
-                $html     = '<span class="badge bg-' . ($typeInfo['color'] ?? 'secondary') . '-lt" title="' . ($typeInfo['label'] ?? '-') . '">' . ($typeInfo['short-label'] ?? 'IND') . '</span>';
-
-                // If Performa, show Parent Code
-                if ($row->type === 'performa' && $row->parent) {
-                    $html .= '<div class="mt-1"><span class="badge bg-primary-lt" title="Indikator Induk">Ref: ' . e($row->parent?->no_indikator ?? '-') . '</span></div>';
-                }
-
-                return $html;
-            })
             ->addColumn('doksub_judul', function ($row) {
                 return $row->dokSubs->pluck('judul')->implode(', ') ?: '-';
             })

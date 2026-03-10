@@ -7,9 +7,9 @@ use App\Http\Requests\Pemutu\PeningkatanRtmRequest;
 use App\Models\Event\Rapat;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
-use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Services\Pemutu\DuplikasiService;
+use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\PelaksanaanService;
 use App\Services\Pemutu\PeningkatanService;
 use App\Services\Pemutu\PeriodeSpmiService;
@@ -23,6 +23,7 @@ class PeningkatanController extends Controller
         protected PeriodeSpmiService $PeriodeSpmiService,
         protected DuplikasiService $DuplikasiService,
         protected PelaksanaanService $PelaksanaanService,
+        protected IndikatorService $IndikatorService,
     ) {}
 
     /**
@@ -229,48 +230,9 @@ class PeningkatanController extends Controller
         return jsonSuccess($message, route('pemutu.peningkatan.show', $periode->encrypted_periodespmi_id) . '#section-duplikasi');
     }
 
-    /**
-     * Data untuk DataTable Tahap 2 — Review Indikator yang sudah diduplikasi.
-     */
     public function reviewData(Request $request, PeriodeSpmi $periode)
     {
-        $query = IndikatorOrgUnit::query()
-            ->join('pemutu_indikator', 'pemutu_indikator.indikator_id', '=', 'pemutu_indikator_orgunit.indikator_id')
-            ->leftJoin('pemutu_indikator_orgunit as prev_ou', 'pemutu_indikator_orgunit.prev_indikorgunit_id', '=', 'prev_ou.indikorgunit_id')
-            ->leftJoin('struktur_organisasi as org', 'pemutu_indikator_orgunit.org_unit_id', '=', 'org.orgunit_id')
-        // Join ke dokumen untuk mengetahui standar / root dokumen hasil duplikasi
-            ->leftJoin('pemutu_indikator_doksub as ids', 'pemutu_indikator.indikator_id', '=', 'ids.indikator_id')
-            ->leftJoin('pemutu_dok_sub as ds', 'ds.doksub_id', '=', 'ids.doksub_id')
-            ->leftJoin('pemutu_dokumen as d', 'd.dok_id', '=', 'ds.dok_id')
-            ->where('pemutu_indikator.origin_from', 'peningkatan_' . $periode->periode)
-            ->select([
-                'pemutu_indikator_orgunit.indikorgunit_id',
-                'pemutu_indikator.no_indikator',
-                \DB::raw('CONCAT("<div class=\"indicator-scroll\">", pemutu_indikator.indikator, "</div>") as nama_indikator'),
-                'pemutu_indikator.type',
-                'org.name as nama_prodi',
-                'pemutu_indikator_orgunit.target as target_baru',
-                'prev_ou.target as target_lama',
-                'prev_ou.pengend_status as prev_pengend_status',
-                'prev_ou.pengend_target as prev_pengend_target',
-                'prev_ou.pengend_penyesuaian as prev_pengend_penyesuaian',
-                'd.judul as dokumen_judul',
-            ])
-            ->groupBy([
-                'pemutu_indikator_orgunit.indikorgunit_id',
-                'pemutu_indikator.no_indikator',
-                'pemutu_indikator.indikator',
-                'pemutu_indikator.type',
-                'org.name',
-                'pemutu_indikator_orgunit.target',
-                'prev_ou.target',
-                'prev_ou.pengend_status',
-                'prev_ou.pengend_target',
-                'prev_ou.pengend_penyesuaian',
-                'd.judul',
-            ])
-            ->orderBy('pemutu_indikator.no_indikator')
-            ->orderBy('org.name');
+        $query = $this->IndikatorService->getPeningkatanReviewQuery($periode);
 
         return DataTables::of($query)
             ->addColumn('status_badge', function ($row) {

@@ -72,17 +72,16 @@ class EvaluasiDiriController extends Controller
     {
         $unitId = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
 
-        // Tampilkan semua indikator sesuai unit dan periode yang dipilih
-        $filters = [
-            'kelompok_indikator' => $periode->jenis,
-            'tahun_dokumen'      => $periode->tahun,
-        ];
-        $query = $this->IndikatorService->getByOrgUnit($unitId, $filters);
+        $query = $this->IndikatorService->getUnifiedSpmiQuery($periode, $unitId);
 
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('indikator_full', function ($row) {
-                return '<strong>' . ($row->no_indikator ?? '-') . '</strong><br>' . $row->indikator;
+                $html = '<strong>' . ($row->no_indikator ?? '-') . '</strong><br>' . e($row->indikator);
+                if (! empty($row->keterangan)) {
+                    $html .= '<div class="text-secondary small mt-1">Keterangan: ' . \Str::limit(strip_tags($row->keterangan), 200) . '</div>';
+                }
+                return $html;
             })
             ->addColumn('target', function ($row) {
                 return $row->orgUnits->first()->pivot->target ?? '<span class="text-muted">-</span>';
@@ -321,10 +320,8 @@ class EvaluasiDiriController extends Controller
         }
 
         // Ambil indikator KTS dari periode tahun lalu
-        $query = $this->IndikatorService->getByOrgUnit($unitId, [
-            'kelompok_indikator' => $prevPeriod->jenis_periode,
-            'tahun_dokumen'      => $prevPeriod->periode,
-            'ami_hasil_akhir'    => 0, // KTS
+        $query = $this->IndikatorService->getUnifiedSpmiQuery($prevPeriod, $unitId, [
+            'ami_hasil_akhir' => 0, // KTS
         ]);
 
         return DataTables::of($query)

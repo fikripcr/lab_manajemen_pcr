@@ -2,152 +2,144 @@
 @section('title', $pageTitle)
 
 @section('content')
-<div class="row">
-    {{-- Summary Cards --}}
-    <div class="col-12">
-        <x-tabler.card>
-            <x-tabler.card-header class="border-bottom">
-                <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
-                    <h3 class="card-title mb-0">List Indikator Standar</h3>
-                    <div class="ms-auto d-flex flex-wrap gap-2">
-                        <x-tabler.datatable-page-length dataTableId="table-standar" />
-                        <x-tabler.datatable-search dataTableId="table-standar" />
-                        
-                        <x-tabler.datatable-filter dataTableId="table-standar">
-                            <div class="row g-2">
-                                <div class="col-12">
-                                    <x-tabler.form-select name="kelompok_indikator" label="Kelompok" class="mb-2">
-                                        <option value="">Semua Kelompok</option>
-                                        <option value="Akademik">Akademik</option>
-                                        <option value="Non Akademik">Non Akademik</option>
-                                    </x-tabler.form-select>
-                                </div>
-                                <div class="col-12">
-                                    <x-tabler.form-select name="year" label="Tahun Periode" class="mb-2">
-                                        <option value="">Semua Tahun</option>
-                                        @foreach($periodes as $periode)
-                                            <option value="{{ $periode->tahun }}">{{ $periode->periode }}</option>
-                                        @endforeach
-                                    </x-tabler.form-select>
-                                </div>
-                                <div class="col-12">
-                                    <x-tabler.form-select name="ed_status" label="Status ED (Evaluasi Diri)" class="mb-2">
-                                        <option value="">Semua Status</option>
-                                        <option value="filled">Sudah Isi</option>
-                                        <option value="empty">Belum Isi</option>
-                                    </x-tabler.form-select>
-                                </div>
-                                <div class="col-12">
-                                    <x-tabler.form-select name="ami_hasil" label="Hasil AMI" class="mb-2">
-                                        <option value="">Semua Hasil</option>
-                                        <option value="empty">Belum Dinilai</option>
-                                        <option value="0">KTS (Kesesuaian Tidak Terpenuhi)</option>
-                                        <option value="1">Terpenuhi</option>
-                                        <option value="2">Terlampaui</option>
-                                    </x-tabler.form-select>
-                                </div>
-                                <div class="col-12">
-                                    <x-tabler.form-select name="pengend_status" label="Status Pengendalian" class="mb-0">
-                                        <option value="">Semua Status</option>
-                                        <option value="filled">Sudah Isi</option>
-                                        <option value="empty">Belum Isi</option>
-                                    </x-tabler.form-select>
-                                </div>
+    <x-tabler.card>
+        <x-tabler.card-header>
+            <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
+                <h3 class="card-title mb-0">List Indikator Standar</h3>
+                <div class="ms-auto d-flex flex-wrap gap-2">
+                    <x-tabler.datatable-page-length dataTableId="table-standar" />
+                    <x-tabler.datatable-search dataTableId="table-standar" />
+                    <x-tabler.datatable-filter dataTableId="table-standar">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <x-tabler.form-select name="kelompok_indikator" label="Kelompok" class="mb-2">
+                                    <option value="">Semua Kelompok</option>
+                                    <option value="Akademik">Akademik</option>
+                                    <option value="Non Akademik">Non Akademik</option>
+                                </x-tabler.form-select>
                             </div>
-                        </x-tabler.datatable-filter>
-
-                        <x-tabler.button type="button" class="btn-success" onclick="exportExcel()" icon="ti ti-file-export" text="Export" />
-                    </div>
+                            <div class="col-12">
+                                <x-tabler.form-select name="year" label="Tahun Periode" class="mb-2">
+                                    <option value="">Semua Tahun</option>
+                                    @foreach($periodes as $periode)
+                                        <option value="{{ $periode->tahun }}">{{ $periode->periode }}</option>
+                                    @endforeach
+                                </x-tabler.form-select>
+                            </div>
+                            <div class="col-12">
+                                <x-tabler.form-select name="ed_status" label="Status ED (Evaluasi Diri)" class="mb-2">
+                                    <option value="">Semua Status</option>
+                                    <option value="filled">Sudah Isi</option>
+                                    <option value="empty">Belum Isi</option>
+                                </x-tabler.form-select>
+                            </div>
+                            <div class="col-12">
+                                <x-tabler.form-select name="ami_hasil" label="Hasil AMI" class="mb-2">
+                                    <option value="">Semua Hasil</option>
+                                    <option value="empty">Belum Dinilai</option>
+                                    <option value="0">KTS (Kesesuaian Tidak Terpenuhi)</option>
+                                    <option value="1">Terpenuhi</option>
+                                    <option value="2">Terlampaui</option>
+                                </x-tabler.form-select>
+                            </div>
+                            <div class="col-12">
+                                <x-tabler.form-select name="pengend_status" label="Status Pengendalian" class="mb-0">
+                                    <option value="">Semua Status</option>
+                                    <option value="filled">Sudah Isi</option>
+                                    <option value="empty">Belum Isi</option>
+                                </x-tabler.form-select>
+                            </div>
+                        </div>
+                    </x-tabler.datatable-filter>
+                    <x-tabler.button type="button" class="btn-success" onclick="exportExcel()" icon="ti ti-file-export" text="Export" />
                 </div>
-            </x-tabler.card-header>
-            <x-tabler.card-body>
-                {{-- Summary Cards --}}
-                <div class="row mb-4">
-                    <div class="col-sm-6 col-lg-3">
-                        <x-tabler.card class="bg-light-lt border-0 shadow-none">
-                            <x-tabler.card-body>
-                                <div class="d-flex align-items-center">
-                                    <div class="subheader" title="Total penugasan indikator ke unit" data-bs-toggle="tooltip">Total Indikator Standar Unit</div>
-                                </div>
-                                <div class="h1 mb-0" id="count-edTotalUnits">{{ number_format($edTotalUnits) }}</div>
-                                <div class="text-muted small">
-                                    (dari total <b id="count-uniqueAssignedStandar">{{ number_format($uniqueAssignedStandar) }}</b> unik)
-                                </div>
+            </div>
+        </x-tabler.card-header>
+        <x-tabler.card-body class="p-0">
+            <div class="row p-3">
+                <div class="col-sm-6 col-lg-3">
+                    <x-tabler.card class="bg-light-lt border-0 shadow-none">
+                        <x-tabler.card-body>
+                            <div class="d-flex align-items-center">
+                                <div class="subheader" title="Total penugasan indikator ke unit" data-bs-toggle="tooltip">Total Indikator Standar Unit</div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-lg-3">
-                        <x-tabler.card class="bg-success-lt border-0 shadow-none">
-                            <x-tabler.card-body>
-                                <div class="d-flex align-items-center">
-                                    <div class="subheader">Isi Evaluasi Diri</div>
-                                </div>
-                                <div class="h1 mb-3 text-success" id="count-edFilledUnits">{{ number_format($edFilledUnits) }}</div>
-                                <div class="progress progress-sm">
-                                    @php $edProgress = $edTotalUnits > 0 ? round(($edFilledUnits / $edTotalUnits) * 100) : 0; @endphp
-                                    <div class="progress-bar bg-success" id="progress-ed" style="width: {{ $edProgress }}%"></div>
-                                </div>
-                                <div class="text-muted small"><span id="count-edProgress">{{ $edProgress }}</span>% dari <span id="count-edTotalUnits2">{{ $edTotalUnits }}</span> unit</div>
+                            <div class="h1 mb-0" id="count-edTotalUnits">{{ number_format($edTotalUnits) }}</div>
+                            <div class="text-muted small">
+                                (dari total <b id="count-uniqueAssignedStandar">{{ number_format($uniqueAssignedStandar) }}</b> unik)
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-lg-3">
-                        <x-tabler.card class="bg-primary-lt border-0 shadow-none">
-                            <x-tabler.card-body>
-                                <div class="d-flex align-items-center">
-                                    <div class="subheader">Pelaksanaan AMI</div>
-                                </div>
-                                <div class="h1 mb-3 text-primary" id="count-amiAssessed">{{ number_format($amiAssessed) }}</div>
-                                <div class="d-flex gap-2">
-                                    <span class="status status-danger" id="count-amiKts">{{ $amiKts }} KTS</span>
-                                    <span class="status status-success" id="count-amiTerpenuhi">{{ $amiTerpenuhi }} Terpenuhi</span>
-                                    <span class="status status-info" id="count-amiTerlampaui">{{ $amiTerlampaui }} Terlampaui</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-lg-3">
-                        <x-tabler.card class="bg-info-lt border-0 shadow-none">
-                            <x-tabler.card-body>
-                                <div class="d-flex align-items-center">
-                                    <div class="subheader">Pengendalian</div>
-                                </div>
-                                <div class="h1 mb-3 text-info" id="count-pengendFilled">{{ number_format($pengendFilled) }}</div>
-                                <div class="text-muted small">Unit dengan pengendalian aktif</div>
-                            </div>
-                        </div>
-                    </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
                 </div>
 
-                <x-tabler.datatable
-                    id="table-standar"
-                    route="{{ route('pemutu.indikator-summary.data-standar') }}"
-                    :columns="[
-                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                        ['data' => 'indikator_full', 'name' => 'no_indikator', 'title' => 'Indikator & Unit', 'width' => '25%'],
-                        ['data' => 'parent_info', 'name' => 'parent_no_indikator', 'title' => 'Parent', 'width' => '8%'],
-                        ['data' => 'labels', 'name' => 'label_details', 'title' => 'Label', 'width' => '10%'],
-                        ['data' => 'ed_detail', 'name' => 'ed_capaian', 'title' => 'Capaian', 'width' => '10%', 'class' => 'text-center'],
-                        ['data' => 'ed_analisis', 'name' => 'ed_analisis', 'title' => 'Analisis', 'width' => '15%'],
-                        ['data' => 'ami_detail', 'name' => 'ami_hasil_label', 'title' => 'AMI Hasil', 'width' => '15%', 'class' => 'text-left'],
-                        ['data' => 'pengend_detail', 'name' => 'pengend_status', 'title' => 'Pengendalian', 'width' => '12%'],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                    ]"
-                    :options="[
-                        'scrollX' => true,
-                        'scrollCollapse' => true,
-                        'fixedColumns' => ['leftColumns' => 2],
-                        'order' => [[1, 'asc']],
-                    ]"
-                    ajax-load
-                />
-            </x-tabler.card-body>
-        </x-tabler.card>
-    </div>
-</div>
+                <div class="col-sm-6 col-lg-3">
+                    <x-tabler.card class="bg-success-lt border-0 shadow-none">
+                        <x-tabler.card-body>
+                            <div class="d-flex align-items-center">
+                                <div class="subheader">Isi Evaluasi Diri</div>
+                            </div>
+                            <div class="h1 mb-3 text-success" id="count-edFilledUnits">{{ number_format($edFilledUnits) }}</div>
+                            <div class="progress progress-sm">
+                                @php $edProgress = $edTotalUnits > 0 ? round(($edFilledUnits / $edTotalUnits) * 100) : 0; @endphp
+                                <div class="progress-bar bg-success" id="progress-ed" style="width: {{ $edProgress }}%"></div>
+                            </div>
+                            <div class="text-muted small"><span id="count-edProgress">{{ $edProgress }}</span>% dari <span id="count-edTotalUnits2">{{ $edTotalUnits }}</span> unit</div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <x-tabler.card class="bg-primary-lt border-0 shadow-none">
+                        <x-tabler.card-body>
+                            <div class="d-flex align-items-center">
+                                <div class="subheader">Pelaksanaan AMI</div>
+                            </div>
+                            <div class="h1 mb-3 text-primary" id="count-amiAssessed">{{ number_format($amiAssessed) }}</div>
+                            <div class="d-flex gap-2">
+                                <span class="status status-danger" id="count-amiKts">{{ $amiKts }} KTS</span>
+                                <span class="status status-success" id="count-amiTerpenuhi">{{ $amiTerpenuhi }} Terpenuhi</span>
+                                <span class="status status-info" id="count-amiTerlampaui">{{ $amiTerlampaui }} Terlampaui</span>
+                            </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <x-tabler.card class="bg-info-lt border-0 shadow-none">
+                        <x-tabler.card-body>
+                            <div class="d-flex align-items-center">
+                                <div class="subheader">Pengendalian</div>
+                            </div>
+                            <div class="h1 mb-3 text-info" id="count-pengendFilled">{{ number_format($pengendFilled) }}</div>
+                            <div class="text-muted small">Unit dengan pengendalian aktif</div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
+                </div>
+            </div>
+
+            <x-tabler.datatable
+                id="table-standar"
+                route="{{ route('pemutu.indikator-summary.data-standar') }}"
+                :columns="[
+                    ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                    ['data' => 'indikator_full', 'name' => 'no_indikator', 'title' => 'Indikator & Unit', 'width' => '25%'],
+                    ['data' => 'parent_info', 'name' => 'parent_no_indikator', 'title' => 'Parent', 'width' => '8%'],
+                    ['data' => 'labels', 'name' => 'label_details', 'title' => 'Label', 'width' => '10%'],
+                    ['data' => 'ed_detail', 'name' => 'ed_capaian', 'title' => 'Capaian', 'width' => '10%', 'class' => 'text-center'],
+                    ['data' => 'ed_analisis', 'name' => 'ed_analisis', 'title' => 'Analisis', 'width' => '15%'],
+                    ['data' => 'ami_detail', 'name' => 'ami_hasil_label', 'title' => 'AMI Hasil', 'width' => '15%', 'class' => 'text-left'],
+                    ['data' => 'pengend_detail', 'name' => 'pengend_status', 'title' => 'Pengendalian', 'width' => '12%'],
+                    ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                ]"
+                :options="[
+                    'scrollX' => true,
+                    'scrollCollapse' => true,
+                    'fixedColumns' => ['leftColumns' => 2],
+                    'order' => [[1, 'asc']],
+                ]"
+                ajax-load
+            />
+        </x-tabler.card-body>
+    </x-tabler.card>
 
 @push('scripts')
 <style>

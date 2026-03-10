@@ -8,10 +8,12 @@ use App\Http\Requests\Pemutu\UpdateMatrixRequest;
 use App\Models\Event\Rapat;
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
+use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\PelaksanaanService;
 use App\Services\Pemutu\PengendalianService;
 use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class PengendalianController extends Controller
 {
@@ -19,6 +21,7 @@ class PengendalianController extends Controller
         protected PengendalianService $PengendalianService,
         protected PeriodeSpmiService $PeriodeSpmiService,
         protected PelaksanaanService $PelaksanaanService,
+        protected IndikatorService $IndikatorService,
     ) {}
 
     /**
@@ -61,7 +64,7 @@ class PengendalianController extends Controller
     public function data(PeriodeSpmi $periode, Request $request)
     {
         $unitId = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
-        $query  = $this->PengendalianService->getIndikatorQuery($periode, $unitId);
+        $query  = $this->IndikatorService->getUnifiedSpmiQuery($periode, $unitId);
 
         return datatables()->of($query)
             ->addIndexColumn()
@@ -70,11 +73,18 @@ class PengendalianController extends Controller
                 $nama   = $row->indikator ?? '-';
                 $labels = pemutuLabelBadges($row->labels);
 
-                return '<div>
+                $html = '<div>
                     <div class="fw-bold text-primary">' . e($kode) . '</div>
-                    <div class="text-wrap">' . e($nama) . '</div>
-                    <div class="mt-1">' . $labels . '</div>
+                    <div class="text-wrap">' . e($nama) . '</div>';
+
+                if (! empty($row->keterangan)) {
+                    $html .= '<div class="text-secondary small mt-1">Keterangan: ' . \Str::limit(strip_tags($row->keterangan), 200) . '</div>';
+                }
+
+                $html .= '<div class="mt-1">' . $labels . '</div>
                 </div>';
+
+                return $html;
             })
             ->addColumn('status_ami', function ($row) {
                 $pivot = $row->orgUnits->first()?->pivot;

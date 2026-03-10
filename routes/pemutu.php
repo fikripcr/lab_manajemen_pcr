@@ -75,6 +75,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     // Indikator Performa (KPI)
     Route::get('indikator-summary/performa', [IndikatorSummaryController::class, 'performa'])->name('indikator-summary.performa');
     Route::get('indikator-summary/performa/data', [IndikatorSummaryController::class, 'dataPerforma'])->name('indikator-summary.data-performa');
+    Route::get('indikator-summary/performa/count', [IndikatorSummaryController::class, 'summaryCountPerforma'])->name('indikator-summary.performa.summary-count');
 
     // Shared routes
     Route::get('indikator-summary/export', [IndikatorSummaryController::class, 'export'])->name('indikator-summary.export');

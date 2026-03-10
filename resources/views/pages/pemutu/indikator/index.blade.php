@@ -43,9 +43,8 @@
             route="{{ route('pemutu.indikator.data', ['type' => $activeType]) }}"
             :columns="[
                 ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '5%'],
-                ['data' => 'tipe', 'name' => 'type', 'title' => 'Tipe', 'width' => '10%'],
                 ['data' => 'indikator', 'name' => 'indikator', 'title' => 'Indikator'],
-                ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%'],
+                ['data' => 'target', 'name' => 'target', 'title' => 'Target','class' => 'text-center', 'width' => '10%'],
                 ['data' => 'dokumen_judul', 'name' => 'dokumen_judul', 'title' => 'Dokumen Induk', 'searchable' => false, 'orderable' => false],
                 ['data' => 'labels', 'name' => 'labels', 'title' => 'Labels', 'orderable' => false, 'searchable' => false],
                 ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '10%']

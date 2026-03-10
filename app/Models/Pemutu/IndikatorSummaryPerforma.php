@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models\Pemutu;
 
 use App\Traits\HashidBinding;
@@ -18,9 +17,9 @@ class IndikatorSummaryPerforma extends Model
 
     protected $casts = [
         'indikator_pegawai_id' => 'integer',
-        'indikator_id' => 'integer',
-        'pegawai_id' => 'integer',
-        'unit_id' => 'integer',
+        'indikator_id'         => 'integer',
+        'pegawai_id'           => 'integer',
+        'unit_id'              => 'integer',
     ];
 
     /**
@@ -30,7 +29,7 @@ class IndikatorSummaryPerforma extends Model
     {
         return encryptId($this->indikator_pegawai_id);
     }
-    
+
     public function getEncryptedIndikatorIdAttribute()
     {
         return encryptId($this->indikator_id);
@@ -72,7 +71,7 @@ class IndikatorSummaryPerforma extends Model
     /**
      * Scope untuk filter berdasarkan kelompok indikator.
      */
-    public function scopeOfKelompok($query, string $kelompok)
+    public function scopeOfKelompok($query, $kelompok)
     {
         return $query->where('kelompok_indikator', $kelompok);
     }
@@ -80,7 +79,7 @@ class IndikatorSummaryPerforma extends Model
     /**
      * Scope untuk filter berdasarkan tahun dari periode_mulai.
      */
-    public function scopeOfYear($query, int $year)
+    public function scopeOfYear($query, $year)
     {
         return $query->whereYear('periode_mulai', $year);
     }
