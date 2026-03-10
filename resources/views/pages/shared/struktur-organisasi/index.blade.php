@@ -10,11 +10,12 @@
 @endsection
 
 @section('content')
-<x-tabler.card>
-    <x-tabler.card-body>
-        <div class="row row-cards">
+
+        <div class="row">
             <!-- Tree View -->
             <div class="col-lg-7">
+                <x-tabler.card>
+                    <x-tabler.card-body>
                 <div class="overflow-auto" style="max-height: 75vh;">
                     @if($treeUnits->isEmpty())
                         <x-tabler.empty-state
@@ -26,6 +27,8 @@
                         @include('pages.shared.struktur-organisasi.tree', ['orgUnits' => $treeUnits])
                     @endif
                 </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
             <!-- Detail Panel -->
             <div class="col-lg-5">
@@ -49,8 +52,7 @@
                 </div>
             </div>
         </div>
-    </x-tabler.card-body>
-</x-tabler.card>
+
 @endsection
 
 @push('scripts')
@@ -126,13 +128,13 @@
 
             const url = $(this).data('url');
             const container = $('#detail-panel-container');
-            container.html('<x-tabler.card><x-tabler.card-body class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></x-tabler.card-body></x-tabler.card>');
+            container.html(`<x-tabler.card><x-tabler.card-body class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></x-tabler.card-body></x-tabler.card>`);
 
             axios.get(url)
                 .then(res => container.html(res.data))
                 .catch(err => {
                     console.error(err);
-                    container.html('<x-tabler.card><x-tabler.card-body class="text-danger">Gagal memuat detail.</x-tabler.card-body></x-tabler.card>');
+                    container.html(`<x-tabler.card><x-tabler.card-body class="text-danger">Gagal memuat detail.</x-tabler.card-body></x-tabler.card>`);
                 });
         });
     });

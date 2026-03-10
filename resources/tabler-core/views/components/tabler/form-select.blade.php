@@ -35,7 +35,7 @@
         {{ $attributes->except(['class', 'options', 'selected', 'id']) }}
     >
         @if($placeholder && !$multiple)
-            <option value="">{{ $placeholder }}</option>
+            <option value="" disabled>{{ $placeholder }}</option>
         @endif
 
         @foreach($options as $key => $value)

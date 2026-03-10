@@ -360,22 +360,24 @@ class IndikatorService
             }
 
             // Filter Pengendalian Status
-            if (! empty($additionalFilters['pengend_status'])) {
+            if (isset($additionalFilters['pengend_status'])) {
                 $status = $additionalFilters['pengend_status'];
-                if ($status === 'empty') {
-                    $q->where(function ($sq) {
-                        $sq->whereNull('pengend_status')->orWhere('pengend_status', '');
-                    });
-                } else {
-                    is_array($status) ? $q->whereIn('pengend_status', $status) : $q->where('pengend_status', $status);
+                if ($status !== '' && $status !== null && strtolower((string) $status) !== 'all') {
+                    if ($status === 'empty') {
+                        $q->where(function ($sq) {
+                            $sq->whereNull('pengend_status')->orWhere('pengend_status', '');
+                        });
+                    } else {
+                        is_array($status) ? $q->whereIn('pengend_status', $status) : $q->where('pengend_status', $status);
+                    }
                 }
             }
 
             // Filter Eisenhower Matrix
-            if (! empty($additionalFilters['pengend_important_matrix'])) {
+            if (! empty($additionalFilters['pengend_important_matrix']) && strtolower((string) $additionalFilters['pengend_important_matrix']) !== 'all') {
                 $q->where('pengend_important_matrix', $additionalFilters['pengend_important_matrix']);
             }
-            if (! empty($additionalFilters['pengend_urgent_matrix'])) {
+            if (! empty($additionalFilters['pengend_urgent_matrix']) && strtolower((string) $additionalFilters['pengend_urgent_matrix']) !== 'all') {
                 $q->where('pengend_urgent_matrix', $additionalFilters['pengend_urgent_matrix']);
             }
         });
@@ -418,20 +420,22 @@ class IndikatorService
             ->where('pemutu_indikator.origin_from', 'peningkatan_' . $periode->periode);
 
         // Apply Filters
-        if (! empty($filters['pengend_status'])) {
+        if (isset($filters['pengend_status'])) {
             $status = $filters['pengend_status'];
-            if ($status === 'empty') {
-                $query->where(function ($q) {
-                    $q->whereNull('prev_ou.pengend_status')->orWhere('prev_ou.pengend_status', '');
-                });
-            } else {
-                $query->where('prev_ou.pengend_status', $status);
+            if ($status !== '' && $status !== null && strtolower((string) $status) !== 'all') {
+                if ($status === 'empty') {
+                    $query->where(function ($q) {
+                        $q->whereNull('prev_ou.pengend_status')->orWhere('prev_ou.pengend_status', '');
+                    });
+                } else {
+                    $query->where('prev_ou.pengend_status', $status);
+                }
             }
         }
-        if (! empty($filters['pengend_important_matrix'])) {
+        if (! empty($filters['pengend_important_matrix']) && strtolower((string) $filters['pengend_important_matrix']) !== 'all') {
             $query->where('prev_ou.pengend_important_matrix', $filters['pengend_important_matrix']);
         }
-        if (! empty($filters['pengend_urgent_matrix'])) {
+        if (! empty($filters['pengend_urgent_matrix']) && strtolower((string) $filters['pengend_urgent_matrix']) !== 'all') {
             $query->where('prev_ou.pengend_urgent_matrix', $filters['pengend_urgent_matrix']);
         }
         if (! empty($filters['dok_id'])) {

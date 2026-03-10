@@ -13,10 +13,20 @@
     :submitText="$submitText"
 >
     <div class="mb-3">
-        <x-tabler.form-select id="parent_id" name="parent_id" label="Parent Unit" type="select2" data-dropdown-parent="#modalAction">
-            <option value="">No Parent (Root)</option>
+        <x-tabler.form-select 
+            id="parent_id" 
+            name="parent_id" 
+            label="Parent Unit" 
+            type="select2" 
+            data-dropdown-parent="#modalAction"
+            placeholder="No Parent (Root)"
+        >
             @foreach($parents as $u)
-                <option value="{{ $u->encrypted_org_unit_id }}" {{ (old('parent_id', $item->parent_id ?? '') == $u->orgunit_id || old('parent_id') == $u->encrypted_org_unit_id) ? 'selected' : '' }}>
+                @php
+                    $uId = $u->encrypted_org_unit_id;
+                    $isSelected = (old('parent_id', $item->parent_id ?? '') == $u->orgunit_id || old('parent_id') == $uId);
+                @endphp
+                <option value="{{ $uId }}" {{ $isSelected ? 'selected' : '' }}>
                     {{ $u->name_display ?? $u->name }}
                 </option>
             @endforeach
@@ -42,10 +52,15 @@
         />
     </div>
     <div class="mb-3">
-        <x-tabler.form-select id="type" name="type" label="Tipe" required="true">
-            <option value="" disabled {{ !isset($item->type) ? 'selected' : '' }}>Pilih Tipe</option>
+        <x-tabler.form-select 
+            id="type" 
+            name="type" 
+            label="Tipe" 
+            required="true"
+            placeholder="Pilih Tipe"
+        >
             @foreach($types as $key => $label)
-                <option value="{{ $key }}" {{ (old('type', $item->type ?? '') == $key) ? 'selected' : '' }}>{{ $label }}</option>
+                <option value="{{ $key }}" {{ old('type', $item->type ?? '') == $key ? 'selected' : '' }}>{{ $label }}</option>
             @endforeach
         </x-tabler.form-select>
     </div>
