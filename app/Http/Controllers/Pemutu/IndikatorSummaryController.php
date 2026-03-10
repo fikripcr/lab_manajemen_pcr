@@ -214,41 +214,42 @@ class IndikatorSummaryController extends Controller
             ->addColumn('target', function ($row) {
                 return pemutuDtColTarget($row);
             })
-            ->addColumn('parent_info', function ($row) {
-                if ($row->parent_no_indikator) {
-                    return '<span class="status status-azure">' . e($row->parent_no_indikator) . '</span>';
-                }
-                return '<span class="text-muted fst-italic">-</span>';
+            ->addColumn('status_ed', function ($row) {
+                return pemutuDtColStatusEd($row);
             })
-            ->addColumn('labels', function ($row) {
-                return pemutuDtColLabelsList($row);
-            })
-            ->addColumn('ed_detail', function ($row) {
-                $capaian = $row->ed_capaian ?? '-';
-                $skala   = $row->ed_skala !== null ? '[' . $row->ed_skala . ']' : '';
-
-                return '<div class="text-center"><strong class="text-success fs-3 d-block">' . e($capaian) . '</strong><span class="text-muted small">' . $skala . '</span></div>';
-            })
-            ->addColumn('ed_analisis', function ($row) {
-                return pemutuDtColAnalisisEd($row);
-            })
-            ->addColumn('ami_detail', function ($row) {
+            ->addColumn('status_ami', function ($row) {
                 return pemutuDtColStatusAmi($row);
             })
-            ->addColumn('ami_rekomendasi', function ($row) {
-                return $this->renderTruncatedText($row->ami_hasil_temuan_rekom, 'text-muted');
+            ->addColumn('rtp', function ($row) {
+                if (empty($row->ami_rtp_isi)) {
+                    return '<span class="text-muted small">-</span>';
+                }
+
+                return '<span class="badge bg-warning-lt" title="' . e($row->ami_rtp_isi) . '">RTP</span>';
+            })
+            ->addColumn('ptp', function ($row) {
+                if (empty($row->ed_ptp_isi)) {
+                    return '<span class="text-muted small">-</span>';
+                }
+
+                return '<span class="badge bg-purple-lt" title="' . e($row->ed_ptp_isi) . '">PTP</span>';
+            })
+            ->addColumn('te', function ($row) {
+                if (empty($row->ami_te_isi)) {
+                    return '<span class="text-muted small">-</span>';
+                }
+
+                return '<span class="badge bg-azure-lt" title="' . e($row->ami_te_isi) . '">TE</span>';
             })
             ->addColumn('pengend_detail', function ($row) {
                 if (! $row->pengend_status) {
-                    return '<span class="text-muted fst-italic small">Belum ada</span>';
+                    return '<span class="text-muted small">-</span>';
                 }
 
-                $html = '<div class="text-center mb-2">' . pemutuDtColStatusPengend($row) . '</div>';
-                if ($row->pengend_analisis && $row->pengend_analisis !== '-') {
-                    $html .= $this->renderTruncatedText($row->pengend_analisis, 'text-muted small');
-                }
-
-                return $html;
+                return pemutuDtColStatusPengend($row);
+            })
+            ->addColumn('peningkatan_detail', function ($row) {
+                return '<span class="text-muted small">-</span>';
             })
             ->addColumn('action', function ($row) {
                 $html  = '<div class="btn-group btn-group-sm" role="group">';
@@ -262,13 +263,13 @@ class IndikatorSummaryController extends Controller
                 'no',
                 'indikator_full',
                 'target',
-                'parent_info',
-                'labels',
-                'ed_detail',
-                'ed_analisis',
-                'ami_detail',
-                'ami_rekomendasi',
+                'status_ed',
+                'status_ami',
+                'rtp',
+                'ptp',
+                'te',
                 'pengend_detail',
+                'peningkatan_detail',
                 'action',
             ])
             ->make(true);

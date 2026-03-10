@@ -6,10 +6,12 @@ use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class DokSub extends Model
+class DokSub extends Model implements HasMedia
 {
-    use HasFactory, Blameable, HashidBinding, SoftDeletes;
+    use HasFactory, Blameable, HashidBinding, SoftDeletes, InteractsWithMedia;
 
     protected $table      = 'pemutu_dok_sub';
     protected $primaryKey = 'doksub_id';
@@ -89,5 +91,14 @@ class DokSub extends Model
             'mapped_doksub_id',
             'doksub_id'
         )->withTimestamps();
+    }
+
+    /**
+     * Spatie Media Library: Register collections.
+     * Collection 'dokumen_pendukung' — allows multiple files per point.
+     */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('dokumen_pendukung');
     }
 }

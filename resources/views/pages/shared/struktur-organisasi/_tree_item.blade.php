@@ -9,10 +9,10 @@
         @endif
         <a href="#" class="tree-item-link" data-id="{{ $unit->encrypted_org_unit_id }}" data-url="{{ route('shared.struktur-organisasi.show', $unit) }}">
             {{ $unit->name }}
-            <span class="badge bg-secondary-lt ms-1" style="font-size: 0.7em;">{{ $unit->type }}</span>
             @if($unit->code)
-                <small class="text-muted">({{ $unit->code }})</small>
+                <small class="fw-bold">({{ $unit->code }})</small>
             @endif
+            <span class="badge bg-secondary-lt ms-1" style="font-size: 0.7em;">{{ $unit->type }}</span>
         </a>
     </div>
     @if($unit->children && $unit->children->count() > 0)

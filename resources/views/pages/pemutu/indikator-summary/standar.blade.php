@@ -120,14 +120,16 @@
                 id="table-standar"
                 route="{{ route('pemutu.indikator-summary.data-standar') }}"
                 :columns="[
-                    ['data' => 'no', 'name' => 'v.no_indikator', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                    ['data' => 'indikator_full', 'name' => 'v.no_indikator', 'title' => 'Indikator & Unit', 'width' => '20%'],
-                    ['data' => 'target', 'name' => 'v.target', 'title' => 'Target', 'width' => '10%'],
-                    ['data' => 'labels', 'name' => 'v.label_details', 'title' => 'Label', 'width' => '10%'],
-                    ['data' => 'ed_detail', 'name' => 'io.ed_capaian', 'title' => 'Capaian', 'width' => '10%', 'class' => 'text-center'],
-                    ['data' => 'ed_analisis', 'name' => 'io.ed_analisis', 'title' => 'Analisis', 'width' => '15%'],
-                    ['data' => 'ami_detail', 'name' => 'v.ami_hasil_akhir_label', 'title' => 'AMI Hasil', 'width' => '15%', 'class' => 'text-left'],
-                    ['data' => 'pengend_detail', 'name' => 'io.pengend_status', 'title' => 'Pengendalian', 'width' => '12%'],
+                    ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                    ['data' => 'indikator_full', 'name' => 'indikator_full', 'title' => 'Indikator & Unit', 'width' => '15%'],
+                    ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '7%'],
+                    ['data' => 'status_ed', 'name' => 'status_ed', 'title' => 'Status ED', 'width' => '10%', 'class' => 'text-center'],
+                    ['data' => 'status_ami', 'name' => 'status_ami', 'title' => 'Status AMI', 'width' => '10%', 'class' => 'text-center'],
+                    ['data' => 'rtp', 'name' => 'rtp', 'title' => 'RTP', 'width' => '8%', 'class' => 'text-center'],
+                    ['data' => 'ptp', 'name' => 'ptp', 'title' => 'PTP', 'width' => '8%', 'class' => 'text-center'],
+                    ['data' => 'te', 'name' => 'te', 'title' => 'TE', 'width' => '8%', 'class' => 'text-center'],
+                    ['data' => 'pengend_detail', 'name' => 'v.pengend_status', 'title' => 'Pengendalian', 'width' => '10%', 'class' => 'text-center'],
+                    ['data' => 'peningkatan_detail', 'name' => 'peningkatan_detail', 'title' => 'Peningkatan', 'width' => '10%', 'class' => 'text-center'],
                     ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                 ]"
                 :options="[

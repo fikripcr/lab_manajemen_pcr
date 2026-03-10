@@ -496,7 +496,7 @@
                                 ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                                 ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator'],
                                 ['data' => 'target', 'name' => 'target', 'title' => 'Target Baru', 'width' => '10%', 'class' => 'text-center'],
-                                ['data' => 'status_badge', 'name' => 'status_badge', 'title' => 'Status Thn Lalu', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                                ['data' => 'status_badge', 'name' => 'status_badge', 'title' => 'Target & Status Thn Lalu', 'width' => '15%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                                 ['data' => 'keterangan_perubahan', 'name' => 'keterangan_perubahan', 'title' => 'Keterangan Perubahan', 'orderable' => false, 'searchable' => false]
                             ]"
                             ajax-load

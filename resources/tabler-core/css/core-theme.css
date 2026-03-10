@@ -442,7 +442,7 @@
     .select2-container--bootstrap-5 .select2-dropdown {
         border-color: var(--tblr-border-color, #d4d9dd) !important;
         border-radius: var(--tblr-border-radius, 0.25rem) !important;
-        overflow: hidden;
+        z-index: 1068 !important;
     }
 
     .select2-container--bootstrap-5 .select2-dropdown .select2-search {

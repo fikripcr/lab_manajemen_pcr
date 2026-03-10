@@ -15,10 +15,7 @@ class DokumenSpmiController extends Controller
     public function __construct(
         protected DokumenSpmiService $dokumenSpmiService,
         protected DokumenService $dokumenService
-    ) {
-        $this->authorizeResourcePermissions('pemutu.dokumen');
-        $this->middleware('permission:pemutu.dokumen.view')->only(['childrenData']);
-    }
+    ) {}
 
     /**
      * MAIN WORKSPACE PAGE
@@ -50,13 +47,11 @@ class DokumenSpmiController extends Controller
         } else {
             $activeTab = 'kebijakan';
             // Kebijakan: flat 5-document architecture
-            // getKebijakanByPeriode returns array<string, Dokumen>, let's wrap values in collections for consistency if needed,
-            // but the view expects $dokumentByJenis[$activeJenis]->first() or similar for specialized view.
             $docsArr         = $this->dokumenService->getKebijakanByPeriode($selectedPeriode);
             $dokumentByJenis = [];
             foreach ($docsArr as $j => $doc) {
                 // Ensure it's a collection so ->first() works in the specialized view
-                $dokumentByJenis[$j] = collect([$doc]);
+                $dokumentByJenis[$j] = $doc ? collect([$doc]) : collect();
             }
         }
 
@@ -110,7 +105,7 @@ class DokumenSpmiController extends Controller
             $allowedTypes = ['kebijakan' => 'Kebijakan', 'visi' => 'Visi', 'misi' => 'Misi', 'rjp' => 'RPJP', 'renstra' => 'Renstra', 'renop' => 'Renop'];
         }
 
-        $fixedJenis   = null;
+        $fixedJenis   = $request->fixed_jenis;
         $parent       = null;
         $parentDokSub = null;
         $parentDok    = null;
@@ -185,7 +180,28 @@ class DokumenSpmiController extends Controller
             $model = $this->dokumenSpmiService->createIndikator($data);
         }
 
-        return jsonSuccess(ucfirst($type) . ' berhasil dibuat.');
+        $redirect = null;
+        if ($type === 'dokumen') {
+            $redirect = route('pemutu.dokumen.index', [
+                'jenis'   => $model->jenis,
+                'periode' => $model->periode,
+                'id'      => $model->encrypted_dok_id,
+                'type'    => 'dokumen',
+            ]);
+        } elseif ($type === 'poin') {
+            $redirect = route('pemutu.dokumen.index', [
+                'jenis'   => $model->dokumen->jenis ?? 'standar',
+                'periode' => $model->dokumen->periode ?? date('Y'),
+                'id'      => $model->encrypted_doksub_id,
+                'type'    => 'doksub',
+            ]);
+        } elseif ($type === 'indikator') {
+            // Indikators might not have a direct direct parent "jenis" in the same way, but often we want to stay on the same tab
+            // For now, reload same page
+            $redirect = url()->previous();
+        }
+
+        return jsonSuccess(ucfirst($type) . ' berhasil dibuat.', $redirect);
     }
 
     /**
@@ -194,17 +210,18 @@ class DokumenSpmiController extends Controller
     public function edit(Request $request, $type, $id)
     {
         $decryptedId = decryptIdIfEncrypted($id);
+        $mode        = $request->query('mode'); // 'title' or 'content'
 
         if ($type === 'dokumen') {
             $dokumen  = Dokumen::findOrFail($decryptedId);
             $dokumens = $this->dokumenSpmiService->getHierarchicalDokumens()->filter(fn($d) => $d->dok_id != $dokumen->dok_id);
-            return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'dokumen', 'dokumens'));
+            return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'dokumen', 'dokumens', 'mode'));
         } elseif ($type === 'poin') {
             $dokSub = DokSub::findOrFail($decryptedId);
-            return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'dokSub'));
+            return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'dokSub', 'mode'));
         } elseif ($type === 'indikator') {
             $indikator = Indikator::findOrFail($decryptedId);
-            return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'indikator'));
+            return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'indikator', 'mode'));
         }
 
         return abort(404);
@@ -224,17 +241,32 @@ class DokumenSpmiController extends Controller
             }
 
             $this->dokumenSpmiService->updateDokumen($decryptedId, $data);
+            $model = Dokumen::find($decryptedId);
         } elseif ($type === 'poin') {
+            if (! empty($data['dok_id'])) {
+                $data['dok_id'] = decryptIdIfEncrypted($data['dok_id']);
+            }
             $this->dokumenSpmiService->updatePoin($decryptedId, $data);
+            $model = DokSub::with('dokumen')->find($decryptedId);
         } elseif ($type === 'indikator') {
             if (! empty($data['doksub_ids'])) {
                 $data['doksub_ids'] = array_map('decryptIdIfEncrypted', $data['doksub_ids']);
             }
 
             $this->dokumenSpmiService->updateIndikator($decryptedId, $data);
+            $model = Indikator::find($decryptedId);
         }
 
-        return jsonSuccess(ucfirst($type) . ' berhasil diperbarui.');
+        $redirect = null;
+        if ($type === 'dokumen') {
+            $redirect = route('pemutu.dokumen.index', ['jenis' => $model->jenis, 'periode' => $model->periode]);
+        } elseif ($type === 'poin') {
+            $redirect = route('pemutu.dokumen.index', ['jenis' => $model->dokumen->jenis ?? 'standar', 'periode' => $model->dokumen->periode ?? date('Y')]);
+        } else {
+            $redirect = url()->previous();
+        }
+
+        return jsonSuccess(ucfirst($type) . ' berhasil diperbarui.', $redirect);
     }
 
     /**
@@ -243,14 +275,25 @@ class DokumenSpmiController extends Controller
     public function destroy(Request $request, $type, $id)
     {
         $decryptedId = decryptIdIfEncrypted($id);
+        $redirect    = url()->previous();
+
         if ($type === 'dokumen') {
+            $item = Dokumen::withTrashed()->find($decryptedId);
+            if ($item) {
+                $redirect = route('pemutu.dokumen.index', ['jenis' => $item->jenis, 'periode' => $item->periode]);
+            }
             $this->dokumenSpmiService->deleteDokumen($decryptedId);
         } elseif ($type === 'poin') {
+            $item = DokSub::withTrashed()->with('dokumen')->find($decryptedId);
+            if ($item && $item->dokumen) {
+                $redirect = route('pemutu.dokumen.index', ['jenis' => $item->dokumen->jenis, 'periode' => $item->dokumen->periode]);
+            }
             $this->dokumenSpmiService->deletePoin($decryptedId);
         } elseif ($type === 'indikator') {
             $this->dokumenSpmiService->deleteIndikator($decryptedId);
         }
-        return jsonSuccess(ucfirst($type) . ' berhasil dihapus.');
+
+        return jsonSuccess(ucfirst($type) . ' berhasil dihapus.', $redirect);
     }
 
     /**
@@ -265,11 +308,11 @@ class DokumenSpmiController extends Controller
 
             return DataTables::of($query)
                 ->addIndexColumn()
+                ->addColumn('kode', function ($row) {
+                    return $row->kode ?: '-';
+                })
                 ->addColumn('judul', function ($row) {
                     $html = '<div class="fw-bold">' . e($row->judul) . '</div>';
-                    if ($row->kode) {
-                        $html .= '<small class="text-muted">' . e($row->kode) . '</small>';
-                    }
                     if ($row->is_hasilkan_indikator) {
                         $html .= '<div class="badge bg-green-lt mt-1">Hasilkan Indikator</div>';
                     }
@@ -289,13 +332,13 @@ class DokumenSpmiController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     return view('components.tabler.datatables-actions', [
-                        'editUrl'       => route('pemutu.dokumen-spmi.edit', ['type' => 'poin', 'id' => $row->encrypted_doksub_id]),
+                        'editUrl'       => route('pemutu.dokumen-spmi.edit', ['type' => 'poin', 'id' => $row->encrypted_doksub_id, 'mode' => 'title']),
                         'editModal'     => true,
-                        'editModalSize' => 'modal-xl',
+                        'editModalSize' => 'modal-lg',
                         'deleteUrl'     => route('pemutu.dokumen-spmi.destroy', ['type' => 'poin', 'id' => $row->encrypted_doksub_id]),
                     ])->render();
                 })
-                ->rawColumns(['judul', 'jumlah_turunan', 'action'])
+                ->rawColumns(['judul', 'kode', 'jumlah_turunan', 'action'])
                 ->make(true);
         } elseif ($type === 'poin_dokumen') {
             $query = Dokumen::where('parent_doksub_id', $decryptedId)->orderBy('seq');
@@ -311,9 +354,9 @@ class DokumenSpmiController extends Controller
                 ->addColumn('jenis', function ($row) {return '<span class="badge bg-blue-lt">' . strtoupper($row->jenis) . '</span>';})
                 ->addColumn('action', function ($row) {
                     return view('components.tabler.datatables-actions', [
-                        'editUrl'       => route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $row->encrypted_dok_id]),
+                        'editUrl'       => route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $row->encrypted_dok_id, 'mode' => 'title']),
                         'editModal'     => true,
-                        'editModalSize' => 'modal-xl',
+                        'editModalSize' => 'modal-lg',
                         'deleteUrl'     => route('pemutu.dokumen-spmi.destroy', ['type' => 'dokumen', 'id' => $row->encrypted_dok_id]),
                     ])->render();
                 })
@@ -326,7 +369,12 @@ class DokumenSpmiController extends Controller
             });
             return DataTables::of($query)
                 ->addIndexColumn()
-                ->addColumn('indikator', function ($row) {return '<div class="fw-bold">' . e($row->indikator) . '</div><small class="text-muted">' . e($row->no_indikator) . '</small>';})
+                ->addColumn('no_indikator', function ($row) {
+                    return $row->no_indikator ?: '-';
+                })
+                ->addColumn('indikator', function ($row) {
+                    return '<div class="fw-bold">' . e($row->indikator) . '</div>';
+                })
                 ->addColumn('unit_target', function ($row) {
                     if ($row->orgUnits->isEmpty()) {
                         return '<span class="text-muted">-</span>';
@@ -343,7 +391,7 @@ class DokumenSpmiController extends Controller
                         'deleteUrl' => route('pemutu.dokumen-spmi.destroy', ['type' => 'indikator', 'id' => $row->encrypted_indikator_id]),
                     ])->render();
                 })
-                ->rawColumns(['indikator', 'unit_target', 'action'])
+                ->rawColumns(['indikator', 'no_indikator', 'unit_target', 'action'])
                 ->make(true);
         } elseif ($type === 'poin_mapping') {
             // Get mapped poin (from the level above) for a given DokSub
@@ -412,21 +460,24 @@ class DokumenSpmiController extends Controller
      * UPLOAD FILE PENDUKUNG (AJAX) — Spatie Media Library
      * Supports multiple file uploads to 'dokumen_pendukung' collection.
      */
-    public function uploadFile(Request $request, $id)
+    public function uploadFile(Request $request, $type, $id)
     {
         $request->validate([
             'files'   => 'required|array',
             'files.*' => 'file|max:20480', // max 20MB per file
         ]);
 
-        $dokumen = Dokumen::findOrFail(decryptIdIfEncrypted($id));
+        $model = ($type === 'poin')
+            ? DokSub::findOrFail(decryptIdIfEncrypted($id))
+            : Dokumen::findOrFail(decryptIdIfEncrypted($id));
 
         foreach ($request->file('files') as $file) {
-            $dokumen->addMedia($file)
+            $model->addMedia($file)
                 ->toMediaCollection('dokumen_pendukung');
         }
 
-        logActivity('dokumen_management', "Mengunggah " . count($request->file('files')) . " file ke dokumen: {$dokumen->judul}");
+        $judul = ($type === 'poin') ? $model->judul : $model->judul;
+        logActivity('dokumen_management', "Mengunggah " . count($request->file('files')) . " file ke {$type}: {$judul}");
 
         return jsonSuccess('File berhasil diunggah.');
     }
@@ -434,17 +485,20 @@ class DokumenSpmiController extends Controller
     /**
      * DELETE FILE PENDUKUNG (AJAX) — Spatie Media Library
      */
-    public function deleteFile(Request $request, $id, $mediaId)
+    public function deleteFile(Request $request, $type, $id, $mediaId)
     {
-        $dokumen = Dokumen::findOrFail(decryptIdIfEncrypted($id));
-        $media   = $dokumen->getMedia('dokumen_pendukung')->firstWhere('id', $mediaId);
+        $model = ($type === 'poin')
+            ? DokSub::findOrFail(decryptIdIfEncrypted($id))
+            : Dokumen::findOrFail(decryptIdIfEncrypted($id));
+
+        $media = $model->getMedia('dokumen_pendukung')->firstWhere('id', $mediaId);
 
         if (! $media) {
             return jsonError('File tidak ditemukan.');
         }
 
         $media->delete();
-        logActivity('dokumen_management', "Menghapus file dari dokumen: {$dokumen->judul}");
+        logActivity('dokumen_management', "Menghapus file dari {$type}: {$model->judul}");
 
         return jsonSuccess('File berhasil dihapus.');
     }

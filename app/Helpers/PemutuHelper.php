@@ -186,7 +186,16 @@ if (! function_exists('pemutuDtColNo')) {
         $risk   = strtoupper($row->level_risk ?? 'NO RISK');
         $jd     = $row->jenis_data ?? '-';
         $base   = $row->parent_no_indikator ?? ($row->parent?->no_indikator ?? null);
-        $id     = $row->indikator_id ?? null;
+
+        // Matrix Data Extraction
+        $important = $row->prev_important ?? null;
+        $urgent    = $row->prev_urgent ?? null;
+
+        if (! $important && ! $urgent && isset($row->orgUnits) && ! is_string($row->orgUnits) && $row->orgUnits->isNotEmpty()) {
+            $pivot     = $row->orgUnits->first()->pivot;
+            $important = $pivot->pengend_important_matrix ?? null;
+            $urgent    = $pivot->pengend_urgent_matrix ?? null;
+        }
 
         $riskColor = match ($risk) {
             'HIGH RISK'   => 'danger',
@@ -203,7 +212,20 @@ if (! function_exists('pemutuDtColNo')) {
             $html .= '<div class="text-muted mt-1" style="font-size: 9px;">' . e($kel) . '</div>';
         }
 
-        $html .= '<span class="badge bg-' . $riskColor . ' text-white px-1 mt-1" style="font-size: 9px;">' . e($risk) . '</span>';
+        // Show Matrix if available, otherwise show Risk
+        if ($important || $urgent) {
+            if ($important === 'important') {
+                $html .= '<span class="badge bg-red-lt text-red px-1 mt-1" style="font-size: 9px;">IMPORTANT</span>';
+            }
+            if ($urgent === 'urgent') {
+                $html .= '<span class="badge bg-orange-lt text-orange px-1 mt-0" style="font-size: 9px;">URGENT</span>';
+            }
+            if ($important === 'not_important' && $urgent === 'not_urgent') {
+                $html .= '<span class="badge bg-secondary-lt text-secondary px-1 mt-1" style="font-size: 9px;">LOW PRIO</span>';
+            }
+        } else {
+            $html .= '<span class="badge bg-' . $riskColor . ' text-white px-1 mt-1" style="font-size: 9px;">' . e($risk) . '</span>';
+        }
 
         if ($jd !== '-') {
             $html .= '<span class="status status-blue status-lite py-0 px-1 fw-bold mt-1" style="font-size: 10px;">' . e($jd) . '</span>';
@@ -213,7 +235,6 @@ if (! function_exists('pemutuDtColNo')) {
             $html .= '<div class="text-muted mt-1" style="font-size: 9px; line-height: 1;">Base: [' . e($base) . ']</div>';
         }
 
-        // No more search icon here
         $html .= '</div>';
 
         return $html;
@@ -605,18 +626,37 @@ if (! function_exists('pemutuDtColStatusPeningkatan')) {
      */
     function pemutuDtColStatusPeningkatan($row)
     {
-        $status = $row->prev_pengend_status ?? null;
+        $status    = $row->prev_pengend_status ?? null;
+        $target    = $row->target_lama ?? null;
+        $adjTarget = $row->prev_pengend_target ?? null;
 
-        if (! $status) {
-            return '<span class="badge bg-blue-lt">Dilanjutkan</span>';
+        $html = '<div class="d-flex flex-column align-items-center gap-1">';
+
+        // Display Target Info
+        if ($status === 'penyesuaian' && $adjTarget) {
+            if ($target && $target !== $adjTarget) {
+                $html .= '<div class="small fw-bold text-muted" style="font-size: 10px;">' . e($target) . ' <i class="ti ti-arrow-right mx-1"></i> <span class="text-orange">' . e($adjTarget) . '</span></div>';
+            } else {
+                $html .= '<div class="small fw-bold text-orange" style="font-size: 10px;">' . e($adjTarget) . '</div>';
+            }
+        } elseif ($target) {
+            $html .= '<div class="small fw-bold" style="font-size: 10px;">' . e($target) . '</div>';
         }
 
-        $colors = [
-            'tetap'       => 'green',
-            'penyesuaian' => 'yellow',
-        ];
-        $color = $colors[$status] ?? 'secondary';
+        // Display Status Badge
+        if (! $status) {
+            $html .= '<span class="badge bg-blue-lt">Dilanjutkan</span>';
+        } else {
+            $colors  = [
+                'tetap'       => 'green',
+                'penyesuaian' => 'yellow',
+                'nonaktif'    => 'red',
+            ];
+            $color  = $colors[$status] ?? 'secondary';
+            $html  .= '<span class="badge bg-' . $color . '-lt">' . e(ucfirst($status)) . '</span>';
+        }
 
-        return '<span class="badge bg-' . $color . '-lt">' . e(ucfirst($status)) . '</span>';
+        $html .= '</div>';
+        return $html;
     }
 }

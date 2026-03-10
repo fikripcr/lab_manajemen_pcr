@@ -32,15 +32,17 @@
                 </span>
                 <input type="text" name="search" class="form-control filter-sync" data-target="#document-tree" placeholder="Cari dokumen..." value="{{ request('search') }}">
             </div>
-            @if(in_array($activeJenis, ['standar', 'formulir', 'manual_prosedur']))
-                <x-tabler.button type="create" text="{{ $allTabs[$activeJenis] }}" class="btn-outline-primary ajax-modal-btn" data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'tabs' => in_array($activeJenis, ['standar', 'formulir', 'manual_prosedur']) ? 'standar' : 'kebijakan']) }}" data-modal-title="Dokumen {{ $allTabs[$activeJenis] }}" />
-            @endif
         </div>
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
 
 @section('content')
+@php
+    $isTreeBased = in_array($activeJenis, ['standar', 'formulir', 'manual_prosedur']);
+    $dokData = $dokumentByJenis[$activeJenis] ?? collect();
+    $rootDoc = $isTreeBased ? null : $dokData->first();
+@endphp
 <div class="row row-cards">
     <!-- Tree View Sidebar -->
     <div class="col-lg-5">
@@ -70,29 +72,37 @@
                         @endforeach
                     </ul>
                 </div>
+                {{-- Global Add Button for Standar/Formulir (Tree Based) --}}
+                @if($isTreeBased)
+                <div class="p-3 bg-light-lt">
+                    <x-tabler.button type="create" text="Tambah {{ $allTabs[$activeJenis] }}" class="btn-primary w-100 ajax-modal-btn" 
+                        data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'tabs' => 'standar', 'fixed_jenis' => $activeJenis]) }}" 
+                        data-modal-title="Tambah Dokumen {{ $allTabs[$activeJenis] }}" />
+                </div>
+                @endif
             </div>
             
             <div class="card-body p-0 overflow-auto" id="document-tree" style="max-height: 65vh;">
                 <div class="p-3">
-                    @php
-                        $isTreeBased = in_array($activeJenis, ['standar', 'formulir', 'manual_prosedur']);
-                        $dokData = $dokumentByJenis[$activeJenis] ?? null;
-                    @endphp
-
                     @if($isTreeBased)
                         {{-- Tree view for Standar, Formulir, Manual Prosedur --}}
                         <ul class="list-unstyled nested-sortable mb-0">
                             @forelse($dokData ?? [] as $dok)
                                 @include('pages.pemutu.dokumen._tree_item', ['dok' => $dok, 'level' => 0, 'collapsed' => true])
                             @empty
-                                <li class="text-muted text-center py-3">Tidak ada dokumen {{ $allTabs[$activeJenis] }}.</li>
+                                <li class="text-muted text-center py-3">
+                                    <div>Tidak ada dokumen {{ $allTabs[$activeJenis] }}.</div>
+                                    <x-tabler.button type="create" text="Tambah {{ $allTabs[$activeJenis] }}" class="btn-sm btn-outline-primary ajax-modal-btn mt-2" 
+                                        data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'tabs' => 'standar', 'fixed_jenis' => $activeJenis]) }}" 
+                                        data-modal-title="Dokumen {{ $allTabs[$activeJenis] }}" />
+                                </li>
                             @endforelse
                         </ul>
                     @else
                         {{-- Specialized view for Visi, Misi, RPJP, etc --}}
                         @php $dok = $dokData->first(); @endphp
                         @if($dok)
-                            <div class="mb-3">
+                            <div class="mb-1">
                                 <div class="tree-node-row rounded">
                                     <a href="#" class="tree-item-link w-100 d-flex align-items-center text-decoration-none px-2 py-1"
                                        data-url="{{ route('pemutu.dokumen-spmi.show', ['type' => 'dokumen', 'id' => $dok->encrypted_dok_id]) }}"
@@ -103,16 +113,15 @@
                                         <div>
                                             <div class="fw-bold text-reset">{{ $dok->judul }}</div>
                                             <div class="text-muted small">
-                                                <i class="ti ti-file-description me-1"></i> Dokument Induk &bull; {{ $dok->dokSubs->count() }} poin
+                                                <i class="ti ti-file-description me-1"></i> Dokument Induk &bull; {{ $dok->dokSubs ? $dok->dokSubs->count() : 0 }} poin
                                             </div>
                                         </div>
                                     </a>
                                 </div>
                             </div>
                             <div class="ms-2">
-                                <h5 class="text-muted mb-2 ms-2"><i class="ti ti-list me-2"></i>Daftar Poin {{ $allTabs[$activeJenis] }}:</h5>
                                 <ul class="list-unstyled mb-0 ms-2 border-start ms-3 ps-3">
-                                    @forelse($dok->dokSubs as $sub)
+                                    @forelse($dok->dokSubs ?? [] as $sub)
                                     <li class="mb-1" id="tree-node-sub-{{ $sub->encrypted_doksub_id }}">
                                         <div class="tree-node-row rounded">
                                             <a href="#" class="tree-item-link w-100 d-flex align-items-center text-decoration-none px-2 py-1"
@@ -129,12 +138,20 @@
                                         </div>
                                     </li>
                                     @empty
-                                    <li class="text-muted text-center py-3">Belum ada poin {{ $allTabs[$activeJenis] }}.</li>
+                                    <li class="text-muted text-center py-3">
+                                        <div>Belum ada poin {{ $allTabs[$activeJenis] }}.</div>
+                                    </li>
                                     @endforelse
                                 </ul>
                             </div>
                         @else
-                            <div class="text-muted text-center py-3">Dokumen {{ $allTabs[$activeJenis] }} belum dibuat.</div>
+                            <div class="text-muted text-center py-3">
+                                <div class="mb-2"><i class="ti ti-file-off fs-1 opacity-25"></i></div>
+                                <div>Dokumen {{ $allTabs[$activeJenis] }} belum dibuat.</div>
+                                <x-tabler.button type="create" text="Tambah Dokumen Induk" class="btn-sm btn-outline-primary ajax-modal-btn mt-3" 
+                                    data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'tabs' => 'kebijakan', 'fixed_jenis' => $activeJenis]) }}" 
+                                    data-modal-title="Tambah Dokumen {{ $allTabs[$activeJenis] }}" />
+                            </div>
                         @endif
                     @endif
                 </div>

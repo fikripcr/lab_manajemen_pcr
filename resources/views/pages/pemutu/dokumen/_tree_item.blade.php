@@ -1,8 +1,8 @@
 <li data-id="{{ $dok->encrypted_dok_id }}" data-jenis="{{ $dok->jenis }}" id="tree-node-dok-{{ $dok->encrypted_dok_id }}">
     <div class="d-flex align-items-start mb-2 tree-node-row" draggable="true">
         @php
-            $hasChildDocs = $dok->children->count() > 0;
-            $hasDokSubs = isset($dok->dokSubs) && $dok->dokSubs->count() > 0;
+            $hasChildDocs = !empty($dok->children) && $dok->children->count() > 0;
+            $hasDokSubs = !empty($dok->dokSubs) && $dok->dokSubs->count() > 0;
             $hasChildren = $hasChildDocs || $hasDokSubs;
         @endphp
         @if($hasChildren)

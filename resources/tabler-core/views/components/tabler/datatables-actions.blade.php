@@ -4,14 +4,14 @@
     'editModal' => true,
     'editModalSize' => null,
     'viewUrl' => null,
-    'viewTitle' => 'View Details',
+    'viewTitle' => 'Lihat Detail',
     'viewModal' => false,
     'viewModalSize' => null,
     'loginAsUrl' => null,
     'loginAsName' => null,
     'deleteUrl' => null,
-    'deleteTitle' => 'Delete Data?',
-    'deleteText' => 'Are you sure? This action cannot be undone!',
+    'deleteTitle' => 'Hapus Data?',
+    'deleteText' => 'Apakah Anda yakin? Tindakan ini tidak dapat dibatalkan!',
     'customActions' => [],
     'extraActions' => [],
 ])
@@ -49,18 +49,18 @@
                        data-url="{{ $viewUrl }}"
                        data-modal-title="{{ $viewTitle }}"
                        @if($viewModalSize) data-modal-size="{{ $viewModalSize }}" @endif>
-                        <i class="ti ti-eye me-1"></i> View
+                        <i class="ti ti-eye me-1"></i> Lihat
                     </a>
                 @else
                     <a class="dropdown-item" href="{{ $viewUrl }}">
-                        <i class="ti ti-eye me-1"></i> View
+                        <i class="ti ti-eye me-1"></i> Lihat
                     </a>
                 @endif
             @endif
 
             @if($loginAsUrl)
                 <a href="javascript:void(0)" class="dropdown-item" onclick="loginAsUser('{{ $loginAsUrl }}', '{{ $loginAsName }}')">
-                    <i class="ti ti-login me-1"></i> Login As
+                    <i class="ti ti-login me-1"></i> Login Sebagai
                 </a>
             @endif
 
@@ -71,7 +71,7 @@
                    @if(isset($action['dataUrl'])) data-url="{{ $action['dataUrl'] }}" @endif
                    @if(isset($action['attributes'])) {!! $action['attributes'] !!} @endif>
                     @if(isset($action['icon'])) <i class="ti {{ $action['icon'] }} me-1"></i> @endif
-                    {{ $action['text'] ?? $action['label'] ?? 'Action' }}
+                    {{ $action['text'] ?? $action['label'] ?? 'Aksi' }}
                 </a>
             @endforeach
 
@@ -91,7 +91,7 @@
                    data-url="{{ $deleteUrl }}"
                    data-title="{{ $deleteTitle }}"
                    data-text="{{ $deleteText }}">
-                    <i class="ti ti-trash me-1"></i> Delete
+                    <i class="ti ti-trash me-1"></i> Hapus
                 </a>
             @endif
         </div>

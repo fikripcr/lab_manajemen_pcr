@@ -44,7 +44,35 @@
         {{-- TAB 1: AMI --}}
         <div class="tab-pane active show" id="tab-ami" role="tabpanel">
             <x-tabler.card-body class="border-bottom bg-light-lt">
-                <p class="text-muted mb-0 small">Berikut adalah daftar indikator yang sudah mengisi Evaluasi Diri. Klik <strong>"Isi"</strong> pada kolom AMI untuk melakukan audit, dan <strong>"Isi"</strong> pada kolom RTP untuk rencana perbaikan jika temuan KTS.</p>
+                <div class="row align-items-center g-2">
+                    <div class="col">
+                        <p class="text-muted mb-0 small">Berikut adalah daftar indikator yang sudah mengisi Evaluasi Diri. Klik <strong>"Isi"</strong> pada kolom AMI untuk melakukan audit, dan <strong>"Isi"</strong> pada kolom RTP untuk rencana perbaikan jika temuan KTS.</p>
+                    </div>
+                    <div class="col-auto d-flex gap-2">
+                        <x-tabler.datatable-page-length dataTableId="table-ami" />
+                        <x-tabler.datatable-filter dataTableId="table-ami">
+                            <div class="row g-2">
+                                <div class="col-12">
+                                    <x-tabler.form-select name="ami_hasil_akhir" label="Hasil AMI" class="mb-2">
+                                        <option value="">Semua Hasil</option>
+                                        <option value="empty">Belum Dinilai</option>
+                                        <option value="0">KTS</option>
+                                        <option value="1">Terpenuhi</option>
+                                        <option value="2">Terlampaui</option>
+                                    </x-tabler.form-select>
+                                </div>
+                                <div class="col-12">
+                                    <x-tabler.form-select name="ed_status" label="Status ED" class="mb-2">
+                                        <option value="">Semua Status</option>
+                                        <option value="isi">Sudah Isi</option>
+                                        <option value="kosong">Belum Isi</option>
+                                    </x-tabler.form-select>
+                                </div>
+                            </div>
+                        </x-tabler.datatable-filter>
+                        <x-tabler.datatable-search dataTableId="table-ami" />
+                    </div>
+                </div>
             </x-tabler.card-body>
             <x-tabler.card-body class="p-0 table-responsive">
                 <x-tabler.datatable

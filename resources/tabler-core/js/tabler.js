@@ -316,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const $el = $(this);
                     if ($el.data('select2')) return;
 
-                    const $modal = $el.closest('.modal');
+                    const $parent = $el.closest('.modal, .dropdown-menu');
                     const config = {
                         theme: 'bootstrap-5',
                         width: '100%',
@@ -324,8 +324,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         allowClear: true
                     };
 
-                    if ($modal.length) {
-                        config.dropdownParent = $modal;
+                    if ($parent.length) {
+                        config.dropdownParent = $parent;
                     }
 
                     $el.select2(config);

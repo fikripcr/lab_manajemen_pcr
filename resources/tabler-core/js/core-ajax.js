@@ -130,7 +130,7 @@ function initAjaxFormHandler() {
             })
             .catch(function (error) {
                 // Error handling
-                let errorMessage = 'An error occurred';
+                let errorMessage = 'Terjadi kesalahan';
 
                 if (error.response) {
                     // Server responded with error
@@ -143,7 +143,7 @@ function initAjaxFormHandler() {
                     }
                 } else if (error.request) {
                     // Request made but no response
-                    errorMessage = 'No response from server';
+                    errorMessage = 'Tidak ada respon dari server';
                 } else {
                     // Error in request setup
                     errorMessage = error.message;
@@ -191,7 +191,7 @@ function initAjaxFormHandler() {
                                 // Error handling
                                 const error = result.value.error;
                                 console.error(error);
-                                let errorMessage = 'Failed to delete item';
+                                let errorMessage = 'Gagal menghapus item';
                                 if (error.response && error.response.data && error.response.data.message) {
                                     errorMessage = error.response.data.message;
                                 }
@@ -328,7 +328,7 @@ function initAjaxFormHandler() {
             })
             .catch(function (error) {
                 console.error(error);
-                let errorMessage = 'Failed to load content';
+                let errorMessage = 'Gagal memuat konten';
                 if (error.response && error.response.data && error.response.data.message) {
                     errorMessage = error.response.data.message;
                 }
