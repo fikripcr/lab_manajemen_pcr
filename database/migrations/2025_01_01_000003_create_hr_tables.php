@@ -145,6 +145,7 @@ return new class extends Migration
         Schema::create('hr_riwayat_datadiri', function (Blueprint $table) {
             $table->id('riwayatdatadiri_id');
             $table->unsignedBigInteger('pegawai_id')->index();
+            $table->unsignedBigInteger('before_id')->nullable()->index();
             $table->string('nip', 30)->nullable();
             $table->string('email', 100)->nullable();
             $table->string('nama', 100)->nullable();
@@ -173,6 +174,7 @@ return new class extends Migration
         Schema::create('hr_riwayat_pendidikan', function (Blueprint $table) {
             $table->id('riwayatpendidikan_id');
             $table->unsignedBigInteger('pegawai_id')->index();
+            $table->unsignedBigInteger('before_id')->nullable()->index();
             $table->string('jenjang_pendidikan', 30)->nullable();
             $table->string('nama_pt', 191)->nullable();
             $table->integer('thn_lulus')->nullable();
@@ -207,6 +209,7 @@ return new class extends Migration
         Schema::create('hr_riwayat_stataktifitas', function (Blueprint $table) {
             $table->id('riwayatstataktifitas_id');
             $table->unsignedBigInteger('pegawai_id')->index();
+            $table->unsignedBigInteger('before_id')->nullable()->index();
             $table->unsignedBigInteger('statusaktifitas_id')->nullable();
             $table->date('tmt')->nullable();
             $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable();
@@ -220,6 +223,7 @@ return new class extends Migration
         Schema::create('hr_riwayat_jabfungsional', function (Blueprint $table) {
             $table->id('riwayatjabfungsional_id');
             $table->unsignedBigInteger('pegawai_id')->index();
+            $table->unsignedBigInteger('before_id')->nullable()->index();
             $table->unsignedBigInteger('jabfungsional_id')->nullable();
             $table->date('tmt')->nullable();
             $table->string('no_sk_internal', 191)->nullable();
@@ -234,6 +238,7 @@ return new class extends Migration
         Schema::create('hr_riwayat_jabstruktural', function (Blueprint $table) {
             $table->id('riwayatjabstruktural_id');
             $table->unsignedBigInteger('pegawai_id')->index();
+            $table->unsignedBigInteger('before_id')->nullable()->index();
             $table->unsignedBigInteger('org_unit_id')->nullable();
             $table->string('no_sk', 191)->nullable();
             $table->date('tgl_awal')->nullable();
@@ -462,6 +467,23 @@ return new class extends Migration
         // Add foreign keys for blameable if needed, generally implicit or added via separate schema call.
         // Given we are in a Consolidation, and users table exists, we can add them.
         // But to keep it simple and avoid potential issues, we rely on the column presence.
+
+        \Illuminate\Support\Facades\DB::statement('DROP VIEW IF EXISTS v_pegawai_info');
+        \Illuminate\Support\Facades\DB::statement("
+            CREATE VIEW v_pegawai_info AS
+            SELECT p.pegawai_id, p.user_id, p.photo, p.latest_riwayatdatadiri_id, posisi.name AS posisi_nama, departemen.name AS departemen_nama, pend.jenjang_pendidikan AS pendidikan_terakhir, pend.bidang_ilmu AS pendidikan_jurusan, pend.nama_pt AS pendidikan_pt, sp.statuspegawai_id, msp.nama_status AS status_pegawai_nama, sa.statusaktifitas_id, dd.nip AS nip, dd.nidn AS nidn, dd.nama AS nama, dd.inisial AS inisial, dd.email AS email, dd.no_hp AS no_hp, dd.jenis_kelamin AS jenis_kelamin, dd.tempat_lahir AS tempat_lahir, dd.tgl_lahir AS tgl_lahir, dd.alamat AS alamat, dd.status_nikah AS status_nikah, dd.agama AS agama, dd.orgunit_posisi_id AS orgunit_posisi_id, dd.orgunit_departemen_id AS orgunit_departemen_id, NULL AS jabatan_fungsional, pen.org_unit_id AS penugasan_org_unit_id, NULL AS penugasan_jabatan, pen.tgl_awal AS penugasan_tgl_mulai
+            FROM pegawai p
+            LEFT JOIN hr_riwayat_datadiri dd ON dd.riwayatdatadiri_id = p.latest_riwayatdatadiri_id AND dd.deleted_at IS NULL
+            LEFT JOIN struktur_organisasi posisi ON posisi.orgunit_id = dd.orgunit_posisi_id
+            LEFT JOIN struktur_organisasi departemen ON departemen.orgunit_id = dd.orgunit_departemen_id
+            LEFT JOIN hr_riwayat_pendidikan pend ON pend.riwayatpendidikan_id = p.latest_riwayatpendidikan_id AND pend.deleted_at IS NULL
+            LEFT JOIN hr_riwayat_statpegawai sp ON sp.riwayatstatpegawai_id = p.latest_riwayatstatpegawai_id AND sp.deleted_at IS NULL
+            LEFT JOIN hr_status_pegawai msp ON msp.statuspegawai_id = sp.statuspegawai_id
+            LEFT JOIN hr_riwayat_stataktifitas sa ON sa.riwayatstataktifitas_id = p.latest_riwayatstataktifitas_id AND sa.deleted_at IS NULL
+            LEFT JOIN hr_riwayat_jabfungsional jf ON jf.riwayatjabfungsional_id = p.latest_riwayatjabfungsional_id AND jf.deleted_at IS NULL
+            LEFT JOIN hr_riwayat_jabstruktural pen ON pen.riwayatjabstruktural_id = p.latest_riwayatjabstruktural_id AND pen.deleted_at IS NULL
+            WHERE p.deleted_at IS NULL
+        ");
     }
 
     /**
@@ -469,6 +491,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        \Illuminate\Support\Facades\DB::statement('DROP VIEW IF EXISTS v_pegawai_info');
         Schema::dropIfExists('hr_lembur_pegawai');
         Schema::dropIfExists('hr_lembur');
         Schema::dropIfExists('hr_file_pegawai');

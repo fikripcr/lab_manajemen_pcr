@@ -1,16 +1,14 @@
 <x-tabler.form-modal 
-    id="modalAction" 
-    title="Pengendalian — {{ $indOrg->indikator->no_indikator ?? '' }}" 
-    route="{{ route('pemutu.pengendalian.update', $indOrg->encrypted_indorgunit_id) }}" 
-    method="PUT">
+    :title="'Pengendalian — ' . ($indOrg->indikator->no_indikator ?? '')" 
+    :route="route('pemutu.pengendalian.update', $indOrg->encrypted_indorgunit_id)" 
+    method="POST" 
+    data-redirect="false">
         {{-- Info Singkat Indikator --}}
         <div class="alert alert-info p-2 mb-3">
             <div class="fw-bold">{{ $indOrg->indikator->no_indikator }}</div>
             <div class="small text-muted">{{ $indOrg->indikator->indikator }}</div>
             <div class="mt-1">
-                @forelse($indOrg->indikator->labels as $label)
-                    {!! pemutuLabelBadge($label) !!}
-                @empty @endforelse
+                {!! pemutuDtColLabelsList($indOrg->indikator) !!}
             </div>
         </div>
 

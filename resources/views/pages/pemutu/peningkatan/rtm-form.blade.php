@@ -88,12 +88,4 @@
             </x-tabler.form-select>
         </div>
     </div>
-
-    @if(!(isset($rapat) && $rapat->exists))
-    <div class="alert alert-info mt-3 mb-0 p-2">
-        <i class="ti ti-info-circle me-1"></i>
-        <strong>2 agenda default</strong> akan otomatis dibuat: Rangkuman dan Penggunaan Budget.
-    </div>
-    @endif
-
 </x-tabler.form-modal>

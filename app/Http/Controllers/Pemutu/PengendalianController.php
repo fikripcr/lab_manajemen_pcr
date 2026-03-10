@@ -42,7 +42,12 @@ class PengendalianController extends Controller
         // Cek jadwal Pengendalian sudah diatur
         $jadwalTersedia = $periode->pengendalian_awal && $periode->pengendalian_akhir;
         if (! $jadwalTersedia) {
-            return view('pages.pemutu.pengendalian.show', compact('periode', 'jadwalTersedia'));
+            return view('pages.pemutu.pengendalian.show', [
+                'periode'        => $periode,
+                'jadwalTersedia' => $jadwalTersedia,
+                'rapat'          => null,
+                'unitId'         => null,
+            ]);
         }
 
         $unitId = $request->input('unit_id');
@@ -90,61 +95,24 @@ class PengendalianController extends Controller
                 return '<span class="badge bg-secondary-lt text-secondary">Belum AMI</span>';
             })
             ->addColumn('status_pengend', function ($row) {
-                $pivot  = $row->orgUnits->first()?->pivot;
-                $status = $pivot?->pengend_status;
-
-                $map = [
-                    'tetap'       => ['label' => 'Tetap', 'color' => 'success'],
-                    'penyesuaian' => ['label' => 'Penyesuaian', 'color' => 'warning'],
-                    'nonaktif'    => ['label' => 'Nonaktif', 'color' => 'danger'],
-                ];
-
-                if ($status && isset($map[$status])) {
-                    $m = $map[$status];
-                    return '<span class="badge bg-' . $m['color'] . '-lt text-' . $m['color'] . '">' . $m['label'] . '</span>';
-                }
-
-                return '<span class="badge bg-secondary-lt text-secondary">Belum Diisi</span>';
+                return pemutuDtColStatusPengend($row);
             })
             ->addColumn('eisenhower_matrix', function ($row) {
-                $pivot     = $row->orgUnits->first()?->pivot;
-                $important = $pivot?->pengend_important_matrix;
-                $urgent    = $pivot?->pengend_urgent_matrix;
-
-                $importantBadge = match ($important) {
-                    'important'     => '<span class="badge bg-red-lt text-red">Important</span>',
-                    'not_important' => '<span class="badge bg-secondary-lt text-secondary">Not Imp.</span>',
-                    default         => '<span class="badge bg-light text-muted">-</span>',
-                };
-                $urgentBadge = match ($urgent) {
-                    'urgent'     => '<span class="badge bg-orange-lt text-orange">Urgent</span>',
-                    'not_urgent' => '<span class="badge bg-secondary-lt text-secondary">Not Urgent</span>',
-                    default      => '<span class="badge bg-light text-muted">-</span>',
-                };
-
-                return '<div class="d-flex flex-column gap-1">' . $importantBadge . $urgentBadge . '</div>';
+                return pemutuDtColEisenhower($row);
             })
             ->addColumn('analisis', function ($row) {
-                $pivot    = $row->orgUnits->first()?->pivot;
-                $analisis = $pivot?->pengend_analisis;
-                if (! $analisis) {
-                    return '<span class="text-muted small fst-italic">Belum diisi</span>';
-                }
-                // Strip HTML tags dan truncate
-                $plain   = strip_tags($analisis);
-                $preview = mb_strlen($plain) > 80 ? mb_substr($plain, 0, 80) . '…' : $plain;
-                return '<span class="small text-muted" title="' . e($plain) . '">' . e($preview) . '</span>';
+                return pemutuDtColAnalisisPengend($row);
             })
             ->addColumn('action', function ($row) {
                 $pivot        = $row->orgUnits->first()?->pivot;
                 $indikorgunit = $pivot?->indikorgunit_id;
+                $url          = route('pemutu.pengendalian.edit-modal', encryptId($indikorgunit));
 
                 return $indikorgunit
-                    ? '<a href="#" class="btn btn-sm btn-primary ajax-modal-btn"
-                         data-modal-target="#pengendalian-modal"
+                    ? '<button class="btn btn-sm btn-primary ajax-modal-btn"
                          data-modal-size="modal-lg"
-                         data-url="' . route('pemutu.pengendalian.edit-modal', encryptId($indikorgunit)) . '">
-                         <i class="ti ti-pencil me-1"></i>Isi</a>'
+                         data-url="' . $url . '">
+                         Isi</button>'
                     : '<span class="text-muted small">-</span>';
             })
             ->filterColumn('indikator_info', function ($query, $keyword) {
@@ -173,7 +141,6 @@ class PengendalianController extends Controller
     public function update(PengendalianRequest $request, IndikatorOrgUnit $indOrg)
     {
         $this->PengendalianService->submitPengendalian($indOrg, $request->validated());
-
         return jsonSuccess('Data pengendalian berhasil disimpan.');
     }
 
@@ -227,6 +194,6 @@ class PengendalianController extends Controller
     {
         $this->PengendalianService->updateRtm($rapat, $request->validated());
 
-        return jsonSuccess('Data RTM berhasil diperbarui.', route('pemutu.pengendalian.show', $periode->encrypted_periodespmi_id));
+        return jsonSuccess('Data RTM berhasil diperbarui.');
     }
 }

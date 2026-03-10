@@ -117,5 +117,4 @@
             </div>
         </div>
     </div>
-    </div>
 </x-tabler.form-modal>

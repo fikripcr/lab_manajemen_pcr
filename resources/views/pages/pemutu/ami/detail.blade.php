@@ -78,16 +78,9 @@
                             @endif
                         </div>
                     </div>
-                    <div class="col-md-12">
-                        <div class="text-uppercase text-muted small fw-bold mb-1">Label</div>
                         <div>
-                            @forelse($indikator->labels as $label)
-                                {!! pemutuLabelBadge($label) !!}
-                            @empty
-                                <span class="text-muted">—</span>
-                            @endforelse
+                            {!! pemutuDtColLabelsList($indikator) !!}
                         </div>
-                    </div>
                     @if(count($breadcrumbs) > 1)
                     <div class="col-12">
                         <div class="text-uppercase text-muted small fw-bold mb-1">Hierarki</div>

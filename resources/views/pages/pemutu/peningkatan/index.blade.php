@@ -2,11 +2,7 @@
 @section('title', 'Peningkatan')
 
 @section('header')
-<x-tabler.page-header title="Peningkatan" pretitle="SPMI / Peningkatan">
-    <x-slot:actions>
-        <x-tabler.button type="back" href="{{ route('pemutu.pengendalian.index') }}" size="sm" text="Pengendalian" icon="ti ti-settings-check" />
-    </x-slot:actions>
-</x-tabler.page-header>
+<x-tabler.page-header title="Peningkatan" pretitle="SPMI / Peningkatan"/>
 @endsection
 
 @section('content')

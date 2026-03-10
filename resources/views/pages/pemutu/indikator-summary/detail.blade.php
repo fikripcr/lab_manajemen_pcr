@@ -99,21 +99,7 @@
         <x-tabler.card>
             <x-tabler.card-header title="Labels" icon="ti ti-tag" />
             <x-tabler.card-body>
-                @if($indikator->all_labels)
-                    @php
-                        $labels = explode(', ', $indikator->all_labels);
-                        $colors = explode(', ', $indikator->all_label_colors ?? '');
-                    @endphp
-                    <div class="d-flex flex-wrap gap-2">
-                        @foreach($labels as $index => $label)
-                            <span class="badge bg-{{ $colors[$index] ?? 'secondary' }}-lt fs-6 py-2 px-3">
-                                {{ $label }}
-                            </span>
-                        @endforeach
-                    </div>
-                @else
-                    <span class="text-muted">Tidak ada label</span>
-                @endif
+                {!! pemutuDtColLabelsList($indikator) !!}
             </x-tabler.card-body>
         </x-tabler.card>
     </div>
@@ -220,30 +206,11 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <x-tabler.button type="button" class="btn-link btn-sm"
-                                            data-bs-toggle="collapse" data-bs-target="#ed-analisis-{{ $loop->index }}"
-                                            text="Lihat Analisis" />
-                                        <div class="collapse" id="ed-analisis-{{ $loop->index }}">
-                                            <x-tabler.card-body small bg-light>
-                                                {{ $ed->ed_analisis ?? '-' }}
-                                            </x-tabler.card-body>
-                                        </div>
+                                        {!! pemutuDtColAnalisisEd($ed) !!}
                                     </td>
                                     <td>
-                                        @if($ed->ed_attachment)
-                                            <x-tabler.button size="sm" style="ghost-primary" text="Detail" />
-                                        @endif
-                                        @if($ed->ed_links)
-                                            @php $links = json_decode($ed->ed_links, true) ?? []; @endphp
-                                            @foreach($links as $link)
-                                                <a href="{{ $link['url'] ?? '#' }}" target="_blank" class="btn btn-sm btn-ghost-info">
-                                                    <i class="ti ti-link"></i> {{ $link['name'] ?? 'Link' }}
-                                                </a>
-                                            @endforeach
-                                        @endif
-                                        @if(!$ed->ed_attachment && empty($ed->ed_links))
-                                            <span class="text-muted">-</span>
-                                        @endif
+                                        {{-- Bukti buttons are already part of pemutuDtColAnalisisEd --}}
+                                        <span class="text-muted small">Sudah termasuk di Analisis</span>
                                     </td>
                                     <td>{{ \Carbon\Carbon::parse($ed->updated_at)->format('d/m/Y H:i') }}</td>
                                 </tr>
@@ -397,16 +364,7 @@
                                     </td>
                                     <td>{{ $pengend->pengend_target ?? '-' }}</td>
                                     <td>
-                                        @if($pengend->pengend_analisis)
-                                            <x-tabler.button type="button" class="btn-link btn-sm"
-                                                data-bs-toggle="collapse" data-bs-target="#pengend-analisis-{{ $loop->index }}"
-                                                text="Lihat Analisis" />
-                                            <div class="collapse" id="pengend-analisis-{{ $loop->index }}">
-                                                <x-tabler.card-body small bg-light">{{ $pengend->pengend_analisis }}</x-tabler.card-body>
-                                            </div>
-                                        @else
-                                            <span class="text-muted">-</span>
-                                        @endif
+                                        {!! pemutuDtColAnalisisPengend($pengend) !!}
                                     </td>
                                     <td>
                                         @if($pengend->pengend_penyesuaian)
@@ -421,18 +379,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if($pengend->pengend_important_matrix || $pengend->pengend_urgent_matrix)
-                                            <div class="d-flex flex-column gap-1">
-                                                @if($pengend->pengend_important_matrix)
-                                                    <span class="badge bg-azure-lt">Important: {{ $pengend->pengend_important_matrix }}</span>
-                                                @endif
-                                                @if($pengend->pengend_urgent_matrix)
-                                                    <span class="badge bg-orange-lt">Urgent: {{ $pengend->pengend_urgent_matrix }}</span>
-                                                @endif
-                                            </div>
-                                        @else
-                                            <span class="text-muted">-</span>
-                                        @endif
+                                        {!! pemutuDtColEisenhower($pengend) !!}
                                     </td>
                                     <td>{{ \Carbon\Carbon::parse($pengend->updated_at)->format('d/m/Y H:i') }}</td>
                                 </tr>

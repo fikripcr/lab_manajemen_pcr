@@ -2,13 +2,7 @@
 @section('title', 'Pengendalian Indikator')
 
 @section('header')
-<x-tabler.page-header title="Pengendalian Indikator" pretitle="SPMI / Pengendalian">
-    <x-slot:actions>
-        <a href="{{ route('pemutu.ami.index') }}" class="btn btn-outline-secondary btn-sm">
-            <i class="ti ti-zoom-scan me-1"></i> AMI
-        </a>
-    </x-slot:actions>
-</x-tabler.page-header>
+<x-tabler.page-header title="Pengendalian Indikator" pretitle="SPMI / Pengendalian"/>
 @endsection
 
 @section('content')

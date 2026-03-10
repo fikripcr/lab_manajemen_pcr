@@ -112,6 +112,7 @@ return new class extends Migration
             $table->text('isi');
             $table->string('jenis', 50);
             $table->boolean('is_published')->default(false);
+            $table->string('image_url')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
             $table->softDeletes();

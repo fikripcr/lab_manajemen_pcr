@@ -52,15 +52,6 @@ class PeningkatanController extends Controller
             $rapat->load(['agendas', 'pesertas.user', 'ketua_user', 'notulen_user', 'author_user']);
         }
 
-        // Check if within SPMI period dates
-        if ($periode->peningkatan_awal && $periode->peningkatan_akhir) {
-            $today = now()->startOfDay();
-            if ($today->lt($periode->peningkatan_awal) || $today->gt($periode->peningkatan_akhir)) {
-                return redirect()->route('pemutu.peningkatan.index')
-                    ->with('error', 'Akses Peningkatan ditutup. Jadwal: ' . $periode->peningkatan_awal->format('d/m/Y') . ' s/d ' . $periode->peningkatan_akhir->format('d/m/Y'));
-            }
-        }
-
         $users = $this->PelaksanaanService->getUsersForSelect();
 
         // Cek apakah sudah pernah diduplikasi
@@ -245,15 +236,7 @@ class PeningkatanController extends Controller
                 return pemutuDtColTarget($row);
             })
             ->addColumn('status_badge', function ($row) {
-                if (! $row->prev_pengend_status) {
-                    return '<span class="badge bg-blue-lt">Dilanjutkan</span>';
-                }
-
-                return match ($row->prev_pengend_status) {
-                    'tetap'       => '<span class="badge bg-green-lt">Tetap</span>',
-                    'penyesuaian' => '<span class="badge bg-yellow-lt">Penyesuaian</span>',
-                    default       => '<span class="badge bg-secondary-lt">' . ucfirst($row->prev_pengend_status) . '</span>',
-                };
+                return pemutuDtColStatusPeningkatan($row);
             })
             ->addColumn('dokumen_standar', function ($row) {
                 return '<span class="text-muted small"><i class="ti ti-folder me-1"></i> ' . e($row->dokumen_judul ?? 'Tanpa Dokumen') . '</span>';

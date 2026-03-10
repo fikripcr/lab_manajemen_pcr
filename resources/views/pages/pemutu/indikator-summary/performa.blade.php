@@ -94,13 +94,15 @@
                 id="table-performa"
                 route="{{ route('pemutu.indikator-summary.data-performa') }}"
                 :columns="[
-                    ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                    ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator Performa', 'width' => '25%'],
-                    ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%'],
-                    ['data' => 'labels', 'name' => 'all_labels', 'title' => 'Label', 'width' => '12%'],
-                    ['data' => 'kpi_detail', 'name' => 'pegawai_name', 'title' => 'Pegawai (Unit)', 'width' => '20%'],
-                    ['data' => 'kpi_score', 'name' => 'kpi_score', 'title' => 'Score', 'width' => '10%', 'class' => 'text-center'],
-                    ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '8%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                    ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                    ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator Performa', 'width' => '20%'],
+                    ['data' => 'target', 'name' => 'target_value', 'title' => 'Target', 'width' => '5%'],
+                    ['data' => 'capaian', 'name' => 'realization', 'title' => 'Capaian', 'width' => '10%'],
+                    ['data' => 'analisis', 'name' => 'kpi_analisis', 'title' => 'Analisis', 'width' => '20%'],
+                    ['data' => 'labels', 'name' => 'labels', 'title' => 'Label', 'width' => '10%'],
+                    ['data' => 'kpi_detail', 'name' => 'pegawai.nama', 'title' => 'Pegawai (Unit)', 'width' => '15%'],
+                    ['data' => 'kpi_score', 'name' => 'score', 'title' => 'Score', 'width' => '10%', 'class' => 'text-center'],
+                    ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                 ]"
                 :options="[
                     'scrollX' => true,

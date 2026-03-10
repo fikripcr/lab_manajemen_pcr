@@ -109,22 +109,28 @@
                             </x-slot:actions>
                         </x-tabler.card-header>
                         <x-tabler.card-body>
-                            <div class="d-flex align-items-center mb-3 p-2 rounded bg-blue-lt">
-                                <span class="avatar avatar-sm me-3 rounded-circle bg-blue text-white">
-                                    {{ strtoupper(substr($rapat->ketua_user->name ?? '?', 0, 2)) }}
-                                </span>
-                                <div>
-                                    <div class="text-muted small">Ketua Rapat</div>
-                                    <div class="fw-bold">{{ $rapat->ketua_user->name ?? '— Belum Diset —' }}</div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center p-2 rounded bg-blue-lt h-100">
+                                        <span class="avatar avatar-sm me-3 rounded-circle bg-blue text-white">
+                                            {{ strtoupper(substr($rapat->ketua_user->name ?? '?', 0, 2)) }}
+                                        </span>
+                                        <div>
+                                            <div class="text-muted small">Ketua Rapat</div>
+                                            <div class="fw-bold">{{ $rapat->ketua_user->name ?? '— Belum Diset —' }}</div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="d-flex align-items-center p-2 rounded bg-orange-lt">
-                                <span class="avatar avatar-sm me-3 rounded-circle bg-orange text-white">
-                                    {{ strtoupper(substr($rapat->notulen_user->name ?? '?', 0, 2)) }}
-                                </span>
-                                <div>
-                                    <div class="text-muted small">Notulen</div>
-                                    <div class="fw-bold">{{ $rapat->notulen_user->name ?? '— Belum Diset —' }}</div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center p-2 rounded bg-orange-lt h-100">
+                                        <span class="avatar avatar-sm me-3 rounded-circle bg-orange text-white">
+                                            {{ strtoupper(substr($rapat->notulen_user->name ?? '?', 0, 2)) }}
+                                        </span>
+                                        <div>
+                                            <div class="text-muted small">Notulen</div>
+                                            <div class="fw-bold">{{ $rapat->notulen_user->name ?? '— Belum Diset —' }}</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

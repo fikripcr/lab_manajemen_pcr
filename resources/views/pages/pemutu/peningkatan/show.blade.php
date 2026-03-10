@@ -16,44 +16,37 @@
 @endsection
 
 @section('content')
-<div class="row">
+    <x-tabler.card class="mb-3">
+        <x-tabler.card-body class="p-2">
+            <ul class="nav nav-pills" id="peningkatan-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a href="#section-rtm" class="nav-link active" data-bs-toggle="tab" role="tab">
+                        <i class="ti ti-calendar-event me-2"></i> Data Umum & Agenda
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a href="#section-duplikasi" class="nav-link" data-bs-toggle="tab" role="tab">
+                        <i class="ti ti-copy me-2"></i> Tahap 1-Duplikasi Standar
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a href="#section-manage" class="nav-link" data-bs-toggle="tab" role="tab">
+                        <i class="ti ti-settings-2 me-2"></i> Tahap 2-Manage Indikator
+                    </a>
+                </li>
+            </ul>
+        </x-tabler.card-body>
+    </x-tabler.card>
 
-    {{-- Tab Navigation --}}
-    <div class="col-12 mb-3">
-        <x-tabler.card>
-            <x-tabler.card-body class="p-2">
-                <ul class="nav nav-pills" id="peningkatan-tabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <a href="#section-rtm" class="nav-link active" data-bs-toggle="tab" role="tab">
-                            <i class="ti ti-calendar-event me-2"></i> Data Umum & Agenda
-                        </a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a href="#section-duplikasi" class="nav-link" data-bs-toggle="tab" role="tab">
-                            <i class="ti ti-copy me-2"></i> Tahap 1-Duplikasi Standar
-                        </a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a href="#section-manage" class="nav-link" data-bs-toggle="tab" role="tab">
-                            <i class="ti ti-settings-2 me-2"></i> Tahap 2-Manage Indikator
-                        </a>
-                    </li>
-                </ul>
-            </x-tabler.card-body>
-        </x-tabler.card>
-    </div>
+    <div class="tab-content" id="peningkatan-tab-content">
 
-    <div class="col-12">
-        <div class="tab-content" id="peningkatan-tab-content">
-
-        {{-- ===== SECTION: RTM (Data Umum & Agenda) ===== --}}
         <div id="section-rtm" class="tab-pane fade show active" role="tabpanel">
 
             @if(!$rapat)
                 {{-- RTM Belum Ada --}}
                 <x-tabler.card>
                     <x-tabler.card-body class="text-center py-5">
-                        <div class="mb-3">
+                        <div class="`mb-3">
                             <span class="avatar avatar-xl rounded bg-blue-lt">
                                 <i class="ti ti-calendar-plus fs-1"></i>
                             </span>
@@ -83,7 +76,7 @@
                                     <li class="nav-item">
                                         <a href="#rtm-tab-peserta" class="nav-link" data-bs-toggle="tab">
                                             <i class="ti ti-users me-1"></i> Peserta
-                                            <span class="badge bg-green-lt ms-1">{{ $rapat->pesertas->count() }}</span>
+                                            <span class="badge bg-green-lt ms-1">{{ $rapat ? $rapat->pesertas->count() : 0 }}</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -95,9 +88,13 @@
                                     <div class="tab-pane active show" id="rtm-tab-umum">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                             <h3 class="mb-0"><i class="ti ti-calendar-event me-2 text-blue"></i>Info Rapat</h3>
-                                            <x-tabler.button type="button" class="btn-outline-primary btn-sm ajax-modal-btn"
-                                                data-url="{{ route('pemutu.peningkatan.rtm.edit', [$periode->encrypted_periodespmi_id, $rapat->encrypted_rapat_id]) }}"
-                                                icon="ti ti-edit" text="Edit" />
+                                            <div class="d-flex align-items-center gap-2">
+                                                <x-tabler.button href="{{ route('Kegiatan.rapat.generate-pdf', $rapat->encrypted_rapat_id) }}" 
+                                                    class="btn-ghost-danger btn-sm" icon="ti ti-file-type-pdf" text="Export PDF" />
+                                                <x-tabler.button type="button" class="btn-outline-primary btn-sm ajax-modal-btn"
+                                                    data-url="{{ route('pemutu.peningkatan.rtm.edit', [$periode->encrypted_periodespmi_id, $rapat->encrypted_rapat_id]) }}"
+                                                    icon="ti ti-edit" text="Edit" />
+                                            </div>
                                         </div>
                                         <div class="datagrid">
                                             <div class="datagrid-item">
@@ -130,76 +127,80 @@
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                             <h3 class="mb-0"><i class="ti ti-user-star me-2 text-orange"></i>Pejabat</h3>
                                             <x-tabler.button type="warning" class="btn-sm ajax-modal-btn"
-                                                data-url="{{ route('Kegiatan.rapat.edit-officials', $rapat->hashid) }}"
+                                                data-url="{{ route('Kegiatan.rapat.edit-officials', $rapat->encrypted_rapat_id) }}"
                                                 icon="ti ti-edit" text="Set" />
                                         </div>
-                                        <div class="d-flex align-items-center mb-2 p-2 rounded bg-blue-lt">
-                                            <span class="avatar avatar-sm me-3 rounded-circle bg-blue text-white">
-                                                {{ strtoupper(substr($rapat->ketua_user->name ?? '?', 0, 2)) }}
-                                            </span>
-                                            <div>
-                                                <div class="text-muted small">Ketua Rapat</div>
-                                                <div class="fw-bold">{{ $rapat->ketua_user->name ?? '— Belum Diset —' }}</div>
+                                        <div class="row g-2 mb-3">
+                                            <div class="col-md-6">
+                                                <div class="d-flex align-items-center p-2 rounded bg-blue-lt h-100">
+                                                    <span class="avatar avatar-sm me-3 rounded-circle bg-blue text-white">
+                                                        {{ strtoupper(substr($rapat->ketua_user->name ?? '?', 0, 2)) }}
+                                                    </span>
+                                                    <div>
+                                                        <div class="text-muted small">Ketua Rapat</div>
+                                                        <div class="fw-bold">{{ $rapat->ketua_user->name ?? '— Belum Diset —' }}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="d-flex align-items-center p-2 rounded bg-orange-lt h-100">
+                                                    <span class="avatar avatar-sm me-3 rounded-circle bg-orange text-white">
+                                                        {{ strtoupper(substr($rapat->notulen_user->name ?? '?', 0, 2)) }}
+                                                    </span>
+                                                    <div>
+                                                        <div class="text-muted small">Notulen</div>
+                                                        <div class="fw-bold">{{ $rapat->notulen_user->name ?? '— Belum Diset —' }}</div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="d-flex align-items-center mb-3 p-2 rounded bg-orange-lt">
-                                            <span class="avatar avatar-sm me-3 rounded-circle bg-orange text-white">
-                                                {{ strtoupper(substr($rapat->notulen_user->name ?? '?', 0, 2)) }}
-                                            </span>
-                                            <div>
-                                                <div class="text-muted small">Notulen</div>
-                                                <div class="fw-bold">{{ $rapat->notulen_user->name ?? '— Belum Diset —' }}</div>
-                                            </div>
                                         </div>
-                                        <div class="text-center">
-                                            <x-tabler.button href="{{ route('Kegiatan.rapat.generate-pdf', $rapat->encrypted_rapat_id) }}"
-                                                class="btn-outline-danger btn-sm" icon="ti ti-file-type-pdf" text="Export PDF" />
-                                        </div>
-                                    </div>
 
                                     {{-- ── TAB: Peserta ── --}}
                                     <div class="tab-pane" id="rtm-tab-peserta">
                                         {{-- Inline Add Peserta Form --}}
-                                        <div class="card card-body bg-light mb-3">
-                                            <h4 class="mb-3"><i class="ti ti-user-plus me-1"></i>Tambah Peserta</h4>
-                                            <form id="form-add-peserta" class="ajax-form"
-                                                  action="{{ route('Kegiatan.rapat.participants.store', $rapat->hashid) }}" method="POST">
-                                                @csrf
-                                                <div id="peserta-rows">
-                                                    <div class="row g-2 mb-2 peserta-row align-items-end">
-                                                        <div class="col-md-6">
-                                                            <x-tabler.form-select
-                                                                name="participants[0][user_id]"
-                                                                label="Pegawai"
-                                                                placeholder="— Pilih Pegawai —"
-                                                                required="true"
-                                                                class="mb-0">
-                                                                 @foreach($users as $user)
-                                                                    <option value="{{ $user->encrypted_id }}">{{ $user->name }}
-                                                                        @if($user->pegawai?->latestDataDiri) — {{ $user->pegawai->latestDataDiri->jabatan ?? '' }}@endif
-                                                                    </option>
-                                                                @endforeach
-                                                            </x-tabler.form-select>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <x-tabler.form-input
-                                                                name="participants[0][jabatan]"
-                                                                label="Jabatan / Peran"
-                                                                placeholder="Contoh: Peserta"
-                                                                class="mb-0"
-                                                            />
-                                                        </div>
-                                                        <div class="col-md-2 d-flex gap-1">
-                                                            <x-tabler.button type="button" class="btn-outline-danger btn-icon remove-peserta-row d-none" icon="ti ti-trash" iconOnly="true" />
+                                        <x-tabler.card class="bg-light mb-3">
+                                            <x-tabler.card-body>
+                                                <h4 class="mb-3"><i class="ti ti-user-plus me-1"></i>Tambah Peserta</h4>
+                                                <form id="form-add-peserta" class="ajax-form"
+                                                    action="{{ route('Kegiatan.rapat.participants.store', $rapat->hashid) }}" method="POST">
+                                                    @csrf
+                                                    <div id="peserta-rows">
+                                                        <div class="row g-2 mb-2 peserta-row align-items-end">
+                                                            <div class="col-md-6">
+                                                                <x-tabler.form-select
+                                                                    name="participants[0][user_id]"
+                                                                    label="Pegawai"
+                                                                    placeholder="— Pilih Pegawai —"
+                                                                    required="true"
+                                                                    class="mb-0">
+                                                                    @foreach($users as $user)
+                                                                        <option value="{{ $user->encrypted_id }}">{{ $user->name }}
+                                                                            @if($user->pegawai?->latestDataDiri) — {{ $user->pegawai->latestDataDiri->jabatan ?? '' }}@endif
+                                                                        </option>
+                                                                    @endforeach
+                                                                </x-tabler.form-select>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <x-tabler.form-input
+                                                                    name="participants[0][jabatan]"
+                                                                    label="Jabatan / Peran"
+                                                                    placeholder="Contoh: Peserta"
+                                                                    class="mb-0"
+                                                                />
+                                                            </div>
+                                                            <div class="col-md-2 d-flex gap-1">
+                                                                <x-tabler.button type="button" class="btn-outline-danger btn-icon remove-peserta-row d-none" icon="ti ti-trash" iconOnly="true" />
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="d-flex gap-2 mt-2">
-                                                    <x-tabler.button type="create" id="btn-add-peserta-row" class="btn-outline-secondary btn-sm" text="Tambah Baris" />
-                                                    <x-tabler.button type="submit" class="btn-sm ms-auto" text="Simpan Peserta" />
-                                                </div>
-                                            </form>
-                                        </div>
+                                                    <div class="d-flex gap-2 mt-2">
+                                                        <x-tabler.button type="create" id="btn-add-peserta-row" class="btn-outline-secondary btn-sm" text="Tambah Baris" />
+                                                        <x-tabler.button type="submit" class="btn-sm ms-auto" text="Simpan Peserta" />
+                                                    </div>
+                                                </form>
+                                            </x-tabler.card-body>
+                                        </x-tabler.card>
 
                                         {{-- Daftar Peserta --}}
                                         <div class="table-responsive">
@@ -270,10 +271,12 @@
                         <x-tabler.card>
                             <x-tabler.card-header title='<i class="ti ti-checklist me-2"></i>Agenda & Pembahasan'>
                                 <x-slot:actions>
+                                    @if($rapat->agendas->count() > 0)
+                                        <x-tabler.button type="submit" form="form-agenda" class="btn-primary btn-sm me-2" text="Simpan Manual" />
+                                    @endif
                                     <x-tabler.button type="create" class="btn-success btn-sm ajax-modal-btn"
                                         data-url="{{ route('Kegiatan.rapat.agenda.create', $rapat->encrypted_rapat_id) }}"
                                         data-modal-title="Tambah Agenda"/>
-                                    <span class="badge bg-blue-lt ms-1">{{ $rapat->agendas->count() }}</span>
                                 </x-slot:actions>
                             </x-tabler.card-header>
                             <x-tabler.card-body>
@@ -333,51 +336,39 @@
                                         @endforelse
                                     </div>
 
-                                    @if($rapat->agendas->count() > 0)
-                                    <div class="mt-3 text-end">
-                                        <x-tabler.button type="submit" class="btn-primary" text="Simpan Manual" />
-                                    </div>
-                                    @endif
                                 </form>
                             </x-tabler.card-body>
                         </x-tabler.card>
                     </div>
 
-                </div>{{-- /row --}}
+                </div>
             @endif
 
-        </div>{{-- /#section-rtm --}}
+        </div>
 
-        {{-- ===== SECTION: TAHAP 1 — DUPLIKASI STANDAR ===== --}}
         <div id="section-duplikasi" class="tab-pane fade" role="tabpanel">
             <x-tabler.card>
-                <div class="card-header">
-                    <h3 class="card-title"><i class="ti ti-copy me-2"></i>Tahap 1 — Duplikasi Standar</h3>
-                </div>
-                <div class="card-body">
+                <x-tabler.card-body>
                     {{-- Info Banner --}}
                     <div class="alert alert-info mb-3">
                         <ul class="mb-0">
                             <li>Standar yang muncul sesuai dengan kelompok periode ini: <strong>{{ $periode->jenis_periode }}</strong></li>
                             <li>Silahkan checklist standar pada bagian <strong>"STANDAR SEBELUMNYA"</strong> lalu klik <strong>"DUPLIKASI STANDAR"</strong> untuk duplikasi ke periode selanjutnya</li>
-                            <li>Klik pada judul standar untuk menampilkan isi standar</li>
                         </ul>
                     </div>
 
-                    {{-- Kontrol: Target Periode --}}
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="ti ti-calendar"></i></span>
-                                <input type="number" id="input-target-periode" class="form-control"
-                                       value="{{ $periode->periode + 1 }}" placeholder="Tahun tujuan"
-                                       min="2020" max="2099">
-                                <x-tabler.button type="button" class="btn-outline-primary" id="btn-load-standar"
-                                    icon="ti ti-refresh" text="Muat Standar" />
+                    {{-- Kontrol: Target Periode (Automated) --}}
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-blue-lt me-2 p-2">
+                                    <i class="ti ti-calendar-share me-1"></i> Target Duplikasi: <strong>{{ $periode->periode + 1 }}</strong>
+                                </span>
+                                <input type="hidden" id="input-target-periode" value="{{ $periode->periode + 1 }}">
+                                <span id="duplikasi-status" class="text-muted small ms-2"></span>
                             </div>
                         </div>
-                        <div class="col-md-8 text-end d-flex align-items-center justify-content-end gap-2">
-                            <span id="duplikasi-status" class="text-muted small"></span>
+                        <div class="col-md-6 text-end">
                             <x-tabler.button type="button" class="btn-primary" id="btn-duplikasi"
                                 icon="ti ti-copy" text="Duplikasi Terpilih" disabled="true" />
                         </div>
@@ -400,7 +391,7 @@
                                                 </div>
                                             </div>
                                             <input type="text" id="search-standar-lama" class="form-control form-control-sm"
-                                                   placeholder="Search..." style="width: 150px">
+                                                placeholder="Search..." style="width: 150px">
                                         </div>
                                     </div>
                                 </div>
@@ -434,7 +425,7 @@
                                                 </div>
                                             </div>
                                             <input type="text" id="search-standar-baru" class="form-control form-control-sm"
-                                                   placeholder="Search..." style="width: 150px">
+                                                placeholder="Search..." style="width: 150px">
                                         </div>
                                     </div>
                                 </div>
@@ -450,14 +441,20 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
-        {{-- ===== SECTION: TAHAP 2 — REVIEW INDIKATOR ===== --}}
         <div id="section-manage" class="tab-pane fade" role="tabpanel">
             <x-tabler.card>
-                <x-tabler.card-header title='<i class="ti ti-settings-2 me-2"></i>Tahap 2 — Review Indikator' />
+                <x-tabler.card-header title='<i class="ti ti-settings-2 me-2"></i>Tahap 2 — Review Indikator'>
+                    <x-slot:actions>
+                        <div class="d-flex gap-2">
+                            <x-tabler.datatable-page-length :dataTableId="'table-review'" />
+                            <x-tabler.datatable-search :dataTableId="'table-review'" />
+                        </div>
+                    </x-slot:actions>
+                </x-tabler.card-header>
                 @if(!$hasDuplicated)
                     <x-tabler.card-body>
                         <div class="text-center py-4">
@@ -492,12 +489,8 @@
                 @endif
             </x-tabler.card>
         </div>
+    </div>
 
-        </div>{{-- /tab-content --}}
-    </div>{{-- /col-12 --}}
-</div>{{-- /row --}}
-
-@endsection
 
 @push('scripts')
 <script>
@@ -533,6 +526,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
+    @if($rapat)
     // ─── Attendance Switch Toggle ─────────────────────────────
     document.querySelectorAll('.attendance-switch').forEach(sw => {
         sw.addEventListener('change', function () {
@@ -566,7 +560,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // ─── HugeRTE Auto-save for Agenda Notulen ─────────────────
-    @if($rapat)
     if (window.loadHugeRTE) {
         window.loadHugeRTE('textarea[data-agenda-id]', {
             height: 280,
@@ -650,7 +643,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // ─── TAHAP 1: Dua Panel Duplikasi ─────────────────────────
-    const btnLoadStandar = document.getElementById('btn-load-standar');
     const inputTargetPeriode = document.getElementById('input-target-periode');
     const badgeNewPeriode = document.getElementById('badge-new-periode');
     const btnDuplikasi = document.getElementById('btn-duplikasi');
@@ -664,7 +656,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let selectedDokIdsLama = new Set();
     let selectedDokIdsBaru = new Set();
 
-    if (btnLoadStandar && panelStandar) {
+    if (panelStandar) {
         // Render helper
         const renderList = (data, containerId, isLama, searchTerm = '') => {
             const container = document.getElementById(containerId);
@@ -814,8 +806,6 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         // Event listeners
-        btnLoadStandar.addEventListener('click', loadStandar);
-        inputTargetPeriode.addEventListener('change', loadStandar);
 
         document.getElementById('search-standar-lama').addEventListener('input', (e) => {
             renderList(allStandarLama, 'list-standar-lama', true, e.target.value);
@@ -961,3 +951,4 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 @endpush
+@endsection

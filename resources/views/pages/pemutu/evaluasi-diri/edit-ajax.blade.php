@@ -33,12 +33,7 @@
             <div class="mb-4">
                 <span class="text-muted text-uppercase fw-bold fs-5">Label</span>
                 <div class="mt-1">
-                    @foreach($indikator->labels as $label)
-                        {!! pemutuLabelBadge($label, 'solid') !!}
-                    @endforeach
-                    @if($indikator->labels->isEmpty())
-                        <span class="text-muted smaller">Tidak ada label</span>
-                    @endif
+                    {!! pemutuDtColLabelsList($indikator) !!}
                 </div>
             </div>
 

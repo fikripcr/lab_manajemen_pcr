@@ -76,7 +76,7 @@ return new class extends Migration
         // 4.1 Main Table: event_rapat
         Schema::create('event_rapat', function (Blueprint $table) {
             $table->id('rapat_id');
-            $table->string('jenis_rapat', 20);
+            $table->string('jenis_rapat', 50)->default('Rapat Biasa');
             $table->string('judul_kegiatan', 100);
             $table->date('tgl_rapat');
             $table->time('waktu_mulai');
@@ -135,6 +135,7 @@ return new class extends Migration
             $table->string('model', 50);
             $table->unsignedBigInteger('model_id');
             $table->text('keterangan')->nullable();
+            $table->json('raw_json')->nullable();
             $table->timestamps();
 
             $table->string('created_by')->nullable();

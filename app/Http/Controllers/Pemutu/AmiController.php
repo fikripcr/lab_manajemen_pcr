@@ -67,29 +67,10 @@ class AmiController extends Controller
                 return pemutuDtColTarget($row);
             })
             ->addColumn('status_ed', function ($row) {
-                $pivot = $row->orgUnits->first()?->pivot;
-                if ($pivot?->ed_capaian) {
-                    $skalaLabel = $pivot->ed_skala !== null
-                        ? '<span class="badge bg-blue-lt text-blue ms-1">Skala ' . $pivot->ed_skala . '</span>'
-                        : '';
-
-                    return '<span class="badge bg-success-lt text-success"><i class="ti ti-check me-1"></i>ED Diisi</span>' . $skalaLabel;
-                }
-
-                return '<span class="badge bg-secondary-lt text-secondary">Belum Diisi</span>';
+                return pemutuDtColStatusEd($row);
             })
             ->addColumn('status_ami', function ($row) {
-                $pivot = $row->orgUnits->first()?->pivot;
-                if ($pivot?->ami_hasil_akhir !== null) {
-                    $map   = IndikatorOrgUnit::$hasilAkhirLabels;
-                    $hasil = $map[$pivot->ami_hasil_akhir] ?? null;
-
-                    return $hasil
-                        ? '<span class="badge bg-' . $hasil['color'] . '-lt text-' . $hasil['color'] . '">' . $hasil['label'] . '</span>'
-                        : '-';
-                }
-
-                return '<span class="badge bg-warning-lt text-warning"><i class="ti ti-clock me-1"></i>Belum Dinilai</span>';
+                return pemutuDtColStatusAmi($row);
             })
             ->addColumn('action', function ($row) {
                 $pivot        = $row->orgUnits->first()?->pivot;

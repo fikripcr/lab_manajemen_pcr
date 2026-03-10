@@ -404,10 +404,12 @@ class IndikatorService
             ->where('pemutu_indikator.origin_from', 'peningkatan_' . $periode->periode)
             ->select([
                 'pemutu_indikator_orgunit.indikorgunit_id',
+                'pemutu_indikator.indikator_id',
                 'pemutu_indikator.no_indikator',
-                DB::raw('CONCAT("<div class=\"indicator-scroll\">", pemutu_indikator.indikator, "</div>") as nama_indikator'),
+                'pemutu_indikator.indikator',
                 'pemutu_indikator.type',
                 'org.name as unit_name',
+                'pemutu_indikator_orgunit.target',
                 'pemutu_indikator_orgunit.target as target_baru',
                 'prev_ou.target as target_lama',
                 'prev_ou.pengend_status as prev_pengend_status',
@@ -417,6 +419,7 @@ class IndikatorService
             ])
             ->groupBy([
                 'pemutu_indikator_orgunit.indikorgunit_id',
+                'pemutu_indikator.indikator_id',
                 'pemutu_indikator.no_indikator',
                 'pemutu_indikator.indikator',
                 'pemutu_indikator.type',

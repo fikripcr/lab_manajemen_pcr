@@ -12,7 +12,7 @@
 
 {{-- Static Modal: renders full modal wrapper with id --}}
 @if($id)
-<div class="modal modal-blur fade" id="{{ $id }}" tabindex="-1" role="dialog" aria-hidden="true" data-bs-focus="true">
+<div class="modal modal-blur fade" id="{{ $id }}" tabindex="-1" role="dialog" aria-hidden="true" data-bs-focus="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered {{ $size }}" role="document">
         <div class="modal-content">
 @else
@@ -25,7 +25,7 @@
                     @if(isset($titleSlot))
                         {{ $titleSlot }}
                     @else
-                        <h5 class="m-0">{{ $title }}</h5>
+                        <h4 class="m-0">{{ $title }}</h4>
                     @endif
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

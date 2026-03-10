@@ -25,7 +25,7 @@
             </span>
         </div>
         <h3>Jadwal Pengendalian Belum Diatur</h3>
-        <p class="text-muted">Jadwal pelaksanaan Pengendalian untuk periode <strong>{{ $periode->periode }}</strong> belum ditetapkan oleh administrator. Silakan hubungi Tim Mutu untuk mengatur jadwal.</p>
+        <p class="text-muted">Jadwal pelaksanaan Pengendalian untuk periode <strong>{{ $periode->periode }}</strong> belum ditetapkan oleh administrator.</p>
         <x-tabler.button type="back" :href="route('pemutu.pengendalian.index')" />
     </x-tabler.card-body>
 </x-tabler.card>
@@ -92,7 +92,7 @@
                                     <li class="nav-item">
                                         <a href="#rtm-tab-peserta" class="nav-link" data-bs-toggle="tab">
                                             <i class="ti ti-users me-1"></i> Peserta
-                                            <span class="badge bg-green-lt ms-1">{{ $rapat->pesertas->count() }}</span>
+                                            <span class="badge bg-green-lt ms-1">{{ $rapat ? $rapat->pesertas->count() : 0 }}</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -104,9 +104,13 @@
                                     <div class="tab-pane active show" id="rtm-tab-umum">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                             <h3 class="mb-0"><i class="ti ti-calendar-event me-2 text-teal"></i>Info Rapat</h3>
-                                            <x-tabler.button type="button" class="btn-outline-primary btn-sm ajax-modal-btn"
-                                                data-url="{{ route('pemutu.pengendalian.rtm.edit', [$periode->encrypted_periodespmi_id, $rapat->encrypted_rapat_id]) }}"
-                                                icon="ti ti-edit" text="Edit" />
+                                            <div class="d-flex align-items-center gap-2">
+                                                <x-tabler.button href="{{ route('Kegiatan.rapat.generate-pdf', $rapat->encrypted_rapat_id) }}" 
+                                                    class="btn-ghost-danger btn-sm" icon="ti ti-file-type-pdf" text="Export PDF" />
+                                                <x-tabler.button type="button" class="btn-outline-primary btn-sm ajax-modal-btn"
+                                                    data-url="{{ route('pemutu.pengendalian.rtm.edit', [$periode->encrypted_periodespmi_id, $rapat->encrypted_rapat_id]) }}"
+                                                    icon="ti ti-edit" text="Edit" />
+                                            </div>
                                         </div>
                                         <div class="datagrid">
                                             <div class="datagrid-item">
@@ -142,27 +146,29 @@
                                                 data-url="{{ route('Kegiatan.rapat.edit-officials', $rapat->hashid) }}"
                                                 icon="ti ti-edit" text="Set" />
                                         </div>
-                                        <div class="d-flex align-items-center mb-2 p-2 rounded bg-blue-lt">
-                                            <span class="avatar avatar-sm me-3 rounded-circle bg-blue text-white">
-                                                {{ strtoupper(substr($rapat->ketua_user->name ?? '?', 0, 2)) }}
-                                            </span>
-                                            <div>
-                                                <div class="text-muted small">Ketua Rapat</div>
-                                                <div class="fw-bold">{{ $rapat->ketua_user->name ?? '— Belum Diset —' }}</div>
+                                        <div class="row g-2 mb-3">
+                                            <div class="col-md-6">
+                                                <div class="d-flex align-items-center p-2 rounded bg-blue-lt h-100">
+                                                    <span class="avatar avatar-sm me-3 rounded-circle bg-blue text-white">
+                                                        {{ strtoupper(substr($rapat->ketua_user->name ?? '?', 0, 2)) }}
+                                                    </span>
+                                                    <div>
+                                                        <div class="text-muted small">Ketua Rapat</div>
+                                                        <div class="fw-bold">{{ $rapat->ketua_user->name ?? '— Belum Diset —' }}</div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="d-flex align-items-center mb-3 p-2 rounded bg-orange-lt">
-                                            <span class="avatar avatar-sm me-3 rounded-circle bg-orange text-white">
-                                                {{ strtoupper(substr($rapat->notulen_user->name ?? '?', 0, 2)) }}
-                                            </span>
-                                            <div>
-                                                <div class="text-muted small">Notulen</div>
-                                                <div class="fw-bold">{{ $rapat->notulen_user->name ?? '— Belum Diset —' }}</div>
+                                            <div class="col-md-6">
+                                                <div class="d-flex align-items-center p-2 rounded bg-orange-lt h-100">
+                                                    <span class="avatar avatar-sm me-3 rounded-circle bg-orange text-white">
+                                                        {{ strtoupper(substr($rapat->notulen_user->name ?? '?', 0, 2)) }}
+                                                    </span>
+                                                    <div>
+                                                        <div class="text-muted small">Notulen</div>
+                                                        <div class="fw-bold">{{ $rapat->notulen_user->name ?? '— Belum Diset —' }}</div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="text-center">
-                                            <x-tabler.button href="{{ route('Kegiatan.rapat.generate-pdf', $rapat->encrypted_rapat_id) }}"
-                                                class="btn-outline-danger btn-sm" icon="ti ti-file-type-pdf" text="Export PDF" />
                                         </div>
                                     </div>
 
@@ -279,10 +285,12 @@
                         <x-tabler.card>
                             <x-tabler.card-header title='<i class="ti ti-checklist me-2"></i>Agenda & Pembahasan'>
                                 <x-slot:actions>
+                                    @if($rapat->agendas->count() > 0)
+                                        <x-tabler.button type="submit" form="form-agenda" class="btn-primary btn-sm me-2" text="Simpan Manual" />
+                                    @endif
                                     <x-tabler.button type="create" class="btn-success btn-sm ajax-modal-btn"
                                         data-url="{{ route('Kegiatan.rapat.agenda.create', $rapat->encrypted_rapat_id) }}"
                                         data-modal-title="Tambah Agenda" />
-                                    <span class="badge bg-teal-lt ms-1">{{ $rapat->agendas->count() }}</span>
                                 </x-slot:actions>
                             </x-tabler.card-header>
                             <x-tabler.card-body>
@@ -342,11 +350,6 @@
                                         @endforelse
                                     </div>
 
-                                    @if($rapat->agendas->count() > 0)
-                                    <div class="mt-3 text-end">
-                                        <x-tabler.button type="submit" class="btn-primary" text="Simpan Manual" />
-                                    </div>
-                                    @endif
                                 </form>
                             </x-tabler.card-body>
                         </x-tabler.card>
@@ -360,7 +363,14 @@
         {{-- ===== SECTION: PENGENDALIAN STANDAR ===== --}}
         <div id="section-pengendalian" class="tab-pane fade" role="tabpanel">
             <x-tabler.card>
-                <x-tabler.card-header title="Daftar Indikator" class="border-bottom py-3" />
+                <x-tabler.card-header title="Daftar Indikator" class="border-bottom py-3">
+                    <x-slot:actions>
+                        <div class="d-flex gap-2">
+                            <x-tabler.datatable-page-length :dataTableId="'table-pengendalian'" />
+                            <x-tabler.datatable-search :dataTableId="'table-pengendalian'" />
+                        </div>
+                    </x-slot:actions>
+                </x-tabler.card-header>
                 <x-tabler.card-body class="p-0 table-responsive">
                     <x-tabler.datatable
                         id="table-pengendalian"

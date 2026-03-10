@@ -297,7 +297,6 @@ class MainPemutuSeeder extends Seeder
                         'no_indikator'       => substr($periode, -2) . str_pad($indSeq++, 4, '0', STR_PAD_LEFT),
                         'indikator'          => "Ketercapaian indikator utama pada " . $judul,
                         'target'             => rand(80, 100) . '%',
-                        'jenis_indikator'    => 'Utama',
                         'created_by'         => 1,
                     ]);
                     $ind->dokSubs()->attach($sub->doksub_id, ['is_hasilkan_indikator' => true]);

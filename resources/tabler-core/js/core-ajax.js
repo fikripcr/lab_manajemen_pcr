@@ -89,10 +89,19 @@ function initAjaxFormHandler() {
                 }
 
                 // Success
-                // Reload DataTable immediately
-                if ($.fn.DataTable && $('.dataTable').length) {
-                    $('.dataTable').DataTable().ajax.reload(null, false);
+                // Reload DataTable immediately (jQuery DataTables)
+                if ($.fn && $.fn.DataTable && $('.dataTable').length) {
+                    try { $('.dataTable').DataTable().ajax.reload(null, false); } catch (e) { }
                 }
+
+                // Reload CustomDataTables instance (Vanilla JS DataTables)
+                // Look for table with .dataTable class and extract its ID
+                $('.dataTable').each(function () {
+                    let tableId = $(this).attr('id');
+                    if (tableId && window['DT_' + tableId] && typeof window['DT_' + tableId].loadData === 'function') {
+                        window['DT_' + tableId].loadData();
+                    }
+                });
 
                 // Reset form immediately
                 $form[0].reset();
@@ -193,10 +202,18 @@ function initAjaxFormHandler() {
                             // Success handling
                             const response = result.value;
 
-                            // Reload DataTable immediately
-                            if ($.fn.DataTable && $('.dataTable').length) {
-                                $('.dataTable').DataTable().ajax.reload(null, false);
+                            // Reload DataTable immediately (jQuery DataTables)
+                            if ($.fn && $.fn.DataTable && $('.dataTable').length) {
+                                try { $('.dataTable').DataTable().ajax.reload(null, false); } catch (e) { }
                             }
+
+                            // Reload CustomDataTables instance (Vanilla JS DataTables)
+                            $('.dataTable').each(function () {
+                                let tableId = $(this).attr('id');
+                                if (tableId && window['DT_' + tableId] && typeof window['DT_' + tableId].loadData === 'function') {
+                                    window['DT_' + tableId].loadData();
+                                }
+                            });
 
                             // Show Success Toast
                             showSuccessMessage(response.data.message || 'Terhapus!');
@@ -235,6 +252,7 @@ function initAjaxFormHandler() {
         let bootstrapModal = window.bootstrap.Modal.getInstance($modal[0]);
         if (!bootstrapModal) {
             // Disable native focus trap so it doesn't break HugeRTE / Select2 search spaces
+            // Configuration like static backdrop is handled by data-bs attributes in the HTML wrapper.
             bootstrapModal = new window.bootstrap.Modal($modal[0], {
                 focus: false
             });

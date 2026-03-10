@@ -88,50 +88,7 @@ class EvaluasiDiriController extends Controller
                 return $row->orgUnits->first()->pivot->ed_capaian ?? '<span class="text-muted fst-italic">Belum diisi</span>';
             })
             ->addColumn('analisis', function ($row) {
-                $pivot = $row->orgUnits->first()->pivot ?? null;
-                $text  = $pivot->ed_analisis ?? '-';
-                $html  = '<div style="max-height: 200px; overflow-y: auto;" class="mb-2">' . $text . '</div>';
-
-                // Evidence items
-                $evidenceHtml = '';
-                if ($pivot) {
-                    $hasFile  = ! empty($pivot->ed_attachment);
-                    $hasLinks = ! empty(json_decode($pivot->ed_links, true));
-
-                    // 1. Show Skala first
-                    if (isset($pivot->ed_skala) && $pivot->ed_skala !== null && $pivot->ed_skala !== '') {
-                        $evidenceHtml .= '<span class="badge bg-primary text-white me-2 mb-1" title="Nilai Skala Capaian" data-bs-toggle="tooltip">Skala [' . e($pivot->ed_skala) . ']</span>';
-
-                        // Add pipeline if there are subsequent attachments/links
-                        if ($hasFile || $hasLinks) {
-                            $evidenceHtml .= '<span class="text-muted mx-1 mb-1">|</span>';
-                        }
-                    }
-
-                    // 2. Show File Attachment
-                    if ($hasFile) {
-                        $url           = route('pemutu.evaluasi-diri.download', encryptId($pivot->indikorgunit_id));
-                        $evidenceHtml .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1" title="Unduh File Pendukung" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
-                    }
-
-                    // 3. Show External Links
-                    if ($hasLinks) {
-                        $links = json_decode($pivot->ed_links, true) ?? [];
-                        if (is_array($links)) {
-                            foreach ($links as $link) {
-                                $name          = htmlspecialchars($link['name'] ?? 'Tautan');
-                                $url           = htmlspecialchars($link['url'] ?? '#');
-                                $evidenceHtml .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-info me-1 mb-1" title="' . $name . '" data-bs-toggle="tooltip"><i class="ti ti-link fs-3"></i></a>';
-                            }
-                        }
-                    }
-                }
-
-                if ($evidenceHtml) {
-                    $html .= '<div class="d-flex flex-wrap align-items-center border-top pt-2">' . $evidenceHtml . '</div>';
-                }
-
-                return $html;
+                return pemutuDtColAnalisisEd($row);
             })
             ->addColumn('action', function ($row) use ($unitId) {
                 // If a specific unit is filtered, pass it. Otherwise try to get it from the pivot.

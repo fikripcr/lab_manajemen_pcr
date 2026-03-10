@@ -137,11 +137,7 @@
             <x-tabler.card-header title='<i class="ti ti-tags text-blue me-2"></i>Label & Kategori' />
             <x-tabler.card-body>
                 <div class="d-flex flex-wrap gap-2">
-                    @forelse($indikator->labels as $label)
-                        {!! pemutuLabelBadge($label) !!}
-                    @empty
-                        <span class="text-muted small italic">Tidak ada label.</span>
-                    @endforelse
+                {!! pemutuDtColLabelsList($indikator) !!}
                 </div>
             </x-tabler.card-body>
         </x-tabler.card>

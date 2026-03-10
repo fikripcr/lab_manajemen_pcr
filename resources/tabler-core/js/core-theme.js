@@ -273,9 +273,9 @@ class ThemeTabler {
         const root = document.documentElement;
         const body = document.body;
 
-        // 1. UI Density (data-theme-density on body)
+        // 1. UI Density (data-theme-density on root)
         if (state.density) {
-            body.setAttribute('data-theme-density', state.density);
+            root.setAttribute('data-theme-density', state.density);
         }
 
         // 2. Base Font Size (data-theme-font-size on html)
@@ -466,7 +466,7 @@ class ThemeTabler {
 
         // Store original text for restoration
         const originalText = btn.textContent;
-        
+
         // SECURITY FIX: Use textContent instead of innerHTML to prevent XSS
         btn.textContent = 'Saving...';
         btn.disabled = true;

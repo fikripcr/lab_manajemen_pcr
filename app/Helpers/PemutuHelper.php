@@ -233,6 +233,8 @@ if (! function_exists('pemutuDtColIndikator')) {
             $details = explode(' ;; ', $row->doksub_details);
             $first   = explode('|', $details[0]);
             $standar = ($first[1] ?? '') . ' ' . $first[0];
+        } elseif (isset($row->dokumen_judul)) {
+            $standar = $row->dokumen_judul;
         } elseif (isset($row->dokSubs) && $row->dokSubs->isNotEmpty()) {
             $ds  = $row->dokSubs->first();
             $doc = $ds->dokumen ?? null;
@@ -325,5 +327,296 @@ if (! function_exists('pemutuDtColTarget')) {
         $html .= '</div>';
 
         return $html;
+    }
+}
+
+if (! function_exists('pemutuDtColAnalisisEd')) {
+    /**
+     * Render the Analisis column for Evaluasi Diri DataTables.
+     */
+    function pemutuDtColAnalisisEd($row)
+    {
+        $pivot = null;
+        if (isset($row->orgUnits) && ! is_string($row->orgUnits) && $row->orgUnits->isNotEmpty()) {
+            $pivot = $row->orgUnits->first()->pivot;
+        } elseif (isset($row->ed_analisis) || isset($row->indikorgunit_id)) {
+            $pivot = $row;
+        }
+
+        $text = $pivot->ed_analisis ?? '-';
+        $html = '<div style="max-height: 200px; overflow-y: auto;" class="mb-2">' . $text . '</div>';
+
+        // Evidence items
+        $evidenceHtml = '';
+        if ($pivot) {
+            $hasFile = ! empty($pivot->ed_attachment);
+
+            $hasLinks   = false;
+            $linksArray = [];
+            if (! empty($pivot->ed_links)) {
+                $decoded = json_decode($pivot->ed_links, true);
+                if (is_array($decoded) && count($decoded) > 0) {
+                    $hasLinks   = true;
+                    $linksArray = $decoded;
+                }
+            }
+
+            // 1. Show Skala first
+            if (isset($pivot->ed_skala) && $pivot->ed_skala !== null && $pivot->ed_skala !== '') {
+                $evidenceHtml .= '<span class="badge bg-primary text-white me-2 mb-1" title="Nilai Skala Capaian" data-bs-toggle="tooltip">Skala [' . e($pivot->ed_skala) . ']</span>';
+
+                // Add pipeline if there are subsequent attachments/links
+                if ($hasFile || $hasLinks) {
+                    $evidenceHtml .= '<span class="text-muted mx-1 mb-1">|</span>';
+                }
+            }
+
+            // 2. Show File Attachment
+            if ($hasFile) {
+                // In summary controller it might be ID directly.
+                $itemId = $pivot->indikorgunit_id ?? null;
+                if ($itemId) {
+                    $url           = route('pemutu.evaluasi-diri.download', encryptId($itemId));
+                    $evidenceHtml .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1" title="Unduh File Pendukung" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
+                }
+            }
+
+            // 3. Show External Links
+            if ($hasLinks) {
+                foreach ($linksArray as $link) {
+                    $name          = htmlspecialchars($link['name'] ?? 'Tautan');
+                    $url           = htmlspecialchars($link['url'] ?? '#');
+                    $evidenceHtml .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-info me-1 mb-1" title="' . $name . '" data-bs-toggle="tooltip"><i class="ti ti-link fs-3"></i></a>';
+                }
+            }
+        }
+
+        if ($evidenceHtml) {
+            $html .= '<div class="d-flex flex-wrap align-items-center border-top pt-2">' . $evidenceHtml . '</div>';
+        }
+
+        return $html;
+    }
+}
+
+if (! function_exists('pemutuDtColStatusPengend')) {
+    /**
+     * Render the Status column for Pengendalian DataTables.
+     */
+    function pemutuDtColStatusPengend($row)
+    {
+        $status = null;
+        if (isset($row->orgUnits) && ! is_string($row->orgUnits) && $row->orgUnits->isNotEmpty()) {
+            $status = $row->orgUnits->first()->pivot->pengend_status ?? null;
+        } else {
+            $status = $row->pengend_status ?? null;
+        }
+
+        $map = [
+            'tetap'       => ['label' => 'Tetap', 'color' => 'success'],
+            'penyesuaian' => ['label' => 'Penyesuaian', 'color' => 'warning'],
+            'nonaktif'    => ['label' => 'Nonaktif', 'color' => 'danger'],
+        ];
+
+        if ($status && isset($map[$status])) {
+            $m = $map[$status];
+            return '<span class="badge bg-' . $m['color'] . '-lt text-' . $m['color'] . '">' . $m['label'] . '</span>';
+        }
+
+        return '<span class="badge bg-secondary-lt text-secondary">Belum Diisi</span>';
+    }
+}
+
+if (! function_exists('pemutuDtColEisenhower')) {
+    /**
+     * Render the Eisenhower Matrix column for Pengendalian DataTables.
+     */
+    function pemutuDtColEisenhower($row)
+    {
+        $important = null;
+        $urgent    = null;
+
+        if (isset($row->orgUnits) && ! is_string($row->orgUnits) && $row->orgUnits->isNotEmpty()) {
+            $pivot     = $row->orgUnits->first()->pivot;
+            $important = $pivot->pengend_important_matrix ?? null;
+            $urgent    = $pivot->pengend_urgent_matrix ?? null;
+        } else {
+            $important = $row->pengend_important_matrix ?? null;
+            $urgent    = $row->pengend_urgent_matrix ?? null;
+        }
+
+        $importantBadge = match ($important) {
+            'important'     => '<span class="badge bg-red-lt text-red">Important</span>',
+            'not_important' => '<span class="badge bg-secondary-lt text-secondary">Not Imp.</span>',
+            default         => '<span class="badge bg-light text-muted">-</span>',
+        };
+        $urgentBadge = match ($urgent) {
+            'urgent'     => '<span class="badge bg-orange-lt text-orange">Urgent</span>',
+            'not_urgent' => '<span class="badge bg-secondary-lt text-secondary">Not Urgent</span>',
+            default      => '<span class="badge bg-light text-muted">-</span>',
+        };
+
+        return '<div class="d-flex flex-column gap-1">' . $importantBadge . $urgentBadge . '</div>';
+    }
+}
+
+if (! function_exists('pemutuDtColAnalisisPengend')) {
+    /**
+     * Render the Analisis column for Pengendalian DataTables.
+     */
+    function pemutuDtColAnalisisPengend($row)
+    {
+        $analisis = null;
+        if (isset($row->orgUnits) && ! is_string($row->orgUnits) && $row->orgUnits->isNotEmpty()) {
+            $analisis = $row->orgUnits->first()->pivot->pengend_analisis ?? null;
+        } else {
+            $analisis = $row->pengend_analisis ?? null;
+        }
+
+        if (! $analisis || $analisis === '-') {
+            return '<span class="text-muted small fst-italic">Belum diisi</span>';
+        }
+        // Strip HTML tags dan truncate
+        $plain   = strip_tags($analisis);
+        $preview = mb_strlen($plain) > 80 ? mb_substr($plain, 0, 80) . '…' : $plain;
+        return '<span class="small text-muted" title="' . e($plain) . '">' . e($preview) . '</span>';
+    }
+}
+
+if (! function_exists('pemutuDtColLabelsList')) {
+    /**
+     * Render the Labels as a flex-wrap container list (for summary/detail separate column).
+     */
+    function pemutuDtColLabelsList($row)
+    {
+        $html     = '<div class="d-flex flex-wrap gap-1">';
+        $hasLabel = false;
+
+        // Support concatenated label_details format (name|color, name|color)
+        if (isset($row->label_details) && $row->label_details !== '-') {
+            $labels = explode(', ', $row->label_details);
+            foreach ($labels as $label) {
+                if (strpos($label, '|') !== false) {
+                    [$name, $color]  = explode('|', $label);
+                    $html           .= '<span class="status status-' . e($color) . '">' . e($name) . '</span>';
+                    $hasLabel        = true;
+                }
+            }
+        }
+        // Support all_labels and all_label_colors format (from IndikatorSummary model view)
+        elseif (isset($row->all_labels) && $row->all_labels !== '') {
+            $names  = explode(', ', $row->all_labels);
+            $colors = explode(', ', $row->all_label_colors ?? '');
+
+            foreach ($names as $index => $name) {
+                $color     = $colors[$index] ?? 'secondary';
+                $html     .= '<span class="status status-' . e($color) . '">' . e($name) . '</span>';
+                $hasLabel  = true;
+            }
+        }
+        // Support Eloquent related models format
+        elseif (isset($row->labels) && ! is_string($row->labels) && $row->labels->isNotEmpty()) {
+            foreach ($row->labels as $labelObj) {
+                $name      = $labelObj->name ?? $labelObj->label?->name;
+                $color     = $labelObj->type?->color ?? $labelObj->label?->type?->color ?? 'secondary';
+                $html     .= '<span class="status status-' . e($color) . '">' . e($name) . '</span>';
+                $hasLabel  = true;
+            }
+        }
+
+        $html .= '</div>';
+
+        return $hasLabel ? $html : '<span class="text-muted fst-italic small">-</span>';
+    }
+}
+
+if (! function_exists('pemutuDtColStatusEd')) {
+    /**
+     * Render the Status of Evaluasi Diri (ED) for DataTables.
+     */
+    function pemutuDtColStatusEd($row)
+    {
+        $pivot = null;
+        if (isset($row->orgUnits)) {
+            $pivot = $row->orgUnits->first()?->pivot;
+        }
+
+        $edCapaian = $pivot->ed_capaian ?? $row->ed_capaian ?? null;
+        $edSkala   = $pivot->ed_skala ?? $row->ed_skala ?? null;
+
+        if ($edCapaian) {
+            $skalaLabel = $edSkala !== null
+                ? '<span class="badge bg-blue-lt text-blue ms-1">Skala ' . e($edSkala) . '</span>'
+                : '';
+
+            return '<span class="badge bg-success-lt text-success"><i class="ti ti-check me-1"></i>ED Diisi</span>' . $skalaLabel;
+        }
+
+        return '<span class="badge bg-secondary-lt text-secondary">Belum Diisi</span>';
+    }
+}
+
+if (! function_exists('pemutuDtColStatusAmi')) {
+    /**
+     * Render the Status of AMI (Audit Mutu Internal) for DataTables.
+     */
+    function pemutuDtColStatusAmi($row)
+    {
+        $pivot = null;
+        if (isset($row->orgUnits)) {
+            $pivot = $row->orgUnits->first()?->pivot;
+        }
+
+        $amiHasil  = $pivot->ami_hasil_akhir ?? $row->ami_hasil_akhir ?? null;
+        $label     = $row->ami_hasil_label ?? $row->ami_hasil_akhir_label ?? null;
+        $amiTemuan = $pivot->ami_hasil_temuan ?? $row->ami_hasil_temuan ?? null;
+
+        if ($amiHasil !== null) {
+            $colors = [0 => 'danger', 1 => 'success', 2 => 'info', 'KTS' => 'danger', 'Terpenuhi' => 'success', 'Terlampaui' => 'info'];
+            $color  = $colors[$amiHasil] ?? 'secondary';
+
+            // Fallback label if not provided in row
+            if (! $label) {
+                if (is_numeric($amiHasil)) {
+                    $labels = [0 => 'KTS', 1 => 'Terpenuhi', 2 => 'Terlampaui'];
+                    $label  = $labels[$amiHasil] ?? '-';
+                } else {
+                    $label = $amiHasil;
+                }
+            }
+
+            $html = '<div class="mb-1"><span class="badge bg-' . $color . '-lt text-' . $color . ' fs-6 px-2">' . e($label) . '</span></div>';
+
+            if ($amiTemuan && $amiTemuan !== '-') {
+                $excerpt  = \Str::limit($amiTemuan, 100);
+                $html    .= '<div class="text-muted small italic" title="' . e($amiTemuan) . '">' . e($excerpt) . '</div>';
+            }
+
+            return $html;
+        }
+
+        return '<span class="badge bg-warning-lt text-warning"><i class="ti ti-clock me-1"></i>Belum Dinilai</span>';
+    }
+}
+
+if (! function_exists('pemutuDtColStatusPeningkatan')) {
+    /**
+     * Render the Status for Peningkatan module review.
+     */
+    function pemutuDtColStatusPeningkatan($row)
+    {
+        $status = $row->prev_pengend_status ?? null;
+
+        if (! $status) {
+            return '<span class="badge bg-blue-lt">Dilanjutkan</span>';
+        }
+
+        $colors = [
+            'tetap'       => 'green',
+            'penyesuaian' => 'yellow',
+        ];
+        $color = $colors[$status] ?? 'secondary';
+
+        return '<span class="badge bg-' . $color . '-lt">' . e(ucfirst($status)) . '</span>';
     }
 }

@@ -5,7 +5,6 @@
 @endphp
 
 <x-tabler.form-modal 
-    id="modalAction" 
     title="{{ isset($member) && $member->exists ? 'Edit Member' : 'Tambah Member' }}" 
     route="{{ $actionUrl }}" 
     method="{{ isset($member) && $member->exists ? 'PUT' : 'POST' }}"

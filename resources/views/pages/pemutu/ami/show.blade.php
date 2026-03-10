@@ -19,7 +19,7 @@
             </span>
         </div>
         <h3>Jadwal AMI Belum Diatur</h3>
-        <p class="text-muted">Jadwal pelaksanaan Audit Mutu Internal untuk periode <strong>{{ $periode->periode }}</strong> belum ditetapkan oleh administrator. Silakan hubungi Tim Mutu untuk mengatur jadwal.</p>
+        <p class="text-muted">Jadwal pelaksanaan Audit Mutu Internal untuk periode <strong>{{ $periode->periode }}</strong> belum ditetapkan oleh administrator.</p>
         <x-tabler.button type="back" :href="route('pemutu.ami.index')" />
     </x-tabler.card-body>
 </x-tabler.card>
