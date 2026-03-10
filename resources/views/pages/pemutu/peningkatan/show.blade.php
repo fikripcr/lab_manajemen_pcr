@@ -62,8 +62,6 @@
             @else
                 {{-- RTM Sudah Ada — Two-column layout --}}
                 <div class="row row-cards">
-
-                    {{-- ══ KIRI: Tabs Data Umum + Peserta ══ --}}
                     <div class="col-md-6">
                         <x-tabler.card>
                             <x-tabler.card-header>
@@ -83,8 +81,6 @@
                             </x-tabler.card-header>
                             <x-tabler.card-body>
                                 <div class="tab-content">
-
-                                    {{-- ── TAB: Data Umum ── --}}
                                     <div class="tab-pane active show" id="rtm-tab-umum">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                             <h3 class="mb-0"><i class="ti ti-calendar-event me-2 text-blue"></i>Info Rapat</h3>
@@ -130,7 +126,7 @@
                                                 data-url="{{ route('Kegiatan.rapat.edit-officials', $rapat->encrypted_rapat_id) }}"
                                                 icon="ti ti-edit" text="Set" />
                                         </div>
-                                        <div class="row g-2 mb-3">
+                                        <div class="row g-2">
                                             <div class="col-md-6">
                                                 <div class="d-flex align-items-center p-2 rounded bg-blue-lt h-100">
                                                     <span class="avatar avatar-sm me-3 rounded-circle bg-blue text-white">
@@ -156,9 +152,7 @@
                                         </div>
                                         </div>
 
-                                    {{-- ── TAB: Peserta ── --}}
                                     <div class="tab-pane" id="rtm-tab-peserta">
-                                        {{-- Inline Add Peserta Form --}}
                                         <x-tabler.card class="bg-light mb-3">
                                             <x-tabler.card-body>
                                                 <h4 class="mb-3"><i class="ti ti-user-plus me-1"></i>Tambah Peserta</h4>
@@ -260,13 +254,11 @@
                                             </table>
                                         </div>
                                     </div>
-
-                                </div>{{-- /tab-content --}}
+                                </div>
                             </x-tabler.card-body>
                         </x-tabler.card>
                     </div>
 
-                    {{-- ══ KANAN: Agenda (selalu tampil) ══ --}}
                     <div class="col-md-6">
                         <x-tabler.card>
                             <x-tabler.card-header title='<i class="ti ti-checklist me-2"></i>Agenda & Pembahasan'>
@@ -284,35 +276,35 @@
                                     @csrf
                                     <div class="accordion" id="accordion-agenda">
                                         @forelse($rapat->agendas as $index => $agenda)
-                                        <div class="accordion-item bg-white">
-                                            <h2 class="accordion-header" id="ah-{{ $agenda->encrypted_rapatagenda_id }}">
-                                                <button class="accordion-button {{ $index === 0 ? '' : 'collapsed' }}" type="button"
+                                        <div class="accordion-item">
+                                            <h5 class="accordion-header d-flex align-items-center" id="ah-{{ $agenda->encrypted_rapatagenda_id }}">
+                                                <button class="accordion-button {{ $index === 0 ? '' : 'collapsed' }} flex-fill" type="button"
                                                     data-bs-toggle="collapse"
                                                     data-bs-target="#ac-{{ $agenda->encrypted_rapatagenda_id }}"
                                                     aria-expanded="{{ $index === 0 ? 'true' : 'false' }}">
                                                     <span class="badge bg-blue-lt me-2">{{ $loop->iteration }}</span>
                                                     <span class="flex-fill">{{ $agenda->judul_agenda }}</span>
                                                     <span class="ms-2 badge save-status-{{ $agenda->encrypted_rapatagenda_id }} d-none bg-blue-lt">Saving...</span>
-                                                    <div class="dropdown ms-2" onclick="event.stopPropagation()">
-                                                        <a href="#" class="btn btn-ghost-secondary btn-icon btn-sm dropdown-toggle no-caret" data-bs-toggle="dropdown">
-                                                            <i class="ti ti-dots-vertical"></i>
-                                                        </a>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <a href="javascript:void(0)" class="dropdown-item ajax-modal-btn" 
-                                                                data-url="{{ route('Kegiatan.rapat.agenda.edit', $agenda->encrypted_rapatagenda_id) }}"
-                                                                data-modal-title="Edit Judul Agenda">
-                                                                <i class="ti ti-edit me-2"></i> Edit Judul
-                                                            </a>
-                                                            <a href="javascript:void(0)" class="dropdown-item text-danger ajax-confirm"
-                                                                data-url="{{ route('Kegiatan.rapat.agenda.destroy', $agenda->encrypted_rapatagenda_id) }}"
-                                                                data-method="DELETE"
-                                                                data-title="Hapus Agenda"
-                                                                data-text="Apakah Anda yakin ingin menghapus agenda ini?">
-                                                                <i class="ti ti-trash me-2"></i> Hapus Agenda
-                                                            </a>
-                                                        </div>
-                                                    </div>
                                                 </button>
+                                                <div class="dropdown pe-3">
+                                                    <a href="#" class="btn btn-ghost-secondary btn-icon btn-sm dropdown-toggle no-caret" data-bs-toggle="dropdown">
+                                                        <i class="ti ti-dots-vertical"></i>
+                                                    </a>
+                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                        <a href="javascript:void(0)" class="dropdown-item ajax-modal-btn" 
+                                                            data-url="{{ route('Kegiatan.rapat.agenda.edit', $agenda->encrypted_rapatagenda_id) }}"
+                                                            data-modal-title="Edit Judul Agenda">
+                                                            <i class="ti ti-edit me-2"></i> Edit Judul
+                                                        </a>
+                                                        <a href="javascript:void(0)" class="dropdown-item text-danger ajax-confirm"
+                                                            data-url="{{ route('Kegiatan.rapat.agenda.destroy', $agenda->encrypted_rapatagenda_id) }}"
+                                                            data-method="DELETE"
+                                                            data-title="Hapus Agenda"
+                                                            data-text="Apakah Anda yakin ingin menghapus agenda ini?">
+                                                            <i class="ti ti-trash me-2"></i> Hapus Agenda
+                                                        </a>
+                                                    </div>
+                                                </div>
                                             </h2>
                                             <div id="ac-{{ $agenda->encrypted_rapatagenda_id }}"
                                                 class="accordion-collapse collapse {{ $index === 0 ? 'show' : '' }}"
@@ -340,7 +332,6 @@
                             </x-tabler.card-body>
                         </x-tabler.card>
                     </div>
-
                 </div>
             @endif
 
@@ -357,7 +348,6 @@
                         </ul>
                     </div>
 
-                    {{-- Kontrol: Target Periode (Automated) --}}
                     <div class="row mb-3 align-items-center">
                         <div class="col-md-6">
                             <div class="d-flex align-items-center">
@@ -374,7 +364,6 @@
                         </div>
                     </div>
 
-                    {{-- Dua Panel: Standar Sebelumnya (kiri) + Standar Baru (kanan) --}}
                     <div class="row" id="panel-standar">
                         {{-- Panel Kiri: STANDAR SEBELUMNYA --}}
                         <div class="col-md-6">

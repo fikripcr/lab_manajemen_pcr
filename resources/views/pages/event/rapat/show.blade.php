@@ -229,34 +229,34 @@
                 <x-tabler.card>
                     @forelse($rapat->agendas as $index => $agenda)
                     <div class="accordion-item">
-                        <h2 class="accordion-header" id="ah-{{ $agenda->encrypted_rapatagenda_id }}">
-                            
-                            <button class="accordion-button {{ $index === 0 ? '' : 'collapsed' }}" type="button"
+                        <h2 class="accordion-header d-flex align-items-center" id="ah-{{ $agenda->encrypted_rapatagenda_id }}">
+                            <button class="accordion-button {{ $index === 0 ? '' : 'collapsed' }} flex-fill" type="button"
                                 data-bs-toggle="collapse"
                                 data-bs-target="#ac-{{ $agenda->encrypted_rapatagenda_id }}"
                                 aria-expanded="{{ $index === 0 ? 'true' : 'false' }}">
-                                
                                 <span class="text-truncate fw-medium">{{ $agenda->judul_agenda }}</span>
                                 <span class="badge save-status-{{ $agenda->encrypted_rapatagenda_id }} d-none bg-blue-lt ms-3">Saving...</span>
-                                
                             </button>
-
-                            <div class="btn-group me-4">
-                                <x-tabler.button type="button" class="btn-primary btn-sm px-2 py-1" 
-                                    data-url="{{ route('Kegiatan.rapat.agenda.edit', $agenda->encrypted_rapatagenda_id) }}"
-                                    data-modal-title="Edit Judul Agenda"
-                                    icon="ti ti-edit" 
-                                    title="Edit Judul"
-                                />
-                                <x-tabler.button type="button" class="btn-danger btn-sm ajax-delete px-2 py-1" 
-                                    data-url="{{ route('Kegiatan.rapat.agenda.destroy', $agenda->encrypted_rapatagenda_id) }}"
-                                    data-title="Hapus Agenda?"
-                                    data-text="Agenda ini dan notulen di dalamnya akan dihapus."
-                                    icon="ti ti-trash" 
-                                    title="Hapus Agenda"
-                                />
+                            <div class="px-3">
+                                <div class="dropdown">
+                                    <a href="#" class="btn btn-ghost-secondary btn-icon btn-sm dropdown-toggle no-caret" data-bs-toggle="dropdown">
+                                        <i class="ti ti-dots-vertical"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="javascript:void(0)" class="dropdown-item ajax-modal-btn" 
+                                            data-url="{{ route('Kegiatan.rapat.agenda.edit', $agenda->encrypted_rapatagenda_id) }}"
+                                            data-modal-title="Edit Judul Agenda">
+                                            <i class="ti ti-edit me-2"></i> Edit Judul
+                                        </a>
+                                        <a href="javascript:void(0)" class="dropdown-item text-danger ajax-delete"
+                                            data-url="{{ route('Kegiatan.rapat.agenda.destroy', $agenda->encrypted_rapatagenda_id) }}"
+                                            data-title="Hapus Agenda?"
+                                            data-text="Agenda ini dan notulen di dalamnya akan dihapus.">
+                                            <i class="ti ti-trash me-2"></i> Hapus Agenda
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-
                         </h2>
                         
                         <div id="ac-{{ $agenda->encrypted_rapatagenda_id }}"
