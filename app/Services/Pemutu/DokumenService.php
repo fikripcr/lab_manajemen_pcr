@@ -61,4 +61,49 @@ class DokumenService
             'results' => array_values($grouped),
         ];
     }
+
+    /**
+     * Get array of Kebijakan Dokumens (Visi, Misi, RJP, Renstra, Renop) by Periode
+     */
+    public function getKebijakanByPeriode(int $periode): array
+    {
+        $jenisList = pemutuKebijakanJenisList();
+
+        $dokumens = \App\Models\Pemutu\Dokumen::with(['dokSubs.childDokumens', 'dokSubs.mappedTo.dokumen'])
+            ->whereIn('jenis', $jenisList)
+            ->where('periode', $periode)
+            ->get()
+            ->keyBy('jenis');
+
+        $result = [];
+        foreach ($jenisList as $jenis) {
+            $result[$jenis] = $dokumens->get($jenis);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get Mappable Poin Options for a given Jenis Kebijakan
+     */
+    public function getMappablePoinOptions(string $sourceJenis, int $periode): \Illuminate\Support\Collection
+    {
+        $targetJenis = pemutuMappableJenis($sourceJenis);
+
+        if (! $targetJenis) {
+            return collect();
+        }
+
+        $targetDokumen = \App\Models\Pemutu\Dokumen::where('jenis', $targetJenis)
+            ->where('periode', $periode)
+            ->first();
+
+        if (! $targetDokumen) {
+            return collect();
+        }
+
+        return DokSub::where('dok_id', $targetDokumen->dok_id)
+            ->orderBy('seq')
+            ->get();
+    }
 }

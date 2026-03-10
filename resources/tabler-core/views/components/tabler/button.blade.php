@@ -119,8 +119,8 @@
     
     // Smart Back/Cancel Logic
     // If type is back or cancel, and no specific onclick is provided, try to use history.back()
-    // We check document.referrer to ensure we are staying within the app, unless there is no href.
-    if (($type === 'back' || $type === 'cancel') && !$onclick) {
+    // However, if the button is used to dismiss a modal (data-bs-dismiss="modal"), we DO NOT want history.back().
+    if (($type === 'back' || $type === 'cancel') && !$onclick && !$attributes->has('data-bs-dismiss')) {
         if (!$href) {
             $onclick = "history.back(); return false;";
         } else {

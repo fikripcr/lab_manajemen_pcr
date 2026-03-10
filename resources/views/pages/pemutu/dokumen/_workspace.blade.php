@@ -102,7 +102,8 @@
                         {{-- Edit/Delete poin --}}
                         <x-tabler.button type="primary" class="btn-sm btn-secondary ajax-modal-btn me-0" text="" icon="ti ti-edit"
                             data-url="{{ route('pemutu.dokumen-spmi.edit', ['type' => 'poin', 'id' => $item->encrypted_doksub_id]) }}"
-                            data-modal-title="Ubah Poin" />
+                            data-modal-title="Ubah Poin"
+                            data-modal-size="modal-xl" />
                         <x-tabler.button type="delete" class="btn-sm ajax-delete" text="" icon="ti ti-trash"
                             data-url="{{ route('pemutu.dokumen-spmi.destroy', ['type' => 'poin', 'id' => $item->encrypted_doksub_id]) }}"
                             data-title="Hapus Poin ini?" />
@@ -202,7 +203,7 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
+                    </x-tabler.card>
                     @else
                         <div class="text-center text-muted p-3 border border-dashed rounded">
                             <i class="ti ti-files mb-2 fs-2 d-block"></i>
@@ -231,6 +232,7 @@
                                     text="Tambah {{ $childLabel ?? 'Turunan' }}"
                                     data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => $isDokSubBased ? 'poin' : 'dokumen', 'parent_id' => $item->encrypted_dok_id]) }}"
                                     data-modal-title="Tambah {{ $childLabel ?? 'Turunan' }}"
+                                    data-modal-size="{{ $isDokSubBased ? 'modal-xl' : 'modal-md' }}"
                                     size="sm" />
                             </x-slot:actions>
                         </x-tabler.card-header>

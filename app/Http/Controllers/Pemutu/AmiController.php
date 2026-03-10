@@ -36,9 +36,15 @@ class AmiController extends Controller
      */
     public function show(PeriodeSpmi $periode, Request $request)
     {
+        // Cek jadwal AMI sudah diatur
+        $jadwalTersedia = $periode->ami_awal && $periode->ami_akhir;
+        if (! $jadwalTersedia) {
+            return view('pages.pemutu.ami.show', compact('periode', 'jadwalTersedia'));
+        }
+
         $unitId = $request->input('unit_id');
 
-        return view('pages.pemutu.ami.show', compact('periode', 'unitId'));
+        return view('pages.pemutu.ami.show', compact('periode', 'unitId', 'jadwalTersedia'));
     }
 
     /**
@@ -55,7 +61,7 @@ class AmiController extends Controller
             ->addColumn('indikator_info', function ($row) {
                 $kode   = $row->no_indikator ?? '-';
                 $nama   = $row->indikator ?? '-';
-                $labels = $row->labels->map(fn($l) => '<span class="badge bg-' . ($l->color ?? 'secondary') . '-lt text-' . ($l->color ?? 'secondary') . '">' . e($l->name) . '</span>')->implode(' ');
+                $labels = pemutuLabelBadges($row->labels);
 
                 return '<div class="indicator-scroll">
                     <div class="fw-bold text-primary">' . e($kode) . '</div>

@@ -138,7 +138,7 @@
             <x-tabler.card-body>
                 <div class="d-flex flex-wrap gap-2">
                     @forelse($indikator->labels as $label)
-                        <span class="badge bg-blue-lt">{{ $label->name }}</span>
+                        {!! pemutuLabelBadge($label) !!}
                     @empty
                         <span class="text-muted small italic">Tidak ada label.</span>
                     @endforelse

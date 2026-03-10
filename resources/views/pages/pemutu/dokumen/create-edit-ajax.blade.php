@@ -33,7 +33,7 @@
     :method="$method"
     :submitText="$isEdit ? 'Simpan Perubahan' : 'Simpan'"
     :submitIcon="$isEdit ? 'ti-device-floppy' : 'ti-plus'"
-    size="{{ $type === 'indikator' ? 'lg' : 'md' }}"
+    data-modal-size="modal-xl"
 >
     {{-- A. DOKUMEN FORM --}}
     @if($type === 'dokumen')
@@ -108,49 +108,68 @@
             <input type="hidden" name="dok_id" value="{{ $dokumen->encrypted_dok_id }}">
         @endif
 
-        <div class="row g-2">
-            <div class="col-md-12">
-                <x-tabler.form-textarea
-                    name="judul"
-                    label="Judul"
-                    id="judul"
-                    :value="$isEdit ? $dokSub->judul : ''"
-                    required="true"
-                    placeholder="{{ $canProduceIndikator ? 'Contoh: Standar Kompetensi Lulusan' : 'Contoh: Misi 1' }}"
-                />
-            </div>
-            <div class="col-md-4">
-                <x-tabler.form-input name="kode" id="kode" label="Kode" :value="$isEdit ? $dokSub->kode : ''" placeholder="Contoh: S.01" />
-            </div>
-        </div>
+        <div class="row">
+            <div class="col-md-5">
+                <div class="row g-2 align-items-end mb-3">
+                    <div class="col-sm-6">
+                        <x-tabler.form-input name="kode" id="kode" label="Kode" :value="$isEdit ? $dokSub->kode : ''" placeholder="Contoh: S.01" />
+                    </div>
+                    @if($canProduceIndikator)
+                    <div class="col-sm-6 pb-2">
+                        <x-tabler.form-checkbox
+                            name="is_hasilkan_indikator"
+                            label="Hasilkan Indikator?"
+                            value="1"
+                            class="mb-0 fw-medium"
+                            :checked="$isEdit ? $dokSub->is_hasilkan_indikator : ($jenisPoin === 'renop' || $jenisPoin === 'standar')"
+                            switch
+                        />
+                    </div>
+                    @endif
+                </div>
 
-        @if($canProduceIndikator)
-        <div class="mb-3 mt-3">
-            <x-tabler.form-checkbox
-                name="is_hasilkan_indikator"
-                label="Hasilkan Indikator?"
-                value="1"
-                :checked="$isEdit ? $dokSub->is_hasilkan_indikator : ($jenisPoin === 'renop' || $jenisPoin === 'standar')"
-                switch
-            />
-            <div class="text-muted small">Jika dicentang, poin ini bisa ditambahkan Indikator.</div>
+                <div class="mb-3">
+                    <x-tabler.form-textarea
+                        name="judul"
+                        label="Judul"
+                        id="judul"
+                        :value="$isEdit ? $dokSub->judul : ''"
+                        required="true"
+                        rows="4"
+                        placeholder="{{ $canProduceIndikator ? 'Contoh: Standar Kompetensi Lulusan' : 'Contoh: Misi 1' }}"
+                    />
+                </div>
+                
+                @if($canProduceIndikator)
+                <div class="alert alert-info bg-transparent border-0 d-flex align-items-center mt-3 p-2 small">
+                    <i class="ti ti-info-circle me-2 icon text-blue"></i>
+                    <div>Jika Anda mengaktifkan opsi <strong>Hasilkan Indikator</strong>, poin ini nantinya dapat menampung daftar Indikator.</div>
+                </div>
+                @endif
+            </div>
+            <div class="col-md-7 border-start ps-md-4">
+                @if(!$canProduceIndikator || $jenisPoin === 'renop' || $isEdit)
+                <div class="h-100">
+                    <x-tabler.form-textarea
+                        :type="$isEdit ? 'editor' : 'textarea'"
+                        name="isi"
+                        id="isi"
+                        label="Isi / Keterangan"
+                        :value="$isEdit ? $dokSub->isi : ''"
+                        rows="12"
+                        placeholder="Uraian rinci terkait poin / kegiatan ini..."
+                        :height="$isEdit ? 350 : null"
+                    />
+                </div>
+                @else
+                <div class="empty bg-transparent h-100 d-flex flex-column justify-content-center border-dashed rounded" style="min-height: 200px">
+                    <div class="empty-icon"><i class="ti ti-file-text"></i></div>
+                    <p class="empty-title mb-1">Isi / Keterangan</p>
+                    <p class="empty-subtitle text-muted">Isi dapat dilengkapi setelah data awal disimpan atau telah memiliki referensi yang mendukung.</p>
+                </div>
+                @endif
+            </div>
         </div>
-        @endif
-
-        @if(!$canProduceIndikator || $jenisPoin === 'renop' || $isEdit)
-        <div class="mt-3">
-            <x-tabler.form-textarea
-                :type="$isEdit ? 'editor' : 'textarea'"
-                name="isi"
-                id="isi"
-                label="{{ $isEdit ? $dokSub->isi : '' }}"
-                :value="$isEdit ? $dokSub->isi : ''"
-                rows="4"
-                placeholder="Isi poin..."
-                :height="$isEdit ? 300 : null"
-            />
-        </div>
-        @endif
 
     {{-- C. INDIKATOR FORM --}}
     @elseif($type === 'indikator')

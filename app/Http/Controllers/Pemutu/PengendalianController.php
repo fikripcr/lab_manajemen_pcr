@@ -36,6 +36,12 @@ class PengendalianController extends Controller
      */
     public function show(PeriodeSpmi $periode, Request $request)
     {
+        // Cek jadwal Pengendalian sudah diatur
+        $jadwalTersedia = $periode->pengendalian_awal && $periode->pengendalian_akhir;
+        if (! $jadwalTersedia) {
+            return view('pages.pemutu.pengendalian.show', compact('periode', 'jadwalTersedia'));
+        }
+
         $unitId = $request->input('unit_id');
 
         // Load the latest RTM rapat (if exists) with its relations
@@ -46,7 +52,7 @@ class PengendalianController extends Controller
 
         $users = $this->PelaksanaanService->getUsersForSelect();
 
-        return view('pages.pemutu.pengendalian.show', compact('periode', 'unitId', 'rapat', 'users'));
+        return view('pages.pemutu.pengendalian.show', compact('periode', 'unitId', 'rapat', 'users', 'jadwalTersedia'));
     }
 
     /**
@@ -62,7 +68,7 @@ class PengendalianController extends Controller
             ->addColumn('indikator_info', function ($row) {
                 $kode   = $row->no_indikator ?? '-';
                 $nama   = $row->indikator ?? '-';
-                $labels = $row->labels->map(fn($l) => '<span class="badge bg-' . ($l->color ?? 'secondary') . '-lt text-' . ($l->color ?? 'secondary') . '">' . e($l->name) . '</span>')->implode(' ');
+                $labels = pemutuLabelBadges($row->labels);
 
                 return '<div>
                     <div class="fw-bold text-primary">' . e($kode) . '</div>

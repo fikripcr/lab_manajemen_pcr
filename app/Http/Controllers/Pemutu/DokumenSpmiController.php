@@ -289,9 +289,10 @@ class DokumenSpmiController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     return view('components.tabler.datatables-actions', [
-                        'editUrl'   => route('pemutu.dokumen-spmi.edit', ['type' => 'poin', 'id' => $row->encrypted_doksub_id]),
-                        'editModal' => true,
-                        'deleteUrl' => route('pemutu.dokumen-spmi.destroy', ['type' => 'poin', 'id' => $row->encrypted_doksub_id]),
+                        'editUrl'       => route('pemutu.dokumen-spmi.edit', ['type' => 'poin', 'id' => $row->encrypted_doksub_id]),
+                        'editModal'     => true,
+                        'editModalSize' => 'modal-xl',
+                        'deleteUrl'     => route('pemutu.dokumen-spmi.destroy', ['type' => 'poin', 'id' => $row->encrypted_doksub_id]),
                     ])->render();
                 })
                 ->rawColumns(['judul', 'jumlah_turunan', 'action'])
@@ -310,9 +311,10 @@ class DokumenSpmiController extends Controller
                 ->addColumn('jenis', function ($row) {return '<span class="badge bg-blue-lt">' . strtoupper($row->jenis) . '</span>';})
                 ->addColumn('action', function ($row) {
                     return view('components.tabler.datatables-actions', [
-                        'editUrl'   => route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $row->encrypted_dok_id]),
-                        'editModal' => true,
-                        'deleteUrl' => route('pemutu.dokumen-spmi.destroy', ['type' => 'dokumen', 'id' => $row->encrypted_dok_id]),
+                        'editUrl'       => route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $row->encrypted_dok_id]),
+                        'editModal'     => true,
+                        'editModalSize' => 'modal-xl',
+                        'deleteUrl'     => route('pemutu.dokumen-spmi.destroy', ['type' => 'dokumen', 'id' => $row->encrypted_dok_id]),
                     ])->render();
                 })
                 ->rawColumns(['judul', 'jenis', 'action'])

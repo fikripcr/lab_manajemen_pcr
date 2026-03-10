@@ -10,8 +10,22 @@
 @endsection
 
 @section('content')
+@if(!($jadwalTersedia ?? false))
 <x-tabler.card>
-    <x-tabler.card-header class="bg-primary-lt" title="Detail Kegiatan">
+    <x-tabler.card-body class="text-center py-5">
+        <div class="mb-3">
+            <span class="avatar avatar-xl rounded bg-yellow-lt">
+                <i class="ti ti-calendar-off fs-1"></i>
+            </span>
+        </div>
+        <h3>Jadwal AMI Belum Diatur</h3>
+        <p class="text-muted">Jadwal pelaksanaan Audit Mutu Internal untuk periode <strong>{{ $periode->periode }}</strong> belum ditetapkan oleh administrator. Silakan hubungi Tim Mutu untuk mengatur jadwal.</p>
+        <x-tabler.button type="back" :href="route('pemutu.ami.index')" />
+    </x-tabler.card-body>
+</x-tabler.card>
+@else
+<x-tabler.card>
+    <x-tabler.card-header >
         <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <a href="#tab-ami" class="nav-link active" data-bs-toggle="tab" aria-selected="true" role="tab">
@@ -70,4 +84,5 @@
         </div>
     </div>
 </x-tabler.card>
+@endif
 @endsection

@@ -40,6 +40,12 @@ class PeningkatanController extends Controller
      */
     public function show(PeriodeSpmi $periode, Request $request)
     {
+        // Cek jadwal Peningkatan sudah diatur
+        $jadwalTersedia = $periode->peningkatan_awal && $periode->peningkatan_akhir;
+        if (! $jadwalTersedia) {
+            return view('pages.pemutu.peningkatan.show', compact('periode', 'jadwalTersedia'));
+        }
+
         $rapat = $periode->latest_rtm_peningkatan;
         if ($rapat) {
             $rapat->load(['agendas', 'pesertas.user', 'ketua_user', 'notulen_user', 'author_user']);
@@ -59,7 +65,7 @@ class PeningkatanController extends Controller
         // Cek apakah sudah pernah diduplikasi
         $hasDuplicated = Indikator::where('origin_from', 'peningkatan_' . $periode->periode)->exists();
 
-        return view('pages.pemutu.peningkatan.show', compact('periode', 'rapat', 'users', 'hasDuplicated'));
+        return view('pages.pemutu.peningkatan.show', compact('periode', 'rapat', 'users', 'hasDuplicated', 'jadwalTersedia'));
     }
 
     // ─── RTM Methods ──────────────────────────────────────────────

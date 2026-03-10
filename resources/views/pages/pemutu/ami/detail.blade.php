@@ -18,6 +18,7 @@
         {{-- SECTION A: Informasi Indikator --}}
         <x-tabler.card class="mb-4">
             <x-tabler.card-header title='<i class="ti ti-info-circle me-2"></i>A. Informasi Indikator' class="py-3" />
+            <x-tabler.card-body>
                 {{-- Monitoring Alert --}}
                 @if(isset($monitorings) && $monitorings->isNotEmpty())
                     @foreach($monitorings as $mon)
@@ -50,19 +51,38 @@
                             </div>
                         @endif
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="text-uppercase text-muted small fw-bold mb-1">Unit Kerja</div>
                         <div class="fw-semibold">{{ $indOrg->orgUnit->name ?? '—' }}</div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="text-uppercase text-muted small fw-bold mb-1">Target</div>
                         <div class="fw-semibold">{{ $indOrg->target ?? '(Belum ditetapkan)' }}</div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <div class="text-uppercase text-muted small fw-bold mb-1">Tipe / Jenis</div>
+                        <div>
+                            @php $typeInfo = pemutuIndikatorTypeInfo($indikator->type); @endphp
+                            <span class="badge bg-{{ $typeInfo['color'] }}-lt text-{{ $typeInfo['color'] }}">{{ $typeInfo['label'] }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-uppercase text-muted small fw-bold mb-1">Kelompok</div>
+                        <div class="fw-medium">
+                            @if(strtolower($indikator->kelompok_indikator ?? '') == 'akademik')
+                                <span class="text-blue"><i class="ti ti-book me-1"></i>Akademik</span>
+                            @elseif(in_array(strtolower($indikator->kelompok_indikator ?? ''), ['non_akademik', 'non-akademik']))
+                                <span class="text-orange"><i class="ti ti-briefcase me-1"></i>Non-Akademik</span>
+                            @else
+                                {{ $indikator->kelompok_indikator ?? '—' }}
+                            @endif
+                        </div>
+                    </div>
+                    <div class="col-md-12">
                         <div class="text-uppercase text-muted small fw-bold mb-1">Label</div>
                         <div>
                             @forelse($indikator->labels as $label)
-                                <span class="badge bg-{{ $label->color ?? 'secondary' }}-lt text-{{ $label->color ?? 'secondary' }}">{{ $label->name }}</span>
+                                {!! pemutuLabelBadge($label) !!}
                             @empty
                                 <span class="text-muted">—</span>
                             @endforelse
@@ -79,7 +99,7 @@
                     </div>
                     @endif
                 </div>
-            </div>
+            </x-tabler.card-body>
         </x-tabler.card>
 
         {{-- SECTION B: Tab Hasil Evaluasi Diri, Audit & Diskusi --}}

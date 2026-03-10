@@ -139,3 +139,37 @@ if (! function_exists('pemutuKebijakanJenisList')) {
         return ['visi', 'misi', 'rjp', 'renstra', 'renop'];
     }
 }
+
+if (! function_exists('pemutuLabelBadge')) {
+    /**
+     * Render a single label badge HTML with correct color from its LabelType.
+     *
+     * @param  \App\Models\Pemutu\Label  $label
+     * @param  string  $style  'lt' (light) or 'solid'
+     * @return string  HTML badge string
+     */
+    function pemutuLabelBadge($label, string $style = 'lt'): string
+    {
+        $color = $label->type->color ?? 'secondary';
+
+        if ($style === 'solid') {
+            return '<span class="badge text-bg-' . e($color) . '">' . e($label->name) . '</span>';
+        }
+
+        return '<span class="badge bg-' . e($color) . '-lt text-' . e($color) . '">' . e($label->name) . '</span>';
+    }
+}
+
+if (! function_exists('pemutuLabelBadges')) {
+    /**
+     * Render multiple label badges from a collection, joined with spaces.
+     *
+     * @param  \Illuminate\Support\Collection  $labels
+     * @param  string  $style  'lt' (light) or 'solid'
+     * @return string  HTML string of all badges
+     */
+    function pemutuLabelBadges($labels, string $style = 'lt'): string
+    {
+        return $labels->map(fn($l) => pemutuLabelBadge($l, $style))->implode(' ');
+    }
+}

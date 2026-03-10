@@ -10,7 +10,20 @@
 @endsection
 
 @section('content')
-@if($unit)
+@if(!($jadwalTersedia ?? false))
+<x-tabler.card>
+    <x-tabler.card-body class="text-center py-5">
+        <div class="mb-3">
+            <span class="avatar avatar-xl rounded bg-yellow-lt">
+                <i class="ti ti-calendar-off fs-1"></i>
+            </span>
+        </div>
+        <h3>Jadwal Evaluasi Diri Belum Diatur</h3>
+        <p class="text-muted">Jadwal pelaksanaan Evaluasi Diri untuk periode <strong>{{ $periode->periode }}</strong> belum ditetapkan oleh administrator. Silakan hubungi Tim Mutu untuk mengatur jadwal.</p>
+        <x-tabler.button type="back" :href="route('pemutu.evaluasi-diri.index')" />
+    </x-tabler.card-body>
+</x-tabler.card>
+@elseif($unit)
 <x-tabler.card>
     <x-tabler.card-header>
         <ul class="nav nav-tabs card-header-tabs flex-grow-1" data-bs-toggle="tabs" role="tablist">
@@ -54,7 +67,7 @@
                         ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                         ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator / Pernyataan Standar'],
                         ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%','class' => 'text-left' ],
-                        ['data' => 'capaian', 'name' => 'capaian', 'title' => 'Capaian', 'width' => '15%','class' => 'text-left'  ],
+                        ['data' => 'capaian', 'name' => 'capaian', 'title' => 'Capaian', 'width' => '15%','class' => 'text-center'  ],
                         ['data' => 'analisis', 'name' => 'analisis', 'title' => 'Analisis', 'width' => '30%'],
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                     ]"

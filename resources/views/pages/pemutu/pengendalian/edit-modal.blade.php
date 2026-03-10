@@ -9,7 +9,7 @@
             <div class="small text-muted">{{ $indOrg->indikator->indikator }}</div>
             <div class="mt-1">
                 @forelse($indOrg->indikator->labels as $label)
-                    <span class="badge bg-{{ $label->color ?? 'secondary' }}-lt text-{{ $label->color ?? 'secondary' }}">{{ $label->name }}</span>
+                    {!! pemutuLabelBadge($label) !!}
                 @empty @endforelse
             </div>
         </div>

@@ -37,6 +37,12 @@ class EvaluasiDiriController extends Controller
 
     public function show(PeriodeSpmi $periode)
     {
+        // Cek jadwal ED sudah diatur
+        $jadwalTersedia = $periode->ed_awal && $periode->ed_akhir;
+        if (! $jadwalTersedia) {
+            return view('pages.pemutu.evaluasi-diri.show', compact('periode', 'jadwalTersedia'));
+        }
+
         $user = auth()->user();
 
         // Get User's Units for this period
@@ -59,7 +65,7 @@ class EvaluasiDiriController extends Controller
         // Supaya tampilan table render (tidak masuk ke block empty state)
         $unit = true;
 
-        return view('pages.pemutu.evaluasi-diri.show', compact('periode', 'unit', 'userUnits', 'selectedUnitId'));
+        return view('pages.pemutu.evaluasi-diri.show', compact('periode', 'unit', 'userUnits', 'selectedUnitId', 'jadwalTersedia'));
     }
 
     public function data(Request $request, PeriodeSpmi $periode)

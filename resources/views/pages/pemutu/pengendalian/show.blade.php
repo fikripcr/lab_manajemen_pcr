@@ -16,6 +16,20 @@
 @endsection
 
 @section('content')
+@if(!($jadwalTersedia ?? false))
+<x-tabler.card>
+    <x-tabler.card-body class="text-center py-5">
+        <div class="mb-3">
+            <span class="avatar avatar-xl rounded bg-yellow-lt">
+                <i class="ti ti-calendar-off fs-1"></i>
+            </span>
+        </div>
+        <h3>Jadwal Pengendalian Belum Diatur</h3>
+        <p class="text-muted">Jadwal pelaksanaan Pengendalian untuk periode <strong>{{ $periode->periode }}</strong> belum ditetapkan oleh administrator. Silakan hubungi Tim Mutu untuk mengatur jadwal.</p>
+        <x-tabler.button type="back" :href="route('pemutu.pengendalian.index')" />
+    </x-tabler.card-body>
+</x-tabler.card>
+@else
 <div class="row">
 
     {{-- Tab Navigation --}}
@@ -368,6 +382,7 @@
         </div>{{-- /tab-content --}}
     </div>{{-- /col-12 --}}
 </div>{{-- /row --}}
+@endif
 
 @endsection
 
