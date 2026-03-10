@@ -58,7 +58,6 @@
 
 <body class="{{ $layoutData['bodyClass'] ?? '' }}" 
       data-container-width="{{ $layoutData['containerWidth'] ?? 'standard' }}"
-      data-theme-density="{{ $themeData['themeDensity'] ?? 'standard' }}"
       data-theme-font-size="{{ $themeData['themeFontSize'] ?? '14px' }}"
       data-theme-icon-weight="{{ $themeData['themeIconWeight'] ?? '1.5' }}"
       data-theme-texture="{{ $themeData['themeTexture'] ?? 'none' }}">

@@ -276,6 +276,10 @@ class ThemeTablerController extends Controller
             $attributes[] = "data-theme-icon-weight=\"{$config['icon_weight']}\"";
         }
 
+        if (! empty($config['density'])) {
+            $attributes[] = "data-theme-density=\"{$config['density']}\"";
+        }
+
         if (! empty($config['bg_texture']) && $config['bg_texture'] !== 'none') {
             $attributes[] = "data-theme-texture=\"{$config['bg_texture']}\"";
         }
@@ -314,11 +318,6 @@ class ThemeTablerController extends Controller
         // Container width
         if (! empty($config['container_width'])) {
             $attributes[] = "data-container-width=\"{$config['container_width']}\"";
-        }
-
-        // Advanced: UI Density
-        if (! empty($config['density'])) {
-            $attributes[] = "data-theme-density=\"{$config['density']}\"";
         }
 
         // Layout classes
