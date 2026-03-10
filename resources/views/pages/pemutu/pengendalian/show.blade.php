@@ -298,8 +298,8 @@
                                     @csrf
                                     <div class="accordion" id="accordion-agenda">
                                         @forelse($rapat->agendas as $index => $agenda)
-                                        <div class="accordion-item">
-                                            <h4 class="accordion-header d-flex align-items-center" id="ah-{{ $agenda->encrypted_rapatagenda_id }}">
+                                        <div class="accordion-item" style="overflow: visible;">
+                                            <h4 class="accordion-header d-flex align-items-center" id="ah-{{ $agenda->encrypted_rapatagenda_id }}" style="z-index: 10;">
                                                 <button class="accordion-button {{ $index === 0 ? '' : 'collapsed' }} flex-fill" type="button"
                                                     data-bs-toggle="collapse"
                                                     data-bs-target="#ac-{{ $agenda->encrypted_rapatagenda_id }}"
@@ -308,7 +308,7 @@
                                                     <span class="flex-fill">{{ $agenda->judul_agenda }}</span>
                                                     <span class="ms-2 badge save-status-{{ $agenda->encrypted_rapatagenda_id }} d-none bg-blue-lt">Saving...</span>
                                                 </button>
-                                                <div class="dropdown pe-3">
+                                                <div class="dropdown pe-3" style="z-index: 1060;">
                                                     <a href="#" class="btn btn-ghost-secondary btn-icon btn-sm dropdown-toggle no-caret" data-bs-toggle="dropdown">
                                                         <i class="ti ti-dots-vertical"></i>
                                                     </a>
@@ -367,6 +367,33 @@
                     <x-slot:actions>
                         <div class="d-flex gap-2">
                             <x-tabler.datatable-page-length :dataTableId="'table-pengendalian'" />
+                            <x-tabler.datatable-filter :dataTableId="'table-pengendalian'">
+                                <div class="row g-2">
+                                    <div class="col-12">
+                                        <x-tabler.form-select name="pengend_status" label="Status Pengendalian" class="mb-2">
+                                            <option value="">Semua Status</option>
+                                            <option value="tetap">Tetap</option>
+                                            <option value="penyesuaian">Penyesuaian</option>
+                                            <option value="nonaktif">Nonaktif</option>
+                                            <option value="empty">Belum Diisi</option>
+                                        </x-tabler.form-select>
+                                    </div>
+                                    <div class="col-12">
+                                        <x-tabler.form-select name="pengend_important_matrix" label="Matriks: Kepentingan" class="mb-2">
+                                            <option value="">Semua</option>
+                                            <option value="important">Important</option>
+                                            <option value="not_important">Not Important</option>
+                                        </x-tabler.form-select>
+                                    </div>
+                                    <div class="col-12">
+                                        <x-tabler.form-select name="pengend_urgent_matrix" label="Matriks: Urgensi" class="mb-0">
+                                            <option value="">Semua</option>
+                                            <option value="urgent">Urgent</option>
+                                            <option value="not_urgent">Not Urgent</option>
+                                        </x-tabler.form-select>
+                                    </div>
+                                </div>
+                            </x-tabler.datatable-filter>
                             <x-tabler.datatable-search :dataTableId="'table-pengendalian'" />
                         </div>
                     </x-slot:actions>
@@ -385,6 +412,7 @@
                             ['data' => 'eisenhower_matrix', 'name' => 'eisenhower_matrix', 'title' => 'Matrix', 'width' => '9%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                             ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '7%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                         ]"
+                        ajax-load
                     />
                 </x-tabler.card-body>
             </x-tabler.card>

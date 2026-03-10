@@ -228,8 +228,8 @@
             <div class="accordion" id="accordion-agenda">
                 <x-tabler.card>
                     @forelse($rapat->agendas as $index => $agenda)
-                    <div class="accordion-item">
-                        <h2 class="accordion-header d-flex align-items-center" id="ah-{{ $agenda->encrypted_rapatagenda_id }}">
+                    <div class="accordion-item" style="overflow: visible;">
+                        <h2 class="accordion-header d-flex align-items-center" id="ah-{{ $agenda->encrypted_rapatagenda_id }}" style="z-index: 10;">
                             <button class="accordion-button {{ $index === 0 ? '' : 'collapsed' }} flex-fill" type="button"
                                 data-bs-toggle="collapse"
                                 data-bs-target="#ac-{{ $agenda->encrypted_rapatagenda_id }}"
@@ -237,7 +237,7 @@
                                 <span class="text-truncate fw-medium">{{ $agenda->judul_agenda }}</span>
                                 <span class="badge save-status-{{ $agenda->encrypted_rapatagenda_id }} d-none bg-blue-lt ms-3">Saving...</span>
                             </button>
-                            <div class="px-3">
+                            <div class="px-3" style="z-index: 1060;">
                                 <div class="dropdown">
                                     <a href="#" class="btn btn-ghost-secondary btn-icon btn-sm dropdown-toggle no-caret" data-bs-toggle="dropdown">
                                         <i class="ti ti-dots-vertical"></i>

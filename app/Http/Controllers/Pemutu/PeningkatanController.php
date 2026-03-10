@@ -223,7 +223,8 @@ class PeningkatanController extends Controller
 
     public function reviewData(Request $request, PeriodeSpmi $periode)
     {
-        $query = $this->IndikatorService->getPeningkatanReviewQuery($periode);
+        $filters = $request->only(['pengend_status', 'pengend_important_matrix', 'pengend_urgent_matrix', 'dok_id', 'unit_id']);
+        $query   = $this->IndikatorService->getPeningkatanReviewQuery($periode, $filters);
 
         return DataTables::of($query)
             ->addColumn('no', function ($row) {

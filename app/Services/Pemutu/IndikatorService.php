@@ -361,8 +361,22 @@ class IndikatorService
 
             // Filter Pengendalian Status
             if (! empty($additionalFilters['pengend_status'])) {
-                $val = $additionalFilters['pengend_status'];
-                is_array($val) ? $q->whereIn('pengend_status', $val) : $q->where('pengend_status', $val);
+                $status = $additionalFilters['pengend_status'];
+                if ($status === 'empty') {
+                    $q->where(function ($sq) {
+                        $sq->whereNull('pengend_status')->orWhere('pengend_status', '');
+                    });
+                } else {
+                    is_array($status) ? $q->whereIn('pengend_status', $status) : $q->where('pengend_status', $status);
+                }
+            }
+
+            // Filter Eisenhower Matrix
+            if (! empty($additionalFilters['pengend_important_matrix'])) {
+                $q->where('pengend_important_matrix', $additionalFilters['pengend_important_matrix']);
+            }
+            if (! empty($additionalFilters['pengend_urgent_matrix'])) {
+                $q->where('pengend_urgent_matrix', $additionalFilters['pengend_urgent_matrix']);
             }
         });
 
@@ -392,31 +406,55 @@ class IndikatorService
     /**
      * Get data for Peningkatan (Review Duplication).
      */
-    public function getPeningkatanReviewQuery(PeriodeSpmi $periode): Builder
+    public function getPeningkatanReviewQuery(PeriodeSpmi $periode, array $filters = []): Builder
     {
-        return IndikatorOrgUnit::query()
+        $query = IndikatorOrgUnit::query()
             ->join('pemutu_indikator', 'pemutu_indikator.indikator_id', '=', 'pemutu_indikator_orgunit.indikator_id')
             ->leftJoin('pemutu_indikator_orgunit as prev_ou', 'pemutu_indikator_orgunit.prev_indikorgunit_id', '=', 'prev_ou.indikorgunit_id')
             ->leftJoin('struktur_organisasi as org', 'pemutu_indikator_orgunit.org_unit_id', '=', 'org.orgunit_id')
             ->leftJoin('pemutu_indikator_doksub as ids', 'pemutu_indikator.indikator_id', '=', 'ids.indikator_id')
             ->leftJoin('pemutu_dok_sub as ds', 'ds.doksub_id', '=', 'ids.doksub_id')
             ->leftJoin('pemutu_dokumen as d', 'd.dok_id', '=', 'ds.dok_id')
-            ->where('pemutu_indikator.origin_from', 'peningkatan_' . $periode->periode)
-            ->select([
-                'pemutu_indikator_orgunit.indikorgunit_id',
-                'pemutu_indikator.indikator_id',
-                'pemutu_indikator.no_indikator',
-                'pemutu_indikator.indikator',
-                'pemutu_indikator.type',
-                'org.name as unit_name',
-                'pemutu_indikator_orgunit.target',
-                'pemutu_indikator_orgunit.target as target_baru',
-                'prev_ou.target as target_lama',
-                'prev_ou.pengend_status as prev_pengend_status',
-                'prev_ou.pengend_target as prev_pengend_target',
-                'prev_ou.pengend_penyesuaian as prev_pengend_penyesuaian',
-                'd.judul as dokumen_judul',
-            ])
+            ->where('pemutu_indikator.origin_from', 'peningkatan_' . $periode->periode);
+
+        // Apply Filters
+        if (! empty($filters['pengend_status'])) {
+            $status = $filters['pengend_status'];
+            if ($status === 'empty') {
+                $query->where(function ($q) {
+                    $q->whereNull('prev_ou.pengend_status')->orWhere('prev_ou.pengend_status', '');
+                });
+            } else {
+                $query->where('prev_ou.pengend_status', $status);
+            }
+        }
+        if (! empty($filters['pengend_important_matrix'])) {
+            $query->where('prev_ou.pengend_important_matrix', $filters['pengend_important_matrix']);
+        }
+        if (! empty($filters['pengend_urgent_matrix'])) {
+            $query->where('prev_ou.pengend_urgent_matrix', $filters['pengend_urgent_matrix']);
+        }
+        if (! empty($filters['dok_id'])) {
+            $query->where('d.dok_id', decryptIdIfEncrypted($filters['dok_id']));
+        }
+        if (! empty($filters['unit_id'])) {
+            $query->where('pemutu_indikator_orgunit.org_unit_id', decryptIdIfEncrypted($filters['unit_id']));
+        }
+        return $query->select([
+            'pemutu_indikator_orgunit.indikorgunit_id',
+            'pemutu_indikator.indikator_id',
+            'pemutu_indikator.no_indikator',
+            'pemutu_indikator.indikator',
+            'pemutu_indikator.type',
+            'org.name as unit_name',
+            'pemutu_indikator_orgunit.target',
+            'pemutu_indikator_orgunit.target as target_baru',
+            'prev_ou.target as target_lama',
+            'prev_ou.pengend_status as prev_pengend_status',
+            'prev_ou.pengend_target as prev_pengend_target',
+            'prev_ou.pengend_penyesuaian as prev_pengend_penyesuaian',
+            'd.judul as dokumen_judul',
+        ])
             ->groupBy([
                 'pemutu_indikator_orgunit.indikorgunit_id',
                 'pemutu_indikator.indikator_id',
