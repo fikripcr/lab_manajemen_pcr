@@ -1,7 +1,7 @@
 <x-tabler.form-modal
     :title="'Isi Evaluasi KPI'"
     :route="route('pemutu.evaluasi-kpi.update', $indikatorPegawai->encrypted_indikator_pegawai_id)"
-    size="modal-fullscreen-md-down modal-xl" style="max-width: 1200px;"
+    size="modal-xl"
     method="POST"
     data-redirect="false"
 >

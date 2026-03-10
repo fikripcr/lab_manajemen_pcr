@@ -2,6 +2,7 @@
     title="Tambah Tanggal Libur"
     :route="route('hr.tanggal-libur.store')"
     method="POST"
+    size="modal-lg"
 >
     <div class="mb-3">
         <x-tabler.form-select name="tahun" label="Tahun" required="true">

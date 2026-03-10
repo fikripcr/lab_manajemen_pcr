@@ -4,6 +4,7 @@
     route="{{ $lab->exists ? route('lab.labs.update', $lab->encrypted_lab_id) : route('lab.labs.store') }}"
     method="{{ $lab->exists ? 'PUT' : 'POST' }}"
     enctype="multipart/form-data"
+    size="modal-xl"
 >
     <div class="row">
         <!-- Kolom Kiri: Informasi Utama -->

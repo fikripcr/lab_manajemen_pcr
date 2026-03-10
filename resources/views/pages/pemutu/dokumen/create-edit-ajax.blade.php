@@ -33,7 +33,7 @@
     :method="$method"
     :submitText="$isEdit ? 'Simpan Perubahan' : 'Simpan'"
     :submitIcon="$isEdit ? 'ti-device-floppy' : 'ti-plus'"
-    data-modal-size="modal-xl"
+    size="modal-xl"
 >
     {{-- A. DOKUMEN FORM --}}
     @if($type === 'dokumen')

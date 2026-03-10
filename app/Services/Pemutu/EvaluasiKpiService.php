@@ -3,10 +3,22 @@ namespace App\Services\Pemutu;
 
 use App\Models\Pemutu\IndikatorPegawai;
 use App\Models\Pemutu\PeriodeKpi;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
 
 class EvaluasiKpiService
 {
+    /**
+     * Query IndikatorPegawai untuk DataTable — hanya yang punya indikator & pegawai valid.
+     */
+    public function getDataTableQuery(PeriodeKpi $periode): Builder
+    {
+        return IndikatorPegawai::with(['indikator', 'pegawai'])
+            ->where('periode_kpi_id', $periode->periode_kpi_id)
+            ->whereHas('indikator')
+            ->whereHas('pegawai');
+    }
+
     /**
      * Ambil daftar PeriodeKpi dengan count pengisian per periode.
      */

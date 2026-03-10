@@ -136,7 +136,7 @@ class IndikatorController extends Controller
         }
 
         $indikator = new Indikator(); // Empty for create
-        return view('pages.pemutu.indikator.create-edit-ajax', compact(
+        return view('pages.pemutu.indikator.create-edit', compact(
             'labelTypes', 'orgUnits', 'parents', 'pegawais',
             'parentDok', 'selectedDokSubs', 'indikator', 'isRenopContext'
         ));
@@ -231,7 +231,7 @@ class IndikatorController extends Controller
         $pegawais = Pegawai::with('latestDataDiri')->get()->sortBy('nama');
         // Fetch only and only currently assigned DokSubs to avoid memory heavy eager loading
         $selectedDokSubs = $indikator->dokSubs()->with('dokumen')->get();
-        return view('pages.pemutu.indikator.create-edit-ajax', compact('indikator', 'labelTypes', 'orgUnits', 'parents', 'pegawais', 'selectedDokSubs'));
+        return view('pages.pemutu.indikator.create-edit', compact('indikator', 'labelTypes', 'orgUnits', 'parents', 'pegawais', 'selectedDokSubs'));
     }
 
     public function update(IndikatorRequest $request, Indikator $indikator)

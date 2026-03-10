@@ -212,7 +212,12 @@ function initAjaxFormHandler() {
 
     /**
      * Handle Generic AJAX Modal
-     * Usage: <a href="#" class="ajax-modal-btn" data-url="/path/to/content">Open Modal</a>
+     * 
+     * Simple usage (recommended):
+     *   <a href="#" class="ajax-modal-btn" data-url="/path/to/content">Open Modal</a>
+     * 
+     * The loaded content (form-modal component) controls title & size.
+     * Optional overrides on trigger: data-modal-title, data-modal-size, data-modal-target
      */
     $(document).on('click', '.ajax-modal-btn', function (e) {
         e.preventDefault();
@@ -220,8 +225,8 @@ function initAjaxFormHandler() {
         const $btn = $(this);
         const url = $btn.data('url') || $btn.attr('href');
         const target = $btn.data('modal-target') || '#modalAction';
-        const title = $btn.data('modal-title');
-        const size = $btn.data('modal-size'); // modal-sm, modal-lg, modal-xl
+        const triggerTitle = $btn.data('modal-title');   // optional override
+        const triggerSize = $btn.data('modal-size');      // optional override
 
         const $modal = $(target);
         const $modalContent = $modal.find('#modalContent');
@@ -238,15 +243,18 @@ function initAjaxFormHandler() {
         // Remove tabindex to prevent focus stealing by the modal wrapper
         $modal.removeAttr('tabindex');
 
-        // Handle size
+        // Apply trigger size as initial (will be overridden by content if present)
         const $modalDialog = $modal.find('.modal-dialog');
-        $modalDialog.removeClass('modal-sm modal-lg modal-xl').addClass(size || '');
+        $modalDialog.removeClass('modal-sm modal-lg modal-xl modal-fullscreen');
+        if (triggerSize) {
+            $modalDialog.addClass(triggerSize);
+        }
 
         // Show modal with loading state
         bootstrapModal.show();
         $modalContent.html(`
             <div class="modal-header">
-                <h5 class="modal-title">${title || 'Loading...'}</h5>
+                <h5 class="modal-title">${triggerTitle || 'Memuat...'}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center py-5">
@@ -262,6 +270,14 @@ function initAjaxFormHandler() {
         })
             .then(function (response) {
                 $modalContent.html(response.data);
+
+                // Read size from loaded content (form-modal wrapper) — overrides trigger size
+                const $wrapper = $modalContent.children().first();
+                const contentSize = $wrapper.data('modal-size');
+                if (contentSize) {
+                    $modalDialog.removeClass('modal-sm modal-lg modal-xl modal-fullscreen').addClass(contentSize);
+                }
+
                 // Re-initialize components
                 if (typeof window.initOfflineSelect2 === 'function') {
                     window.initOfflineSelect2();
@@ -306,7 +322,7 @@ function initAjaxFormHandler() {
                     </div>
                     <div class="modal-body text-center py-5">
                         <div class="text-danger mb-3">
-                            <i class="bx bx-error-circle bx-lg"></i>
+                            <i class="ti ti-alert-circle" style="font-size: 3rem;"></i>
                         </div>
                         <p class="text-danger mb-0">${errorMessage}</p>
                     </div>

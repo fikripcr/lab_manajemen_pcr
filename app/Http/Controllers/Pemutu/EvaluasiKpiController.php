@@ -29,18 +29,17 @@ class EvaluasiKpiController extends Controller
 
     public function data(PeriodeKpi $periode)
     {
-        $user = auth()->user();
-
-        $query = IndikatorPegawai::with(['indikator', 'pegawai'])
-            ->where('periode_kpi_id', $periode->periode_kpi_id);
+        $query = $this->EvaluasiKpiService->getDataTableQuery($periode);
 
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('pegawai', function ($row) {
-                return $row->pegawai->nama ?? '-';
+                return $row->pegawai?->nama ?? '-';
             })
             ->addColumn('indikator_full', function ($row) {
-                return '<strong>' . ($row->indikator->no_indikator ?? '-') . '</strong><br>' . $row->indikator->indikator;
+                $no   = $row->indikator?->no_indikator ?? '-';
+                $nama = $row->indikator?->indikator ?? '-';
+                return '<strong>' . $no . '</strong><br>' . $nama;
             })
             ->addColumn('target', function ($row) {
                 return $row->target_value ?? '<span class="text-muted">-</span>';
@@ -99,7 +98,7 @@ class EvaluasiKpiController extends Controller
             $request->hasFile('attachment') ? $request->file('attachment') : null
         );
 
-        return jsonSuccess('Evaluasi KPI berhasil disimpan.', route('pemutu.evaluasi-kpi.show', $indikatorPegawai->periodeKpi->encrypted_periode_kpi_id));
+        return jsonSuccess('Evaluasi KPI berhasil disimpan.');
     }
 
     public function downloadAttachment(IndikatorPegawai $indikatorPegawai)

@@ -4,16 +4,20 @@
     'method' => 'POST', // Use method="none" for purely view-based modals
     'id' => null,
     'id_form' => null,
-    'size' => '', // modal-lg, modal-sm, etc.
+    'size' => '', // modal-lg, modal-sm, modal-xl, modal-fullscreen
     'submitText' => 'Simpan',
     'submitIcon' => 'ti-device-floppy',
     'hideFooter' => false // Set to true to hide the default footer buttons completely
 ])
 
+{{-- Static Modal: renders full modal wrapper with id --}}
 @if($id)
 <div class="modal modal-blur fade" id="{{ $id }}" tabindex="-1" role="dialog" aria-hidden="true" data-bs-focus="true">
     <div class="modal-dialog modal-dialog-centered {{ $size }}" role="document">
         <div class="modal-content">
+@else
+{{-- AJAX Modal: wrapper carries size metadata for core-ajax.js to read --}}
+<div @if($size) data-modal-size="{{ $size }}" @endif>
 @endif
 
             <div class="modal-header">
@@ -59,5 +63,7 @@
 @if($id)
         </div>
     </div>
+</div>
+@else
 </div>
 @endif
