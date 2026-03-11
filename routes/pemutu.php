@@ -54,6 +54,8 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::post('dokumen-spmi/mapping-sync', [DokumenSpmiController::class, 'mappingSync'])->name('dokumen-spmi.mapping-sync');
     Route::post('dokumen-spmi/{type}/{id}/upload-file', [DokumenSpmiController::class, 'uploadFile'])->name('dokumen-spmi.upload-file');
     Route::delete('dokumen-spmi/{type}/{id}/file/{mediaId}', [DokumenSpmiController::class, 'deleteFile'])->name('dokumen-spmi.delete-file');
+    Route::get('dokumen-spmi/summary', [DokumenSpmiController::class, 'summary'])->name('dokumen-spmi.summary');
+    Route::get('dokumen-spmi/summary/{type}/{id}', [DokumenSpmiController::class, 'summaryData'])->name('dokumen-spmi.summary-data');
 
     // Sub-Documents (DokSub) - Handled dynamically by DokumenSpmiController now
     // Route::get('dok-subs/{dokumen}/data', [DokSubController::class, 'data'])->name('dok-subs.data');

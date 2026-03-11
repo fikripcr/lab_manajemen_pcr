@@ -70,6 +70,12 @@
                             </a>
                         </li>
                         @endforeach
+                        <li class="nav-item">
+                            <a href="{{ route('pemutu.dokumen-spmi.summary', ['periode' => $selectedPeriode]) }}" 
+                               class="nav-link py-1 px-2 small btn-outline-success">
+                                <i class="ti ti-chart-bar me-1"></i>SUMMARY
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 {{-- Global Add Button for Standar/Formulir (Tree Based) --}}

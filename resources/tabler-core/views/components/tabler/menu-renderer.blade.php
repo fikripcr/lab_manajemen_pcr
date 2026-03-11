@@ -227,12 +227,18 @@
                     'icon'          => 'ti ti-trending-up',
                 ],
                 [
-                    'title'         => 'Summary Indikator',
-                    'id'            => 'navbar-summary-indikator',
-                    'icon'          => 'ti ti-table-share',
-                    'active_routes' => ['pemutu.indikator-summary.*'],
+                    'title'         => 'Summary',
+                    'id'            => 'navbar-summary-new',
+                    'icon'          => 'ti ti-chart-bar',
+                    'active_routes' => ['pemutu.indikator-summary.*', 'pemutu.dokumen-spmi.summary'],
                     'type'          => 'dropdown',
                     'children'      => [
+                        [
+                            'title'         => 'Summary Dokumen',
+                            'route'         => 'pemutu.dokumen-spmi.summary',
+                            'active_routes' => ['pemutu.dokumen-spmi.summary'],
+                            'icon'          => 'ti ti-file-analytics',
+                        ],
                         [
                             'title'         => 'Indikator Standar',
                             'route'         => 'pemutu.indikator-summary.standar',
@@ -243,7 +249,7 @@
                             'title'         => 'Indikator Performa',
                             'route'         => 'pemutu.indikator-summary.performa',
                             'active_routes' => ['pemutu.indikator-summary.performa', 'pemutu.indikator-summary.data-performa'],
-                            'icon'          => 'ti ti-chart-bar',
+                            'icon'          => 'ti ti-chart-line',
                         ],
                     ],
                 ],

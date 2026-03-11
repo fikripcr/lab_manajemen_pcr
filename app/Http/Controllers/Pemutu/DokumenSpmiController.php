@@ -502,4 +502,235 @@ class DokumenSpmiController extends Controller
 
         return jsonSuccess('File berhasil dihapus.');
     }
+
+    /**
+     * SUMMARY PAGE – Tree-based layout.
+     */
+    public function summary(Request $request)
+    {
+        $pageTitle       = 'Rekap Capaian';
+        $activeJenis     = $request->query('jenis', 'visi');
+        $selectedPeriode = $request->periode ?: (date('Y') + 2); // Default 2026 based on DB if empty
+
+        $periods = Dokumen::select('periode')
+            ->whereNotNull('periode')
+            ->distinct()
+            ->orderBy('periode', 'desc')
+            ->pluck('periode');
+
+        if ($periods->isEmpty()) {
+            $periods->push($selectedPeriode);
+        }
+
+        // We only care about Kebijakan docs for the Summary tree
+        $kebijakanTypes = ['visi', 'misi', 'rjp', 'renstra', 'renop'];
+
+        if (! in_array($activeJenis, $kebijakanTypes)) {
+            $activeJenis = 'visi';
+        }
+
+        $docsArr         = $this->dokumenService->getKebijakanByPeriode($selectedPeriode);
+        $dokumentByJenis = [];
+        foreach ($docsArr as $j => $doc) {
+            $dokumentByJenis[$j] = $doc ? collect([$doc]) : collect();
+        }
+
+        return view('pages.pemutu.dokumen.summary', compact(
+            'pageTitle', 'periods', 'selectedPeriode', 'activeJenis', 'dokumentByJenis', 'kebijakanTypes'
+        ));
+    }
+
+    /**
+     * AJAX Endpoint to fetch summary data for a specifically clicked node.
+     */
+    public function summaryData(Request $request, $type, $id)
+    {
+        $kebijakanChain = ['visi', 'misi', 'rjp', 'renstra', 'renop'];
+        $indicators     = collect();
+        $title          = '';
+        $jenis          = '';
+        $periode        = $request->periode ?: date('Y');
+
+        if ($type === 'dokumen') {
+            $doc     = Dokumen::with('dokSubs')->findOrFail(decryptIdIfEncrypted($id));
+            $title   = $doc->judul;
+            $jenis   = strtolower(trim($doc->jenis));
+            $periode = $doc->periode;
+
+            $startIndex = array_search($jenis, $kebijakanChain);
+
+            // Trace down for ALL poin in this document
+            foreach ($doc->dokSubs as $poin) {
+                // If it's already renop, get indicators directly
+                if ($jenis === 'renop') {
+                    if ($poin->is_hasilkan_indikator) {
+                        $inds       = $poin->indikators()->with(['orgUnits', 'parent.orgUnits'])->get();
+                        $indicators = $indicators->merge($inds);
+                    }
+                } else {
+                    $chain      = $this->traceChainDown($poin, $kebijakanChain, $startIndex, $periode);
+                    $indicators = $indicators->merge($this->collectIndicatorsFromChain($chain));
+                }
+            }
+        } elseif ($type === 'poin') {
+            $poin    = DokSub::with('dokumen')->findOrFail(decryptIdIfEncrypted($id));
+            $title   = "Poin: " . $poin->judul;
+            $jenis   = strtolower(trim($poin->dokumen->jenis ?? ''));
+            $periode = $poin->dokumen->periode ?? date('Y');
+
+            $startIndex = array_search($jenis, $kebijakanChain);
+
+            if ($jenis === 'renop') {
+                if ($poin->is_hasilkan_indikator) {
+                    $inds       = $poin->indikators()->with(['orgUnits', 'parent.orgUnits'])->get();
+                    $indicators = $indicators->merge($inds);
+                }
+            } else {
+                $chain      = $this->traceChainDown($poin, $kebijakanChain, $startIndex, $periode);
+                $indicators = $indicators->merge($this->collectIndicatorsFromChain($chain));
+            }
+        }
+
+        // Unique indicators by ID
+        $indicators = $indicators->unique('indikator_id')->values();
+
+        // Aggregate AMI Results
+        $unitsEvaluated = collect();
+        $amiCounts      = [
+            'total'     => 0,
+            'terpenuhi' => 0,
+            'melampaui' => 0,
+            'kts'       => 0,
+            'none'      => 0,
+        ];
+
+        $detailUnits = []; // Store specific scores per unit to show in the UI
+
+        foreach ($indicators as $ind) {
+            foreach ($ind->orgUnits as $ou) {
+                $unitsEvaluated->push($ou->name);
+                $amiResult = $ou->pivot->ami_hasil_akhir;
+                $edCapaian = $ou->pivot->ed_capaian;
+                $target    = $ou->pivot->target;
+
+                $amiCounts['total']++;
+                if ($amiResult === 1) {
+                    $amiCounts['terpenuhi']++;
+                } elseif ($amiResult === 2) {
+                    $amiCounts['melampaui']++;
+                } elseif ($amiResult === 0) {
+                    $amiCounts['kts']++;
+                } else {
+                    $amiCounts['none']++;
+                }
+
+                // Collect breakdown per unit
+                if (! isset($detailUnits[$ou->name])) {
+                    $detailUnits[$ou->name] = [
+                        'name'            => $ou->name,
+                        'total_indikator' => 0,
+                        'terpenuhi'       => 0,
+                        'melampaui'       => 0,
+                        'kts'             => 0,
+                        'indicators'      => [],
+                    ];
+                }
+
+                $detailUnits[$ou->name]['total_indikator']++;
+                if ($amiResult === 1) {
+                    $detailUnits[$ou->name]['terpenuhi']++;
+                } elseif ($amiResult === 2) {
+                    $detailUnits[$ou->name]['melampaui']++;
+                } elseif ($amiResult === 0) {
+                    $detailUnits[$ou->name]['kts']++;
+                }
+
+                $detailUnits[$ou->name]['indicators'][] = [
+                    'no'      => $ind->no_indikator,
+                    'nama'    => $ind->indikator,
+                    'target'  => $target,
+                    'capaian' => $edCapaian,
+                    'ami'     => $amiResult,
+                ];
+            }
+        }
+
+        $unitsEvaluated = $unitsEvaluated->unique()->values();
+
+        // Calculate Percentages
+        $total       = $amiCounts['total'];
+        $percentages = [
+            'terpenuhi' => $total > 0 ? round(($amiCounts['terpenuhi'] / $total) * 100, 1) : 0,
+            'melampaui' => $total > 0 ? round(($amiCounts['melampaui'] / $total) * 100, 1) : 0,
+            'kts'       => $total > 0 ? round(($amiCounts['kts'] / $total) * 100, 1) : 0,
+        ];
+
+        return view('pages.pemutu.dokumen._summary_data', compact(
+            'title', 'jenis', 'indicators', 'unitsEvaluated', 'amiCounts', 'percentages', 'detailUnits'
+        ));
+    }
+
+    /**
+     * Recursively trace the chain from a poin down through mappedFrom relations.
+     */
+    private function traceChainDown(DokSub $poin, array $kebijakanChain, int $currentLevel, $periode): array
+    {
+        $result    = [];
+        $nextLevel = $currentLevel + 1;
+
+        if ($nextLevel >= count($kebijakanChain)) {
+            return $result;
+        }
+
+        // Find poin that map TO this poin (i.e. the children in the chain)
+        $children = $poin->mappedFrom()
+            ->whereHas('dokumen', function ($q) use ($kebijakanChain, $nextLevel, $periode) {
+                $q->where('jenis', $kebijakanChain[$nextLevel])
+                    ->where('periode', $periode);
+            })
+            ->with(['dokumen', 'indikators.orgUnits', 'indikators.parent.orgUnits'])
+            ->get();
+
+        foreach ($children as $child) {
+            $childData = [
+                'poin'       => $child,
+                'jenis'      => $kebijakanChain[$nextLevel],
+                'indicators' => collect(),
+                'chain'      => [],
+            ];
+
+            // If this is a Renop poin with indicators, collect them
+            if ($kebijakanChain[$nextLevel] === 'renop' && $child->is_hasilkan_indikator) {
+                $childData['indicators'] = $child->indikators()
+                    ->with(['orgUnits', 'parent.orgUnits'])
+                    ->get();
+            }
+
+            // Continue tracing down
+            $childData['chain'] = $this->traceChainDown($child, $kebijakanChain, $nextLevel, $periode);
+
+            $result[] = $childData;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Collect all indicators from the whole chain tree.
+     */
+    private function collectIndicatorsFromChain(array $chain)
+    {
+        $indicators = collect();
+
+        foreach ($chain as $node) {
+            if (isset($node['indicators']) && $node['indicators'] instanceof \Illuminate\Support\Collection) {
+                $indicators = $indicators->merge($node['indicators']);
+            }
+            if (! empty($node['chain'])) {
+                $indicators = $indicators->merge($this->collectIndicatorsFromChain($node['chain']));
+            }
+        }
+
+        return $indicators;
+    }
 }
