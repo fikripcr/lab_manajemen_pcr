@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Hr;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\RiwayatPendidikanRequest;
 use App\Models\Hr\RiwayatPendidikan;
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use App\Services\Hr\RiwayatPendidikanService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -17,13 +17,13 @@ class RiwayatPendidikanController extends Controller
 
     public function index(Pegawai $pegawai = null)
     {
-        return view('pages.hr.data-diri.tabs.pendidikan', compact('pegawai'));
+        return view('pages.hr.data-diri.tabs.pendidikan', compact('hr_pegawai'));
     }
 
     public function create(Pegawai $pegawai)
     {
         $pendidikan = new RiwayatPendidikan();
-        return view('pages.hr.pegawai.pendidikan.create-edit-ajax', compact('pegawai', 'pendidikan'));
+        return view('pages.hr.pegawai.pendidikan.create-edit-ajax', compact('hr_pegawai', 'pendidikan'));
     }
 
     public function store(RiwayatPendidikanRequest $request, Pegawai $pegawai)
@@ -33,7 +33,7 @@ class RiwayatPendidikanController extends Controller
     }
     public function edit(Pegawai $pegawai, RiwayatPendidikan $pendidikan)
     {
-        return view('pages.hr.pegawai.pendidikan.create-edit-ajax', compact('pegawai', 'pendidikan'));
+        return view('pages.hr.pegawai.pendidikan.create-edit-ajax', compact('hr_pegawai', 'pendidikan'));
     }
 
     public function update(RiwayatPendidikanRequest $request, Pegawai $pegawai, RiwayatPendidikan $pendidikan)
@@ -50,7 +50,7 @@ class RiwayatPendidikanController extends Controller
 
     public function data(Request $request)
     {
-        $query = RiwayatPendidikan::with('pegawai')->select('hr_riwayat_pendidikan.*');
+        $query = RiwayatPendidikan::with('hr_pegawai')->select('hr_riwayat_pendidikan.*');
 
         if ($request->has('pegawai_id')) {
             $query->where('pegawai_id', decryptIdIfEncrypted($request->pegawai_id));

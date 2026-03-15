@@ -77,9 +77,9 @@
                         </div>
                     </div>
 
-                    <div class="card-footer text-end px-0">
+                    <x-tabler.card-footer class="text-end px-0">
                         <x-tabler.button type="submit" size="lg" text="Kirim Pendaftaran" />
-                    </div>
+                    </x-tabler.card-footer>
                 </form>
             </div>
         </div>

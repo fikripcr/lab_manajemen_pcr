@@ -76,7 +76,7 @@ class JenisLayananDisposisiController extends Controller
     /**
      * Update sequence for drag-and-drop
      */
-    public function updateSeq(\App\Http\Requests\Shared\ReorderRequest $request, $id)
+    public function updateSeq(\App\Http\Requests\Hr\ReorderRequest $request, $id)
     {
         $this->JenisLayananDisposisiService->updateSeq($id, $request->validated('seq'));
         return jsonSuccess('Urutan berhasil diperbarui.');

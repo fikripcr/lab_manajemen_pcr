@@ -24,7 +24,7 @@ class SuratBebasLabController extends Controller
 
         return DataTables::of($query)
             ->addIndexColumn()
-            ->addColumn('mahasiswa', function ($row) {
+            ->addColumn('akademik_mahasiswa', function ($row) {
                 return $row->student->name . '<br><small>' . ($row->student->username ?? '-') . '</small>';
             })
             ->addColumn('status', function ($row) {
@@ -35,7 +35,7 @@ class SuratBebasLabController extends Controller
                     'rejected' => 'danger',
                 ];
                 $color = $badges[$row->status] ?? 'secondary';
-                return "<span class='badge bg-{$color} text-white'>" . ucfirst($row->status) . "</span>";
+                return "<span class='status status-{$color}'><span class='status-dot'></span> " . ucfirst($row->status) . "</span>";
             })
             ->addColumn('tanggal', function ($row) {
                 return $row->created_at->format('d M Y');
@@ -45,7 +45,7 @@ class SuratBebasLabController extends Controller
                     'viewUrl' => \route('lab.surat-bebas.show', $row->encrypted_surat_bebas_lab_id),
                 ])->render();
             })
-            ->rawColumns(['mahasiswa', 'status', 'action'])
+            ->rawColumns(['akademik_mahasiswa', 'status', 'action'])
             ->make(true);
     }
 
@@ -73,7 +73,7 @@ class SuratBebasLabController extends Controller
 
     public function show(SuratBebasLab $id)
     {
-        $surat = $id->load(['student', 'approver', 'approvals' => function ($q) {
+        $surat = $id->load(['student', 'approvals' => function ($q) {
             $q->orderBy('created_at', 'desc');
         }]);
         return \view('pages.lab.surat-bebas.show', compact('surat'));

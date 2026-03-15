@@ -5,10 +5,7 @@ use App\Http\Requests\BaseRequest;
 
 class SaveAnswerRequest extends BaseRequest
 {
-    public function authorize()
-    {
-        return true;
-    }
+    
 
     protected function prepareForValidation()
     {

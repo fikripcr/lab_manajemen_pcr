@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Pemutu;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\PegawaiImportRequest;
 use App\Http\Requests\Pemutu\PegawaiRequest;
-use App\Models\Pemutu\OrgUnit;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Services\Pemutu\PegawaiService;
 use Yajra\DataTables\DataTables;
 
@@ -43,9 +43,9 @@ class PegawaiController extends Controller
 
     public function create()
     {
-        $pegawai = new \App\Models\Shared\Pegawai();
-        $units   = OrgUnit::orderBy('name')->get();
-        return view('pages.pemutu.pegawai.create-edit-ajax', compact('pegawai', 'units'));
+        $pegawai = new \App\Models\Hr\Pegawai();
+        $units   = StrukturOrganisasi::orderBy('name')->get();
+        return view('pages.pemutu.pegawai.create-edit-ajax', compact('hr_pegawai', 'units'));
     }
 
     public function store(PegawaiRequest $request)
@@ -57,13 +57,13 @@ class PegawaiController extends Controller
         return jsonSuccess('Pegawai created successfully.');
     }
 
-    public function edit(\App\Models\Shared\Pegawai $pegawai)
+    public function edit(\App\Models\Hr\Pegawai $pegawai)
     {
-        $units = OrgUnit::orderBy('name')->get();
-        return view('pages.pemutu.pegawai.create-edit-ajax', compact('pegawai', 'units'));
+        $units = StrukturOrganisasi::orderBy('name')->get();
+        return view('pages.pemutu.pegawai.create-edit-ajax', compact('hr_pegawai', 'units'));
     }
 
-    public function update(PegawaiRequest $request, \App\Models\Shared\Pegawai $pegawai)
+    public function update(PegawaiRequest $request, \App\Models\Hr\Pegawai $pegawai)
     {
         $this->pegawaiService->updatePegawai($pegawai->pegawai_id, $request->validated());
 
@@ -72,7 +72,7 @@ class PegawaiController extends Controller
         return jsonSuccess('Pegawai updated successfully.');
     }
 
-    public function destroy(\App\Models\Shared\Pegawai $pegawai)
+    public function destroy(\App\Models\Hr\Pegawai $pegawai)
     {
         $pegawaiName = $pegawai->nama;
         $this->pegawaiService->deletePegawai($pegawai->pegawai_id);

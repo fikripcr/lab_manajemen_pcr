@@ -26,10 +26,10 @@
 
 @section('content')
 <x-tabler.card>
-    <div class="card-body p-0">
+    <x-tabler.card-body class="p-0">
         <div id="fullKanban"></div>
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection
 
 {{-- CSS via resources/css/components/projects-kanban.css (bundled by Vite) --}}

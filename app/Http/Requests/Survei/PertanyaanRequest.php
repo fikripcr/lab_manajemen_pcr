@@ -6,12 +6,7 @@ use App\Http\Requests\BaseRequest;
 class PertanyaanRequest extends BaseRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     protected function prepareForValidation()
     {

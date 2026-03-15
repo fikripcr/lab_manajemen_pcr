@@ -14,10 +14,10 @@ class LabelController extends Controller
 
     public function index()
     {
-        $types       = $this->labelService->getAllLabelTypes();
-        $totalLabels = $this->labelService->getTotalLabels();
+        $parents       = $this->labelService->getParentLabels();
+        $totalLabels   = $this->labelService->getTotalLabels();
 
-        return view('pages.pemutu.label.index', compact('types', 'totalLabels'));
+        return view('pages.pemutu.label.index', compact('parents', 'totalLabels'));
     }
 
     public function data(Request $request)
@@ -27,14 +27,14 @@ class LabelController extends Controller
         return DataTables::of($query)
             ->addIndexColumn()
             ->editColumn('name', function ($row) {
-                $color = $row->type->color ?? 'blue';
+                $color = $row->color ?? 'blue';
                 return '<span class="badge bg-' . $color . '-lt text-' . $color . '">' . e($row->name) . '</span>';
             })
             ->editColumn('description', function ($row) {
                 return $row->description ?: '-';
             })
-            ->editColumn('type_id', function ($row) {
-                return $row->type ? $row->type->name : '-';
+            ->editColumn('parent_id', function ($row) {
+                return $row->parent ? $row->parent->name : '-';
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
@@ -49,8 +49,8 @@ class LabelController extends Controller
 
     public function create()
     {
-        $types = $this->labelService->getAllLabelTypes();
-        return view('pages.pemutu.label.create-edit-ajax', compact('types'));
+        $parents = $this->labelService->getParentLabels();
+        return view('pages.pemutu.label.create-edit-ajax', compact('parents'));
     }
 
     public function store(LabelRequest $request)
@@ -64,9 +64,9 @@ class LabelController extends Controller
 
     public function edit(\App\Models\Pemutu\Label $label)
     {
-        $types = $this->labelService->getAllLabelTypes();
+        $parents = $this->labelService->getParentLabels();
 
-        return view('pages.pemutu.label.create-edit-ajax', compact('label', 'types'));
+        return view('pages.pemutu.label.create-edit-ajax', compact('label', 'parents'));
     }
 
     public function update(LabelRequest $request, \App\Models\Pemutu\Label $label)

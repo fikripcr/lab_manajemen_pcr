@@ -9,8 +9,8 @@
 <div class="w-100" style="max-width:500px">
 
     {{-- ── Header ── --}}
-    <div class="card rounded-bottom-0 border-bottom-0 mb-3">
-        <div class="card-body bg-primary-lt rounded-top-3 rounded-bottom-0 p-4"
+    <x-tabler.card class="rounded-bottom-0 border-bottom-0 mb-3">
+        <x-tabler.card-body class="rounded-top-3 rounded-bottom-0 p-4"
              style="background: linear-gradient(135deg, var(--tbl-primary-lt) 0%, var(--tbl-bg-surface) 100%) !important">
             <div class="text-primary fw-bold small text-uppercase mb-2" style="letter-spacing:.08em">
                 Buku Tamu Digital
@@ -32,12 +32,12 @@
                 <span><i class="ti ti-map-pin me-1"></i>{{ $event->lokasi }}</span>
                 @endif
             </div>
-        </div>
-    </div>
+        </x-tabler.card-body>
+    </x-tabler.card>
 
     {{-- ── Body ── --}}
-    <div class="card shadow-sm">
-        <div class="card-body p-4">
+    <x-tabler.card class="shadow-sm">
+        <x-tabler.card-body class="p-4">
 
             @if($sukses)
             {{-- ── Sukses ── --}}
@@ -103,12 +103,12 @@
             </form>
             @endif
 
-        </div>
+        </x-tabler.card-body>
 
-        <div class="card-footer text-center text-muted small">
+        <x-tabler.card-footer class="text-center text-muted small">
             {{ config('app.name') }} &copy; {{ date('Y') }}
-        </div>
-    </div>
+        </x-tabler.card-footer>
+    </x-tabler.card>
 
 </div>
 </div>

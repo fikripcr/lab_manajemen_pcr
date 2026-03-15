@@ -6,10 +6,6 @@ use Illuminate\Validation\Rule;
 
 class JenisLayananRequest extends BaseRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     public function rules(): array
     {

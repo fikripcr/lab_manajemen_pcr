@@ -10,7 +10,7 @@
 
 @section('content')
 <x-tabler.card>
-    <div class="card-body p-0">
+    <x-tabler.card-body class="p-0">
         <x-tabler.datatable
             id="table-kategori-isian"
             route="{{ route('eoffice.kategori-isian.data') }}"
@@ -22,8 +22,8 @@
                 ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '15%']
             ]"
         />
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection
 
 @push('scripts')

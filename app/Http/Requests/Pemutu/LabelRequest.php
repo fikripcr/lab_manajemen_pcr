@@ -6,12 +6,7 @@ use App\Http\Requests\BaseRequest;
 class LabelRequest extends BaseRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -19,8 +14,9 @@ class LabelRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'type_id'     => 'required|exists:pemutu_label_type,labeltype_id',
+            'parent_id'   => 'nullable|exists:pemutu_label,label_id',
             'name'        => 'required|string|max:100',
+            'color'       => 'nullable|string|max:20',
             'description' => 'nullable|string',
         ];
     }
@@ -28,9 +24,10 @@ class LabelRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'type_id'     => 'Tipe Label',
+            'parent_id'   => 'Parent Label',
             'name'        => 'Nama Label',
             'slug'        => 'Slug',
+            'color'       => 'Warna Label',
             'description' => 'Deskripsi',
         ];
     }

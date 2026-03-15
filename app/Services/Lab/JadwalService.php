@@ -28,18 +28,18 @@ class JadwalService
                 'jadwal_kuliah.created_at',
                 'jadwal_kuliah.updated_at',
                 'jadwal_kuliah.deleted_at',
-                'semesters.tahun_ajaran',
-                'semesters.semester as semester_nama',
-                'mata_kuliahs.kode_mk',
-                'mata_kuliahs.nama_mk',
+                'akademik_semesters.tahun_ajaran',
+                'akademik_semesters.semester as semester_nama',
+                'akademik_mata_kuliahs.kode_mk',
+                'akademik_mata_kuliahs.nama_mk',
                 'users.name as dosen_name',
-                'labs.name as lab_name',
+                'lab_labs.name as lab_name',
             ])
             ->with(['semester', 'mataKuliah', 'dosen', 'lab'])
-            ->leftJoin('semesters', 'jadwal_kuliah.semester_id', '=', 'semesters.semester_id')
-            ->leftJoin('mata_kuliahs', 'jadwal_kuliah.mata_kuliah_id', '=', 'mata_kuliahs.mata_kuliah_id')
+            ->leftJoin('akademik_semesters', 'jadwal_kuliah.semester_id', '=', 'akademik_semesters.semester_id')
+            ->leftJoin('akademik_mata_kuliahs', 'jadwal_kuliah.mata_kuliah_id', '=', 'akademik_mata_kuliahs.mata_kuliah_id')
             ->leftJoin('users', 'jadwal_kuliah.dosen_id', '=', 'users.id')
-            ->leftJoin('labs', 'jadwal_kuliah.lab_id', '=', 'labs.lab_id')
+            ->leftJoin('lab_labs', 'jadwal_kuliah.lab_id', '=', 'lab_labs.lab_id')
             ->whereNull('jadwal_kuliah.deleted_at');
 
         // Apply specific filters

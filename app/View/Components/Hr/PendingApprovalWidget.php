@@ -33,7 +33,7 @@ class PendingApprovalWidget extends Component
     {
         $this->pendingCount = RiwayatApproval::where('status', 'Pending')->count();
 
-        $this->recentApprovals = RiwayatApproval::with(['pegawai'])
+        $this->recentApprovals = RiwayatApproval::with(['hr_pegawai'])
             ->where('status', 'Pending')
             ->latest()
             ->take(5)

@@ -1,4 +1,4 @@
-﻿@extends('layouts.tabler.app')
+@extends('layouts.tabler.app')
 
 @section('title', 'Detail Kegiatan: ' . $event->judul_Kegiatan)
 
@@ -27,9 +27,9 @@
     {{-- Left Column - Event Info --}}
     <div class="col-lg-4">
         {{-- Event Card --}}
-        <div class="card shadow-sm">
+        <x-tabler.card class="shadow-sm">
             <x-tabler.card-header title="Informasi Kegiatan" class="bg-primary-lt text-primary" icon="ti ti-info-circle" />
-            <div class="card-body">
+            <x-tabler.card-body>
                 <div class="mb-4">
                     <label class="form-label text-muted small text-uppercase fw-bold">
                         <i class="ti ti-book me-1"></i>Jenis Kegiatan
@@ -92,19 +92,19 @@
                     </div>
                 </div>
                 @endif
-            </div>
-            <div class="card-footer text-muted small">
+            </x-tabler.card-body>
+            <x-tabler.card-footer class="text-muted small">
                 <i class="ti ti-clock me-1"></i>
                 Dibuat {{ $event->created_at ? $event->created_at->diffForHumans() : '-' }}
-            </div>
-        </div>
+            </x-tabler.card-footer>
+        </x-tabler.card>
     </div>
 
     {{-- Right Column - Tabs --}}
     <div class="col-lg-8">
-        <div class="card shadow-sm">
-            <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+        <x-tabler.card class="shadow-sm">
+            <x-tabler.card-header>
+                <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" id="kegiatan-detail-tabs">
                     <li class="nav-item">
                         <a href="#tabs-deskripsi" class="nav-link active" data-bs-toggle="tab">
                             <i class="ti ti-file-text me-2"></i>Info Kegiatan
@@ -123,8 +123,8 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-            <div class="card-body">
+            </x-tabler.card-header>
+            <x-tabler.card-body>
                 <div class="tab-content">
                     {{-- Tab: Info Kegiatan --}}
                     <div class="tab-pane active show" id="tabs-deskripsi">
@@ -140,7 +140,7 @@
                         @if($event->teams->where('is_pic', true)->first())
                         <div class="alert alert-warning">
                             <i class="ti ti-alert-triangle me-2"></i>
-                            <strong>PIC Utama:</strong> {{ $event->teams->where('is_pic', true)->first().memberable.nama_pegawai }}
+                            <strong>PIC Utama:</strong> {{ $event->teams->where('is_pic', true)->first()->memberable->nama_pegawai }}
                             bertanggung jawab sebagai koordinator lapangan untuk kegiatan ini.
                         </div>
                         @endif
@@ -175,17 +175,17 @@
                                 @forelse($event->teams->load('memberable') as $team)
                                     <tr>
                                         <td>
-                                            @if($team->memberable.foto)
+                                            @if($team->memberable->foto)
                                                 <img src="{{ $team->memberable->foto }}" class="avatar avatar-sm rounded-circle" />
                                             @else
                                                 <span class="avatar avatar-sm bg-primary-lt text-primary rounded-circle">
-                                                    {{ substr($team->memberable.nama_pegawai ?? '?', 0, 1) }}
+                                                    {{ substr($team->memberable->nama_pegawai ?? '?', 0, 1) }}
                                                 </span>
                                             @endif
                                         </td>
                                         <td>
-                                            <div class="fw-semibold">{{ $team->memberable.nama_pegawai ?? '-' }}</div>
-                                            <small class="text-muted">{{ $team->memberable.nip ?? '' }}</small>
+                                            <div class="fw-semibold">{{ $team->memberable->nama_pegawai ?? '-' }}</div>
+                                            <small class="text-muted">{{ $team->memberable->nip ?? '' }}</small>
                                         </td>
                                         <td>
                                             <div class="fw-medium">{{ $team->role ?: '-' }}</div>
@@ -239,8 +239,8 @@
                     <div class="tab-pane" id="tabs-tamu">
                         {{-- Buku Tamu Digital Card — Permanent Link --}}
                         @php $attendanceUrl = route('attendance.form', $event->encrypted_event_id) @endphp
-                        <div class="card mb-4 border-2 border-success-subtle">
-                            <div class="card-body">
+                        <x-tabler.card class="mb-4 border-2 border-success-subtle">
+                            <x-tabler.card-body>
                                 <div class="row align-items-center g-3">
                                     <div class="col-auto">
                                         <span class="avatar avatar-lg bg-success text-white">
@@ -266,8 +266,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
 
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4 class="m-0">
@@ -338,8 +338,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 </div>
 @endsection

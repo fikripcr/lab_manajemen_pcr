@@ -1,7 +1,7 @@
 <?php
 namespace App\Services\Hr;
 
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;

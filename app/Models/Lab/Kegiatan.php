@@ -58,7 +58,7 @@ class Kegiatan extends Model
      */
     public function penyelenggara()
     {
-        return $this->belongsTo(User::class, 'penyelenggara_id');
+        return $this->belongsTo(\App\Models\User::class, 'penyelenggara_id');
     }
 
     /**

@@ -24,12 +24,12 @@
         {{-- Progress Bar --}}
         @php $totalHalaman = $survei->halaman->count(); @endphp
         @if($totalHalaman > 1)
-        <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-4">
+        <x-tabler.card-footer class="bg-transparent border-0 pt-0 pb-3 px-4">
             <div class="progress progress-sm mb-1">
                 <div class="progress-bar bg-primary" id="survei-progress" style="width: {{ round(1 / $totalHalaman * 100) }}%"></div>
             </div>
             <small class="text-muted">Halaman <span id="current-page-num">1</span> dari {{ $totalHalaman }}</small>
-        </div>
+        </x-tabler.card-footer>
         @endif
     </x-tabler.card>
 

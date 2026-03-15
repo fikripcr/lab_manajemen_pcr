@@ -81,6 +81,11 @@ class Dokumen extends Model implements HasMedia
             ->orderBy('created_at', 'desc');
     }
 
+    public function riwayatApprovals()
+    {
+        return $this->morphMany(RiwayatApproval::class, 'subject', 'model', 'model_id');
+    }
+
     /**
      * Spatie Media Library: Register collections.
      * Collection 'dokumen_pendukung' — allows multiple files per document.

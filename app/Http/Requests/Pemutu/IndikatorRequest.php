@@ -6,12 +6,7 @@ use App\Http\Requests\BaseRequest;
 class IndikatorRequest extends BaseRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -22,6 +17,7 @@ class IndikatorRequest extends BaseRequest
             'type'            => 'required|in:renop,standar,performa',
             'doksub_ids'      => 'nullable|array',
             'parent_id'       => 'nullable|string',
+            'renstra_poin_id' => 'nullable|string',
             'no_indikator'    => 'nullable|string|max:50',
             'indikator'       => 'required|string',
             'target'          => 'nullable|string',
@@ -44,6 +40,7 @@ class IndikatorRequest extends BaseRequest
             'type'            => 'Tipe Indikator',
             'doksub_ids'      => 'Sub-Dokumen',
             'parent_id'       => 'Indikator Induk',
+            'renstra_poin_id' => 'Poin Renstra',
             'no_indikator'    => 'Nomor Indikator',
             'indikator'       => 'Nama Indikator',
             'target'          => 'Target',

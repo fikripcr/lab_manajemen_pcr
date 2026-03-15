@@ -13,8 +13,8 @@
         </div>
         <p class="mt-3">QR Code generated with text: "{{ $text }}"</p>
         <a href="{{ route('sys.test.index') }}" class="btn btn-secondary">Back to Test Features</a>
-    </div>
-</div>
+        </x-tabler.card-body>
+    </x-tabler.card>
 @endsection
 
 @push('css')

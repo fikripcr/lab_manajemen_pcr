@@ -45,7 +45,7 @@ class Pembayaran extends Model
 
     public function verifikator()
     {
-        return $this->belongsTo(User::class, 'verifikator_id');
+        return $this->belongsTo(\App\Models\User::class, 'verifikator_id');
     }
 
     public function camaba()

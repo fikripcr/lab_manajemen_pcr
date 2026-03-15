@@ -19,7 +19,7 @@
 @section('content')
     <x-tabler.card class="mb-3">
         <x-tabler.card-body class="p-2">
-            <ul class="nav nav-tabs bg-transparent border-bottom px-3 persist-tabs" id="rapat_tabs" data-bs-toggle="tabs">
+            <ul class="nav nav-tabs bg-transparent border-bottom px-3" id="rapat-detail-tabs" data-bs-toggle="tabs">
                 <li class="nav-item">
                     <a href="#section-info" class="nav-link active rounded-top" data-bs-toggle="tab">
                         <i class="ti ti-info-circle me-2"></i> Info & Peserta
@@ -42,8 +42,9 @@
     </x-tabler.card>
 
 
+    <div class="tab-content">
     {{-- ===== SECTION: INFO & PESERTA ===== --}}
-    <div id="section-info" class="content-section">
+    <div id="section-info" class="tab-pane fade show active content-section">
         <div class="row row-cards">
 
             {{-- Kolom Kiri: Info Rapat + Pejabat --}}
@@ -211,7 +212,7 @@
     </div>
 
     {{-- ===== SECTION: AGENDA & NOTULEN ===== --}}
-    <div id="section-agenda" class="content-section">
+    <div id="section-agenda" class="tab-pane fade content-section">
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <x-tabler.button type="create" class="btn-sm ajax-modal-btn"
@@ -278,7 +279,7 @@
     </div>
 
     {{-- ===== SECTION: ENTITAS TERKAIT ===== --}}
-    <div id="section-entitas" class="content-section">
+    <div id="section-entitas" class="tab-pane fade content-section">
         <x-tabler.card>
             <x-tabler.card-header>
                 <h3 class="card-title"><i class="ti ti-link me-2 text-cyan"></i>Entitas Terkait</h3>
@@ -339,32 +340,13 @@
                 @endforelse
             </x-tabler.card-body>
         </x-tabler.card>
+        </div>
     </div>
-@endsection
+    @endsection
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-
-    // ─── Segmented Control ──────────────────────────────────────
-    function switchSection(targetId) {
-        document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
-        const t = document.querySelector(targetId);
-        if (t) t.style.display = 'block';
-        document.querySelectorAll('#rapat_tabs .nav-link').forEach(l =>
-            l.classList.toggle('active', l.getAttribute('href') === targetId));
-    }
-    document.querySelectorAll('#rapat_tabs .nav-link').forEach(link => {
-        link.addEventListener('click', function (e) {
-            if (this.getAttribute('href').startsWith('#section-')) {
-                e.preventDefault();
-                switchSection(this.getAttribute('href'));
-                history.pushState(null, null, this.getAttribute('href'));
-            }
-        });
-    });
-    const hash = window.location.hash;
-    switchSection(hash && hash.startsWith('#section-') && document.querySelector(hash) ? hash : '#section-info');
 
     // ─── Attendance Switch Toggle ─────────────────────────────
     document.querySelectorAll('.attendance-switch').forEach(sw => {

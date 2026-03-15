@@ -110,20 +110,28 @@
                 </div>
             </div>
         </div>
-        <h2>{{ ($item->kode ?? '') . ' ' . $item->judul }}</h2>
+        <h2>{{ ($item->kode ?? '') . ' ' . $item->judul }} <span class="text-muted small">(Tahun {{ $item->periode ?? ($item->dokumen->periode ?? '') }})</span></h2>
         <div class="p-2">
-            <ul class="nav nav-tabs card-header-tabs my-2" role="tablist">
+            <ul class="nav nav-tabs card-header-tabs my-2" id="workspace-tabs-{{ $item->encrypted_doksub_id ?? ($item->encrypted_dok_id ?? 'root') }}" role="tablist">
                 <li class="nav-item" role="presentation">
                     <a href="#tab-overview" class="nav-link active" data-bs-toggle="tab" role="tab" aria-selected="true">
                         <i class="ti ti-eye icon me-1"></i> Overview
                     </a>
                 </li>
                 @if($type === 'dokumen')
-                    <li class="nav-item" role="presentation">
-                        <a href="#tab-subdokumen" class="nav-link" data-bs-toggle="tab" role="tab" aria-selected="false">
-                            <i class="ti ti-file-description icon me-1"></i> Poin
-                        </a>
-                    </li>
+                    @if($item->jenis === 'renop')
+                        <li class="nav-item" role="presentation">
+                            <a href="#tab-indikator-renop" class="nav-link" data-bs-toggle="tab" role="tab" aria-selected="false">
+                                <i class="ti ti-target icon me-1"></i> Indikator RENOP
+                            </a>
+                        </li>
+                    @else
+                        <li class="nav-item" role="presentation">
+                            <a href="#tab-subdokumen" class="nav-link" data-bs-toggle="tab" role="tab" aria-selected="false">
+                                <i class="ti ti-file-description icon me-1"></i> Poin
+                            </a>
+                        </li>
+                    @endif
                     <li class="nav-item" role="presentation">
                         <a href="#tab-informasi" class="nav-link" data-bs-toggle="tab" role="tab" aria-selected="false">
                             <i class="ti ti-info-circle icon me-1"></i> Approval Dokumen
@@ -230,25 +238,44 @@
                 </div>
 
                 @if($type === 'dokumen')
-                    <div class="tab-pane" id="tab-subdokumen" role="tabpanel">
-                        <x-tabler.card class="bg-transparent shadow-none border">
-                            <x-tabler.card-header title="Daftar {{ $childLabel ?? 'Turunan' }}">
-                                <x-slot:actions>
-                                    <x-tabler.button type="create" class="ajax-modal-btn"
-                                        text="Tambah {{ $childLabel ?? 'Turunan' }}"
-                                        data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => $isDokSubBased ? 'poin' : 'dokumen', 'parent_id' => $item->encrypted_dok_id]) }}"
-                                        data-modal-title="Tambah {{ $childLabel ?? 'Turunan' }}"
-                                        data-modal-size="{{ $isDokSubBased ? 'modal-lg' : 'modal-md' }}"
-                                        size="sm" />
-                                </x-slot:actions>
-                            </x-tabler.card-header>
-                            <x-tabler.datatable
-                                id="children-table"
-                                :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id])"
-                                :columns="$childrenColumns"
-                                ajax-load />
-                        </x-tabler.card>
-                    </div>
+                    @if($item->jenis === 'renop')
+                        <div class="tab-pane" id="tab-indikator-renop" role="tabpanel">
+                            <x-tabler.card class="bg-transparent shadow-none border">
+                                <x-tabler.card-header title="Daftar Indikator Labeled RENOP">
+                                    <x-slot:actions>
+                                        <x-tabler.button type="create" class="btn-success"
+                                            href="{{ route('pemutu.indikator.index', ['type' => 'standar']) }}"
+                                            text="Kelola Indikator Standar" size="sm" />
+                                    </x-slot:actions>
+                                </x-tabler.card-header>
+                                <x-tabler.datatable
+                                    id="indikator-renop-table"
+                                    :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'renop_indikator', 'id' => $item->encrypted_dok_id])"
+                                    :columns="$indikatorColumns"
+                                    ajax-load />
+                            </x-tabler.card>
+                        </div>
+                    @else
+                        <div class="tab-pane" id="tab-subdokumen" role="tabpanel">
+                            <x-tabler.card class="bg-transparent shadow-none border">
+                                <x-tabler.card-header title="Daftar {{ $childLabel ?? 'Turunan' }}">
+                                    <x-slot:actions>
+                                        <x-tabler.button type="create" class="ajax-modal-btn"
+                                            text="Tambah {{ $childLabel ?? 'Turunan' }}"
+                                            data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => $isDokSubBased ? 'poin' : 'dokumen', 'parent_id' => $item->encrypted_dok_id]) }}"
+                                            data-modal-title="Tambah {{ $childLabel ?? 'Turunan' }}"
+                                            data-modal-size="{{ $isDokSubBased ? 'modal-lg' : 'modal-md' }}"
+                                            size="sm" />
+                                    </x-slot:actions>
+                                </x-tabler.card-header>
+                                <x-tabler.datatable
+                                    id="children-table"
+                                    :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id])"
+                                    :columns="$childrenColumns"
+                                    ajax-load />
+                            </x-tabler.card>
+                        </div>
+                    @endif
                 @elseif($type === 'poin')
                     {{-- Mapping Section --}}
                     @if($isKebijakan && $mappableJenis)
@@ -601,35 +628,3 @@
 </script>
 @endif
 
-<script>
-(function() {
-    const initWorkspaceTabs = function() {
-        const pointId = '{{ $item->encrypted_doksub_id ?? ($item->encrypted_dok_id ?? "doc") }}';
-        const storageKey = 'activeWorkspaceTab_' + pointId;
-        
-        // Restore tab on load
-        const activeTabId = localStorage.getItem(storageKey);
-        if (activeTabId) {
-            const triggerEl = document.querySelector('.nav-tabs a[href="' + activeTabId + '"]');
-            if (triggerEl && typeof bootstrap !== 'undefined') {
-                const tab = new bootstrap.Tab(triggerEl);
-                tab.show();
-            }
-        }
-        
-        // Save tab on click
-        const tabLinks = document.querySelectorAll('.nav-tabs a[data-bs-toggle="tab"]');
-        tabLinks.forEach(function(link) {
-            link.addEventListener('shown.bs.tab', function(e) {
-                localStorage.setItem(storageKey, e.target.getAttribute('href'));
-            });
-        });
-    };
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initWorkspaceTabs);
-    } else {
-        initWorkspaceTabs();
-    }
-})();
-</script>

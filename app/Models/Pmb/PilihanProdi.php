@@ -2,7 +2,7 @@
 namespace App\Models\Pmb;
 
 use App\Models\Pmb\Pendaftaran;
-use App\Models\Shared\StrukturOrganisasi;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

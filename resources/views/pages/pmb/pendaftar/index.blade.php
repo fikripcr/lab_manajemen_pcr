@@ -6,7 +6,7 @@
 
 @section('content')
 <x-tabler.card>
-    <div class="card-header">
+    <x-tabler.card-header>
         <div class="d-flex flex-wrap gap-2">
             <div>
                 <x-tabler.datatable-page-length :dataTableId="'table-pendaftar'" />
@@ -15,7 +15,7 @@
                 <x-tabler.datatable-search :dataTableId="'table-pendaftar'" />
             </div>
         </div>
-    </div>
+    </x-tabler.card-header>
     <x-tabler.card-body class="p-0">
         <x-tabler.datatable
             id="table-pendaftar"
@@ -31,7 +31,7 @@
             :route="route('pmb.pendaftar.data')"
         />
     </x-tabler.card-body>
-</div>
+</x-tabler.card>
 
 
 <!-- Modal Verifikasi Berkas dengan Toggle -->

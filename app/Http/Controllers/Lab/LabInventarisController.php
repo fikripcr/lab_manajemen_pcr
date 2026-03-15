@@ -44,12 +44,12 @@ class LabInventarisController extends Controller
             })
             ->editColumn('status', function ($item) {
                 $statusClass = match ($item->status) {
-                    'active'   => 'bg-label-success',
-                    'moved'    => 'bg-label-warning',
-                    'inactive' => 'bg-label-secondary',
-                    default    => 'bg-label-secondary',
+                    'active'   => 'success',
+                    'moved'    => 'warning',
+                    'inactive' => 'secondary',
+                    default    => 'secondary',
                 };
-                return '<span class="badge ' . $statusClass . '">' . ucfirst($item->status) . '</span>';
+                return '<span class="status status-' . $statusClass . '"><span class="status-dot"></span> ' . ucfirst($item->status) . '</span>';
             })
             ->addColumn('nama_alat', function ($item) {
                 return $item->inventaris->nama_alat;

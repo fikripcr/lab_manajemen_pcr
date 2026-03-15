@@ -97,7 +97,7 @@ class ApprovalController extends Controller
 
         $diffs = hrDiffFields($before, $subject);
 
-        return view('pages.hr.approval.show', compact('approval', 'subject', 'before', 'pegawai', 'diffs'));
+        return view('pages.hr.approval.show', compact('approval', 'subject', 'before', 'hr_pegawai', 'diffs'));
     }
 
     /**

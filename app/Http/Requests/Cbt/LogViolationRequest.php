@@ -5,10 +5,7 @@ use App\Http\Requests\BaseRequest;
 
 class LogViolationRequest extends BaseRequest
 {
-    public function authorize()
-    {
-        return true;
-    }
+    
 
     public function rules()
     {

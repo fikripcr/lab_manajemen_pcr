@@ -17,13 +17,13 @@ class PengembanganDiriController extends Controller
 
     public function index(Pegawai $pegawai = null)
     {
-        return view('pages.hr.data-diri.tabs.pengembangan', compact('pegawai'));
+        return view('pages.hr.data-diri.tabs.pengembangan', compact('hr_pegawai'));
     }
 
     public function create(Pegawai $pegawai)
     {
         $pengembangan = new PengembanganDiri();
-        return view('pages.hr.pegawai.pengembangan.create-edit-ajax', compact('pegawai', 'pengembangan'));
+        return view('pages.hr.pegawai.pengembangan.create-edit-ajax', compact('hr_pegawai', 'pengembangan'));
     }
 
     public function store(PengembanganDiriRequest $request, Pegawai $pegawai)
@@ -34,7 +34,7 @@ class PengembanganDiriController extends Controller
 
     public function edit(Pegawai $pegawai, PengembanganDiri $pengembangan)
     {
-        return view('pages.hr.pegawai.pengembangan.create-edit-ajax', compact('pegawai', 'pengembangan'));
+        return view('pages.hr.pegawai.pengembangan.create-edit-ajax', compact('hr_pegawai', 'pengembangan'));
     }
 
     public function update(PengembanganDiriRequest $request, Pegawai $pegawai, PengembanganDiri $pengembangan)
@@ -51,7 +51,7 @@ class PengembanganDiriController extends Controller
 
     public function data(Request $request)
     {
-        $query = PengembanganDiri::with('pegawai')->select('hr_pengembangan_diri.*');
+        $query = PengembanganDiri::with('hr_pegawai')->select('hr_pengembangan_diri.*');
 
         if ($request->has('pegawai_id')) {
             $query->where('pegawai_id', decryptIdIfEncrypted($request->pegawai_id));

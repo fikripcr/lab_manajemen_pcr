@@ -6,26 +6,25 @@ use App\Http\Requests\BaseRequest;
 class DokumenApprovalRequest extends BaseRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     /**
      * Prepare the data for validation.
      */
     protected function prepareForValidation()
     {
-        if ($this->has('personil_id') && $this->personil_id) {
-            try {
-                $this->merge([
-                    'personil_id' => decryptId($this->personil_id),
-                ]);
-            } catch (\Exception $e) {
-                // Keep original value if decryption fails, validation will likely fail
+        if ($this->has('approvers') && is_array($this->approvers)) {
+            $approvers = $this->approvers;
+            foreach ($approvers as $key => $approver) {
+                if (isset($approver['pegawai_id'])) {
+                    try {
+                        $approvers[$key]['pegawai_id'] = decryptIdIfEncrypted($approver['pegawai_id']);
+                    } catch (\Exception $e) {
+                        // Keep original value if decryption fails
+                    }
+                }
             }
+            $this->merge(['approvers' => $approvers]);
         }
     }
 
@@ -37,17 +36,18 @@ class DokumenApprovalRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'personil_id' => 'required|exists:personil,personil_id',
-            'komentar'    => 'nullable|string',
+            'approvers'              => 'required|array|min:1',
+            'approvers.*.pegawai_id' => 'required|exists:pegawai,pegawai_id',
+            'approvers.*.jabatan'    => 'required|string|max:191',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'personil_id' => 'Personil Approval',
-            'status'      => 'Status Approval',
-            'komentar'    => 'Komentar',
+            'approvers'              => 'Daftar Approver',
+            'approvers.*.pegawai_id' => 'Pegawai Approver',
+            'approvers.*.jabatan'    => 'Jabatan Approver',
         ];
     }
 }

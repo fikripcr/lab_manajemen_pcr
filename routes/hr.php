@@ -100,10 +100,10 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
         Route::get('struktural/data', [RiwayatStrukturalController::class, 'data'])->name('struktural.data');
         Route::get('struktural/create', [RiwayatStrukturalController::class, 'create'])->name('struktural.create');
         Route::post('struktural', [RiwayatStrukturalController::class, 'store'])->name('struktural.store');
-        Route::get('struktural/{struktural}/edit', [RiwayatStrukturalController::class, 'edit'])->name('struktural.edit');
-        Route::put('struktural/{struktural}', [RiwayatStrukturalController::class, 'update'])->name('struktural.update');
-        Route::delete('struktural/{struktural}', [RiwayatStrukturalController::class, 'destroy'])->name('struktural.destroy');
-        Route::post('struktural/{struktural}/end', [RiwayatStrukturalController::class, 'endAssignment'])->name('struktural.end');
+        Route::get('struktural/{riwayatJabStruktural}/edit', [RiwayatStrukturalController::class, 'edit'])->name('struktural.edit');
+        Route::put('struktural/{riwayatJabStruktural}', [RiwayatStrukturalController::class, 'update'])->name('struktural.update');
+        Route::delete('struktural/{riwayatJabStruktural}', [RiwayatStrukturalController::class, 'destroy'])->name('struktural.destroy');
+        Route::post('struktural/{riwayatJabStruktural}/end', [RiwayatStrukturalController::class, 'endAssignment'])->name('struktural.end');
 
         // Riwayat Pengajuan (Approval History)
         Route::get('pengajuan', [ApprovalController::class, 'employeeHistory'])->name('pengajuan.index');
@@ -141,6 +141,19 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
     // Mesin Presensi (AttDevice)
     Route::get('att-device/data', [AttDeviceController::class, 'data'])->name('att-device.data');
     Route::resource('att-device', AttDeviceController::class);
+
+    // Personil (Merged from Shared)
+    Route::get('personil/data', [\App\Http\Controllers\Hr\PersonilController::class, 'data'])->name('personil.data');
+    Route::get('personil/{personil}/edit-modal', [\App\Http\Controllers\Hr\PersonilController::class, 'editModal'])->name('personil.edit-modal.show');
+    Route::post('personil/{personil}/generate-user', [\App\Http\Controllers\Hr\PersonilController::class, 'generateUser'])->name('personil.generate-user');
+    Route::resource('personil', \App\Http\Controllers\Hr\PersonilController::class);
+
+    // Struktur Organisasi (Merged from Shared)
+    Route::get('struktur-organisasi/data', [\App\Http\Controllers\Hr\StrukturOrganisasiController::class, 'data'])->name('struktur-organisasi.data');
+    Route::post('struktur-organisasi/reorder', [\App\Http\Controllers\Hr\StrukturOrganisasiController::class, 'reorder'])->name('struktur-organisasi.reorder');
+    Route::post('struktur-organisasi/{struktur_organisasi}/toggle-status', [\App\Http\Controllers\Hr\StrukturOrganisasiController::class, 'toggleStatus'])->name('struktur-organisasi.toggle-status');
+    Route::post('struktur-organisasi/{struktur_organisasi}/set-auditee', [\App\Http\Controllers\Hr\StrukturOrganisasiController::class, 'setAuditee'])->name('struktur-organisasi.set-auditee');
+    Route::resource('struktur-organisasi', \App\Http\Controllers\Hr\StrukturOrganisasiController::class);
 
     // Indisipliner (Pelanggaran Disiplin)
     Route::get('indisipliner/data', [IndisiplinerController::class, 'data'])->name('indisipliner.data');

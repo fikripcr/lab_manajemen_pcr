@@ -31,7 +31,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label text-muted">Lab</label>
-                                <p class="fw-bold">{{ $laporan->inventaris && $laporan->inventaris->lab ? $laporan->inventaris->lab->name : '-' }}</p>
+                                <p class="fw-bold">{{ $laporan->inventaris && $laporan->inventaris->lab->isNotEmpty() ? $laporan->inventaris->lab->first()->name : '-' }}</p>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label text-muted">Inventaris / Alat</label>

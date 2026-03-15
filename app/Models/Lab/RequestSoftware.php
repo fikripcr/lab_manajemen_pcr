@@ -53,7 +53,7 @@ class RequestSoftware extends Model
      */
     public function dosen()
     {
-        return $this->belongsTo(User::class, 'dosen_id');
+        return $this->belongsTo(\App\Models\User::class, 'dosen_id');
     }
 
     /**

@@ -11,10 +11,8 @@
 
 @section('content')
     <x-tabler.card>
-        <div class="card-header">
-            <h3 class="card-title">Daftar Entitas Terkait</h3>
-        </div>
-        <div class="card-body">
+        <x-tabler.card-header title="Daftar Entitas Terkait" />
+        <x-tabler.card-body>
 
             <x-tabler.datatable
                 id="entitas-table" route="{{ route('Kegiatan.rapat.entitas.data', $rapat) }}" :columns="[
@@ -41,6 +39,6 @@
                     'searchable' => false,
                 ],
             ]" />
-        </div>
-    </div>
+        </x-tabler.card-body>
+    </x-tabler.card>
 @endsection

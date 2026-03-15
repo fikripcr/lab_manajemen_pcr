@@ -7,8 +7,8 @@
             <img src="{{ asset('static/logo.svg') }}" height="36" alt="">
         </a>
     </div>
-    <div class="card card-md">
-        <div class="card-body">
+    <x-tabler.card class="card-md">
+        <x-tabler.card-body>
             <h2 class="card-title text-center mb-4">Buku Tamu Kegiatan</h2>
             <p class="text-muted text-center mb-4">Silakan isi identitas Anda untuk mengikuti kegiatan: <br><strong>{{ $kegiatan->judul_Kegiatan }}</strong></p>
             
@@ -61,8 +61,8 @@
                     <x-tabler.button type="submit" class="btn-primary w-100" text="Simpan Data & Masuk" />
                 </div>
             </form>
-        </div>
-    </div>
+        </x-tabler.card-body>
+    </x-tabler.card>
 </div>
 @endsection
 

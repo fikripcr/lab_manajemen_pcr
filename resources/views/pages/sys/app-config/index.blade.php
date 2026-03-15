@@ -39,7 +39,7 @@
     <x-tabler.card-body>
         <div class="row">
             <div class="col-md-3">
-                <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <div class="nav flex-column nav-pills me-3" id="app-config-v-pills" role="tablist" aria-orientation="vertical">
                     <button class="nav-link active text-start" id="v-pills-general-tab" data-bs-toggle="pill" data-bs-target="#v-pills-general" type="button" role="tab" aria-controls="v-pills-general" aria-selected="true">
                         <i class="ti ti-world me-2"></i> General Settings
                     </button>

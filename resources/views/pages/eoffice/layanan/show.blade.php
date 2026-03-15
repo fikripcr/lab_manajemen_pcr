@@ -91,7 +91,7 @@
         {{-- 2. Data Isian Display --}}
         <x-tabler.card class="mb-3">
             <x-tabler.card-header>
-                <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+                <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" id="layanan-detail-tabs">
                     <li class="nav-item">
                         <a href="#tab-pemohon" class="nav-link active" data-bs-toggle="tab">Data Pemohon</a>
                     </li>
@@ -362,7 +362,7 @@
                     @endforelse
                 </div>
             </x-tabler.card-body>
-            <div class="card-footer border-top p-2">
+            <x-tabler.card-footer class="border-top p-2">
                 <form action="{{ route('eoffice.layanan.diskusi.store') }}" method="POST" class="ajax-form" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="layanan_id" value="{{ $layanan->encrypted_layanan_id }}">
@@ -371,7 +371,7 @@
                         <x-tabler.button type="submit" class="btn-primary btn-sm" title="Kirim" icon="ti ti-send" text="Kirim Pesan" />
                     </div>
                 </form>
-            </div>
+            </x-tabler.card-footer>
         </x-tabler.card>
         @endif
     </div>

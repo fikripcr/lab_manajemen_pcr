@@ -1,4 +1,4 @@
-<div class="card-header border-bottom py-3">
+<x-tabler.card-header class="border-bottom py-3">
     <div class="d-flex flex-wrap gap-2 align-items-center">
         <div>
             <x-tabler.datatable-page-length :dataTableId="'pegawai-table'" />
@@ -30,7 +30,7 @@
             <x-tabler.button class="btn-outline-success w-100 w-sm-auto" icon="ti ti-file-spreadsheet" text="Export Excel" />
         </div>
     </div>
-</div>
+</x-tabler.card-header>
 <div class="table-responsive">
     <x-tabler.datatable
         id="pegawai-table"

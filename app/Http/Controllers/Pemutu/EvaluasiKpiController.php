@@ -33,7 +33,7 @@ class EvaluasiKpiController extends Controller
 
         return DataTables::of($query)
             ->addIndexColumn()
-            ->addColumn('pegawai', function ($row) {
+            ->addColumn('hr_pegawai', function ($row) {
                 return $row->pegawai?->nama ?? '-';
             })
             ->addColumn('indikator_full', function ($row) {
@@ -81,7 +81,7 @@ class EvaluasiKpiController extends Controller
                     Isi KPI
                     </button>';
             })
-            ->rawColumns(['pegawai', 'indikator_full', 'target', 'capaian', 'file', 'action', 'analisis'])
+            ->rawColumns(['hr_pegawai', 'indikator_full', 'target', 'capaian', 'file', 'action', 'analisis'])
             ->make(true);
     }
 

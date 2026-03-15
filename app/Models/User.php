@@ -8,9 +8,9 @@ use App\Models\Lab\LogPenggunaanPc;
 use App\Models\Lab\PcAssignment;
 use App\Models\Lab\RequestSoftware;
 use App\Models\Pmb\Camaba;
-use App\Models\Shared\Mahasiswa;
-use App\Models\Shared\Pegawai;
-use App\Models\Shared\Personil;
+use App\Models\Hr\Pegawai;
+use App\Models\Hr\Personil;
+use App\Models\Akademik\Mahasiswa;
 use App\Models\Sys\Notification;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
@@ -37,17 +37,17 @@ class User extends Authenticatable implements HasMedia, Searchable
     /**
      * Get the Pegawai associated with this user.
      */
-    public function pegawai(): HasOne
+    public function pegawai()
     {
-        return $this->hasOne(Pegawai::class, 'user_id');
+        return $this->hasOne(Hr\Pegawai::class, 'user_id', 'id');
     }
 
     /**
      * Get the Mahasiswa associated with this user.
      */
-    public function mahasiswa(): HasOne
+    public function mahasiswa()
     {
-        return $this->hasOne(Mahasiswa::class, 'user_id');
+        return $this->hasOne(Akademik\Mahasiswa::class, 'user_id', 'id');
     }
 
     /**

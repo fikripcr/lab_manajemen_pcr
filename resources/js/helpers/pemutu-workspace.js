@@ -1,4 +1,4 @@
-/**
+ /**
  * pemutu-workspace.js
  * JS untuk halaman Dokumen SPMI (tree + detail panel + drag-drop).
  * Dipanggil dari resources/views/pages/pemutu/dokumens/index.blade.php
@@ -276,22 +276,6 @@ window.initPemutuWorkspace = function (config) {
             });
         });
 
-        // 10. Filter param sync (Periode dropdown)
-        $('.filter-sync-param').on('change', function () {
-            const param = $(this).data('param');
-            const value = $(this).val();
-            const params = new URLSearchParams(window.location.search);
 
-            if (value) {
-                params.set(param, value);
-            } else {
-                params.delete(param);
-            }
-
-            const activeSubTab = document.querySelector('.nav-link.active[data-jenis]');
-            if (activeSubTab) params.set('jenis', activeSubTab.dataset.jenis);
-
-            window.location.href = $(this).data('base-url') + '?' + params.toString();
-        });
     });
 };

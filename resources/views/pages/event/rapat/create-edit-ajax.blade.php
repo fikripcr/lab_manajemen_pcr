@@ -101,9 +101,9 @@
                                 />
                             </div>
                         </x-tabler.card-body>
-                        <div class="card-footer text-end">
+                        <x-tabler.card-footer class="text-end">
                             <x-tabler.button type="submit" :text="$rapat->exists ? 'Simpan Perubahan' : 'Jadwalkan Rapat'" icon="ti ti-check" />
-                        </div>
+                        </x-tabler.card-footer>
                     </x-tabler.card>
                 </div>
 
@@ -294,8 +294,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const newAgenda = document.createElement('div');
         newAgenda.className = 'agenda-item mb-2';
         newAgenda.innerHTML = `
-            <div class="card">
-                <div class="card-body py-2">
+            <x-tabler.card>
+                <x-tabler.card-body class="py-2">
                     <div class="row align-items-center">
                         <div class="col-auto">
                             <span class="badge bg-primary rounded-pill">${agendaCounter + 1}</span>
@@ -313,8 +313,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             </button>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         `;
         container.appendChild(newAgenda);
         agendaCounter++;

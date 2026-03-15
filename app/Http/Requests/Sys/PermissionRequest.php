@@ -6,12 +6,7 @@ use App\Http\Requests\BaseRequest;
 class PermissionRequest extends BaseRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -32,7 +27,6 @@ class PermissionRequest extends BaseRequest
     }
 
     /**
-     * Get custom validation messages.
      */
     public function attributes(): array
     {

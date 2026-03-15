@@ -6,12 +6,12 @@ use App\Http\Requests\Pemutu\IndikatorRequest;
 use App\Models\Pemutu\DokSub;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
-use App\Models\Pemutu\LabelType;
-use App\Models\Pemutu\OrgUnit;
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\StrukturOrganisasi;
+use App\Models\Hr\Pegawai;
 use App\Services\Pemutu\DokumenService;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\PelaksanaanService;
+use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -20,35 +20,26 @@ class IndikatorController extends Controller
     public function __construct(
         protected IndikatorService $indikatorService,
         protected PelaksanaanService $PelaksanaanService,
-        protected DokumenService $dokumenService
+        protected DokumenService $dokumenService,
+        protected PeriodeSpmiService $PeriodeSpmiService
     ) {}
 
     public function index(Request $request)
     {
         // Allowed types
-        $types      = ['standar' => 'Standar', 'renop' => 'Renop', 'performa' => 'Performa'];
+        $types      = ['standar' => 'Standar', 'performa' => 'Performa'];
         $activeType = $request->query('type', 'standar');
         if (! array_key_exists($activeType, $types)) {
             $activeType = 'standar';
         }
 
+        $siklus = $this->PeriodeSpmiService->getSiklusData();
+
         // Filters data
-        $dokumens   = Dokumen::whereNull('parent_id')->orderBy('judul')->pluck('judul', 'dok_id')->toArray();
-        $labelTypes = LabelType::orderBy('name')->pluck('name', 'labeltype_id')->toArray();
+        $dokumens     = Dokumen::whereNull('parent_id')->orderBy('judul')->pluck('judul', 'dok_id')->toArray();
+        $labelParents = \App\Models\Pemutu\Label::whereNull('parent_id')->orderBy('name')->pluck('name', 'label_id')->toArray();
 
-        // Year filter from Dokumen.periode
-        $periodes = Dokumen::select('periode')
-            ->distinct()
-            ->whereNotNull('periode')
-            ->orderBy('periode', 'desc')
-            ->pluck('periode', 'periode')
-            ->toArray();
-
-        if (empty($periodes)) {
-            $periodes[date('Y')] = date('Y');
-        }
-
-        return view('pages.pemutu.indikator.index', compact('dokumens', 'labelTypes', 'types', 'periodes', 'activeType'));
+        return view('pages.pemutu.indikator.index', compact('dokumens', 'labelParents', 'types', 'activeType', 'siklus'));
     }
 
     public function data(Request $request)
@@ -67,7 +58,7 @@ class IndikatorController extends Controller
             })
             ->addColumn('labels', function ($row) {
                 return '<div class="d-flex flex-wrap gap-1">' . $row->labels->map(function ($label) {
-                    $color = $label->type?->color ?? 'blue';
+                    $color = $label->color ?? 'blue';
                     return '<span class="badge bg-' . $color . '-lt text-' . $color . '">' . e($label->name) . '</span>';
                 })->implode('') . '</div>';
             })
@@ -86,11 +77,11 @@ class IndikatorController extends Controller
     public function create(Request $request)
     {
         // View Dependencies
-        $labelTypes = LabelType::with(['labels' => function ($q) {
+        $labelParents = \App\Models\Pemutu\Label::whereNull('parent_id')->with(['children' => function ($q) {
             $q->orderBy('name');
         }])->orderBy('name')->get();
 
-        $orgUnits = OrgUnit::with('descendants')->where('level', 1)->orderBy('seq')->get();
+        $orgUnits = StrukturOrganisasi::with('descendants')->where('level', 1)->orderBy('seq')->get();
         $parents  = Indikator::where('type', 'standar')->orderBy('no_indikator')->get();
 
         $pegawais = Pegawai::with('latestDataDiri')->get()->sortBy('nama');
@@ -135,10 +126,14 @@ class IndikatorController extends Controller
             }
         }
 
+        $renstraOptions = DokSub::whereHas('dokumen', function ($q) {
+            $q->where('jenis', 'renstra');
+        })->with('dokumen')->get();
+
         $indikator = new Indikator(); // Empty for create
         return view('pages.pemutu.indikator.create-edit', compact(
-            'labelTypes', 'orgUnits', 'parents', 'pegawais',
-            'parentDok', 'selectedDokSubs', 'indikator', 'isRenopContext'
+            'labelParents', 'orgUnits', 'parents', 'pegawais',
+            'parentDok', 'selectedDokSubs', 'indikator', 'isRenopContext', 'renstraOptions'
         ));
     }
 
@@ -186,6 +181,9 @@ class IndikatorController extends Controller
         if (isset($data['parent_id'])) {
             $data['parent_id'] = decryptIdIfEncrypted($data['parent_id']);
         }
+        if (isset($data['renstra_poin_id'])) {
+            $data['renstra_poin_id'] = decryptIdIfEncrypted($data['renstra_poin_id']);
+        }
 
         $indikator = $this->indikatorService->createIndikator($data);
 
@@ -217,11 +215,11 @@ class IndikatorController extends Controller
 
     public function edit(Indikator $indikator)
     {
-        $labelTypes = LabelType::with(['labels' => function ($q) {
+        $labelParents = \App\Models\Pemutu\Label::whereNull('parent_id')->with(['children' => function ($q) {
             $q->orderBy('name');
         }])->orderBy('name')->get();
 
-        $orgUnits = OrgUnit::with('descendants')->where('level', 1)->orderBy('seq')->get();
+        $orgUnits = StrukturOrganisasi::with('descendants')->where('level', 1)->orderBy('seq')->get();
 
         $parents = Indikator::where('type', 'standar')
             ->where('indikator_id', '!=', $indikator->indikator_id)
@@ -229,9 +227,14 @@ class IndikatorController extends Controller
             ->get();
 
         $pegawais = Pegawai::with('latestDataDiri')->get()->sortBy('nama');
+
+        $renstraOptions = DokSub::whereHas('dokumen', function ($q) {
+            $q->where('jenis', 'renstra');
+        })->with('dokumen')->get();
+
         // Fetch only and only currently assigned DokSubs to avoid memory heavy eager loading
         $selectedDokSubs = $indikator->dokSubs()->with('dokumen')->get();
-        return view('pages.pemutu.indikator.create-edit', compact('indikator', 'labelTypes', 'orgUnits', 'parents', 'pegawais', 'selectedDokSubs'));
+        return view('pages.pemutu.indikator.create-edit', compact('indikator', 'labelParents', 'orgUnits', 'parents', 'pegawais', 'renstraOptions', 'selectedDokSubs'));
     }
 
     public function update(IndikatorRequest $request, Indikator $indikator)
@@ -276,6 +279,9 @@ class IndikatorController extends Controller
         }
         if (isset($data['parent_id'])) {
             $data['parent_id'] = decryptIdIfEncrypted($data['parent_id']);
+        }
+        if (isset($data['renstra_poin_id'])) {
+            $data['renstra_poin_id'] = decryptIdIfEncrypted($data['renstra_poin_id']);
         }
 
         $this->indikatorService->updateIndikator($indikator->indikator_id, $data);

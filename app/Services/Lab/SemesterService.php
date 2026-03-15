@@ -1,7 +1,7 @@
 <?php
 namespace App\Services\Lab;
 
-use App\Models\Lab\Semester;
+use App\Models\Akademik\Semester;
 use Exception;
 use Illuminate\Support\Facades\DB;
 

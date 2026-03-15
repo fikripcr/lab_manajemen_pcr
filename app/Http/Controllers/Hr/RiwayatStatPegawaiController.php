@@ -24,7 +24,7 @@ class RiwayatStatPegawaiController extends Controller
     public function create(Pegawai $pegawai)
     {
         $statusPegawai = StatusPegawai::where('is_active', 1)->get();
-        return view('pages.hr.pegawai.status-pegawai.create-edit-ajax', compact('pegawai', 'statusPegawai'));
+        return view('pages.hr.pegawai.status-pegawai.create-edit-ajax', compact('hr_pegawai', 'statusPegawai'));
     }
 
     public function store(RiwayatStatPegawaiRequest $request, Pegawai $pegawai)
@@ -35,7 +35,7 @@ class RiwayatStatPegawaiController extends Controller
 
     public function data(Request $request)
     {
-        $query = RiwayatStatPegawai::with(['pegawai', 'statusPegawai'])->select('hr_riwayat_statpegawai.*');
+        $query = RiwayatStatPegawai::with(['hr_pegawai', 'statusPegawai'])->select('hr_riwayat_statpegawai.*');
 
         if ($request->has('pegawai_id')) {
             $query->where('pegawai_id', decryptIdIfEncrypted($request->pegawai_id));

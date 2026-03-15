@@ -26,26 +26,30 @@ class AmiController extends Controller
      */
     public function index()
     {
-        $periodes = $this->PeriodeSpmiService->getPeriodes();
+        // Bypass old period selection — use global siklus from session
+        $siklus = $this->PeriodeSpmiService->getSiklusData();
 
-        return view('pages.pemutu.ami.index', compact('periodes'));
-    }
+        $data = [
+            'pageTitle' => 'Audit Mutu Internal (AMI)',
+            'siklus'    => $siklus,
+        ];
 
-    /**
-     * Daftar indikator dalam satu periode (list page, bukan modal).
-     */
-    public function show(PeriodeSpmi $periode, Request $request)
-    {
-        // Cek jadwal AMI sudah diatur
-        $jadwalTersedia = $periode->ami_awal && $periode->ami_akhir;
-        if (! $jadwalTersedia) {
-            return view('pages.pemutu.ami.show', compact('periode', 'jadwalTersedia'));
+        // Resolve user units for both periods to populate filters
+        foreach (['akademik', 'non_akademik'] as $type) {
+            $periode = $siklus[$type];
+            $units   = collect();
+            
+            if ($periode) {
+                // Use the service to get available units
+                $units = $this->AmiService->getAvailableUnits($periode);
+            }
+            
+            $data[$type . 'Units'] = $units;
         }
 
-        $unitId = $request->input('unit_id');
-
-        return view('pages.pemutu.ami.show', compact('periode', 'unitId', 'jadwalTersedia'));
+        return view('pages.pemutu.ami.index', $data);
     }
+
 
     /**
      * DataTable AJAX: daftar Indikator untuk satu periode yang sudah isi ED.
@@ -82,6 +86,9 @@ class AmiController extends Controller
                     : '<span class="text-muted small">-</span>';
             })
             ->addColumn('rtp', function ($row) {
+                return pemutuDtColRtp($row);
+            })
+            ->addColumn('action_rtp', function ($row) {
                 $pivot = $row->orgUnits->first()?->pivot;
 
                 // Hanya muncul jika hasil AMI adalah KTS (0)
@@ -106,7 +113,7 @@ class AmiController extends Controller
                         ->orWhere('no_indikator', 'like', "%{$keyword}%");
                 });
             })
-            ->rawColumns(['no', 'indikator_full', 'target', 'status_ed', 'status_ami', 'action', 'rtp'])
+            ->rawColumns(['no', 'indikator_full', 'target', 'status_ed', 'status_ami', 'action', 'rtp', 'action_rtp'])
             ->make(true);
     }
 

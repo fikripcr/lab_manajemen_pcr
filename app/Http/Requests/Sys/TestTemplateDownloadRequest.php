@@ -7,12 +7,7 @@ use App\Http\Requests\BaseRequest;
 class TestTemplateDownloadRequest extends BaseRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -27,7 +22,6 @@ class TestTemplateDownloadRequest extends BaseRequest
     }
 
     /**
-     * Get custom error messages for validation rules.
      *
      * @return array<string, string>
      */

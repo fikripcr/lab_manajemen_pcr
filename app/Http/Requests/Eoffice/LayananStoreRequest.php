@@ -9,12 +9,7 @@ use Illuminate\Validation\Validator;
 class LayananStoreRequest extends BaseRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -30,18 +25,9 @@ class LayananStoreRequest extends BaseRequest
     }
 
     /**
-     * Get custom error messages for validation rules.
      *
      * @return array<string, string>
      */
-    public function messages(): array
-    {
-        return array_merge(parent::messages(), [
-            'jenislayanan_id.required' => 'Jenis layanan harus dipilih.',
-            'jenislayanan_id.exists'   => 'Jenis layanan tidak ditemukan.',
-            'keterangan.max'           => 'Keterangan maksimal 1000 karakter.',
-        ];
-    }
 
     /**
      * Configure the validator instance (for dynamic rules)

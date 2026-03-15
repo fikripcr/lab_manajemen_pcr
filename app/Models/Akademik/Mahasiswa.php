@@ -1,0 +1,68 @@
+<?php
+namespace App\Models\Akademik;
+
+use App\Models\Hr\StrukturOrganisasi;
+use App\Models\User;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Mahasiswa extends Model
+{
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+
+    protected $table      = 'akademik_mahasiswa';
+    protected $primaryKey = 'mahasiswa_id';
+
+    protected $appends = ['encrypted_mahasiswa_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'mahasiswa_id';
+    }
+
+    protected $fillable = [
+        'user_id',
+        'nim',
+        'nama',
+        'email',
+        'jenis_kelamin',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'agama',
+        'kewarganegaraan',
+        'no_hp',
+        'alamat',
+        'angkatan',
+        'foto',
+        'orgunit_id',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+    ];
+
+    protected $casts = [
+        'mahasiswa_id' => 'string',
+    ];
+
+    /**
+     * Get the user associated with this mahasiswa.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\User::class, 'user_id');
+    }
+
+    public function getEncryptedMahasiswaIdAttribute()
+    {
+        return encryptId($this->mahasiswa_id);
+    }
+
+    public function prodi()
+    {
+        return $this->belongsTo(StrukturOrganisasi::class, 'orgunit_id');
+    }
+}

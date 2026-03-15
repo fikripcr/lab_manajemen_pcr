@@ -100,7 +100,7 @@ class ProjectTask extends Model
      */
     public function assignee(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'assignee_id');
+        return $this->belongsTo(\App\Models\User::class, 'assignee_id');
     }
 
     /**

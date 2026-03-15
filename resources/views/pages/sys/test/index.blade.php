@@ -153,10 +153,17 @@
 
                     axios.post('{{ route('sys.test.notification') }}')
                         .then(function(response) {
-                                icon: 'error',
-                                title: 'Error!',
-                                text: 'An error occurred while sending the notification.'
-                            });
+                            if (response.data.success) {
+                                showSuccessMessage('Notification Sent!', response.data.message)
+                                    .then(() => {
+                                        location.reload();
+                                    });
+                            } else {
+                                showErrorMessage('Error!', response.data.message);
+                            }
+                        })
+                        .catch(function(error) {
+                            showErrorMessage('Error!', 'An error occurred while sending the notification.');
                         });
                 }
             });

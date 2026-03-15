@@ -3,7 +3,7 @@ namespace App\Models\Hr;
 
 use App\Models\Hr\Lembur;
 use App\Models\Hr\Perizinan;
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -67,12 +67,12 @@ class RiwayatApproval extends Model
             return $subject->pengusul;
         }
 
-        // Default check if subject has 'pegawai' relationship or is Pegawai
+        // Default check if subject has 'hr_pegawai' relationship or is Pegawai
         if ($subject instanceof Pegawai) {
             return $subject;
         }
 
-        if (method_exists($subject, 'pegawai')) {
+        if (method_exists($subject, 'hr_pegawai')) {
             return $subject->pegawai;
         }
 

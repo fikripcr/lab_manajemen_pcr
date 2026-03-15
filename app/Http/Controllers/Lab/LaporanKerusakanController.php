@@ -27,7 +27,7 @@ class LaporanKerusakanController extends Controller
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('lab_nama', function ($row) {
-                return $row->inventaris && $row->inventaris->lab ? $row->inventaris->lab->name : '-';
+                return $row->inventaris && $row->inventaris->lab->isNotEmpty() ? $row->inventaris->lab->first()->name : '-';
             })
             ->addColumn('alat_info', function ($row) {
                 return $row->inventaris ? $row->inventaris->nama_alat : 'Umum/Lainnya';

@@ -100,9 +100,9 @@
                 </div>
             </x-tabler.card-body>
             
-            <div class="card-footer text-end">
+            <x-tabler.card-footer class="text-end">
                 <x-tabler.button type="submit" icon="{{ $isEdit ? 'ti ti-device-floppy' : 'ti ti-send' }}" text="{{ $isEdit ? 'Simpan Perubahan & Ajukan Ulang' : 'Ajukan' }}" />
-            </div>
+            </x-tabler.card-footer>
         </form>
     </x-tabler.card>
 </div>

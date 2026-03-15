@@ -3,10 +3,10 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Public\PublicSoftwareRequest;
-use App\Models\Lab\MataKuliah;
+use App\Models\Akademik\MataKuliah;
+use App\Models\Cms\Slideshow;
 use App\Models\Lab\Pengumuman;
 use App\Models\Lab\RequestSoftware;
-use App\Models\Shared\Slideshow;
 use Illuminate\Http\Request;
 
 class PublicController extends Controller
@@ -32,12 +32,12 @@ class PublicController extends Controller
             ->get();
 
         // Get active FAQs grouped by category
-        $faqs = \App\Models\Shared\FAQ::where('is_active', true)
+        $faqs = \App\Models\Cms\FAQ::where('is_active', true)
             ->orderBy('seq', 'asc')
             ->get()
             ->groupBy('category');
 
-        return view('pages.public.home', compact('recentNews', 'approvedSoftwareRequests', 'slideshows', 'faqs'));
+        return view('pages.public.home', compact('recentNews', 'approvedSoftwareRequests', 'cms_slideshows', 'cms_faqs'));
     }
 
     public function showNews(Pengumuman $pengumuman)
@@ -47,7 +47,7 @@ class PublicController extends Controller
             abort(404);
         }
 
-        return view('pages.public.news.show', compact('pengumuman'));
+        return view('pages.public.news.show', compact('cms_pengumuman'));
     }
 
     public function requestSoftware()

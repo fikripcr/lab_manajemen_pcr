@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     :title="isset($riwayat) && $riwayat->exists ? 'Edit Jabatan Fungsional' : 'Ajukan Perubahan Jabatan Fungsional'"
-    :route="isset($riwayat) && $riwayat->exists ? route('hr.pegawai.jabatan-fungsional.update', ['pegawai' => $pegawai->encrypted_pegawai_id, 'riwayat' => $riwayat->id]) : route('hr.pegawai.jabatan-fungsional.store', $pegawai->encrypted_pegawai_id)"
+    :route="isset($riwayat) && $riwayat->exists ? route('hr.pegawai.jabatan-fungsional.update', ['hr_pegawai' => $pegawai->encrypted_pegawai_id, 'riwayat' => $riwayat->id]) : route('hr.pegawai.jabatan-fungsional.store', $pegawai->encrypted_pegawai_id)"
     :method="isset($riwayat) && $riwayat->exists ? 'PUT' : 'POST'"
     :submitText="isset($riwayat) && $riwayat->exists ? 'Simpan Perubahan' : 'Ajukan Perubahan'"
 >

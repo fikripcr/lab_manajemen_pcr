@@ -3,10 +3,10 @@ namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\StoreTimMutuRequest;
-use App\Http\Requests\Shared\SearchRequest;
+use App\Http\Requests\Hr\SearchRequest;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Models\Pemutu\TimMutu;
-use App\Models\Shared\StrukturOrganisasi;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Services\Pemutu\PeriodeSpmiService;
 use App\Services\Pemutu\TimMutuService;
 
@@ -16,52 +16,45 @@ class TimMutuController extends Controller
         protected TimMutuService $timMutuService,
         protected PeriodeSpmiService $PeriodeSpmiService,
     ) {
-        $this->authorizeResourcePermissions('pemutu.tim-mutu');
-        $this->middleware('permission:pemutu.tim-mutu.update')->only(['editAuditee', 'storeAuditee', 'editAuditor', 'storeAuditor', 'manage']);
+        // $this->authorizeResourcePermissions('pemutu.tim-mutu');
+        // $this->middleware('permission:pemutu.tim-mutu.update')->only(['editAuditee', 'storeAuditee', 'editAuditor', 'storeAuditor', 'manage']);
     }
 
     /**
-     * Index — select a Periode SPMI to manage.
+     * Index — manage Tim Mutu based on global cycle.
      */
     public function index()
     {
-        $periodes = $this->PeriodeSpmiService->getAll();
+        $siklus = $this->PeriodeSpmiService->getSiklusData();
+        $orgUnits = $this->timMutuService->getOrgUnitsPaginated();
 
-        $activePeriode = $periodes->first();
-        $summary       = $activePeriode
-            ? $this->timMutuService->getSummary($activePeriode->periodespmi_id)
-            : null;
+        $data = [
+            'pageTitle' => 'Tim Mutu',
+            'siklus'    => $siklus,
+            'orgUnits'  => $orgUnits,
+        ];
 
-        return view('pages.pemutu.tim-mutu.index', compact('periodes', 'activePeriode', 'summary'));
-    }
-
-    /**
-     * Manage — card-based assignment page for a specific periode.
-     */
-    /**
-     * Manage — card-based assignment page for a specific periode.
-     */
-    public function manage(PeriodeSpmi $periode)
-    {
-        $periodeId   = $periode->periodespmi_id;
-        $orgUnits    = $this->timMutuService->getOrgUnitsPaginated();
-        $assignments = $this->timMutuService->getByPeriode($periodeId);
-
-        // Pre-build assignment data keyed by orgunit_id
-        $assignmentMap = [];
-        foreach ($assignments as $unitId => $items) {
-            $encryptedId                 = encryptId($unitId);
-            $assignmentMap[$encryptedId] = [
-                'auditee'       => $items->where('role', 'auditee')->first(),
-                'ketua_auditor' => $items->where('role', 'ketua_auditor')->first(),
-                'auditor'       => $items->where('role', 'auditor')->values(),
-                'anggota'       => $items->where('role', 'anggota')->values(),
-            ];
+        foreach (['akademik', 'non_akademik'] as $type) {
+            $periode = $siklus[$type];
+            $assignmentMap = [];
+            
+            if ($periode) {
+                $assignments = $this->timMutuService->getByPeriode($periode->periodespmi_id);
+                foreach ($assignments as $unitId => $items) {
+                    $encryptedId = encryptId($unitId);
+                    $assignmentMap[$encryptedId] = [
+                        'auditee'       => $items->where('role', 'auditee')->first(),
+                        'ketua_auditor' => $items->where('role', 'ketua_auditor')->first(),
+                        'auditor'       => $items->where('role', 'auditor')->values(),
+                        'anggota'       => $items->where('role', 'anggota')->values(),
+                    ];
+                }
+            }
+            
+            $data[$type . 'AssignmentMap'] = $assignmentMap;
         }
 
-        return view('pages.pemutu.tim-mutu.manage', compact(
-            'periode', 'orgUnits', 'assignmentMap'
-        ));
+        return view('pages.pemutu.tim-mutu.index', $data);
     }
 
     /**
@@ -74,7 +67,7 @@ class TimMutuController extends Controller
 
         $assignments = TimMutu::forPeriode($periodeId)
             ->forUnit($unitId)
-            ->with('pegawai')
+            ->with('hr_pegawai')
             ->get();
 
         $auditee = $assignments->where('role', 'auditee')->first();
@@ -101,7 +94,7 @@ class TimMutuController extends Controller
         $this->timMutuService->updateAuditee($periodeId, $unitId, $auditeeId, $anggotaIds);
 
         logActivity('pemutu', "Memperbarui Tim Auditee untuk unit: {$unit->name} pada periode: {$periode->periode}");
-        return jsonSuccess('Tim Auditee berhasil disimpan.', route('pemutu.tim-mutu.manage', $periode->encrypted_periodespmi_id));
+        return jsonSuccess('Tim Auditee berhasil disimpan.', route('pemutu.tim-mutu.index'));
     }
 
     /**
@@ -114,7 +107,7 @@ class TimMutuController extends Controller
 
         $assignments = TimMutu::forPeriode($periodeId)
             ->forUnit($unitId)
-            ->with('pegawai')
+            ->with('hr_pegawai')
             ->get();
 
         $ketuaAuditor = $assignments->where('role', 'ketua_auditor')->first();
@@ -138,7 +131,7 @@ class TimMutuController extends Controller
         $this->timMutuService->updateAuditor($periodeId, $unitId, $ketuaAuditorId, $auditorIds);
 
         logActivity('pemutu', "Memperbarui Tim Auditor untuk unit: {$unit->name} pada periode: {$periode->periode}");
-        return jsonSuccess('Tim Auditor berhasil disimpan.', route('pemutu.tim-mutu.manage', $periode->encrypted_periodespmi_id));
+        return jsonSuccess('Tim Auditor berhasil disimpan.', route('pemutu.tim-mutu.index'));
     }
 
     /**

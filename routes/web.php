@@ -15,8 +15,9 @@ require __DIR__ . '/event.php';
 // 🔹 Theme API (public, no auth required)
 Route::post('/theme/save', [App\Http\Controllers\Sys\ThemeTablerController::class, 'save'])->name('theme.save');
 
-// 🔹 Shared Routes (Authenticated)
-require __DIR__ . '/shared.php';
+// 🔹 CMS & Akademik Routes (Authenticated)
+require __DIR__ . '/cms.php';
+require __DIR__ . '/akademik.php';
 
 require __DIR__ . '/sys.php';
 

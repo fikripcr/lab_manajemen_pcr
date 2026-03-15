@@ -5,10 +5,7 @@ use App\Http\Requests\BaseRequest;
 
 class StoreJadwalRequest extends BaseRequest
 {
-    public function authorize()
-    {
-        return true;
-    }
+    
 
     protected function prepareForValidation()
     {

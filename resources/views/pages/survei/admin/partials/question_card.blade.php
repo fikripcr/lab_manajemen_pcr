@@ -1,6 +1,6 @@
-<div class="card mb-1 py-2 px-2 m-2 card-pertanyaan border-0 shadow-sm" data-id="{{ $pertanyaan->encrypted_pertanyaan_id }}"
-     style="border-left: 4px solid var(--tblr-primary) !important;">
-    <div class="card-body py-1 px-3">
+<x-tabler.card class="mb-1 py-2 px-2 m-2 card-pertanyaan border-0 shadow-sm" data-id="{{ $pertanyaan->encrypted_pertanyaan_id }}"
+             style="border-left: 4px solid var(--tblr-primary) !important;">
+    <x-tabler.card-body class="py-1 px-3">
         <div class="row align-items-start g-2">
             <div class="col-auto drag-handle cursor-move text-muted pt-1" title="Drag untuk mengatur urutan">
                 <i class="ti ti-grip-vertical"></i>
@@ -149,5 +149,5 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>

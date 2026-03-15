@@ -20,10 +20,11 @@ class Label extends Model
         return 'label_id';
     }
     protected $fillable = [
-        'type_id',
+        'parent_id',
         'name',
         'slug',
         'description',
+        'color',
         'created_by',
         'updated_by', 'deleted_by',
 
@@ -36,8 +37,13 @@ class Label extends Model
     }
 
     // Relationships
-    public function type()
+    public function parent()
     {
-        return $this->belongsTo(LabelType::class, 'type_id', 'labeltype_id');
+        return $this->belongsTo(Label::class, 'parent_id', 'label_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Label::class, 'parent_id', 'label_id');
     }
 }

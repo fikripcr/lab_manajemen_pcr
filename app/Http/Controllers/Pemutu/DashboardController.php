@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
-use App\Models\Shared\StrukturOrganisasi;
+use App\Models\Hr\StrukturOrganisasi;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -13,6 +13,13 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $pageTitle = 'Dashboard SPMI - Overview';
+
+        $pendingApprovalsCount = 0;
+        if (auth()->check() && auth()->user()->pegawai) {
+            $pendingApprovalsCount = \App\Models\Pemutu\RiwayatApproval::where('status', 'Pending')
+                ->where('pegawai_id', auth()->user()->pegawai->pegawai_id)
+                ->count();
+        }
 
         $years = PeriodeSpmi::orderBy('periode', 'desc')->pluck('periode')->unique()->toArray();
         if (empty($years)) {
@@ -169,7 +176,7 @@ class DashboardController extends Controller
         return view('pages.pemutu.dashboard.index', compact(
             'pageTitle', 'years', 'units', 'kriterias', 'currentYear', 'currentUnit', 'currentKriteria',
             'metrics', 'trendData', 'top3Units', 'bottom3Units', 'top3Standar', 'bottom3Standar',
-            'jenisKriteriaRaw', 'eisenhowerCount'
+            'jenisKriteriaRaw', 'eisenhowerCount', 'pendingApprovalsCount'
         ));
     }
 }

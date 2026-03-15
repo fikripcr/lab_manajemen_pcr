@@ -9,13 +9,13 @@ use App\Models\Lab\LabInventaris;
 use App\Models\Lab\LabTeam;
 use App\Models\Lab\LaporanKerusakan;
 use App\Models\Lab\LogPenggunaanLab;
-use App\Models\Lab\Mahasiswa;
-use App\Models\Lab\MataKuliah;
-use App\Models\Lab\Pengumuman;
-use App\Models\Lab\Personil;
-use App\Models\Lab\Semester;
+use App\Models\Akademik\Mahasiswa;
+use App\Models\Akademik\MataKuliah;
+use App\Models\Cms\Pengumuman;
+use App\Models\Hr\Personil;
+use App\Models\Akademik\Semester;
 use App\Models\Lab\SuratBebasLab;
-use App\Models\Shared\StrukturOrganisasi as OrgUnit;
+use App\Models\Hr\StrukturOrganisasi as OrgUnit;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -275,7 +275,7 @@ class MainLabSeeder extends Seeder
         $faker = \Faker\Factory::create('id_ID');
 
         for ($i = 1; $i <= 200; $i++) {
-            Pengumuman::create(['judul' => $faker->sentence(), 'isi' => $faker->paragraphs(3, true), 'jenis' => 'pengumuman', 'penulis_id' => $userIds[array_rand($userIds)], 'is_published' => $faker->boolean(80), 'published_at' => $faker->dateTimeBetween('-1 year', 'now')]);
+            Pengumuman::create(['judul' => $faker->sentence(), 'isi' => $faker->paragraphs(3, true), 'jenis' => 'cms_pengumuman', 'penulis_id' => $userIds[array_rand($userIds)], 'is_published' => $faker->boolean(80), 'published_at' => $faker->dateTimeBetween('-1 year', 'now')]);
             Pengumuman::create(['judul' => $faker->sentence(), 'isi' => $faker->paragraphs(3, true), 'jenis' => 'artikel_berita', 'penulis_id' => $userIds[array_rand($userIds)], 'is_published' => $faker->boolean(80), 'published_at' => $faker->dateTimeBetween('-1 year', 'now')]);
         }
     }

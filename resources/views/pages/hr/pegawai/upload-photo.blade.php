@@ -7,10 +7,10 @@
 <div class="row">
     <div class="col-md-8">
         <x-tabler.card>
-            <div class="card-header">
+            <x-tabler.card-header>
                 <h3 class="card-title">Upload Foto untuk Face Recognition</h3>
-            </div>
-            <div class="card-body">
+            </x-tabler.card-header>
+            <x-tabler.card-body>
                 <form id="uploadPhotoForm" enctype="multipart/form-data">
                     @csrf
                     <x-tabler.form-input type="file" id="photo" name="photo" label="Foto Pegawai" accept="image/*" required="true" help="Upload foto yang jelas wajahnya untuk face recognition yang akurat." />
@@ -46,7 +46,7 @@
                         <x-tabler.button href="{{ route('hr.pegawai.index') }}" type="back" />
                     </div>
                 </form>
-            </div>
+            </x-tabler.card-body>
         </x-tabler.card>
     </div>
     

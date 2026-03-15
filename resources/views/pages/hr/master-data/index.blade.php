@@ -57,8 +57,8 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-            <div class="card-body">
+            </x-tabler.card-header>
+            <x-tabler.card-body>
                 <div class="tab-content">
                     {{-- Status Pegawai --}}
                     @if($activeTab == 'status-pegawai')

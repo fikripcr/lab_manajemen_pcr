@@ -1,4 +1,4 @@
-﻿@extends('layouts.tabler.app')
+@extends('layouts.tabler.app')
 
 @section('title', $project->project_name)
 @section('pretitle', 'Project Dashboard')
@@ -421,7 +421,6 @@
     </div>
 </div>
 @endsection
-@endpush
 
 @push('scripts')
 <script type="module">
@@ -435,8 +434,6 @@ document.addEventListener('DOMContentLoaded', function() {
         widthBoard: '280px',
         boards: ['todo', 'in_progress', 'done']
     });
-
-    window.initProjectTabPersistence({{ $project->project_id }});
 });
 </script>
 @endpush

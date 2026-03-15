@@ -10,13 +10,8 @@ use App\Http\Controllers\Lab\LabTeamController;
 use App\Http\Controllers\Lab\LaporanKerusakanController;
 use App\Http\Controllers\Lab\LogPenggunaanLabController;
 use App\Http\Controllers\Lab\LogPenggunaanPcController;
-use App\Http\Controllers\Lab\MahasiswaController;
-use App\Http\Controllers\Lab\MataKuliahController;
 use App\Http\Controllers\Lab\PcAssignmentController;
-use App\Http\Controllers\Lab\PengumumanController;
 use App\Http\Controllers\Lab\PeriodSoftRequestController;
-use App\Http\Controllers\Lab\PersonilController;
-use App\Http\Controllers\Lab\SemesterController;
 use App\Http\Controllers\Lab\SoftwareRequestController;
 use App\Http\Controllers\Lab\SuratBebasLabController;
 use Illuminate\Support\Facades\Route;
@@ -53,13 +48,7 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
     });
     Route::resource('inventaris', InventarisController::class);
 
-    // Semester
-    Route::prefix('semesters')->name('semesters.')->group(function () {
-        Route::get('data', [SemesterController::class, 'data'])->name('data');
-        Route::get('create-modal', [SemesterController::class, 'createModal'])->name('create-modal');
-        Route::get('edit-modal/{semesterid?}', [SemesterController::class, 'editModal'])->name('edit-modal.show');
-    });
-    Route::resource('semesters', SemesterController::class);
+
 
     // Jadwal
     Route::prefix('jadwal')->name('jadwal.')->group(function () {
@@ -78,9 +67,7 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
     });
     Route::resource('jadwal', JadwalController::class);
 
-    // Mata Kuliah
-    Route::get('api/mata-kuliah', [MataKuliahController::class, 'data'])->name('mata-kuliah.data');
-    Route::resource('mata-kuliah', MataKuliahController::class);
+
 
     // Software Requests
     Route::prefix('software-requests')->name('software-requests.')->controller(SoftwareRequestController::class)->group(function () {
@@ -94,29 +81,7 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
         Route::post('/{id}/approve', 'approve')->name('approve');
     });
 
-// Pengumuman
-    Route::prefix('pengumuman')->name('pengumuman.')->controller(PengumumanController::class)->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/create', 'create')->name('create');
-        Route::post('/', 'store')->name('store');
-        Route::get('/{pengumuman}', 'show')->name('show');
-        Route::get('/{pengumuman}/edit', 'edit')->name('edit');
-        Route::put('/{pengumuman}', 'update')->name('update');
-        Route::delete('/{pengumuman}', 'destroy')->name('destroy');
-        Route::get('/api/data', 'data')->name('data');
-    });
 
-// Berita
-    Route::prefix('berita')->name('berita.')->controller(PengumumanController::class)->group(function () {
-        Route::get('/', 'beritaIndex')->name('index');
-        Route::get('/create', 'create')->defaults('type', 'berita')->name('create');
-        Route::post('/', 'store')->name('store');
-        Route::get('/{pengumuman}', 'show')->name('show');
-        Route::get('/{pengumuman}/edit', 'edit')->name('edit');
-        Route::put('/{pengumuman}', 'update')->name('update');
-        Route::delete('/{pengumuman}', 'destroy')->name('destroy');
-        Route::get('/api/data', 'data')->name('data');
-    });
 
     // Log Penggunaan PC
     Route::prefix('log-pc')->name('log-pc.')->controller(LogPenggunaanPcController::class)->group(function () {
@@ -168,19 +133,6 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
     Route::get('api/periode-request', [PeriodSoftRequestController::class, 'data'])->name('periode-request.data');
     Route::resource('periode-request', PeriodSoftRequestController::class);
 
-// Mahasiswa
-    Route::get('api/mahasiswa', [MahasiswaController::class, 'data'])->name('mahasiswa.data');
-    Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
-        Route::get('edit-modal/{id}', [MahasiswaController::class, 'editModal'])->name('edit-modal.show');
-        Route::post('{mahasiswa}/generate-user', [MahasiswaController::class, 'generateUser'])->name('generate-user');
-    });
-    Route::resource('mahasiswa', MahasiswaController::class);
 
-// Personil
-    Route::get('api/personil', [PersonilController::class, 'data'])->name('personil.data');
-    Route::prefix('personil')->name('personil.')->group(function () {
-        Route::get('edit-modal/{id}', [PersonilController::class, 'editModal'])->name('edit-modal.show');
-    });
-    Route::resource('personil', PersonilController::class);
 
 });

@@ -2,12 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Shared\Pengumuman;
+use App\Models\Cms\Pengumuman;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shared\Pengumuman>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Cms\Pengumuman>
  */
 class PengumumanFactory extends Factory
 {
@@ -23,7 +23,7 @@ class PengumumanFactory extends Factory
         return [
             'judul' => fake()->sentence(),
             'isi' => fake()->paragraphs(3, true),
-            'jenis' => fake()->randomElement(['pengumuman', 'artikel_berita']),
+            'jenis' => fake()->randomElement(['cms_pengumuman', 'artikel_berita']),
             'penulis_id' => User::factory(),
             'is_published' => true,
             'published_at' => now(),
@@ -47,7 +47,7 @@ class PengumumanFactory extends Factory
     public function announcement(): static
     {
         return $this->state(fn (array $attributes) => [
-            'jenis' => 'pengumuman',
+            'jenis' => 'cms_pengumuman',
         ]);
     }
 

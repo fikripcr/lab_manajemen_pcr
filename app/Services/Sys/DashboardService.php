@@ -144,18 +144,6 @@ class DashboardService
     /**
      * Get server monitoring data
      */
-    /**
-     * Get recent news (published announcements)
-     */
-    public function getRecentNews(int $limit = 5): \Illuminate\Database\Eloquent\Collection
-    {
-        return \App\Models\Shared\Pengumuman::with('penulis')
-            ->where('is_published', true)
-            ->latest('published_at')
-            ->limit($limit)
-            ->get();
-    }
-
     public function getServerMonitoringData(): array
     {
         $serverMonitoringData = [];

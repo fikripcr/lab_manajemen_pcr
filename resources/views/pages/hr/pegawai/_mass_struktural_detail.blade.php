@@ -1,10 +1,10 @@
-<div class="card-header">
+<x-tabler.card-header>
     <h3 class="card-title">
         {{ $unit->name }}
         <span class="badge bg-primary-lt ms-2">{{ ucfirst(str_replace('_', ' ', $unit->type)) }}</span>
     </h3>
-</div>
-<div class="card-body">
+</x-tabler.card-header>
+<x-tabler.card-body>
     {{-- Current Assignments --}}
     <h4 class="mb-3">Pegawai yang Ditugaskan</h4>
     @if($assignments->count() > 0)
@@ -74,4 +74,4 @@
             <x-tabler.button type="create" text="Tambah Struktural" />
         </div>
     </form>
-</div>
+</x-tabler.card-body>

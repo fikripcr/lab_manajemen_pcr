@@ -2,124 +2,91 @@
 @section('title', 'Master Label')
 
 @section('header')
-<x-tabler.page-header title="Master Label" pretitle="Data Master"/>
+<x-tabler.page-header title="Master Label" pretitle="Data Master">
+    <x-slot:actions>
+        <x-tabler.button type="create" class="ajax-modal-btn" data-url="{{ route('pemutu.label.create') }}" data-modal-title="Tambah Label Baru" />
+    </x-slot:actions>
+</x-tabler.page-header>
 @endsection
 
 @section('content')
 <div class="row row-cards">
-    <!-- Sidebar: Label Types -->
-    <div class="col-lg-4">
+    @foreach($parents as $parent)
+    <div class="col-lg-6 col-xl-4">
         <x-tabler.card>
-            <x-tabler.card-header title="Tipe Label">
+            <x-tabler.card-header>
+                <x-slot:title>
+                    <span class="d-flex align-items-center gap-2">
+                        <span class="avatar avatar-xs rounded bg-{{ $parent->color ?? 'blue' }}"></span>
+                        {{ $parent->name }}
+                    </span>
+                </x-slot:title>
                 <x-slot:actions>
-                    <x-tabler.button type="create" class="btn-sm me-0 ajax-modal-btn" data-url="{{ route('pemutu.label-type.create') }}" data-modal-title="Tambah Tipe Label" />
+                    <x-tabler.dropdown>
+                        <x-tabler.dropdown-item icon="ti ti-plus text-success" label="Tambah Label" 
+                            class="ajax-modal-btn" 
+                            url="{{ route('pemutu.label.create', ['parent_id' => $parent->encrypted_label_id]) }}" 
+                            data-title="Tambah Label di {{ $parent->name }}" />
+                        <x-tabler.dropdown-item type="edit" 
+                            url="{{ route('pemutu.label.edit', $parent->encrypted_label_id) }}" 
+                            data-title="Edit {{ $parent->name }}" />
+                        <x-tabler.dropdown-divider />
+                        <x-tabler.dropdown-item type="delete" 
+                            url="{{ route('pemutu.label.destroy', $parent->encrypted_label_id) }}" 
+                            data-text="Semua label di dalam grup ini juga akan terhapus." />
+                    </x-tabler.dropdown>
                 </x-slot:actions>
             </x-tabler.card-header>
-            <div class="list-group list-group-flush" id="label-type-list">
-                <a href="#" class="list-group-item list-group-item-action active d-flex align-items-center" data-type-id="" onclick="filterLabels(this, '')">
-                    All Labels
-                    <span class="ms-auto badge bg-secondary-lt">{{ $totalLabels }}</span>
-                </a>
-                @foreach($types as $type)
-                    <div class="list-group-item list-group-item-action flex-column align-items-start label-type-item py-2" data-type-id="{{ $type->encrypted_labeltype_id }}" onclick="filterLabels(this, '{{ $type->encrypted_labeltype_id }}', event)">
-                        <div class="d-flex w-100 justify-content-between align-items-center">
-                            <span class="d-flex align-items-center gap-2 text-truncate fw-bold" style="cursor: pointer;">
-                                <span class="avatar avatar-xs rounded bg-{{ $type->color ?? 'blue' }}"></span>
-                                {{ $type->name }}
-                            </span>
-                            <div class="d-flex gap-1">
-                                 <x-tabler.button type="button" iconOnly class="btn-ghost-secondary ajax-modal-btn" 
-                                    data-url="{{ route('pemutu.label-type.edit', $type->encrypted_labeltype_id) }}" 
-                                    data-modal-title="Edit Tipe" icon="ti ti-pencil" />
-                                 <x-tabler.button type="button" iconOnly class="btn-ghost-danger ajax-delete" 
-                                    data-url="{{ route('pemutu.label-type.destroy', $type->encrypted_labeltype_id) }}" 
-                                    data-title="Hapus Tipe?" 
-                                    data-text="Menghapus tipe akan menghapus semua label di dalamnya." icon="ti ti-trash" />
+            <x-tabler.card-body class="p-3">
+                @if($parent->children && $parent->children->count() > 0)
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach($parent->children as $child)
+                            <div class="d-inline-flex align-items-center">
+                                <span class="badge bg-{{ $child->color ?? $parent->color ?? 'blue' }}-lt text-{{ $child->color ?? $parent->color ?? 'blue' }} fs-6 fw-medium px-3 py-2">
+                                    {{ $child->name }}
+                                </span>
+                                <x-tabler.dropdown>
+                                    <x-tabler.dropdown-item type="edit" 
+                                        url="{{ route('pemutu.label.edit', $child->encrypted_label_id) }}" 
+                                        data-title="Edit Label" />
+                                    <x-tabler.dropdown-divider />
+                                    <x-tabler.dropdown-item type="delete" 
+                                        url="{{ route('pemutu.label.destroy', $child->encrypted_label_id) }}" />
+                                </x-tabler.dropdown>
                             </div>
-                        </div>
-                        @if($type->description)
-                            <small class="text-muted text-truncate w-100" style="display: block;">{{ $type->description }}</small>
-                        @endif
+                        @endforeach
                     </div>
-                @endforeach
-            </div>
-        </x-tabler.card>
-    </div>
-
-    <!-- Content: Labels -->
-    <div class="col-lg-8">
-        <x-tabler.card>
-            <x-tabler.card-header title="Daftar Label">
-                <x-slot:actions>
-                    <x-tabler.button type="create" class="btn-sm ajax-modal-btn" id="btn-add-label" data-url="{{ route('pemutu.label.create') }}" data-modal-title="Tambah Label Baru" />
-                </x-slot:actions>
-            </x-tabler.card-header>
-            <x-tabler.card-body class="p-0 table-responsive">
-                <x-tabler.datatable
-                    id="table-labels"
-                    route="{{ route('pemutu.label.data') }}"
-                    :columns="[
-                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '5%', 'class' => 'text-center'],
-                        ['data' => 'name', 'name' => 'name', 'title' => 'Nama Label', 'class' => 'text-center'],
-                        ['data' => 'description', 'name' => 'description', 'title' => 'Deskripsi', 'class' => 'text-center'],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '15%']
-                    ]"
-                />
+                @else
+                    <div class="text-center text-muted py-3">
+                        <i class="ti ti-tags opacity-50 d-block mb-1"></i>
+                        <small>Label tidak memiliki sub label (Label Tunggal)</small>
+                    </div>
+                @endif
             </x-tabler.card-body>
         </x-tabler.card>
     </div>
+    @endforeach
+
+    @if($parents->isEmpty())
+    <div class="col-12">
+        <x-tabler.card>
+            <x-tabler.card-body class="text-center py-5">
+                <i class="ti ti-tags fs-1 text-muted opacity-50 d-block mb-2"></i>
+                <p class="text-muted mb-3">Belum ada grup label. Buat grup label pertama Anda.</p>
+                <x-tabler.button type="create" class="ajax-modal-btn" data-url="{{ route('pemutu.label.create') }}" data-modal-title="Tambah Label Baru" />
+            </x-tabler.card-body>
+        </x-tabler.card>
+    </div>
+    @endif
 </div>
 @endsection
 
 @push('scripts')
 <script>
-    let currentTypeId = '';
-
-    function filterLabels(element, typeId, event) {
-        // Prevent if clicked on button group or buttons
-        if (event && $(event.target).closest('.btn-icon').length) return;
-
-        $('#label-type-list .list-group-item').removeClass('active');
-        // If it's the "All" link or a specific type item (which is now a div for type items, but a tag for 'All')
-        // We can just add active class to the element passed.
-        // Wait, the element passed is the div/a itself.
-        
-        // Remove active from all items in list-group
-        $('#label-type-list .list-group-item').removeClass('active');
-        
-        $(element).addClass('active');
-
-        currentTypeId = typeId;
-        
-        // Reload DataTable
-        const table = $('#table-labels').DataTable();
-        const url = "{{ route('pemutu.label.data') }}?type_id=" + typeId;
-        table.ajax.url(url).load();
-
-        // Update Add Label Button URL
-        const addBtn = $('#btn-add-label');
-        let addUrl = "{{ route('pemutu.label.create') }}";
-        if(typeId) {
-            addUrl += "?type_id=" + typeId;
-        }
-        addBtn.attr('data-url', addUrl);
-    }
-
-    // Unified layout handles 'form-success' event
     document.addEventListener('form-success', function(e) {
-        if (e.detail && e.detail.redirect) {
-            // If response has redirect, it might handle it.
-        } else {
-             if(e.detail.url && e.detail.url.includes('label-types')) {
-                 location.reload();
-             } else {
-                 $('#table-labels').DataTable().ajax.reload();
-             }
+        if (!e.detail || !e.detail.redirect) {
+            location.reload();
         }
     });
 </script>
-<style>
-    .hover-opacity-100 { opacity: 0; transition: opacity 0.2s; }
-    .label-type-item:hover .hover-opacity-100 { opacity: 1; }
-</style>
 @endpush

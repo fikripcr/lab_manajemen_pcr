@@ -7,12 +7,7 @@ use App\Http\Requests\BaseRequest;
 class NotificationSendRequest extends BaseRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -32,18 +27,9 @@ class NotificationSendRequest extends BaseRequest
     }
 
     /**
-     * Get custom error messages for validation rules.
      *
      * @return array<string, string>
      */
-    public function messages(): array
-    {
-        return array_merge(parent::messages(), [
-            'type.in' => 'Tipe harus database atau email.',
-            'user_id.exists' => 'User tidak ditemukan.',
-            'level.in' => 'Level harus info, success, warning, atau error.',
-        ]);
-    }
 
     public function attributes(): array
     {

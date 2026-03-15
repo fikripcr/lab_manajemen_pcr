@@ -16,7 +16,7 @@
 <div class="row row-cards">
     <div class="col-12">
         <x-tabler.card>
-            <div class="card-header">
+            <x-tabler.card-header>
                 <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
                     <li class="nav-item">
                         <a href="{{ route('eoffice.master-data.index', ['tab' => 'jenis-layanan']) }}" class="nav-link {{ $activeTab == 'jenis-layanan' ? 'active' : '' }}">
@@ -28,9 +28,8 @@
                             <i class="ti ti-category me-1"></i> Kategori Isian
                         </a>
                     </li>
-                </ul>
-            </div>
-            <div class="card-body">
+            </x-tabler.card-header>
+            <x-tabler.card-body>
                 <div class="tab-content">
                     {{-- Jenis Layanan Tab --}}
                     @if($activeTab == 'jenis-layanan')
@@ -84,8 +83,8 @@
                     </div>
                     @endif
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 </div>
 @endsection

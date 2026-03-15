@@ -13,10 +13,10 @@ class EvaluasiKpiService
      */
     public function getDataTableQuery(PeriodeKpi $periode): Builder
     {
-        return IndikatorPegawai::with(['indikator', 'pegawai'])
+        return IndikatorPegawai::with(['indikator', 'hr_pegawai'])
             ->where('periode_kpi_id', $periode->periode_kpi_id)
             ->whereHas('indikator')
-            ->whereHas('pegawai');
+            ->whereHas('hr_pegawai');
     }
 
     /**

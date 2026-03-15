@@ -53,14 +53,14 @@
                     </tr>
                     @endforeach
                 </x-tabler.datatable-client>
-            </div>
+            </x-tabler.card-body>
             @if($pendaftaran->status_terkini == 'Menunggu_Verifikasi_Berkas')
-            <div class="card-footer text-end">
+            <x-tabler.card-footer class="text-end">
                 <form action="{{ route('pmb.camaba.finalize-files', $pendaftaran->encrypted_pendaftaran_id) }}" method="POST" class="ajax-form" data-redirect="true">
                     @csrf
                     <x-tabler.button type="success" size="lg" text="Selesai Unggah & Ajukan Verifikasi" />
                 </form>
-            </div>
+            </x-tabler.card-footer>
             @endif
-        </div>
+        </x-tabler.card>
 @endsection

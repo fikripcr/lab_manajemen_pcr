@@ -3,9 +3,9 @@ namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\RiwayatJabStrukturalRequest;
-use App\Models\Hr\OrgUnit;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Hr\RiwayatJabStruktural;
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use App\Services\Hr\PegawaiService;
 use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
@@ -22,14 +22,14 @@ class RiwayatJabStrukturalController extends Controller
 
     public function create(Pegawai $pegawai)
     {
-        // Use OrgUnit with type 'jabatan_struktural' instead of legacy JabatanStruktural
-        $jabatan = OrgUnit::where('type', 'jabatan_struktural')
+        // Use StrukturOrganisasi with type 'jabatan_struktural' instead of legacy JabatanStruktural
+        $jabatan = StrukturOrganisasi::where('type', 'jabatan_struktural')
             ->where('is_active', true)
             ->orderBy('name')
             ->get();
 
         $riwayat = new RiwayatJabStruktural();
-        return view('pages.hr.jabatan-struktural.create-edit-ajax', compact('pegawai', 'jabatan', 'riwayat'));
+        return view('pages.hr.jabatan-struktural.create-edit-ajax', compact('hr_pegawai', 'jabatan', 'riwayat'));
     }
 
     public function store(RiwayatJabStrukturalRequest $request, Pegawai $pegawai)
@@ -41,7 +41,7 @@ class RiwayatJabStrukturalController extends Controller
 
     public function data()
     {
-        $query = RiwayatJabStruktural::with(['pegawai', 'orgUnit'])->select('hr_riwayat_jabstruktural.*');
+        $query = RiwayatJabStruktural::with(['hr_pegawai', 'orgUnit'])->select('hr_riwayat_jabstruktural.*');
 
         return DataTables::of($query)
             ->addIndexColumn()

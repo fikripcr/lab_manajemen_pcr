@@ -6,7 +6,7 @@ use App\Models\Pmb\Jalur;
 use App\Models\Pmb\JenisDokumen;
 use App\Models\Pmb\Periode;
 use App\Models\Pmb\SyaratDokumenJalur;
-use App\Models\Shared\StrukturOrganisasi as OrgUnit;
+use App\Models\Hr\StrukturOrganisasi as OrgUnit;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 

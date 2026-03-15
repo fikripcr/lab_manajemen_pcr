@@ -132,6 +132,7 @@ window.addEventListener('load', function() {
                 </div>
                 </x-tabler.card-body>
             </x-tabler.card>
+        </div>
     </div>
     
     <!-- Quick Info Card -->
@@ -153,8 +154,8 @@ window.addEventListener('load', function() {
                         <span class="badge bg-blue-lt">Tetap</span>
                     </div>
                 </div>
-                </x-tabler.card-body>
-            </x-tabler.card>
+            </x-tabler.card-body>
+        </x-tabler.card>
         
         <x-tabler.card>
             <x-tabler.card-header title="Jadwal Kerja" />
@@ -173,8 +174,8 @@ window.addEventListener('load', function() {
                         </div>
                     </div>
                 </div>
-                </x-tabler.card-body>
-            </x-tabler.card>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 </div>
 

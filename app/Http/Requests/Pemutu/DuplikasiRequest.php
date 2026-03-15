@@ -5,17 +5,13 @@ use App\Http\Requests\BaseRequest;
 
 class DuplikasiRequest extends BaseRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     public function rules(): array
     {
         return [
             'target_periode'     => ['required', 'integer', 'min:2020', 'max:2099'],
             'selected_dok_ids'   => ['required', 'array', 'min:1'],
-            'selected_dok_ids.*' => ['required', 'integer', 'exists:pemutu_dokumen,dok_id'],
+            'selected_dok_ids.*' => ['required', 'string'],
         ];
     }
 

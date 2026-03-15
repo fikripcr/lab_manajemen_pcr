@@ -2,7 +2,7 @@
 namespace App\Services\Hr;
 
 use App\Models\Hr\RiwayatJabFungsional;
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use Illuminate\Support\Facades\DB;
 
 class RiwayatJabFungsionalService

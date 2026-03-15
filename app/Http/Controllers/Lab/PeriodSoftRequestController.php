@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Lab;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\PeriodSoftRequestRequest;
 use App\Models\Lab\PeriodSoftRequest;
-use App\Models\Lab\Semester;
+use App\Models\Akademik\Semester;
 use App\Services\Lab\PeriodSoftRequestService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;

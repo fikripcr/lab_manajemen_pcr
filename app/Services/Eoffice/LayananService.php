@@ -3,8 +3,8 @@ namespace App\Services\Eoffice;
 
 use App\Models\Eoffice\JenisLayanan;
 use App\Models\Eoffice\Layanan;
-use App\Models\Eoffice\Mahasiswa;
-use App\Models\Eoffice\Pegawai;
+use App\Models\Akademik\Mahasiswa;
+use App\Models\Hr\Pegawai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;

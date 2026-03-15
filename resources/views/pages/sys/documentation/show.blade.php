@@ -56,14 +56,14 @@
                             </div>
                         </nav>
                     </x-tabler.card-body>
-                    <div class="card-footer bg-surface-secondary">
+                    <x-tabler.card-footer class="bg-surface-secondary">
                         <div class="d-flex align-items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 8l0 4" /><path d="M12 16l0 .01" /><path d="M3 12a9 9 0 1 1 18 0a9 9 0 0 1 -18 0" /></svg>
                             <small class="text-muted">
                                 Updated: {{ formatTanggalIndo($lastUpdated) }}
                             </small>
                         </div>
-                    </div>
+                    </x-tabler.card-footer>
                 </x-tabler.card>
             </div>
 

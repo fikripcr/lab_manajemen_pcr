@@ -166,20 +166,20 @@
                 <div class="col-12 mt-4">
                     <x-tabler.card>
                         <x-tabler.card-header>
-                            <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+                            <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" id="user-detail-tabs">
                                 <li class="nav-item">
-                                    <a href="#tabs-activity" class="nav-link active" data-bs-toggle="tab" data-dt-id="dt-activity">
-                                        <i class="ti ti-activity me-2"></i>Log Aktivitas
+                                    <a href="#tabs-activity" class="nav-link active" data-bs-toggle="tab">
+                                        <i class="ti ti-history me-1"></i> Activity Log
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#tabs-notification" class="nav-link" data-bs-toggle="tab" data-dt-id="dt-notification">
-                                        <i class="ti ti-bell me-2"></i>Notifikasi
+                                    <a href="#tabs-notification" class="nav-link" data-bs-toggle="tab">
+                                        <i class="ti ti-bell me-1"></i> Notifications
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#tabs-error" class="nav-link" data-bs-toggle="tab" data-dt-id="dt-error">
-                                        <i class="ti ti-bug me-2"></i>Log Error
+                                    <a href="#tabs-error" class="nav-link" data-bs-toggle="tab">
+                                        <i class="ti ti-alert-triangle me-1"></i> Error Logs
                                     </a>
                                 </li>
                             </ul>
@@ -261,17 +261,6 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Auto-activate tab from URL hash
-    let hash = window.location.hash;
-    if (hash) {
-        let tabEl = document.querySelector('a[href="' + hash + '"]');
-        if (tabEl) {
-            // Using bootstrap Tab instance
-            let tab = new bootstrap.Tab(tabEl);
-            tab.show();
-        }
-    }
-
     $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
         if ($.fn.dataTable) {
             $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();

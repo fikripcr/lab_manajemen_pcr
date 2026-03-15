@@ -71,9 +71,6 @@ class DashboardController extends Controller
         // Retrieve server monitoring data
         $serverMonitoringData = $this->dashboardService->getServerMonitoringData();
 
-        // Get recent news
-        $recentNews = $this->dashboardService->getRecentNews(5);
-
         $yesterdayActivityCount = $this->dashboardService->getYesterdayActivityCount();
         $yesterdayErrorCount    = $this->dashboardService->getYesterdayErrorCount();
         $recentErrors           = $this->dashboardService->getRecentErrors(10);
@@ -94,7 +91,6 @@ class DashboardController extends Controller
             'activityChartData',
             'errorChartData',
             'serverMonitoringData',
-            'recentNews',
             'yesterdayActivityCount',
             'yesterdayErrorCount',
             'recentErrors'

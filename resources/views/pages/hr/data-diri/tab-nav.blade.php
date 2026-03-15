@@ -1,4 +1,4 @@
-<div class="card-header">
+<x-tabler.card-header>
     <ul class="nav nav-tabs card-header-tabs">
         <li class="nav-item">
             <a href="{{ route('hr.pegawai.show', $pegawai->encrypted_pegawai_id) }}" 
@@ -63,4 +63,4 @@
             </a>
         </li>
     </ul>
-</div>
+</x-tabler.card-header>

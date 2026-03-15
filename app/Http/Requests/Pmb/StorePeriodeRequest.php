@@ -5,10 +5,7 @@ use App\Http\Requests\BaseRequest;
 
 class StorePeriodeRequest extends BaseRequest
 {
-    public function authorize()
-    {
-        return true;
-    }
+    
 
     public function rules()
     {

@@ -17,17 +17,18 @@
                                 @include('pages.hr.pegawai._mass_tree_item', ['unit' => $unit])
                             @endforeach
                         </ul>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             {{-- Right Panel: Assignment Panel --}}
             <div class="col-lg-7">
                 <x-tabler.card id="assignment-panel">
-                    <div class="card-body text-center py-5 text-muted">
+                    <x-tabler.card-body class="text-center py-5 text-muted">
                         <i class="ti ti-hand-click" style="font-size: 3rem;"></i>
                         <p class="mt-3">Pilih unit/jabatan di sebelah kiri untuk mengelola struktural</p>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
 @endsection

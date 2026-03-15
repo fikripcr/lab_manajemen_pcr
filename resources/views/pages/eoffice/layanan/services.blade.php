@@ -137,7 +137,7 @@
                     </x-tabler.card-body>
 
                     {{-- Card Footer with Action --}}
-                    <div class="card-footer bg-transparent border-0 pb-3 px-3">
+                    <x-tabler.card-footer class="bg-transparent border-0 pb-3 px-3">
                         @if($item->is_active)
                             <x-tabler.button 
                                 href="{{ route('eoffice.layanan.create', $item->encrypted_jenislayanan_id) }}" 
@@ -148,7 +148,7 @@
                         @else
                             <x-tabler.button class="w-100" style="secondary" disabled="true" text="Layanan Tidak Aktif" />
                         @endif
-                    </div>
+                    </x-tabler.card-footer>
                 </x-tabler.card>
             </div>
         @endforeach

@@ -258,7 +258,7 @@ class NotificationService
                 'body'       => $notification->data['body'] ?? 'New notification',
                 'created_at' => formatTanggalIndo($notification->created_at),
                 'is_unread'  => is_null($notification->read_at),
-                'action_url' => route('notifications.mark-as-read', $notification->id),
+                'action_url' => route('sys.notifications.mark-as-read', $notification->id),
             ];
         });
     }

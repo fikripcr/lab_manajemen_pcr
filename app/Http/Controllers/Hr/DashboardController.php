@@ -6,7 +6,7 @@ use App\Models\Hr\Lembur;
 use App\Models\Hr\Perizinan;
 use App\Models\Hr\Presensi;
 use App\Models\Hr\RiwayatApproval;
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -140,29 +140,27 @@ class DashboardController extends Controller
 
     private function getRecentActivities()
     {
-        return collect([]);
-        /*
-        return ActivityLog::with('user')
-            ->orderBy('created_at', 'desc')
+        return \App\Models\Sys\Activity::with('causer')
+            ->latest()
             ->limit(10)
             ->get()
             ->map(function ($activity) {
-                $activity->type_color = $this->getActivityTypeColor($activity->action);
+                $activity->action = $activity->description;
+                $activity->type_color = $this->getActivityTypeColor($activity->description);
                 return $activity;
             });
-        */
     }
 
     private function getActivityTypeColor($action)
     {
         $colors = [
-            'create'  => 'success',
-            'update'  => 'primary',
-            'delete'  => 'danger',
-            'approve' => 'success',
-            'reject'  => 'danger',
-            'login'   => 'blue',
-            'logout'  => 'yellow',
+            'created'  => 'success',
+            'updated'  => 'primary',
+            'deleted'  => 'danger',
+            'approved' => 'success',
+            'rejected' => 'danger',
+            'login'    => 'blue',
+            'logout'   => 'yellow',
         ];
 
         foreach ($colors as $key => $color) {
@@ -189,15 +187,21 @@ class DashboardController extends Controller
         $attendanceTrend = [];
         $labels          = [];
 
+        // Check if we have any employees
+        $totalPegawai = Pegawai::whereHas('latestStatusPegawai.statusPegawai', function ($query) {
+            $query->where('is_active', true);
+        })->count();
+
         for ($i = 29; $i >= 0; $i--) {
             $date     = now()->subDays($i);
             $labels[] = $date->format('d');
 
-            // Simulate attendance data
-            $totalPegawai = Pegawai::whereHas('latestStatusPegawai.statusPegawai', function ($query) {
-                $query->where('is_active', true);
-            })->count();
+            if ($totalPegawai === 0) {
+                $attendanceTrend[] = ['hadir' => 0, 'cuti' => 0, 'izin' => 0];
+                continue;
+            }
 
+            // Simulate attendance data
             $hadir = round($totalPegawai * (rand(80, 95) / 100));
             $cuti  = round($totalPegawai * (rand(2, 8) / 100));
             $izin  = round($totalPegawai * (rand(1, 5) / 100));
@@ -230,10 +234,11 @@ class DashboardController extends Controller
         // Get units with employee counts
         // We link Pegawai to their latest RiwayatJabStruktural
         return Pegawai::whereHas('latestJabatanStruktural')
+            ->with('latestJabatanStruktural.orgUnit')
             ->get()
             ->groupBy('latestJabatanStruktural.org_unit_id')
             ->map(function ($group, $orgUnitId) {
-                $unit = \App\Models\Shared\StrukturOrganisasi::find($orgUnitId);
+                $unit = \App\Models\Hr\StrukturOrganisasi::find($orgUnitId);
                 return (object) [
                     'name'  => $unit->name ?? 'Unknown',
                     'count' => $group->count(),

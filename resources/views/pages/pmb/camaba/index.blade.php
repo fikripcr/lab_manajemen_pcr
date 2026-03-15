@@ -10,7 +10,7 @@
 
 @section('content')
 <x-tabler.card>
-    <div class="card-header border-bottom">
+    <x-tabler.card-header class="border-bottom">
         <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
             <h3 class="card-title mb-0">Calon Mahasiswa Baru</h3>
             <div class="ms-auto d-flex gap-2">
@@ -18,8 +18,8 @@
                 <x-tabler.datatable-search :dataTableId="'table-camaba'" />
             </div>
         </div>
-    </div>
-    <div class="card-body">
+    </x-tabler.card-header>
+    <x-tabler.card-body>
         <x-tabler.datatable
             id="table-camaba"
             :columns="[
@@ -32,7 +32,7 @@
             ]"
             :route="route('pmb.camaba.data')"
         />
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection
 

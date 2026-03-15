@@ -198,7 +198,7 @@
                 </x-tabler.card-body>
 
                 {{-- Navigation --}}
-                <div class="card-footer">
+                <x-tabler.card-footer>
                     <div class="row align-items-center">
                         <div class="col-md-6">
                             <x-tabler.button type="button" id="prev-question" onclick="CBT.navigateQuestion('prev')" type="back" />
@@ -208,7 +208,7 @@
                             <x-tabler.button type="button" onclick="CBT.submitExam()" icon="ti ti-check" text="Selesai Ujian" />
                         </div>
                     </div>
-                </div>
+                </x-tabler.card-footer>
             </x-tabler.card>
         </div>
     </div>

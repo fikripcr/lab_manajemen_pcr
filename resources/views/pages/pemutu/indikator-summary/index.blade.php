@@ -7,7 +7,7 @@
     <div class="col-12">
         <x-tabler.card>
             <x-tabler.card-header>
-                <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                <ul class="nav nav-tabs card-header-tabs" role="tablist" id="indikator-summary-tabs">
                     <li class="nav-item">
                         <a class="nav-link active" data-bs-toggle="tab" href="#tab-standar" role="tab">
                             <i class="ti ti-book me-2"></i>Indikator Standar
@@ -57,8 +57,8 @@
         const target = event.target.getAttribute('href');
         if (target === '#tab-performa') {
             // Refresh performa table when tab is shown
-            if (window.DT_table-performa) {
-                window.DT_table-performa.table.draw();
+            if (window['DT_table-performa']) {
+                window['DT_table-performa'].table.draw();
             }
         }
     });

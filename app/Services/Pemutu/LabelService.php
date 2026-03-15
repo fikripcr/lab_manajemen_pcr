@@ -12,14 +12,14 @@ class LabelService
 
     public function getLabelFilteredQuery(array $filters = [])
     {
-        $query = Label::with('type')->select('*');
+        $query = Label::with('parent')->select('*');
 
-        if (! empty($filters['type_id'])) {
-            $typeId = decryptIdIfEncrypted($filters['type_id']);
-            $query->where('type_id', $typeId);
+        if (! empty($filters['parent_id'])) {
+            $parentId = decryptIdIfEncrypted($filters['parent_id']);
+            $query->where('parent_id', $parentId);
+        } else {
+            // default mode without parent_id filter could show all or only parents. Let's show all if no parent_id selected.
         }
-
-        // Add more filters if needed
 
         return $query;
     }
@@ -31,7 +31,7 @@ class LabelService
 
     public function getLabelById(int $id): ?Label
     {
-        return Label::with('type')->find($id);
+        return Label::with('parent')->find($id);
     }
 
     public function createLabel(array $data): Label
@@ -99,79 +99,12 @@ class LabelService
         return $model;
     }
 
-    // --- LABEL TYPE Logic ---
+    // --- PARENT LABEL Logic ---
 
-    public function getAllLabelTypes()
+    public function getParentLabels()
     {
-        return LabelType::orderBy('name')->get();
-    }
-
-    public function getLabelTypeById(int $id): ?LabelType
-    {
-        return LabelType::find($id);
-    }
-
-    public function createLabelType(array $data): LabelType
-    {
-        return DB::transaction(function () use ($data) {
-            $type = LabelType::create($data);
-
-            logActivity(
-                'label_type_management',
-                "Membuat tipe label baru: {$type->name}"
-            );
-
-            return $type;
-        });
-    }
-
-    public function updateLabelType(int $id, array $data): bool
-    {
-        return DB::transaction(function () use ($id, $data) {
-            $type    = $this->findLabelTypeOrFail($id);
-            $oldName = $type->name;
-
-            $type->update($data);
-
-            logActivity(
-                'label_type_management',
-                "Memperbarui tipe label: {$oldName}" . ($oldName !== $type->name ? " menjadi {$type->name}" : "")
-            );
-
-            return true;
-        });
-    }
-
-    public function deleteLabelType(int $id): bool
-    {
-        return DB::transaction(function () use ($id) {
-            $type = $this->findLabelTypeOrFail($id);
-            $name = $type->name;
-
-            // Check if used by labels?
-            if ($type->labels()->count() > 0) {
-                // Throw error or handle?
-                // Usually restriction.
-                throw new \Exception("Tipe Label '{$name}' tidak bisa dihapus karena masih digunakan oleh label.");
-            }
-
-            $type->delete();
-
-            logActivity(
-                'label_type_management',
-                "Menghapus tipe label: {$name}"
-            );
-
-            return true;
-        });
-    }
-
-    protected function findLabelTypeOrFail(int $id): LabelType
-    {
-        $model = LabelType::find($id);
-        if (! $model) {
-            throw new \Exception("Tipe Label dengan ID {$id} tidak ditemukan.");
-        }
-        return $model;
+        return Label::with(['children' => function($q) {
+            $q->orderBy('name');
+        }])->whereNull('parent_id')->orderBy('name')->get();
     }
 }

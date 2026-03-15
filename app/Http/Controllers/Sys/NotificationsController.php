@@ -38,6 +38,7 @@ class NotificationsController extends Controller
         $query = $this->notificationService->getFilteredQueryForUser($filters);
 
         return DataTables::of($query)
+            ->addIndexColumn()
             ->addColumn('checkbox', function ($notification) {
                 return '<div class="form-check">
                             <input class="form-check-input notification-checkbox" type="checkbox" value="' . $notification->id . '" id="checkbox_' . $notification->id . '">
@@ -66,7 +67,7 @@ class NotificationsController extends Controller
                         'customActions' => [
                             [
                                 'label' => 'Mark as Read',
-                                'url'   => route('notifications.mark-as-read', $notification->id),
+                                'url'   => route('sys.notifications.mark-as-read', $notification->id),
                                 'icon'  => 'check',
                                 'class' => '',
                             ],
@@ -88,12 +89,12 @@ class NotificationsController extends Controller
         $result = $this->notificationService->markAsReadById($id);
 
         if (! $result) {
-            return redirect()->back()->with('error', 'Notifikasi tidakditemukan . ');
+            return redirect()->back()->with('error', 'Notifikasi tidak ditemukan.');
         }
 
         logActivity('notification', 'Notification marked as read');
 
-        return redirect()->back()->with('success', 'Notifikasi telahditandaisebagaitelahdibaca . ');
+        return redirect()->back()->with('success', 'Notifikasi telah ditandai sebagai telah dibaca.');
     }
 
     /**

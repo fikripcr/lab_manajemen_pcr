@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     :title="$inpassing->exists ? 'Edit Riwayat Inpassing' : 'Tambah Riwayat Inpassing'"
-    :route="$inpassing->exists ? route('hr.pegawai.inpassing.update', ['pegawai' => $pegawai->encrypted_pegawai_id, 'inpassing' => $inpassing->riwayatinpassing_id]) : route('hr.pegawai.inpassing.store', $pegawai->encrypted_pegawai_id)"
+    :route="$inpassing->exists ? route('hr.pegawai.inpassing.update', ['hr_pegawai' => $pegawai->encrypted_pegawai_id, 'inpassing' => $inpassing->riwayatinpassing_id]) : route('hr.pegawai.inpassing.store', $pegawai->encrypted_pegawai_id)"
     :method="$inpassing->exists ? 'PUT' : 'POST'"
     enctype="multipart/form-data"
     :submitText="$inpassing->exists ? 'Simpan Perubahan' : 'Simpan'"

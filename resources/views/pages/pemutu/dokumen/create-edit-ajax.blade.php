@@ -39,8 +39,17 @@
     {{-- A. DOKUMEN FORM --}}
     @if($type === 'dokumen')
         <input type="hidden" name="jenis" value="{{ $isEdit ? $dokumen->jenis : (isset($fixedJenis) ? $fixedJenis : '') }}">
-        <input type="hidden" name="periode" value="{{ $isEdit ? $dokumen->periode : date('Y') }}">
+        <input type="hidden" name="periode" value="{{ $isEdit ? $dokumen->periode : ($currentPeriode ? $currentPeriode->periode : '') }}">
         <input type="hidden" name="parent_id" value="{{ $isEdit ? $dokumen->parent_id : (isset($parent) ? $parent->encrypted_dok_id : '') }}">
+
+        @if(!$isEdit && $currentPeriode)
+            <div class="mb-3">
+                <label class="form-label">Tahun Siklus</label>
+                <div class="form-control-plaintext fw-bold">
+                    <span class="badge bg-blue-lt">{{ $currentPeriode->periode }} ({{ $currentPeriode->jenis_periode }})</span>
+                </div>
+            </div>
+        @endif
 
         @if(!$isEdit)
             @if(isset($parentDokSub))

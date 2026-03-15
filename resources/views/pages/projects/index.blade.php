@@ -26,7 +26,7 @@
                 <x-tabler.datatable-search :dataTableId="'projects-table'" />
             </div>
         </div>
-    </div>
+    </x-tabler.card-header>
     <x-tabler.card-body class="p-0">
         @php
             $columns = [

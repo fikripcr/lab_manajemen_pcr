@@ -1,4 +1,4 @@
-﻿@extends('layouts.tabler.app')
+@extends('layouts.tabler.app')
 
 @section('title', 'Dokumen SPMI')
 
@@ -9,23 +9,18 @@
         'rjp' => 'RPJP', 
         'renstra' => 'RENSTRA', 
         'renop' => 'RENOP',
+        'kebijakan' => 'KEBIJAKAN',
         'standar' => 'STANDAR',
         'formulir' => 'FORMULIR',
         'manual_prosedur' => 'MANUAL PROSEDUR'
     ];
-    $activeJenis = request('jenis', 'visi');
+    $activeJenis = request('jenis', 'kebijakan');
 @endphp
 
 @section('header')
-<x-tabler.page-header title="Dokumen SPMI" pretitle="Penetapan">
+<x-tabler.page-header title="Indikator SPMI {{ $selectedPeriode }}" pretitle="Penetapan">
     <x-slot:actions>
         <div class="d-flex justify-content-between align-items-center gap-2">
-            <x-tabler.form-select name="periode" class="mb-0 filter-sync-param" data-param="periode" data-base-url="{{ route('pemutu.dokumen.index', ['jenis' => $activeJenis]) }}">
-                <option value="">Semua Periode</option>
-                @foreach($periods as $p)
-                    <option value="{{ $p }}" {{ request('periode') == $p ? 'selected' : '' }}>{{ $p }}</option>
-                @endforeach
-            </x-tabler.form-select>
             <div class="input-icon">
                 <span class="input-icon-addon">
                     <i class="ti ti-search"></i>
@@ -39,7 +34,7 @@
 
 @section('content')
 @php
-    $isTreeBased = in_array($activeJenis, ['standar', 'formulir', 'manual_prosedur']);
+    $isTreeBased = in_array($activeJenis, ['standar', 'formulir', 'manual_prosedur', 'kebijakan']);
     $dokData = $dokumentByJenis[$activeJenis] ?? collect();
     $rootDoc = $isTreeBased ? null : $dokData->first();
 @endphp
@@ -47,12 +42,12 @@
     <!-- Tree View Sidebar -->
     <div class="col-lg-5">
         <x-tabler.card> 
-            <div class="card-body border-bottom bg-transparent p-0">
+            <x-tabler.card-body class="border-bottom bg-transparent p-0">
                 <div class="p-2 border-bottom">
                     <ul class="nav nav-pills nav-fill gap-1 px-2">
                         @foreach(array_slice($allTabs, 0, 5, true) as $key => $label)
                         <li class="nav-item">
-                            <a href="{{ route('pemutu.dokumen.index', ['jenis' => $key, 'periode' => $selectedPeriode]) }}" 
+                            <a href="{{ route('pemutu.dokumen.index', ['jenis' => $key]) }}" 
                                class="nav-link py-1 px-2 small {{ $activeJenis == $key ? 'active shadow-sm' : '' }}">
                                 {{ $label }}
                             </a>
@@ -64,18 +59,12 @@
                     <ul class="nav nav-pills nav-fill gap-1 px-2">
                         @foreach(array_slice($allTabs, 5, null, true) as $key => $label)
                         <li class="nav-item">
-                            <a href="{{ route('pemutu.dokumen.index', ['jenis' => $key, 'periode' => $selectedPeriode]) }}" 
+                            <a href="{{ route('pemutu.dokumen.index', ['jenis' => $key]) }}" 
                                class="nav-link py-1 px-2 small {{ $activeJenis == $key ? 'active shadow-sm' : '' }}">
                                 {{ $label }}
                             </a>
                         </li>
                         @endforeach
-                        <li class="nav-item">
-                            <a href="{{ route('pemutu.dokumen-spmi.summary', ['periode' => $selectedPeriode]) }}" 
-                               class="nav-link py-1 px-2 small btn-outline-success">
-                                <i class="ti ti-chart-bar me-1"></i>SUMMARY
-                            </a>
-                        </li>
                     </ul>
                 </div>
                 {{-- Global Add Button for Standar/Formulir (Tree Based) --}}
@@ -86,9 +75,9 @@
                         data-modal-title="Tambah Dokumen {{ $allTabs[$activeJenis] }}" />
                 </div>
                 @endif
-            </div>
+            </x-tabler.card-body>
             
-            <div class="card-body p-0 overflow-auto" id="document-tree" style="max-height: 65vh;">
+            <x-tabler.card-body class="p-0 overflow-auto" id="document-tree" style="max-height: 65vh;">
                 <div class="p-3">
                     @if($isTreeBased)
                         {{-- Tree view for Standar, Formulir, Manual Prosedur --}}
@@ -161,7 +150,7 @@
                         @endif
                     @endif
                 </div>
-            </div>
+            </x-tabler.card-body>
         </x-tabler.card>
     </div>
 
@@ -198,7 +187,7 @@
             $(this).closest('.tree-node-row').addClass('bg-primary-lt');
         });
 
-        @if($activeTab === 'kebijakan')
+        @if(in_array($activeJenis, ['kebijakan', 'visi', 'misi', 'rjp', 'renstra', 'renop']))
             // Auto-click the Dokumen Induk link when switching Kebijakan tabs
             $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
                 let targetId = $(e.target).attr('href'); // e.g. #tab-visi
@@ -211,7 +200,7 @@
             setTimeout(function() {
                 const urlParams = new URL(window.location.href).searchParams;
                 if (!urlParams.get('id')) {
-                    $('.tab-pane.active .tree-item-link').first().trigger('click');
+                    $('.tree-item-link').first().trigger('click');
                 }
             }, 300);
         @endif

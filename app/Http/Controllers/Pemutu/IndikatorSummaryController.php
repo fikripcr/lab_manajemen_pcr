@@ -120,11 +120,11 @@ class IndikatorSummaryController extends Controller
             ->where('pemutu_indikator.type', 'performa')
             ->avg('pemutu_indikator_pegawai.score');
 
-        $pegawais = \App\Models\Shared\Pegawai::whereHas('latestDataDiri')->get()->sortBy(function ($pegawai) {
+        $pegawais = \App\Models\Hr\Pegawai::whereHas('latestDataDiri')->get()->sortBy(function ($pegawai) {
             return $pegawai->nama;
         });
 
-        $units = \App\Models\Shared\StrukturOrganisasi::orderBy('name')->get();
+        $units = \App\Models\Hr\StrukturOrganisasi::orderBy('name')->get();
 
         return view('pages.pemutu.indikator-summary.performa', compact(
             'pageTitle',
@@ -418,7 +418,7 @@ class IndikatorSummaryController extends Controller
 
         // Get detailed data from related tables
         $edDetails = DB::table('pemutu_indikator_orgunit')
-            ->join('struktur_organisasi', 'pemutu_indikator_orgunit.org_unit_id', '=', 'struktur_organisasi.orgunit_id')
+            ->join('hr_struktur_organisasi', 'pemutu_indikator_orgunit.org_unit_id', '=', 'struktur_organisasi.orgunit_id')
             ->where('pemutu_indikator_orgunit.indikator_id', $indikator->indikator_id)
             ->whereNotNull('pemutu_indikator_orgunit.ed_capaian')
             ->select(
@@ -434,7 +434,7 @@ class IndikatorSummaryController extends Controller
             ->get();
 
         $amiDetails = DB::table('pemutu_indikator_orgunit')
-            ->join('struktur_organisasi', 'pemutu_indikator_orgunit.org_unit_id', '=', 'struktur_organisasi.orgunit_id')
+            ->join('hr_struktur_organisasi', 'pemutu_indikator_orgunit.org_unit_id', '=', 'struktur_organisasi.orgunit_id')
             ->where('pemutu_indikator_orgunit.indikator_id', $indikator->indikator_id)
             ->whereNotNull('pemutu_indikator_orgunit.ami_hasil_akhir')
             ->select(
@@ -450,7 +450,7 @@ class IndikatorSummaryController extends Controller
             ->get();
 
         $pengendDetails = DB::table('pemutu_indikator_orgunit')
-            ->join('struktur_organisasi', 'pemutu_indikator_orgunit.org_unit_id', '=', 'struktur_organisasi.orgunit_id')
+            ->join('hr_struktur_organisasi', 'pemutu_indikator_orgunit.org_unit_id', '=', 'struktur_organisasi.orgunit_id')
             ->where('pemutu_indikator_orgunit.indikator_id', $indikator->indikator_id)
             ->whereNotNull('pemutu_indikator_orgunit.pengend_status')
             ->select(

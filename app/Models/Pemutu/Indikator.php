@@ -1,7 +1,7 @@
 <?php
 namespace App\Models\Pemutu;
 
-use App\Models\Shared\StrukturOrganisasi;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,6 +24,7 @@ class Indikator extends Model
         'type',
         'kelompok_indikator',
         'parent_id',
+        'renstra_poin_id',
         'prev_indikator_id',
         'no_indikator',
         'indikator',
@@ -82,6 +83,11 @@ class Indikator extends Model
     public function parent()
     {
         return $this->belongsTo(Indikator::class, 'parent_id', 'indikator_id');
+    }
+
+    public function renstraPoin()
+    {
+        return $this->belongsTo(DokSub::class, 'renstra_poin_id', 'doksub_id');
     }
 
     public function children()

@@ -7,6 +7,7 @@ use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Services\Pemutu\DokumenService;
 use App\Services\Pemutu\DokumenSpmiService;
+use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -14,7 +15,8 @@ class DokumenSpmiController extends Controller
 {
     public function __construct(
         protected DokumenSpmiService $dokumenSpmiService,
-        protected DokumenService $dokumenService
+        protected DokumenService $dokumenService,
+        protected PeriodeSpmiService $PeriodeSpmiService
     ) {}
 
     /**
@@ -23,39 +25,27 @@ class DokumenSpmiController extends Controller
     public function index(Request $request)
     {
         $pageTitle   = 'Workspace Dokumen SPMI';
-        $activeJenis = $request->query('jenis', 'visi');
+        $activeJenis = $request->query('jenis', 'kebijakan');
+        
+        // Use Global Cycle from Session (Handled by PeriodeSpmiService fallback)
+        $siklusData = $this->PeriodeSpmiService->getSiklusData();
+        $selectedYe = $siklusData['tahun'];
 
-        $periods = Dokumen::select('periode')
-            ->whereNotNull('periode')
-            ->distinct()
-            ->orderBy('periode', 'desc')
-            ->pluck('periode');
+        // Tree-based: Multiple documents allowed (Standar, Formulir, Manual, and Generic Kebijakan)
+        $isTreeBased = in_array($activeJenis, ['standar', 'formulir', 'manual_prosedur', 'kebijakan']);
+        
+        // Optimization: ONLY fetch documents for the active jenis to improve performance
+        $dokumentByJenis = [
+            $activeJenis => $this->dokumenSpmiService->getDokumenByJenis($activeJenis, $selectedYe)
+        ];
 
-        if ($periods->isEmpty()) {
-            $periods->push(date('Y'));
-        }
-
-        // Default to the latest period if none provided
-        $selectedPeriode = $request->periode ?: $periods->first();
-
-        if (in_array($activeJenis, ['standar', 'formulir', 'manual_prosedur'])) {
-            $activeTab       = 'standar';
-            $dokumentByJenis = [];
-            foreach (['standar', 'formulir', 'manual_prosedur'] as $j) {
-                $dokumentByJenis[$j] = $this->dokumenSpmiService->getDokumenByJenis($j, $selectedPeriode);
-            }
-        } else {
-            $activeTab = 'kebijakan';
-            // Kebijakan: flat 5-document architecture
-            $docsArr         = $this->dokumenService->getKebijakanByPeriode($selectedPeriode);
-            $dokumentByJenis = [];
-            foreach ($docsArr as $j => $doc) {
-                // Ensure it's a collection so ->first() works in the specialized view
-                $dokumentByJenis[$j] = $doc ? collect([$doc]) : collect();
-            }
-        }
-
-        return view('pages.pemutu.dokumen.index', compact('pageTitle', 'dokumentByJenis', 'periods', 'activeTab', 'selectedPeriode', 'activeJenis'));
+        return view('pages.pemutu.dokumen.index', [
+            'pageTitle'       => $pageTitle,
+            'activeJenis'     => $activeJenis,
+            'selectedPeriode' => $selectedYe,
+            'dokumentByJenis' => $dokumentByJenis,
+            'activeTab'       => $isTreeBased ? 'standar' : 'kebijakan',
+        ]);
     }
 
     /**
@@ -95,13 +85,10 @@ class DokumenSpmiController extends Controller
      */
     public function create(Request $request)
     {
-        $type     = $request->query('type', 'dokumen');
-        $dokumens = $this->dokumenSpmiService->getHierarchicalDokumens();
+        $type         = $request->query('type', 'dokumen');
+        $allowedTypes = ['standar' => 'Standar', 'manual_prosedur' => 'Manual Prosedur', 'formulir' => 'Formulir'];
 
-        $activeTab = $request->query('tabs', 'kebijakan');
-        if ($activeTab === 'standar') {
-            $allowedTypes = ['standar' => 'Standar', 'formulir' => 'Formulir', 'manual_prosedur' => 'Manual Prosedur'];
-        } else {
+        if ($request->tabs === 'kebijakan') {
             $allowedTypes = ['kebijakan' => 'Kebijakan', 'visi' => 'Visi', 'misi' => 'Misi', 'rjp' => 'RPJP', 'renstra' => 'Renstra', 'renop' => 'Renop'];
         }
 
@@ -125,16 +112,35 @@ class DokumenSpmiController extends Controller
             }
         }
 
+        $currentPeriode = null;
+        if ($request->filled('periode_id')) {
+            $currentPeriode = \App\Models\Pemutu\PeriodeSpmi::find(decryptIdIfEncrypted($request->periode_id));
+        } elseif ($request->filled('periode')) {
+            // Resolve by year string
+            $currentPeriode = \App\Models\Pemutu\PeriodeSpmi::where('periode', $request->periode)->first();
+        }
+
+        // Fallback to Global Cycle if not provided
+        if (!$currentPeriode) {
+            $siklusData = $this->PeriodeSpmiService->getSiklusData();
+            // We only need the year as an indicator if no specific PeriodeSpmi record exists for it yet
+            // But we can create a dummy object or just use the year
+            $currentPeriode = (object) [
+                'periode' => $siklusData['tahun'],
+                'jenis_periode' => 'Global'
+            ];
+        }
+
         // Additional variables based on type
         if ($type === 'dokumen') {
-            return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'dokumens', 'allowedTypes', 'fixedJenis', 'parent', 'parentDokSub'));
+            return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'allowedTypes', 'fixedJenis', 'parent', 'parentDokSub', 'currentPeriode'));
         } elseif ($type === 'poin') {
             if ($request->filled('parent_id')) {
                 $dokumen = Dokumen::find(decryptIdIfEncrypted($request->parent_id));
-                return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'dokumen'));
+                return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'dokumen', 'currentPeriode'));
             }
         } elseif ($type === 'indikator') {
-            return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'parentDokSub', 'parentDok'));
+            return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'parentDokSub', 'parentDok', 'currentPeriode'));
         }
 
         return abort(404);
@@ -162,6 +168,21 @@ class DokumenSpmiController extends Controller
 
             if (! empty($data['parent_doksub_id'])) {
                 $data['parent_doksub_id'] = decryptIdIfEncrypted($data['parent_doksub_id']);
+            }
+
+            // Ensure periode is an ID if it's passed as a year string
+            if (isset($data['periode']) && ! empty($data['periode']) && ! is_numeric($data['periode'])) {
+                $periode = \App\Models\Pemutu\PeriodeSpmi::where('periode', $data['periode'])->first();
+                if ($periode) {
+                    $data['periode'] = $periode->periode;
+                    $data['periode_id'] = $periode->periodespmi_id;
+                }
+            }
+
+            // Dual insurance: if still empty or fallback to current Year, use Global Cycle instead of server date('Y')
+            if (empty($data['periode'])) {
+                $siklusData = $this->PeriodeSpmiService->getSiklusData();
+                $data['periode'] = $siklusData['tahun'];
             }
 
             $model = $this->dokumenSpmiService->createDokumen($data);
@@ -214,8 +235,7 @@ class DokumenSpmiController extends Controller
 
         if ($type === 'dokumen') {
             $dokumen  = Dokumen::findOrFail($decryptedId);
-            $dokumens = $this->dokumenSpmiService->getHierarchicalDokumens()->filter(fn($d) => $d->dok_id != $dokumen->dok_id);
-            return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'dokumen', 'dokumens', 'mode'));
+            return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'dokumen', 'mode'));
         } elseif ($type === 'poin') {
             $dokSub = DokSub::findOrFail($decryptedId);
             return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'dokSub', 'mode'));
@@ -393,6 +413,37 @@ class DokumenSpmiController extends Controller
                 })
                 ->rawColumns(['indikator', 'no_indikator', 'unit_target', 'action'])
                 ->make(true);
+        } elseif ($type === 'renop_indikator') {
+            $query = Indikator::with('orgUnits')
+                ->where('type', 'standar')
+                ->whereHas('labels', function($q) {
+                    $q->where('name', 'RENOP');
+                });
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->addColumn('no_indikator', function ($row) {
+                    return $row->no_indikator ?: '-';
+                })
+                ->addColumn('indikator', function ($row) {
+                    return '<div class="fw-bold">' . e($row->indikator) . '</div>';
+                })
+                ->addColumn('unit_target', function ($row) {
+                    if ($row->orgUnits->isEmpty()) {
+                        return '<span class="text-muted">-</span>';
+                    }
+                    return $row->orgUnits->map(function ($unit) {
+                        $target = $unit->pivot->target ?? '-';
+                        return '<div class="d-flex justify-content-between gap-2"><span class="text-muted small">' . e($unit->name) . '</span><span class="badge bg-blue-lt">' . e($target) . '</span></div>';
+                    })->implode('');
+                })
+                ->addColumn('action', function ($row) {
+                    return view('components.tabler.datatables-actions', [
+                        'editUrl'   => route('pemutu.indikator.edit', ['indikator' => $row->encrypted_indikator_id, 'redirect_to' => url()->current()]),
+                        'editModal' => false,
+                    ])->render();
+                })
+                ->rawColumns(['indikator', 'no_indikator', 'unit_target', 'action'])
+                ->make(true);
         } elseif ($type === 'poin_mapping') {
             // Get mapped poin (from the level above) for a given DokSub
             $doksub = DokSub::with('dokumen')->findOrFail($decryptedId);
@@ -441,10 +492,11 @@ class DokumenSpmiController extends Controller
         // Validate: mapping must be to the correct level above
         $sourceJenis    = strtolower(trim($doksub->dokumen->jenis ?? ''));
         $targetJenis    = strtolower(trim($mapped->dokumen->jenis ?? ''));
-        $expectedTarget = pemutuMappableJenis($sourceJenis);
+        $expectedTargets = pemutuMappableJenis($sourceJenis);
 
-        if ($expectedTarget !== $targetJenis) {
-            return jsonError("Poin {$sourceJenis} hanya bisa dipetakan ke poin " . pemutuJenisLabel($expectedTarget) . '.');
+        if (!in_array($targetJenis, $expectedTargets)) {
+            $targetLabels = implode(' atau ', array_map('pemutuJenisLabel', $expectedTargets));
+            return jsonError("Poin {$sourceJenis} hanya bisa dipetakan ke poin " . $targetLabels . '.');
         }
 
         if ($request->action === 'attach') {
@@ -508,36 +560,33 @@ class DokumenSpmiController extends Controller
      */
     public function summary(Request $request)
     {
-        $pageTitle       = 'Rekap Capaian';
-        $activeJenis     = $request->query('jenis', 'visi');
-        $selectedPeriode = $request->periode ?: (date('Y') + 2); // Default 2026 based on DB if empty
+        $pageTitle   = 'Rekap Capaian';
+        $activeJenis = $request->query('jenis', 'visi');
+        $siklus      = $this->PeriodeSpmiService->getSiklusData();
 
-        $periods = Dokumen::select('periode')
-            ->whereNotNull('periode')
-            ->distinct()
-            ->orderBy('periode', 'desc')
-            ->pluck('periode');
+        $data = [
+            'pageTitle'      => $pageTitle,
+            'activeJenis'    => $activeJenis,
+            'kebijakanTypes' => ['visi', 'misi', 'rjp', 'renstra', 'renop'],
+            'siklus'         => $siklus,
+        ];
 
-        if ($periods->isEmpty()) {
-            $periods->push($selectedPeriode);
+        foreach (['akademik', 'non_akademik'] as $type) {
+            $periode = $siklus[$type];
+            $dokumentByJenis = [];
+
+            if ($periode) {
+                // We only care about Kebijakan docs for the Summary tree
+                $docsArr = $this->dokumenService->getKebijakanByPeriode($periode->periodespmi_id);
+                foreach ($docsArr as $j => $doc) {
+                    $dokumentByJenis[$j] = $doc ? collect([$doc]) : collect();
+                }
+            }
+
+            $data[$type . 'DokumentByJenis'] = $dokumentByJenis;
         }
 
-        // We only care about Kebijakan docs for the Summary tree
-        $kebijakanTypes = ['visi', 'misi', 'rjp', 'renstra', 'renop'];
-
-        if (! in_array($activeJenis, $kebijakanTypes)) {
-            $activeJenis = 'visi';
-        }
-
-        $docsArr         = $this->dokumenService->getKebijakanByPeriode($selectedPeriode);
-        $dokumentByJenis = [];
-        foreach ($docsArr as $j => $doc) {
-            $dokumentByJenis[$j] = $doc ? collect([$doc]) : collect();
-        }
-
-        return view('pages.pemutu.dokumen.summary', compact(
-            'pageTitle', 'periods', 'selectedPeriode', 'activeJenis', 'dokumentByJenis', 'kebijakanTypes'
-        ));
+        return view('pages.pemutu.dokumen.summary', $data);
     }
 
     /**

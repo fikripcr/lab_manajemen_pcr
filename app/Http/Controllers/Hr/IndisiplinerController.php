@@ -37,7 +37,7 @@ class IndisiplinerController extends Controller
             ->addColumn('jenis', function ($row) {
                 return $row->jenisIndisipliner->jenis_indisipliner ?? '-';
             })
-            ->addColumn('pegawai', function ($row) {
+            ->addColumn('hr_pegawai', function ($row) {
                 $badges = [];
                 foreach ($row->indisiplinerPegawai as $ip) {
                     $inisial  = $ip->pegawai->latestDataDiri->inisial ?? 'N/A';
@@ -52,7 +52,7 @@ class IndisiplinerController extends Controller
                     'deleteUrl' => route('hr.indisipliner.destroy', ['indisipliner' => $row->encrypted_indisipliner_id]),
                 ])->render();
             })
-            ->rawColumns(['pegawai', 'action'])
+            ->rawColumns(['hr_pegawai', 'action'])
             ->make(true);
     }
 

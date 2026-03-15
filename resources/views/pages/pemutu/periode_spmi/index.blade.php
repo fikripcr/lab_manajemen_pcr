@@ -43,14 +43,14 @@
                                 <i class="ti ti-gavel"></i>
                             </div>
                             <div class="timeline-event-card shadow-none border">
-                                <div class="card-body p-2">
+                                <x-tabler.card-body class="p-2">
                                     <div class="fw-bold">Penetapan</div>
                                     <div class="text-muted small">
                                         {{ formatTanggalIndo($periode->penetapan_awal) }} 
                                         s/d 
                                         {{ formatTanggalIndo($periode->penetapan_akhir) }}
                                     </div>
-                                </div>
+                                </x-tabler.card-body>
                             </div>
                         </li>
 
@@ -60,12 +60,12 @@
                                 <i class="ti ti-player-play"></i>
                             </div>
                             <div class="timeline-event-card shadow-none border">
-                                <div class="card-body p-2">
+                                <x-tabler.card-body class="p-2">
                                     <div class="fw-bold">Pelaksanaan</div>
                                     <div class="text-muted small">
                                         Sepanjang Periode {{ $periode->periode }}
                                     </div>
-                                </div>
+                                </x-tabler.card-body>
                             </div>
                         </li>
 
@@ -75,7 +75,7 @@
                                 <i class="ti ti-clipboard-check"></i>
                             </div>
                             <div class="timeline-event-card shadow-none border">
-                                <div class="card-body p-2">
+                                <x-tabler.card-body class="p-2">
                                     <div class="fw-bold">Evaluasi (ED & AMI)</div>
                                     <div class="text-muted small">
                                         @if($periode->ed_awal)
@@ -85,7 +85,7 @@
                                             <div><span class="text-warning">AMI:</span> {{ formatTanggalIndo($periode->ami_awal) }} - {{ formatTanggalIndo($periode->ami_akhir) }}</div>
                                         @endif
                                     </div>
-                                </div>
+                                </x-tabler.card-body>
                             </div>
                         </li>
 
@@ -95,14 +95,14 @@
                                 <i class="ti ti-settings-exclamation"></i>
                             </div>
                             <div class="timeline-event-card shadow-none border">
-                                <div class="card-body p-2">
+                                <x-tabler.card-body class="p-2">
                                     <div class="fw-bold">Pengendalian</div>
                                     <div class="text-muted small">
                                         {{ formatTanggalIndo($periode->pengendalian_awal) }}
                                         s/d
                                         {{ formatTanggalIndo($periode->pengendalian_akhir) }}
                                     </div>
-                                </div>
+                                </x-tabler.card-body>
                             </div>
                         </li>
 
@@ -112,14 +112,14 @@
                                 <i class="ti ti-trending-up"></i>
                             </div>
                             <div class="timeline-event-card shadow-none border">
-                                <div class="card-body p-2">
+                                <x-tabler.card-body class="p-2">
                                     <div class="fw-bold">Peningkatan</div>
                                     <div class="text-muted small">
                                         {{ formatTanggalIndo($periode->peningkatan_awal) }}
                                         s/d
                                         {{ formatTanggalIndo($periode->peningkatan_akhir) }}
                                     </div>
-                                </div>
+                                </x-tabler.card-body>
                             </div>
                         </li>
                     </ul>

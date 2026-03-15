@@ -217,7 +217,7 @@ class PendaftaranService
     public function getStatsByJalur(): \Illuminate\Support\Collection
     {
         return Pendaftaran::join('pmb_jalur', 'pmb_pendaftaran.jalur_id', '=', 'pmb_jalur.jalur_id')
-            ->selectRaw('pmb_jalur.nama_jalur, COUNT(*) as total')
+            ->selectRaw('pmb_jalur.nama_jalur, COUNT(*) as total_pendaftar')
             ->groupBy('pmb_jalur.nama_jalur')
             ->get();
     }

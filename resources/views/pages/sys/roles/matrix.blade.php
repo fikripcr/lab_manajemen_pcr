@@ -130,13 +130,13 @@
                         </table>
                     </div>
                 </x-tabler.card-body>
-                <div class="card-footer d-flex justify-content-between align-items-center bg-light-lt border-top">
+                <x-tabler.card-footer class="d-flex justify-content-between align-items-center bg-light-lt border-top">
                     <div class="text-muted small">
                         <i class="ti ti-info-circle me-1"></i> Centang kotak untuk memberikan hak akses. 
                         <strong>Memory usage optimized (Loaded by system).</strong>
                     </div>
                     <x-tabler.button type="submit" text="Simpan Perubahan Matriks" />
-                </div>
+                </x-tabler.card-footer>
             </form>
         </x-tabler.card>
     </div>

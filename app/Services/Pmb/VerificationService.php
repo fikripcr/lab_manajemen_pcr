@@ -3,7 +3,7 @@ namespace App\Services\Pmb;
 
 use App\Models\Pmb\Pembayaran;
 use App\Models\Pmb\Pendaftaran;
-use App\Models\Shared\RiwayatApproval;
+use App\Models\Pmb\RiwayatApproval;
 use Illuminate\Support\Facades\DB;
 
 class VerificationService

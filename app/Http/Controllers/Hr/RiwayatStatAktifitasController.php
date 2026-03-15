@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\RiwayatStatAktifitasRequest;
 use App\Models\Hr\RiwayatStatAktifitas;
 use App\Models\Hr\StatusAktifitas;
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use App\Services\Hr\RiwayatStatAktifitasService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -24,7 +24,7 @@ class RiwayatStatAktifitasController extends Controller
     public function create(Pegawai $pegawai)
     {
         $statusAktifitas = StatusAktifitas::where('is_active', 1)->get();
-        return view('pages.hr.pegawai.status-aktifitas.create-edit-ajax', compact('pegawai', 'statusAktifitas'));
+        return view('pages.hr.pegawai.status-aktifitas.create-edit-ajax', compact('hr_pegawai', 'statusAktifitas'));
     }
 
     public function store(RiwayatStatAktifitasRequest $request, Pegawai $pegawai)
@@ -35,7 +35,7 @@ class RiwayatStatAktifitasController extends Controller
 
     public function data(Request $request)
     {
-        $query = RiwayatStatAktifitas::with(['pegawai', 'statusAktifitas'])->select('hr_riwayat_stataktifitas.*');
+        $query = RiwayatStatAktifitas::with(['hr_pegawai', 'statusAktifitas'])->select('hr_riwayat_stataktifitas.*');
 
         if ($request->has('pegawai_id')) {
             $query->where('pegawai_id', decryptIdIfEncrypted($request->pegawai_id));

@@ -6,7 +6,7 @@ use App\Http\Requests\Pemutu\IndikatorStandarRequest;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\IndikatorPersonil;
-use App\Models\Shared\Personil;
+use App\Models\Hr\Personil;
 
 use Illuminate\Support\Facades\DB;
 
@@ -57,7 +57,7 @@ class IndikatorStandarController extends Controller
     {
         $personils = Personil::orderBy('nama')->get();
         $assigned  = IndikatorPersonil::where('indikator_id', $indikator->indikator_id)
-            ->with('personil')
+            ->with('hr_personil')
             ->get();
 
         return view('pages.pemutu.standar.assign', compact('indikator', 'personils', 'assigned'));

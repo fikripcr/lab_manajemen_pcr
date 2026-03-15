@@ -7,12 +7,7 @@ use App\Http\Requests\BaseRequest;
 class LayananDiskusiStoreRequest extends BaseRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -41,17 +36,7 @@ class LayananDiskusiStoreRequest extends BaseRequest
     }
 
     /**
-     * Get custom error messages for validation rules.
      *
      * @return array<string, string>
      */
-    public function messages(): array
-    {
-        return array_merge(parent::messages(), [
-            'layanan_id.required' => 'Layanan harus dipilih.',
-            'pesan.required' => 'Pesan harus diisi.',
-            'pesan.string' => 'Pesan harus berupa string.',
-            'status_pengirim.string' => 'Status pengirim harus berupa string.',
-        ]);
-    }
 }

@@ -1,6 +1,7 @@
 {{-- Recursive chain rendering partial --}}
 @php
     $jenisLabels = [
+        'kebijakan' => ['label' => 'KEBIJAKAN', 'color' => 'red', 'icon' => 'ti-book'],
         'misi' => ['label' => 'MISI', 'color' => 'azure', 'icon' => 'ti-compass'],
         'rjp' => ['label' => 'RPJP', 'color' => 'indigo', 'icon' => 'ti-timeline'],
         'renstra' => ['label' => 'RENSTRA', 'color' => 'purple', 'icon' => 'ti-clipboard-list'],

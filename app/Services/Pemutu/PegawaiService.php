@@ -2,7 +2,7 @@
 namespace App\Services\Pemutu;
 
 use App\Imports\Pemutu\PegawaiImport;
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;

@@ -15,7 +15,7 @@
     <div class="row">
         <div class="col-12">
             <x-tabler.card>
-                <div class="card-body">
+                <x-tabler.card-body>
             <x-tabler.datatable
                 id="inventaris-table"
                 route="{{ route('lab.labs.inventaris.data', $lab->encrypted_lab_id) }}"
@@ -31,6 +31,8 @@
                     ['title' => 'Aksi', 'data' => 'action', 'name' => 'action', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                 ]"
             />
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
 @endsection

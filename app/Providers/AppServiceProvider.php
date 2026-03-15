@@ -1,13 +1,11 @@
 <?php
 namespace App\Providers;
 
-use App\Models\Hr\RiwayatJabStruktural;
 use App\Models\Notification;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Sanctum;
@@ -49,13 +47,12 @@ class AppServiceProvider extends ServiceProvider
         // Set locale for Carbon (Native Localization)
         Carbon::setLocale(env('APP_LOCALE', 'en'));
 
-        // Custom Route Model Binding: {struktural} → RiwayatJabStruktural
-        Route::model('struktural', RiwayatJabStruktural::class);
+        // Custom Route Model Binding: {struktural} → removed
 
         Relation::morphMap([
             'Perizinan'                => \App\Models\Hr\Perizinan::class,
             'Lembur'                   => \App\Models\Hr\Lembur::class,
-            'Pegawai'                  => \App\Models\Shared\Pegawai::class,
+            'Pegawai'                  => \App\Models\Hr\Pegawai::class,
             'RiwayatDatadiri'          => \App\Models\Hr\RiwayatDatadiri::class,
             'RiwayatPendidikan'        => \App\Models\Hr\RiwayatPendidikan::class,
             'RiwayatJabatanFungsional' => \App\Models\Hr\RiwayatJabfungsional::class,
@@ -64,5 +61,9 @@ class AppServiceProvider extends ServiceProvider
             'RiwayatStruktural'        => \App\Models\Hr\RiwayatJabStruktural::class,
             'PengembanganDiri'         => \App\Models\Hr\PengembanganDiri::class,
         ]);
+
+        // Global Notification Composer
+        View::composer('layouts.tabler.header', \App\View\Composers\NotificationComposer::class);
+        View::composer('layouts.tabler.header', \App\View\Composers\SiklusSpmiComposer::class);
     }
 }

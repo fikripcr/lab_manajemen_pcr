@@ -7,8 +7,8 @@
     data-reload="true">
     
     {{-- Info Temuan KTS --}}
-    <div class="card bg-warning-lt border-0 border-start border-4 border-warning mb-4 shadow-sm">
-        <div class="card-body p-3">
+    <x-tabler.card class="bg-warning-lt border-0 border-start border-4 border-warning mb-4 shadow-sm">
+        <x-tabler.card-body class="p-3">
             <div class="d-flex align-items-center mb-2">
                 <div class="bg-warning text-white rounded-circle p-1 me-2 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
                     <i class="ti ti-alert-triangle fs-5"></i>
@@ -30,8 +30,8 @@
                     </div>
                 </div>
             @endif
-        </div>
-    </div>
+        </x-tabler.card-body>
+    </x-tabler.card>
 
     <div class="mb-3">
         <x-tabler.form-textarea 

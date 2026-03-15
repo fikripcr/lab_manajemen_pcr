@@ -6,10 +6,6 @@ use App\Http\Requests\BaseRequest;
 
 class ProjectCostRequest extends BaseRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     public function rules(): array
     {
@@ -23,12 +19,4 @@ class ProjectCostRequest extends BaseRequest
         ];
     }
 
-    public function messages(): array
-    {
-        return array_merge(parent::messages(), [
-            'cost_desc.required' => 'Judul biaya wajib diisi.', // Changed from 'Description is required.'
-            'amount.required'    => 'Jumlah biaya wajib diisi.', // Overwrites original 'Amount is required.'
-            'cost_date.required' => 'Tanggal wajib diisi.',     // Changed from 'Date is required.'
-        ]);
-    }
 }

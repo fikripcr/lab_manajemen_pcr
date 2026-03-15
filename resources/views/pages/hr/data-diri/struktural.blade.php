@@ -23,7 +23,7 @@
     </x-tabler.card-header>
     <x-tabler.datatable
         id="struktural-table"
-        route="{{ $isPerPegawai ? route('hr.pegawai.struktural.data', ['pegawai' => $pegawai->encrypted_pegawai_id]) : route('hr.struktural.index') }}"
+        route="{{ $isPerPegawai ? route('hr.pegawai.struktural.data', ['hr_pegawai' => $pegawai->encrypted_pegawai_id]) : route('hr.struktural.index') }}"
         :columns="[
             ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
             ['data' => 'unit_struktural', 'name' => 'orgUnit.name', 'title' => 'Unit / Jabatan Struktural'],

@@ -63,9 +63,9 @@
                 </div>
             @endif
             @if($violations->hasPages())
-                <div class="card-footer d-flex align-items-center">
+                <x-tabler.card-footer class="d-flex align-items-center">
                     {{ $violations->links() }}
-                </div>
+                </x-tabler.card-footer>
             @endif
             </x-tabler.card-body>
     </x-tabler.card>

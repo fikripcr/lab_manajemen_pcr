@@ -18,6 +18,7 @@ class MainPemutuSeeder extends Seeder
     // For Peningkatan cross-period tracking
     private array $prevIndikators = [];
     private array $prevOrgUnits   = [];
+    private array $poinMap        = [];
 
     public function run()
     {
@@ -128,7 +129,8 @@ class MainPemutuSeeder extends Seeder
         ];
 
         $kebijakanTypes = array_keys($items);
-        $poinMap        = [];
+        $this->poinMap  = [];
+        $lastDokId      = null;
 
         foreach ($kebijakanTypes as $idx => $jenis) {
             $data = $items[$jenis];
@@ -136,12 +138,15 @@ class MainPemutuSeeder extends Seeder
                 'judul'      => $data['judul'],
                 'periode'    => $year,
                 'jenis'      => $jenis,
-                'level'      => 1,
+                'parent_id'  => $lastDokId,
+                'level'      => $idx + 1,
                 'seq'        => $idx + 1,
                 'created_by' => 1,
             ]);
 
-            $poinMap[$jenis] = [];
+            $lastDokId = $dok->dok_id;
+
+            $this->poinMap[$jenis] = [];
             foreach ($data['poin'] as $p => $judul) {
                 $kodePrefix = strtoupper(substr($jenis, 0, 2));
                 if ($jenis === 'renstra') {
@@ -170,12 +175,12 @@ class MainPemutuSeeder extends Seeder
                     'is_hasilkan_indikator' => $isHasilkan,
                     'created_by'            => 1,
                 ]);
-                $poinMap[$jenis][$p] = $sub;
+                $this->poinMap[$jenis][$p] = $sub;
 
                 // Link to previous level
                 if ($idx > 0) {
                     $prevJenis  = $kebijakanTypes[$idx - 1];
-                    $mappedPoin = $poinMap[$prevJenis][$p] ?? $poinMap[$prevJenis][0] ?? null;
+                    $mappedPoin = $this->poinMap[$prevJenis][$p] ?? $this->poinMap[$prevJenis][0] ?? null;
                     if ($mappedPoin) {
                         DB::table('pemutu_doksub_mapping')->insert([
                             'doksub_id'        => $sub->doksub_id,
@@ -187,7 +192,7 @@ class MainPemutuSeeder extends Seeder
             }
         }
 
-        return $poinMap;
+        return $this->poinMap;
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -405,11 +410,15 @@ class MainPemutuSeeder extends Seeder
                 $nameBase = $indicatorNames[$i % count($indicatorNames)];
                 $name     = $nameBase . ' (Target ' . ($poinIdx + 1) . '.' . ($i + 1) . ')';
 
+                $renstraPoin = $this->poinMap['renstra'][$i % count($this->poinMap['renstra'])] ?? null;
+
                 $noIndikator = $this->indikatorService->generateNoIndikator($year);
                 $ind         = Indikator::create([
                     'type'               => 'renop',
                     'kelompok_indikator' => ($i % 2 == 0) ? 'Akademik' : 'Non Akademik',
                     'parent_id'          => $parentInd?->indikator_id,
+                    'renstra_id'         => $renstraPoin?->dok_id,
+                    'renstra_poin_id'    => $renstraPoin?->doksub_id,
                     'prev_indikator_id'  => $prevIndId,
                     'origin_from'        => $originFrom,
                     'no_indikator'       => $noIndikator,

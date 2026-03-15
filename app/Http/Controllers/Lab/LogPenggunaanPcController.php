@@ -28,7 +28,7 @@ class LogPenggunaanPcController extends Controller
 
         return DataTables::of($logs)
             ->addIndexColumn()
-            ->addColumn('mahasiswa', function ($log) {
+            ->addColumn('akademik_mahasiswa', function ($log) {
                 return $log->user->name . '<br><small class="text-muted">' . $log->user->username . '</small>';
             })
             ->addColumn('pc_info', function ($log) {
@@ -43,7 +43,7 @@ class LogPenggunaanPcController extends Controller
                 $color = $log->status_pc == 'Baik' ? 'success' : 'danger';
                 return "<span class='badge bg-{$color}'>{$log->status_pc}</span><br><small>{$log->catatan_umum}</small>";
             })
-            ->rawColumns(['mahasiswa', 'pc_info', 'kondisi'])
+            ->rawColumns(['akademik_mahasiswa', 'pc_info', 'kondisi'])
             ->make(true);
     }
 

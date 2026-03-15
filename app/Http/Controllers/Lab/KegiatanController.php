@@ -42,7 +42,7 @@ class KegiatanController extends Controller
                     'completed' => 'info',
                 ];
                 $color = $badges[$row->status] ?? 'secondary';
-                return "<span class='badge bg-{$color}'>" . ucfirst($row->status) . "</span>";
+                return "<span class='status status-{$color}'><span class='status-dot'></span> " . ucfirst($row->status) . "</span>";
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [

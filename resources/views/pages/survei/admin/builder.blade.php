@@ -42,6 +42,7 @@
                                 </div>
                             </div>
                         </div>
+                        @endforeach
                     </div>
                 </x-tabler.card>
             </div>

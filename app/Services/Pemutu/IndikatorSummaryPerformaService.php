@@ -21,7 +21,7 @@ class IndikatorSummaryPerformaService
                 $q->where('type', 'performa')
                     ->whereNull('deleted_at');
             })
-            ->whereHas('pegawai', function ($q) {
+            ->whereHas('hr_pegawai', function ($q) {
                 $q->whereNull('deleted_at');
             });
 

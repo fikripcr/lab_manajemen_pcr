@@ -20,8 +20,8 @@
 
 @section('content')
     <div class="row">
-
-        <!-- Application Environment & Server Stats -->
+        <div class="col-12 mb-4">
+            <!-- Application Environment & Server Stats -->
             <x-tabler.card>
                 <x-tabler.card-body>
                     <div class="row">
@@ -66,10 +66,9 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
-
 
 
         <!-- Disk Space and Database Size -->
@@ -169,8 +168,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
         <!-- Stats Cards -->
@@ -188,8 +187,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
         <div class="col-xl-3 col-md-6 col-lg-3 mb-4">
@@ -206,8 +205,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
         <div class="col-xl-3 col-md-6 col-lg-3 mb-4">
@@ -224,8 +223,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
         <div class="col-xl-3 col-md-6 col-lg-3 mb-4">
@@ -242,8 +241,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
         <!-- System Management Menu -->
@@ -253,7 +252,7 @@
                 <!-- Role & Permissions -->
                 <div class="col-md-6 col-lg-4">
                     <a href="{{ route('sys.roles.index') }}" class="card card-link text-decoration-none h-100">
-                        <div class="card-body d-flex align-items-center p-3">
+                        <x-tabler.card-body class="d-flex align-items-center p-3">
                             <div class="avatar me-3 bg-green-lt text-green">
                                 <i class="ti ti-shield-lock"></i>
                             </div>
@@ -261,14 +260,14 @@
                                 <h4 class="mb-0 text-reset h3 fs-4">Role & Permissions</h4>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
-                        </div>
+                        </x-tabler.card-body>
                     </a>
                 </div>
 
                 <!-- Backup Management -->
                 <div class="col-md-6 col-lg-4">
                     <a href="{{ route('sys.backup.index') }}" class="card card-link text-decoration-none h-100">
-                        <div class="card-body d-flex align-items-center p-3">
+                        <x-tabler.card-body class="d-flex align-items-center p-3">
                             <div class="avatar me-3 bg-cyan-lt text-cyan">
                                 <i class="ti ti-database"></i>
                             </div>
@@ -276,14 +275,14 @@
                                 <h4 class="mb-0 text-reset h3 fs-4">Backup Management</h4>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
-                        </div>
+                        </x-tabler.card-body>
                     </a>
                 </div>
 
                 <!-- System Management Hub (Logs, Notifs, Config) -->
                 <div class="col-md-6 col-lg-4">
                     <a href="{{ route('sys.activity-log.index') }}" class="card card-link text-decoration-none h-100">
-                        <div class="card-body d-flex align-items-center p-3">
+                        <x-tabler.card-body class="d-flex align-items-center p-3">
                             <div class="avatar me-3 bg-primary-lt text-primary">
                                 <i class="ti ti-settings"></i>
                             </div>
@@ -291,14 +290,14 @@
                                 <h4 class="mb-0 text-reset h3 fs-4">System Hub</h4>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
-                        </div>
+                        </x-tabler.card-body>
                     </a>
                 </div>
 
                 <!-- Documentation -->
                 <div class="col-md-6 col-lg-4">
                     <a href="{{ route('sys.documentation.index') }}" class="card card-link text-decoration-none h-100">
-                        <div class="card-body d-flex align-items-center p-3">
+                        <x-tabler.card-body class="d-flex align-items-center p-3">
                             <div class="avatar me-3 bg-azure-lt text-azure">
                                 <i class="ti ti-book"></i>
                             </div>
@@ -306,14 +305,14 @@
                                 <h4 class="mb-0 text-reset h3 fs-4">System Documentation</h4>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
-                        </div>
+                        </x-tabler.card-body>
                     </a>
                 </div>
 
                 <!-- System Utilities Hub -->
                 <div class="col-md-6 col-lg-4">
                     <a href="{{ route('sys.test.index') }}" class="card card-link text-decoration-none h-100">
-                        <div class="card-body d-flex align-items-center p-3">
+                        <x-tabler.card-body class="d-flex align-items-center p-3">
                             <div class="avatar me-3 bg-purple-lt text-purple">
                                 <i class="ti ti-browser-check"></i>
                             </div>
@@ -321,7 +320,7 @@
                                 <h4 class="mb-0 text-reset h3 fs-4">System Utilities</h4>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
-                        </div>
+                        </x-tabler.card-body>
                     </a>
                 </div>
             </div>
@@ -333,22 +332,21 @@
             <div class="mb-4">
             <x-tabler.card class="h-100">
                 <x-tabler.card-body>
-                        <h3 class="card-title">User Distribution by Role</h3>
-                        <div class="badges-list">
-                            @forelse($roleUserCounts as $roleData)
-                                <span class="badge bg-azure-lt p-2">
-                                    {{ Str::ucfirst($roleData['name']) }}
-                                    <span class="badge badge-outline text-reset ms-2">{{ $roleData['count'] }}</span>
-                                </span>
-                            @empty
-                                <div class="text-center w-100">
-                                    <p class="text-muted py-4 mb-0">No roles found</p>
-                                </div>
-                            @endforelse
-                        </div>
+                    <h3 class="card-title">User Distribution by Role</h3>
+                    <div class="badges-list">
+                        @forelse($roleUserCounts as $roleData)
+                            <span class="badge bg-azure-lt p-2">
+                                {{ Str::ucfirst($roleData['name']) }}
+                                <span class="badge badge-outline text-reset ms-2">{{ $roleData['count'] }}</span>
+                            </span>
+                        @empty
+                            <div class="text-center w-100">
+                                <p class="text-muted py-4 mb-0">No roles found</p>
+                            </div>
+                        @endforelse
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
             <div class="row">
                 <!-- Combined Recent Activity Card -->
                 <div class="col-lg-6 mb-4">
@@ -387,7 +385,7 @@
 
                             <!-- Mini Sparkline Chart -->
                             <div id="activitySparkline" style="height: 6rem; margin-bottom: 1.5rem;"></div>
-                        </div>
+                        </x-tabler.card-body>
 
                         <!-- Activity List -->
                         <div class="list-group list-group-flush">
@@ -421,6 +419,9 @@
                 <div class="col-lg-6 mb-4">
                     <x-tabler.card>
                         <x-tabler.card-header>
+                            <h3 class="mb-0">Recent Errors</h3>
+                            <x-slot:actions>
+                                <a href="{{ route('sys.activity-log.index') }}" class="text-primary text-decoration-none small fw-bold">View All <i class="ti ti-chevron-right ms-1"></i></a>
                             </x-slot:actions>
                         </x-tabler.card-header>
                         <x-tabler.card-body>
@@ -451,7 +452,7 @@
 
                             <!-- Mini Sparkline Chart -->
                             <div id="errorSparkline" style="height: 6rem; margin-bottom: 1.5rem;"></div>
-                        </div>
+                        </x-tabler.card-body>
 
                         <!-- Error List -->
                         <div class="list-group list-group-flush">
@@ -480,8 +481,8 @@
                                 </div>
                             @endforelse
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
 

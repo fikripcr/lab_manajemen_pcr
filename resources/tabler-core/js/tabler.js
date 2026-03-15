@@ -33,7 +33,6 @@ window.Swal = Swal;
 // --- Shared Components ---
 import ThemeTabler from './core-theme.js';
 import './core-alerts.js';
-import './core-notification.js';
 import './core-ajax.js';
 
 // --- Module Helpers ---
@@ -41,6 +40,7 @@ import '../../js/helpers/pemutu-workspace.js';
 import '../../js/helpers/pemutu-indikator.js';
 import '../../js/helpers/projects-kanban.js';
 import '../../js/helpers/hr-pegawai.js';
+import '../../js/helpers/tab-persistence.js';
 
 
 /**

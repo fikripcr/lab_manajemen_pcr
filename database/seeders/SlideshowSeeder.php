@@ -1,7 +1,7 @@
 <?php
 namespace Database\Seeders;
 
-use App\Models\Shared\Slideshow;
+use App\Models\Cms\Slideshow;
 use Illuminate\Database\Seeder;
 
 class SlideshowSeeder extends Seeder

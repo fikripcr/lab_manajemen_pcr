@@ -161,26 +161,3 @@ window.initProjectsKanban = function (config) {
         });
     }
 };
-
-/**
- * Initialize tab persistence untuk project show page.
- * Menyimpan/restore active tab ke localStorage berdasarkan projectId.
- *
- * @param {string|number} projectId
- */
-window.initProjectTabPersistence = function (projectId) {
-    const storageKey = `project_active_tab_${projectId}`;
-    const lastActiveTab = localStorage.getItem(storageKey);
-
-    if (lastActiveTab) {
-        const tabEl = document.querySelector(`a[data-tab-id="${lastActiveTab}"]`);
-        if (tabEl && window.bootstrap) new bootstrap.Tab(tabEl).show();
-    }
-
-    document.querySelectorAll('#projectTabs a[data-bs-toggle="tab"]').forEach(tabLink => {
-        tabLink.addEventListener('shown.bs.tab', function (e) {
-            const tabId = e.target.getAttribute('data-tab-id');
-            if (tabId) localStorage.setItem(storageKey, tabId);
-        });
-    });
-};

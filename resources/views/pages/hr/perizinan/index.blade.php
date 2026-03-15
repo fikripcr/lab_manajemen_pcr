@@ -11,8 +11,8 @@
 @endsection
 
 @section('content')
-<div class="card overflow-hidden">
-    <div class="card-header border-bottom">
+<x-tabler.card class="overflow-hidden">
+    <x-tabler.card-header class="border-bottom">
         <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
             <h3 class="card-title mb-0">Data Perizinan</h3>
             <div class="ms-auto d-flex gap-2 align-items-center">
@@ -33,8 +33,8 @@
                 </x-tabler.datatable-filter>
             </div>
         </div>
-    </div>
-    <div class="card-body">
+    </x-tabler.card-header>
+    <x-tabler.card-body>
         <x-tabler.datatable
             id="table-perizinan"
             route="{{ route('hr.perizinan.data') }}?year={{ $selectedYear }}"
@@ -47,8 +47,8 @@
                 ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '12%']
             ]"
         />
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection
 
 @push('scripts')

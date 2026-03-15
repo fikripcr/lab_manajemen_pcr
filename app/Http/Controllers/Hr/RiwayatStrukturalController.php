@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\EndStrukturalRequest;
 use App\Http\Requests\Hr\MassStrukturalRequest;
 use App\Http\Requests\Hr\RiwayatStrukturalRequest;
-use App\Models\Hr\OrgUnit;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Hr\Pegawai;
 use App\Models\Hr\RiwayatJabStruktural;
 use App\Services\Hr\RiwayatStrukturalService;
@@ -18,7 +18,7 @@ class RiwayatStrukturalController extends Controller
     public function index(Pegawai $pegawai = null)
     {
         if ($pegawai) {
-            return view('pages.hr.data-diri.tabs.struktural', compact('pegawai'));
+            return view('pages.hr.data-diri.tabs.struktural', compact('hr_pegawai'));
         }
         // Global (non-pegawai) view: show full list with DataTable
         return view('pages.hr.data-diri.tabs.struktural');
@@ -26,7 +26,7 @@ class RiwayatStrukturalController extends Controller
 
     public function create(Pegawai $pegawai)
     {
-        $units = OrgUnit::whereIn('type', ['jabatan_struktural', 'departemen', 'prodi'])
+        $units = StrukturOrganisasi::whereIn('type', ['jabatan_struktural', 'departemen', 'prodi'])
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->orderBy('name')
@@ -35,7 +35,7 @@ class RiwayatStrukturalController extends Controller
         $currentStruktural = $pegawai->latestStruktural;
         $struktural        = new RiwayatJabStruktural();
 
-        return view('pages.hr.pegawai.struktural.create-edit-ajax', compact('pegawai', 'units', 'currentStruktural', 'struktural'));
+        return view('pages.hr.pegawai.struktural.create-edit-ajax', compact('hr_pegawai', 'units', 'currentStruktural', 'struktural'));
     }
 
     public function store(RiwayatStrukturalRequest $request, Pegawai $pegawai)
@@ -46,12 +46,12 @@ class RiwayatStrukturalController extends Controller
 
     public function edit(Pegawai $pegawai, RiwayatJabStruktural $struktural)
     {
-        $units = OrgUnit::whereIn('type', ['jabatan_struktural', 'departemen', 'prodi'])
+        $units = StrukturOrganisasi::whereIn('type', ['jabatan_struktural', 'departemen', 'prodi'])
             ->where('is_active', true)
             ->orderBy('name')
             ->get();
 
-        return view('pages.hr.pegawai.struktural.create-edit-ajax', compact('pegawai', 'struktural', 'units'));
+        return view('pages.hr.pegawai.struktural.create-edit-ajax', compact('hr_pegawai', 'struktural', 'units'));
     }
 
     public function update(RiwayatStrukturalRequest $request, Pegawai $pegawai, RiwayatJabStruktural $struktural)
@@ -76,7 +76,7 @@ class RiwayatStrukturalController extends Controller
     // Mass Struktural Page
     public function massIndex()
     {
-        $units = OrgUnit::with('children')
+        $units = StrukturOrganisasi::with('children')
             ->whereNull('parent_id')
             ->where('is_active', true)
             ->orderBy('sort_order')
@@ -89,9 +89,9 @@ class RiwayatStrukturalController extends Controller
     // Mass Struktural Detail (AJAX)
     public function massDetail($unitId)
     {
-        $unit = \App\Models\Shared\StrukturOrganisasi::findOrFail($unitId);
+        $unit = \App\Models\Hr\StrukturOrganisasi::findOrFail($unitId);
 
-        $assignments = RiwayatJabStruktural::with('pegawai')
+        $assignments = RiwayatJabStruktural::with('hr_pegawai')
             ->where('org_unit_id', $unitId)
             ->orderByDesc('tgl_awal')
             ->get();
@@ -110,7 +110,7 @@ class RiwayatStrukturalController extends Controller
 
     public function data(\Illuminate\Http\Request $request)
     {
-        $query = RiwayatJabStruktural::with(['pegawai', 'orgUnit'])->select('hr_riwayat_jabstruktural.*');
+        $query = RiwayatJabStruktural::with(['hr_pegawai', 'orgUnit'])->select('hr_riwayat_jabstruktural.*');
 
         if ($request->has('pegawai_id')) {
             $query->where('pegawai_id', decryptIdIfEncrypted($request->pegawai_id));

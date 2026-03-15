@@ -11,6 +11,7 @@ class PelaksanaanController extends Controller
 {
     public function __construct(
         protected PelaksanaanService $PelaksanaanService,
+        protected \App\Services\Pemutu\PeriodeSpmiService $PeriodeSpmiService,
     ) {}
 
     /**
@@ -18,7 +19,8 @@ class PelaksanaanController extends Controller
      */
     public function pemantauanIndex()
     {
-        return view('pages.pemutu.pelaksanaan.pemantauan.index');
+        $siklus = $this->PeriodeSpmiService->getSiklusData();
+        return view('pages.pemutu.pelaksanaan.pemantauan.index', compact('siklus'));
     }
 
     /**

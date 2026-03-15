@@ -25,7 +25,7 @@
                 </x-slot:actions>
             </x-tabler.card-header>
 
-            <div class="card-body p-0">
+            <x-tabler.card-body class="p-0">
                 @if($paket->komposisi->isEmpty())
                     <x-tabler.empty-state
                         title="Belum Ada Soal"
@@ -67,7 +67,7 @@
                         </table>
                     </div>
                 @endif
-            </div>
+            </x-tabler.card-body>
         </x-tabler.card>
     </div>
 
@@ -88,7 +88,7 @@
                 @csrf
 
                 {{-- Search & Filter --}}
-                <div class="card-body border-bottom pb-3">
+                <x-tabler.card-body class="border-bottom pb-3">
 
                     {{-- Search --}}
                     <div class="input-group mb-2">
@@ -118,10 +118,10 @@
                     <div class="mt-2" id="selected-info" style="display:none;">
                         <span class="badge bg-green-lt fs-6" id="selected-count-badge">0 soal dipilih</span>
                     </div>
-                </div>
+                </x-tabler.card-body>
 
                 {{-- List Soal --}}
-                <div class="card-body p-0">
+                <x-tabler.card-body class="p-0">
                     <div id="soal-list" style="max-height: 420px; overflow-y: auto;">
                         @forelse($soalTersedia as $soal)
                         <label class="soal-item list-group-item list-group-item-action px-3 py-2 border-bottom"
@@ -151,15 +151,15 @@
                         </div>
                         @endforelse
                     </div>
-                </div>
+                </x-tabler.card-body>
 
                 {{-- Submit --}}
-                <div class="card-footer">
+                <x-tabler.card-footer>
                     <x-tabler.button type="create" class="w-100" id="btn-tambahkan" text="Tambahkan ke Paket" />
-                </div>
+                </x-tabler.card-footer>
 
             </form>
-        </div>
+        </x-tabler.card>
     </div>
 
 </div>

@@ -15,7 +15,7 @@
     <div class="row">
         <div class="col-12">
             <x-tabler.card>
-                <div class="card-body">
+                <x-tabler.card-body>
                     <x-tabler.datatable-client
                         id="table-lab-teams"
                         :columns="[
@@ -65,6 +65,8 @@
                             icon="ti ti-users"
                         />
                     @endif
-
+                </x-tabler.card-body>
+            </x-tabler.card>
+        </div>
     </div>
 @endsection

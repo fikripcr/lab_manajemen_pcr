@@ -8,7 +8,7 @@ use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Models\Pemutu\TimMutu;
-use App\Models\Shared\StrukturOrganisasi;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
@@ -25,48 +25,35 @@ class EvaluasiDiriController extends Controller
 
     public function index()
     {
-        $pageTitle = 'Evaluasi Diri';
-        $periodes  = $this->PeriodeSpmiService->getPeriodes();
+        // Bypass old period selection — use global siklus from session
+        $siklus = $this->PeriodeSpmiService->getSiklusData();
+        $user   = auth()->user();
 
-        // Global counts (not per-period, as orgunit pivot has no period FK)
-        $edTotal  = DB::table('pemutu_indikator_orgunit')->count();
-        $edFilled = DB::table('pemutu_indikator_orgunit')->whereNotNull('ed_capaian')->where('ed_capaian', '!=', '')->count();
+        $data = [
+            'pageTitle' => 'Evaluasi Diri',
+            'siklus'    => $siklus,
+        ];
 
-        return view('pages.pemutu.evaluasi-diri.index', compact('pageTitle', 'periodes', 'edTotal', 'edFilled'));
-    }
-
-    public function show(PeriodeSpmi $periode)
-    {
-        // Cek jadwal ED sudah diatur
-        $jadwalTersedia = $periode->ed_awal && $periode->ed_akhir;
-        if (! $jadwalTersedia) {
-            return view('pages.pemutu.evaluasi-diri.show', compact('periode', 'jadwalTersedia'));
+        // Resolve user units for both periods to populate filters
+        foreach (['akademik', 'non_akademik'] as $type) {
+            $periode = $siklus[$type];
+            $units   = collect();
+            
+            if ($periode) {
+                $units = TimMutu::where('periodespmi_id', $periode->periodespmi_id)
+                    ->with('orgUnit')
+                    ->get()
+                    ->pluck('orgUnit')
+                    ->filter()
+                    ->unique('orgunit_id');
+            }
+            
+            $data[$type . 'Units'] = $units;
         }
 
-        $user = auth()->user();
-
-        // Get User's Units for this period
-        $timMutuUnits = TimMutu::with('orgUnit')
-            ->where('periodespmi_id', $periode->periodespmi_id)
-            ->where('pegawai_id', $user->pegawai?->pegawai_id)
-            ->get()
-            ->pluck('orgUnit')
-            ->filter();
-
-        // Fallback for testing/administration
-        // Ambil daftar seluruh unit untuk filter (atau biarkan TimMutu sementara waktu sesuai role)
-        $userUnits = TimMutu::where('periodespmi_id', $periode->periodespmi_id)
-            ->with('orgUnit') // Ambil semua unit di periode ini, bukan cuma unit pegawai yang login
-            ->get()
-            ->pluck('orgUnit')
-            ->filter();
-
-        $selectedUnitId = request('unit_id');
-        // Supaya tampilan table render (tidak masuk ke block empty state)
-        $unit = true;
-
-        return view('pages.pemutu.evaluasi-diri.show', compact('periode', 'unit', 'userUnits', 'selectedUnitId', 'jadwalTersedia'));
+        return view('pages.pemutu.evaluasi-diri.index', $data);
     }
+
 
     public function data(Request $request, PeriodeSpmi $periode)
     {

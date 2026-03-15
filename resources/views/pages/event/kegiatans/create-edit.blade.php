@@ -1,7 +1,7 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-<x-tabler.page-header title="{{ $Kegiatan->exists ? 'Edit Kegiatan' : 'Tambah Kegiatan' }}" pretitle="Kegiatan">
+<x-tabler.page-header title="{{ $kegiatan->exists ? 'Edit Kegiatan' : 'Tambah Kegiatan' }}" pretitle="Kegiatan">
     <x-slot:actions>
         <x-tabler.button href="{{ route('Kegiatan.Kegiatans.index') }}" type="back" />
     </x-slot:actions>
@@ -12,17 +12,17 @@
         <div class="row justify-content-center">
             <div class="col-md-10">
                 <x-tabler.card>
-                    <form class="ajax-form" action="{{ $Kegiatan->exists ? route('Kegiatan.Kegiatans.update', $Kegiatan->encrypted_event_id) : route('Kegiatan.Kegiatans.store') }}" method="POST">
+                    <form class="ajax-form" action="{{ $kegiatan->exists ? route('Kegiatan.Kegiatans.update', $kegiatan->encrypted_event_id) : route('Kegiatan.Kegiatans.store') }}" method="POST">
                         @csrf
-                        @if($Kegiatan->exists) @method('PUT') @endif
-                        <div class="card-body">
+                        @if($kegiatan->exists) @method('PUT') @endif
+                        <x-tabler.card-body>
                             
                             <div class="mb-3">
                                 <x-tabler.form-input 
-                                    name="judul_Kegiatan" 
+                                    name="judul_kegiatan" 
                                     label="Judul Kegiatan" 
                                     placeholder="Masukkan judul Kegiatan"
-                                    value="{{ $Kegiatan->judul_Kegiatan }}"
+                                    value="{{ $kegiatan->judul_kegiatan }}"
                                     required="true"
                                 />
                             </div>
@@ -30,10 +30,10 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <x-tabler.form-input 
-                                        name="jenis_Kegiatan" 
+                                        name="jenis_kegiatan" 
                                         label="Jenis Kegiatan" 
                                         placeholder="Contoh: Seminar, Workshop, Lomba"
-                                        value="{{ $Kegiatan->jenis_Kegiatan }}"
+                                        value="{{ $kegiatan->jenis_kegiatan }}"
                                     />
                                 </div>
                                 <div class="col-md-6">
@@ -44,7 +44,7 @@
                                     >
                                         <option value="">-- Pilih PIC --</option>
                                         @foreach($users as $user)
-                                            <option value="{{ $user->id }}" {{ $Kegiatan->pic_user_id == $user->id ? 'selected' : '' }}>
+                                            <option value="{{ $user->id }}" {{ $kegiatan->pic_user_id == $user->id ? 'selected' : '' }}>
                                                 {{ $user->name }}
                                             </option>
                                         @endforeach
@@ -58,7 +58,7 @@
                                         name="tanggal_mulai" 
                                         label="Tanggal Mulai" 
                                         type="date"
-                                        value="{{ $Kegiatan->tanggal_mulai?->format('Y-m-d') }}"
+                                        value="{{ $kegiatan->tanggal_mulai?->format('Y-m-d') }}"
                                         required="true"
                                     />
                                 </div>
@@ -67,7 +67,7 @@
                                         name="tanggal_selesai" 
                                         label="Tanggal Selesai (Opsional)" 
                                         type="date"
-                                        value="{{ $Kegiatan->tanggal_selesai?->format('Y-m-d') }}"
+                                        value="{{ $kegiatan->tanggal_selesai?->format('Y-m-d') }}"
                                     />
                                 </div>
                             </div>
@@ -77,7 +77,7 @@
                                     name="lokasi" 
                                     label="Lokasi" 
                                     placeholder="Tempat pelaksanaan Kegiatan"
-                                    value="{{ $Kegiatan->lokasi }}"
+                                    value="{{ $kegiatan->lokasi }}"
                                 />
                             </div>
 
@@ -87,14 +87,14 @@
                                     label="Deskripsi Kegiatan"
                                     placeholder="Keterangan singkat mengenai Kegiatan"
                                     rows="5"
-                                >{{ $Kegiatan->deskripsi }}</x-tabler.form-textarea>
+                                >{{ $kegiatan->deskripsi }}</x-tabler.form-textarea>
                             </div>
-                        </div>
-                        <div class="card-footer text-end">
+                        </x-tabler.card-body>
+                        <x-tabler.card-footer class="text-end">
                             <x-tabler.button type="submit" text="Simpan Kegiatan" class="btn-primary" />
-                        </div>
+                        </x-tabler.card-footer>
                     </form>
-                </div>
+                </x-tabler.card>
             </div>
         </div>
 @endsection

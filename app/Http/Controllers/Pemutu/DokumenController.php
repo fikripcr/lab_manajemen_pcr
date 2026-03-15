@@ -234,7 +234,7 @@ class DokumenController extends Controller
         return jsonSuccess('Dokumen berhasil dihapus.', $redirectOpt);
     }
 
-    public function reorder(\App\Http\Requests\Shared\ReorderRequest $request)
+    public function reorder(\App\Http\Requests\Hr\ReorderRequest $request)
     {
         $hierarchy = $request->validated('hierarchy');
         $this->dokumenService->reorderDokumens($hierarchy);

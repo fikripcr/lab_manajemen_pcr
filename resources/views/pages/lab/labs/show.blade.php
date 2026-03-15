@@ -272,7 +272,7 @@
                         </div>
                     </x-tabler.card-body>
                     @if($lab->jadwals->count() > 5)
-                        <div class="card-footer p-2 text-center">
+                        <x-tabler.card-footer class="p-2 text-center">
                             <a href="{{ route('lab.jadwal.index') }}" class="small">Lihat Semua</a>
                         </div>
                     @endif

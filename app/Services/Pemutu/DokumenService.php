@@ -90,19 +90,19 @@ class DokumenService
     {
         $targetJenis = pemutuMappableJenis($sourceJenis);
 
-        if (! $targetJenis) {
+        if (empty($targetJenis)) {
             return collect();
         }
 
-        $targetDokumen = \App\Models\Pemutu\Dokumen::where('jenis', $targetJenis)
+        $targetDokumens = \App\Models\Pemutu\Dokumen::whereIn('jenis', $targetJenis)
             ->where('periode', $periode)
-            ->first();
+            ->pluck('dok_id');
 
-        if (! $targetDokumen) {
+        if ($targetDokumens->isEmpty()) {
             return collect();
         }
 
-        return DokSub::where('dok_id', $targetDokumen->dok_id)
+        return DokSub::whereIn('dok_id', $targetDokumens)
             ->orderBy('seq')
             ->get();
     }

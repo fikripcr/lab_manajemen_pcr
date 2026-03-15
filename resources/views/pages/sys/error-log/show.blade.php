@@ -162,7 +162,6 @@
                 </x-tabler.card>
 
                 @if ($errorLog->context)
-                    <div class="card mb-4">
                     <x-tabler.card class="mb-4">
                         <x-tabler.card-header title="Context Information" />
                         <x-tabler.card-body>

@@ -37,6 +37,6 @@ class Diskusi extends Model
     // Pengirim (user yang mengirim diskusi)
     public function pengirim()
     {
-        return $this->belongsTo(User::class, 'pengirim_user_id', 'id');
+        return $this->belongsTo(\App\Models\User::class, 'pengirim_user_id', 'id');
     }
 }

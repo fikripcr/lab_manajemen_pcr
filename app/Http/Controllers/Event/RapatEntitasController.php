@@ -7,7 +7,7 @@ use App\Models\Event\Rapat;
 use App\Models\Event\RapatEntitas;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\IndikatorOrgUnit;
-use App\Models\Shared\StrukturOrganisasi;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Services\Event\RapatEntitasService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;

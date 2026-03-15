@@ -2,14 +2,11 @@
 @section('title', 'Pemantauan (Monitoring)')
 
 @section('header')
-<x-tabler.page-header title="Pemantauan (Monitoring)" pretitle="Pelaksanaan">
+<x-tabler.page-header title="Pemantauan SPMI {{ $siklus['tahun'] }}" pretitle="Pelaksanaan">
     <x-slot:actions>
-        <x-tabler.button 
-            type="create" 
-            href="#" 
-            :modalUrl="route('pemutu.pelaksanaan.pemantauan.create')" 
-            modalTitle="Jadwalkan Pemantauan Baru" 
-            text="Jadwalkan Monitoring" />
+        <div class="text-muted small px-3 py-2 bg-light-lt rounded border border-info d-none d-md-block">
+            <i class="ti ti-info-circle me-1 text-info"></i> Silahkan jadwalkan di menu <b>Rapat</b> lalu pilih entitas terkait indikator pemantauan.
+        </div>
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

@@ -7,12 +7,7 @@ use App\Http\Requests\BaseRequest;
 class FeedbackStoreRequest extends BaseRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -41,19 +36,7 @@ class FeedbackStoreRequest extends BaseRequest
     }
 
     /**
-     * Get custom error messages for validation rules.
      *
      * @return array<string, string>
      */
-    public function messages(): array
-    {
-        return array_merge(parent::messages(), [
-            'rating.required'  => 'Rating harus diisi.',
-            'rating.integer'   => 'Rating tidak valid.',
-            'rating.min'       => 'Rating minimal 1.',
-            'rating.max'       => 'Rating maksimal 5.',
-            'catatan.required' => 'Catatan harus diisi.',
-            'catatan.min'      => 'Catatan minimal 5 karakter.',
-        ]);
-    }
 }

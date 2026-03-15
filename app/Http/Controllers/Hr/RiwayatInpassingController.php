@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\RiwayatInpassingRequest;
 use App\Models\Hr\GolonganInpassing;
 use App\Models\Hr\RiwayatInpassing;
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use App\Services\Hr\RiwayatInpassingService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -18,7 +18,7 @@ class RiwayatInpassingController extends Controller
     public function index(Pegawai $pegawai = null)
     {
         if ($pegawai) {
-            return view('pages.hr.data-diri.tabs.inpassing', compact('pegawai'));
+            return view('pages.hr.data-diri.tabs.inpassing', compact('hr_pegawai'));
         }
         return view('pages.hr.data-diri.tabs.inpassing'); // Global view if needed
     }
@@ -27,7 +27,7 @@ class RiwayatInpassingController extends Controller
     {
         $golongan  = GolonganInpassing::all();
         $inpassing = new RiwayatInpassing();
-        return view('pages.hr.pegawai.inpassing.create-edit-ajax', compact('pegawai', 'golongan', 'inpassing'));
+        return view('pages.hr.pegawai.inpassing.create-edit-ajax', compact('hr_pegawai', 'golongan', 'inpassing'));
     }
 
     public function store(RiwayatInpassingRequest $request, Pegawai $pegawai)
@@ -39,7 +39,7 @@ class RiwayatInpassingController extends Controller
     public function edit(Pegawai $pegawai, RiwayatInpassing $inpassing)
     {
         $golongan = GolonganInpassing::all();
-        return view('pages.hr.pegawai.inpassing.create-edit-ajax', compact('pegawai', 'inpassing', 'golongan'));
+        return view('pages.hr.pegawai.inpassing.create-edit-ajax', compact('hr_pegawai', 'inpassing', 'golongan'));
     }
 
     public function update(RiwayatInpassingRequest $request, Pegawai $pegawai, RiwayatInpassing $inpassing)
@@ -56,7 +56,7 @@ class RiwayatInpassingController extends Controller
 
     public function data(Request $request)
     {
-        $query = RiwayatInpassing::with(['pegawai', 'golonganInpassing'])->select('hr_riwayat_inpassing.*');
+        $query = RiwayatInpassing::with(['hr_pegawai', 'golonganInpassing'])->select('hr_riwayat_inpassing.*');
 
         if ($request->has('pegawai_id')) {
             $query->where('pegawai_id', decryptIdIfEncrypted($request->pegawai_id));

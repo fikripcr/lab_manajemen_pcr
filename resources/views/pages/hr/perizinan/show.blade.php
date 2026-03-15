@@ -25,7 +25,7 @@
                     </span>
                 </div>
             </div>
-            <div class="card-body">
+            <x-tabler.card-body>
                 <table class="table table-borderless table-vcenter">
                     <tr>
                         <th width="180" class="text-secondary font-weight-bold">Pegawai</th>
@@ -60,15 +60,15 @@
                         <td>: {{ $perizinan->alamat_izin ?? '-' }}</td>
                     </tr>
                 </table>
-            </div>
+            </x-tabler.card-body>
         </div>
     </div>
 
     <div class="col-lg-5">
-        <div class="card mb-3">
-            <div class="card-header">
+        <x-tabler.card class="mb-3">
+            <x-tabler.card-header>
                 <h3 class="card-title">Riwayat Approval</h3>
-            </div>
+            </x-tabler.card-header>
             <div class="list-group list-group-flush" style="max-height: 320px; overflow-y: auto;">
                 @forelse ($perizinan->approvalHistory as $history)
                     @php
@@ -102,11 +102,11 @@
                     <div class="list-group-item text-center py-3 text-muted small fst-italic">Belum ada riwayat approval.</div>
                 @endforelse
             </div>
-        </div>
+        </x-tabler.card>
 
         @if($perizinan->status == 'Diajukan' || $perizinan->status == 'Draft' || $perizinan->status == 'Pending')
-        <div class="card shadow-sm border-top border-warning border-3">
-            <div class="card-body">
+        <x-tabler.card class="shadow-sm border-top border-warning border-3">
+            <x-tabler.card-body>
                 <h4 class="card-title mb-3">Proses Approval</h4>
                 <form class="ajax-form" action="{{ route('hr.perizinan.approve', $perizinan->encrypted_perizinan_id) }}" method="POST">
                     @csrf
@@ -134,8 +134,8 @@
                         </div>
                     </div>
                 </form>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
         @endif
     </div>
 </div>

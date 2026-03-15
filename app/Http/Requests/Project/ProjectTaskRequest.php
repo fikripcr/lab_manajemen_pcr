@@ -7,12 +7,7 @@ use App\Http\Requests\BaseRequest;
 class ProjectTaskRequest extends BaseRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -39,25 +34,5 @@ class ProjectTaskRequest extends BaseRequest
     }
 
     /**
-     * Get custom messages for validator errors.
      */
-    public function messages(): array
-    {
-        return array_merge(parent::messages(), [
-            'project_id.required'         => 'Proyek wajib dipilih',
-            'project_id.exists'           => 'Proyek tidak ditemukan',
-            'task_title.required'         => 'Judul tugas wajib diisi',
-            'task_title.max'              => 'Judul tugas maksimal 200 karakter',
-            'status.required'             => 'Status wajib diisi',
-            'status.in'                   => 'Status tidak valid',
-            'priority.required'           => 'Prioritas wajib diisi',
-            'priority.in'                 => 'Prioritas tidak valid',
-            'weight.integer'              => 'Bobot harus berupa angka',
-            'weight.min'                  => 'Bobot minimal 1',
-            'weight.max'                  => 'Bobot maksimal 10',
-            'hours_worked.integer'        => 'Jam kerja harus berupa angka',
-            'hours_worked.min'            => 'Jam kerja minimal 0',
-            'due_date.date'               => 'Tanggal jatuh tempo tidak valid',
-        ]);
-    }
 }

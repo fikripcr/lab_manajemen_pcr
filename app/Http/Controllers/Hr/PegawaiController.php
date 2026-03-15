@@ -3,11 +3,11 @@ namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\PegawaiRequest;
-use App\Http\Requests\Shared\SearchRequest;
-use App\Models\Hr\OrgUnit;
+use App\Http\Requests\Hr\SearchRequest;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Hr\StatusAktifitas;
 use App\Models\Hr\StatusPegawai;
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use App\Services\Hr\PegawaiService;
 use App\Services\Hr\RiwayatDataDiriService;
 use Illuminate\Http\Request;
@@ -49,8 +49,8 @@ class PegawaiController extends Controller
      */
     public function index(Request $request)
     {
-        $posisi = OrgUnit::where('type', 'posisi')->get();
-        $units  = OrgUnit::whereIn('type', ['Bagian', 'Jurusan', 'Prodi', 'Unit'])->get();
+        $posisi = StrukturOrganisasi::where('type', 'posisi')->get();
+        $units  = StrukturOrganisasi::whereIn('type', ['Bagian', 'Jurusan', 'Prodi', 'Unit'])->get();
         return view('pages.hr.data-diri.index', compact('posisi', 'units'));
     }
 
@@ -169,7 +169,7 @@ class PegawaiController extends Controller
             ->where('approval.status', 'Pending')
             ->first();
 
-        return view('pages.hr.pegawai.show', compact('pegawai', 'pendingChange'));
+        return view('pages.hr.pegawai.show', compact('hr_pegawai', 'pendingChange'));
     }
 
     /**
@@ -179,11 +179,11 @@ class PegawaiController extends Controller
     {
         $pegawai->load('latestDataDiri');
 
-        $posisi     = OrgUnit::where('type', 'posisi')->select('orgunit_id', 'name')->get();
-        $departemen = OrgUnit::whereIn('type', ['Bagian', 'Jurusan', 'Prodi', 'Unit'])->select('orgunit_id', 'name')->get();
-        $prodi      = OrgUnit::where('type', 'Prodi')->select('orgunit_id', 'name')->get();
+        $posisi     = StrukturOrganisasi::where('type', 'posisi')->select('orgunit_id', 'name')->get();
+        $departemen = StrukturOrganisasi::whereIn('type', ['Bagian', 'Jurusan', 'Prodi', 'Unit'])->select('orgunit_id', 'name')->get();
+        $prodi      = StrukturOrganisasi::where('type', 'Prodi')->select('orgunit_id', 'name')->get();
 
-        return view('pages.hr.pegawai.create-edit', compact('pegawai', 'posisi', 'departemen', 'prodi'));
+        return view('pages.hr.pegawai.create-edit', compact('hr_pegawai', 'posisi', 'departemen', 'prodi'));
     }
 
     /**

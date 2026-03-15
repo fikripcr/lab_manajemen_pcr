@@ -12,7 +12,7 @@ class IndikatorService
 {
     public function getFilteredQuery(array $filters)
     {
-        $query = Indikator::with(['dokSubs.dokumen', 'labels.type', 'parent', 'orgUnits']);
+        $query = Indikator::with(['dokSubs.dokumen', 'labels', 'parent', 'orgUnits']);
 
         if (! empty($filters['dokumen_id'])) {
             $dokId = decryptIdIfEncrypted($filters['dokumen_id']);
@@ -41,7 +41,7 @@ class IndikatorService
 
     public function getIndikatorById($id)
     {
-        return Indikator::with(['dokSubs.dokumen', 'labels.type', 'orgUnits', 'pegawai.pegawai', 'parent'])->find($id);
+        return Indikator::with(['dokSubs.dokumen', 'labels', 'orgUnits', 'pegawai.pegawai', 'parent'])->find($id);
     }
 
     /**
@@ -300,10 +300,28 @@ class IndikatorService
      */
     public function getUnifiedSpmiQuery(PeriodeSpmi $periode, ?int $unitId = null, array $additionalFilters = []): Builder
     {
-        $query = Indikator::with(['orgUnits' => function ($q) use ($unitId) {
+        $query = Indikator::with(['orgUnits' => function ($q) use ($unitId, $additionalFilters) {
             if ($unitId) {
                 $q->where('pemutu_indikator_orgunit.org_unit_id', $unitId);
             }
+
+            // Apply same result filters to the loaded units to ensure context consistency
+            if (isset($additionalFilters['ami_hasil_akhir']) && $additionalFilters['ami_hasil_akhir'] !== '') {
+                $val = $additionalFilters['ami_hasil_akhir'];
+                is_array($val) ? $q->whereIn('ami_hasil_akhir', $val) : $q->where('ami_hasil_akhir', $val);
+            }
+
+            if (isset($additionalFilters['pengend_status']) && $additionalFilters['pengend_status'] !== 'all') {
+                $status = $additionalFilters['pengend_status'];
+                if ($status === 'empty') {
+                    $q->where(function ($sq) {
+                        $sq->whereNull('pengend_status')->orWhere('pengend_status', '');
+                    });
+                } else {
+                    is_array($status) ? $q->whereIn('pengend_status', $status) : $q->where('pengend_status', $status);
+                }
+            }
+
             $q->withPivot([
                 'indikorgunit_id',
                 'target',
@@ -329,7 +347,7 @@ class IndikatorService
                 'pengend_urgent_matrix',
                 'prev_indikorgunit_id',
             ]);
-        }, 'labels.type', 'parent', 'dokSubs.dokumen.parent']);
+        }, 'labels', 'parent', 'dokSubs.dokumen.parent']);
 
         $query->whereHas('orgUnits', function ($q) use ($unitId, $additionalFilters) {
             if ($unitId) {
@@ -354,7 +372,7 @@ class IndikatorService
             }
 
             // Filter by AMI Hasil Akhir (exact or array)
-            if (isset($additionalFilters['ami_hasil_akhir'])) {
+            if (isset($additionalFilters['ami_hasil_akhir']) && $additionalFilters['ami_hasil_akhir'] !== '') {
                 $val = $additionalFilters['ami_hasil_akhir'];
                 is_array($val) ? $q->whereIn('ami_hasil_akhir', $val) : $q->where('ami_hasil_akhir', $val);
             }

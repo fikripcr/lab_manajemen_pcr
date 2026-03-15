@@ -7,12 +7,7 @@ use App\Http\Requests\BaseRequest;
 class FormPlayerRequest extends BaseRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -40,17 +35,9 @@ class FormPlayerRequest extends BaseRequest
     }
 
     /**
-     * Get custom messages for validator errors.
      *
      * @return array
      */
-    public function messages(): array
-    {
-        return [
-            'jawaban.required'   => 'Anda harus mengisi minimal satu jawaban.',
-            'jawaban.*.required' => 'Pertanyaan wajib harus diisi.',
-        ];
-    }
 
     public function attributes(): array
     {

@@ -5,10 +5,6 @@ use App\Http\Requests\BaseRequest;
 
 class RapatRequest extends BaseRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     public function rules(): array
     {
@@ -29,19 +25,12 @@ class RapatRequest extends BaseRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'ketua_user_id'   => decryptIdIfEncrypted($this->ketua_user_id),
-            'notulen_user_id' => decryptIdIfEncrypted($this->notulen_user_id),
-            'author_user_id'  => decryptIdIfEncrypted($this->author_user_id),
+            'ketua_user_id'   => $this->ketua_user_id ? decryptIdIfEncrypted($this->ketua_user_id, false) : null,
+            'notulen_user_id' => $this->notulen_user_id ? decryptIdIfEncrypted($this->notulen_user_id, false) : null,
+            'author_user_id'  => $this->author_user_id ? decryptIdIfEncrypted($this->author_user_id, false) : null,
         ]);
     }
 
-    public function messages(): array
-    {
-        return array_merge(parent::messages(), [
-            'waktu_selesai.after' => 'Waktu Selesai harus setelah Waktu Mulai.',
-            'date_format'         => 'Format :attribute tidak valid (HH:MM).',
-        ]);
-    }
 
     public function attributes(): array
     {

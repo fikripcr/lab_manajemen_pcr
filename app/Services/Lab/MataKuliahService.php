@@ -1,7 +1,7 @@
 <?php
 namespace App\Services\Lab;
 
-use App\Models\Lab\MataKuliah;
+use App\Models\Akademik\MataKuliah;
 use Exception;
 use Illuminate\Support\Facades\DB;
 

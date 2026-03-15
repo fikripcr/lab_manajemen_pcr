@@ -5,16 +5,12 @@ use App\Http\Requests\BaseRequest;
 
 class PeningkatanRtmRequest extends BaseRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     protected function prepareForValidation()
     {
         $this->merge([
-            'ketua_user_id'   => decryptIdIfEncrypted($this->ketua_user_id),
-            'notulen_user_id' => decryptIdIfEncrypted($this->notulen_user_id),
+            'ketua_user_id'   => $this->ketua_user_id ? decryptIdIfEncrypted($this->ketua_user_id, false) : null,
+            'notulen_user_id' => $this->notulen_user_id ? decryptIdIfEncrypted($this->notulen_user_id, false) : null,
         ]);
     }
 

@@ -1,6 +1,8 @@
 <?php
 namespace App\Models\Lab;
 
+use App\Models\Akademik\Semester;
+use App\Models\Akademik\MataKuliah;
 use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
@@ -58,7 +60,7 @@ class JadwalKuliah extends Model
      */
     public function dosen()
     {
-        return $this->belongsTo(User::class, 'dosen_id');
+        return $this->belongsTo(\App\Models\User::class, 'dosen_id');
     }
 
     /**

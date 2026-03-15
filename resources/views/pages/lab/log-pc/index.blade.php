@@ -29,7 +29,7 @@
                     route="{{ route('lab.log-pc.data') }}"
                     :columns="[
                         ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '5%'],
-                        ['data' => 'mahasiswa', 'name' => 'user.name', 'title' => 'Mahasiswa'],
+                        ['data' => 'akademik_mahasiswa', 'name' => 'user.name', 'title' => 'Mahasiswa'],
                         ['data' => 'waktu', 'name' => 'waktu_isi', 'title' => 'Waktu', 'class' => 'text-center'],
                         ['data' => 'pc_info', 'name' => 'lab.name', 'title' => 'PC Info'],
                         ['data' => 'kondisi', 'name' => 'status_pc', 'title' => 'Kondisi & Catatan']

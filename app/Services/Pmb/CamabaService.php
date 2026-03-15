@@ -7,7 +7,7 @@ use App\Models\Pmb\Jalur;
 use App\Models\Pmb\Pembayaran;
 use App\Models\Pmb\Pendaftaran;
 use App\Models\Pmb\SyaratDokumenJalur;
-use App\Models\Shared\StrukturOrganisasi;
+use App\Models\Hr\StrukturOrganisasi;
 use Illuminate\Support\Facades\DB;
 
 class CamabaService

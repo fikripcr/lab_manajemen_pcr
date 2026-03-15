@@ -5,10 +5,6 @@ use App\Http\Requests\BaseRequest;
 
 class RapatEntitasRequest extends BaseRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     public function rules(): array
     {
@@ -37,7 +33,7 @@ class RapatEntitasRequest extends BaseRequest
                 // Mapping short name to full class name
                 $modelMap = [
                     'IndikatorOrgUnit'   => \App\Models\Pemutu\IndikatorOrgUnit::class,
-                    'StrukturOrganisasi' => \App\Models\Shared\StrukturOrganisasi::class,
+                    'StrukturOrganisasi' => \App\Models\Hr\StrukturOrganisasi::class,
                     'Indikator'          => \App\Models\Pemutu\Indikator::class,
                 ];
 

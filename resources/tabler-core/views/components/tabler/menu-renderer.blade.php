@@ -35,12 +35,12 @@
             'title'         => 'Master Data',
             'id'            => 'navbar-master-data',
             'icon'          => 'ti ti-database',
-            'active_routes' => ['shared.struktur-organisasi.*', 'hr.pegawai.*', 'lab.mahasiswa.*', 'shared.personil.*'],
-            'children'      => [
+            'active_routes' => ['hr.struktur-organisasi.*', 'hr.pegawai.*', 'akademik.mahasiswa.*', 'hr.personil.*'],
+            'children' => [
                 [
                     'title' => 'Struktur Organisasi',
-                    'route' => 'shared.struktur-organisasi.index',
-                    'active_routes' => ['shared.struktur-organisasi.*'],
+                    'route' => 'hr.struktur-organisasi.index',
+                    'active_routes' => ['hr.struktur-organisasi.*'],
                     'icon'  => 'ti ti-hierarchy-2',
                 ],
                 [
@@ -51,14 +51,14 @@
                 ],
                 [
                     'title' => 'Mahasiswa',
-                    'route' => 'lab.mahasiswa.index',
-                    'active_routes' => ['lab.mahasiswa.*'],
+                    'route' => 'akademik.mahasiswa.index',
+                    'active_routes' => ['akademik.mahasiswa.*'],
                     'icon'  => 'ti ti-school',
                 ],
                 [
                     'title' => 'Personil',
-                    'route' => 'shared.personil.index',
-                    'active_routes' => ['shared.personil.*'],
+                    'route' => 'hr.personil.index',
+                    'active_routes' => ['hr.personil.*'],
                     'icon'  => 'ti ti-user-check',
                 ],
                 [
@@ -76,36 +76,36 @@
             'title'         => 'Info Publik',
             'id'            => 'navbar-info-master',
             'icon'          => 'ti ti-info-circle',
-            'active_routes' => ['lab.pengumuman.*', 'lab.berita.*', 'shared.slideshow.*', 'shared.faq.*', 'shared.public-menu.*', 'shared.public-page.*'],
+            'active_routes' => ['cms.pengumuman.*', 'cms.berita.*', 'cms.slideshow.*', 'cms.faq.*', 'cms.public-menu.*', 'cms.public-page.*'],
             'children'      => [
                 [
                     'title'         => 'Pengumuman',
-                    'route'         => 'lab.pengumuman.index',
-                    'active_routes' => ['lab.pengumuman.*'],
+                    'route'         => 'cms.pengumuman.index',
+                    'active_routes' => ['cms.pengumuman.*'],
                     'icon'          => 'ti ti-speakerphone',
                 ],
                 [
                     'title'         => 'Berita',
-                    'route'         => 'lab.berita.index',
-                    'active_routes' => ['lab.berita.*'],
+                    'route'         => 'cms.berita.index',
+                    'active_routes' => ['cms.berita.*'],
                     'icon'          => 'ti ti-news',
                 ],
                 [
                     'title'         => 'Slideshow',
-                    'route'         => 'shared.slideshow.index',
-                    'active_routes' => ['shared.slideshow.*'],
+                    'route'         => 'cms.slideshow.index',
+                    'active_routes' => ['cms.slideshow.*'],
                     'icon'          => 'ti ti-presentation',
                 ],
                 [
                     'title'         => 'FAQ',
-                    'route'         => 'shared.faq.index',
-                    'active_routes' => ['shared.faq.*'],
+                    'route'         => 'cms.faq.index',
+                    'active_routes' => ['cms.faq.*'],
                     'icon'          => 'ti ti-help',
                 ],
                 [
                     'title'         => 'Halaman & Menu',
-                    'route'         => 'shared.public-menu.index',
-                    'active_routes' => ['shared.public-menu.*', 'shared.public-page.*'],
+                    'route'         => 'cms.public-menu.index',
+                    'active_routes' => ['cms.public-menu.*', 'cms.public-page.*'],
                     'icon'          => 'ti ti-layout-sidebar',
                 ],
             ],
@@ -125,7 +125,7 @@
             // Removed parent 'can' => 'admin' to allow Auditees to see My KPI / Evaluasi Diri
             'children'      => [
                 [
-                    'title' => 'Label & Kategori',
+                    'title' => 'Label',
                     'route' => 'pemutu.label.index',
                     'active_routes' => ['pemutu.label.*', 'pemutu.label-type.*'],
                     'icon' => 'ti ti-tags',
@@ -271,19 +271,17 @@
                 'lab.laporan-kerusakan.*',
                 'lab.log-pc.*',
                 'lab.software-requests.*',
-                'lab.pengumuman.*',
-                'lab.semesters.*',
-                'lab.mata-kuliah.*',
+                'akademik.semesters.*',
+                'akademik.mata-kuliah.*',
                 'lab.jadwal.*',
                 'lab.periode-request.*',
-                'lab.personil.*'
             ],
             'children'      => [
                 [
                     'title'         => 'Master Data',
                     'id'            => 'navbar-lab-master',
                     'icon'          => 'ti ti-database',
-                    'active_routes' => ['lab.labs.*', 'lab.inventaris.*', 'lab.semesters.*', 'lab.mata-kuliah.*', 'lab.jadwal.*', 'lab.personil.*'],
+                    'active_routes' => ['lab.labs.*', 'lab.inventaris.*', 'akademik.semesters.*', 'akademik.mata-kuliah.*', 'lab.jadwal.*'],
                     'children'      => [
                         [
                             'title'         => 'Data Lab',
@@ -299,14 +297,14 @@
                         ],
                         [
                             'title'         => 'Data Semester',
-                            'route'         => 'lab.semesters.index',
-                            'active_routes' => ['lab.semesters.*'],
+                            'route'         => 'akademik.semesters.index',
+                            'active_routes' => ['akademik.semesters.*'],
                             'icon'          => 'ti ti-calendar-stats',
                         ],
                         [
                             'title'         => 'Data Mata Kuliah',
-                            'route'         => 'lab.mata-kuliah.index',
-                            'active_routes' => ['lab.mata-kuliah.*'],
+                            'route'         => 'akademik.mata-kuliah.index',
+                            'active_routes' => ['akademik.mata-kuliah.*'],
                             'icon'          => 'ti ti-book',
                         ],
                         [
@@ -639,14 +637,7 @@
         return request()->routeIs($routes);
     };
 
-    // Helper to render icon (SVG or Class)
-    $renderIcon = function($icon) {
-        if (empty($icon)) return '';
-        if (str_contains($icon, '<svg')) {
-            return $icon;
-        }
-        return '<i class="'.$icon.'"></i>';
-    };
+
 @endphp
 
 @if($type === 'sidebar')
@@ -661,7 +652,7 @@
                 <li class="nav-item{{ $isActive($item['route'] ?? null) ? ' active' : '' }}">
                     <a class="nav-link" href="{{ (isset($item['route']) && $item['route'] !== '#') ? route($item['route']) : '#' }}">
                         <span class="nav-link-icon d-lg-inline-block">
-                            {!! $renderIcon($item['icon'] ?? '') !!}
+                            @if(!empty($item['icon']))<x-tabler.icon-svg name="{{ str_replace('ti ti-', '', $item['icon']) }}" />@endif
                         </span>
                         <span class="nav-link-title">{{ $item['title'] ?? '' }}</span>
                     </a>
@@ -675,7 +666,7 @@
                        role="button"
                        aria-expanded="{{ $isActive($item['active_routes'] ?? []) ? 'true' : 'false' }}">
                         <span class="nav-link-icon d-lg-inline-block">
-                            {!! $renderIcon($item['icon'] ?? '') !!}
+                            @if(!empty($item['icon']))<x-tabler.icon-svg name="{{ str_replace('ti ti-', '', $item['icon']) }}" />@endif
                         </span>
                         <span class="nav-link-title">{{ $item['title'] ?? '' }}</span>
                     </a>
@@ -698,7 +689,7 @@
                                                role="button"
                                                aria-expanded="{{ $isChildActive ? 'true' : 'false' }}">
                                                 @if(!empty($child['icon']))
-                                                    {!! $renderIcon($child['icon'], 'icon-inline me-1') !!}
+                                                    <x-tabler.icon-svg name="{{ str_replace('ti ti-', '', $child['icon']) }}" class="icon-inline me-1" />
                                                 @endif
                                                 {{ $child['title'] ?? '' }}
                                             </a>
@@ -715,7 +706,7 @@
                                                     <a class="dropdown-item{{ $subIsActive ? ' active' : '' }}"
                                                        href="{{ $subHref }}">
                                                         @if(!empty($subchild['icon']))
-                                                            {!! $renderIcon($subchild['icon'], 'icon-inline me-1') !!}
+                                                            <x-tabler.icon-svg name="{{ str_replace('ti ti-', '', $subchild['icon']) }}" class="icon-inline me-1" />
                                                         @endif
                                                         {{ $subchild['title'] ?? '' }}
                                                     </a>
@@ -735,7 +726,7 @@
                                            href="{{ $childHref }}">
                                             {{-- Icons optional in submenus --}}
                                             @if(!empty($child['icon']))
-                                                {!! $renderIcon($child['icon'], 'icon-inline me-1') !!}
+                                                <x-tabler.icon-svg name="{{ str_replace('ti ti-', '', $child['icon']) }}" class="icon-inline me-1" />
                                             @endif
                                             {{ $child['title'] ?? '' }}
                                         </a>
@@ -756,7 +747,7 @@
                 <li class="nav-item{{ $isActive($item['route'] ?? null) ? ' active' : '' }}">
                     <a class="nav-link" href="{{ (isset($item['route']) && $item['route'] !== '#') ? route($item['route']) : '#' }}">
                         <span class="nav-link-icon d-lg-inline-block">
-                            {!! $renderIcon($item['icon'] ?? '') !!}
+                            @if(!empty($item['icon']))<x-tabler.icon-svg name="{{ str_replace('ti ti-', '', $item['icon']) }}" />@endif
                         </span>
                         <span class="nav-link-title">{{ $item['title'] ?? '' }}</span>
                     </a>
@@ -765,7 +756,7 @@
                 <li class="nav-item dropdown{{ $isActive($item['active_routes'] ?? []) ? ' active' : '' }}">
                     <a class="nav-link dropdown-toggle" href="#{{ $item['id'] ?? 'nav-drop' }}" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
                         <span class="nav-link-icon d-lg-inline-block">
-                            {!! $renderIcon($item['icon'] ?? '') !!}
+                            @if(!empty($item['icon']))<x-tabler.icon-svg name="{{ str_replace('ti ti-', '', $item['icon']) }}" />@endif
                         </span>
                         <span class="nav-link-title">{{ $item['title'] ?? '' }}</span>
                     </a>
@@ -785,7 +776,7 @@
                                                role="button"
                                                aria-expanded="{{ $isChildActive ? 'true' : 'false' }}">
                                                 @if(!empty($child['icon']))
-                                                   {!! $renderIcon($child['icon'], 'icon-inline me-1') !!}
+                                                   <x-tabler.icon-svg name="{{ str_replace('ti ti-', '', $child['icon']) }}" class="icon-inline me-1" />
                                                 @endif
                                                 {{ $child['title'] ?? '' }}
                                             </a>
@@ -794,7 +785,7 @@
                                                     <a class="dropdown-item{{ $isActive($subchild['route'] ?? null) ? ' active' : '' }}"
                                                        href="{{ (isset($subchild['route']) && $subchild['route'] !== '#') ? route($subchild['route']) : '#' }}">
                                                         @if(!empty($subchild['icon']))
-                                                            {!! $renderIcon($subchild['icon'], 'icon-inline me-1') !!}
+                                                            <x-tabler.icon-svg name="{{ str_replace('ti ti-', '', $subchild['icon']) }}" class="icon-inline me-1" />
                                                         @endif
                                                         {{ $subchild['title'] ?? '' }}
                                                     </a>
@@ -804,9 +795,7 @@
                                     @else
                                         <a class="dropdown-item{{ $isActive($child['active_routes'] ?? $child['route'] ?? '') ? ' active' : '' }}"
                                            href="{{ (isset($child['route']) && $child['route'] !== '#') ? route($child['route']) : '#' }}">
-                                            @if(!empty($child['icon']))
-                                               {!! $renderIcon($child['icon'], 'icon-inline me-1') !!}
-                                            @endif
+                                                <x-tabler.icon-svg name="{{ str_replace('ti ti-', '', $child['icon']) }}" class="icon-inline me-1" />
                                             {{ $child['title'] ?? '' }}
                                         </a>
                                     @endif

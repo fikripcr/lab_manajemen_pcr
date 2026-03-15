@@ -122,6 +122,21 @@
 @endsection
 
 @section('content')
+    @if($pendingApprovalsCount > 0)
+    <div class="alert alert-warning alert-important alert-dismissible" role="alert">
+        <div class="d-flex">
+            <div>
+                <i class="ti ti-alert-circle icon alert-icon"></i>
+            </div>
+            <div>
+                <h4 class="alert-title">Perhatian!</h4>
+                <div class="text-secondary">Ada {{ $pendingApprovalsCount }} dokumen yang menunggu persetujuan Anda.</div>
+            </div>
+        </div>
+        <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+    </div>
+    @endif
+
     {{-- FILTERS ROW --}}
     <x-tabler.card class="mb-3 metric-card">
         <x-tabler.card-body class="py-2">

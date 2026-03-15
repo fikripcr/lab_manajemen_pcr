@@ -11,8 +11,8 @@
 
 @section('content')
 
-        <div class="card card-print">
-            <div class="card-body">
+        <x-tabler.card class="card-print">
+            <x-tabler.card-body>
                 <div class="row align-items-center mb-4 text-center">
                     <div class="col-auto">
                         <img src="{{ asset('static/logo-pcr.png') }}" height="60" alt="">
@@ -67,8 +67,8 @@
                         <li>Peserta wajib membawa identitas diri (KTP/Kartu Pelajar).</li>
                     </ol>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
 <style type="text/css">
     @media print {
         .btn-list, .page-header, .navbar, .footer { display: none !important; }

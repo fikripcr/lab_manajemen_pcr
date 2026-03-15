@@ -6,6 +6,7 @@ use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\User;
 
 class LaporanKerusakan extends Model
 {
@@ -49,7 +50,7 @@ class LaporanKerusakan extends Model
      */
     public function teknisi()
     {
-        return $this->belongsTo(User::class, 'teknisi_id');
+        return $this->belongsTo(\App\Models\User::class, 'teknisi_id');
     }
 
     /**

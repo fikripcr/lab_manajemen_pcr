@@ -56,6 +56,6 @@ class PaketUjian extends Model
 
     public function pembuat()
     {
-        return $this->belongsTo(User::class, 'dibuat_oleh');
+        return $this->belongsTo(\App\Models\User::class, 'dibuat_oleh');
     }
 }

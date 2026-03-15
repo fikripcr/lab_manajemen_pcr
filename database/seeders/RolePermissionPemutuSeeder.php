@@ -22,12 +22,12 @@ class RolePermissionPemutuSeeder extends Seeder
             // ── 1. LAPORAN (Dashboard) ─────────────────────────────────────────
             ['name' => 'pemutu.dashboard.view', 'category' => 'Penjaminan Mutu', 'sub_category' => 'Laporan', 'description' => 'Melihat dashboard capaian mutu SPMI'],
 
-            // ── 2. PENGATURAN ── Label & Kategori ─────────────────────────────
-            ['name' => 'pemutu.label.view', 'category' => 'Penjaminan Mutu', 'sub_category' => 'Label & Kategori', 'description' => 'Melihat daftar label & kategori indikator'],
-            ['name' => 'pemutu.label.data', 'category' => 'Penjaminan Mutu', 'sub_category' => 'Label & Kategori', 'description' => 'Mengambil data label (DataTables)'],
-            ['name' => 'pemutu.label.create', 'category' => 'Penjaminan Mutu', 'sub_category' => 'Label & Kategori', 'description' => 'Menambah label baru'],
-            ['name' => 'pemutu.label.update', 'category' => 'Penjaminan Mutu', 'sub_category' => 'Label & Kategori', 'description' => 'Mengubah detail label'],
-            ['name' => 'pemutu.label.delete', 'category' => 'Penjaminan Mutu', 'sub_category' => 'Label & Kategori', 'description' => 'Menghapus label'],
+            // ── 2. PENGATURAN ── Label ─────────────────────────────
+            ['name' => 'pemutu.label.view', 'category' => 'Penjaminan Mutu', 'sub_category' => 'Label', 'description' => 'Melihat daftar label & kategori indikator'],
+            ['name' => 'pemutu.label.data', 'category' => 'Penjaminan Mutu', 'sub_category' => 'Label', 'description' => 'Mengambil data label (DataTables)'],
+            ['name' => 'pemutu.label.create', 'category' => 'Penjaminan Mutu', 'sub_category' => 'Label', 'description' => 'Menambah label baru'],
+            ['name' => 'pemutu.label.update', 'category' => 'Penjaminan Mutu', 'sub_category' => 'Label', 'description' => 'Mengubah detail label'],
+            ['name' => 'pemutu.label.delete', 'category' => 'Penjaminan Mutu', 'sub_category' => 'Label', 'description' => 'Menghapus label'],
 
             // ── 2. PENGATURAN ── Periode SPMI ─────────────────────────────────
             ['name' => 'pemutu.periode.view', 'category' => 'Penjaminan Mutu', 'sub_category' => 'Periode SPMI', 'description' => 'Melihat daftar periode SPMI'],

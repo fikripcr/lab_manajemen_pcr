@@ -1,4 +1,4 @@
-<div class="card-header border-bottom">
+<x-tabler.card-header class="border-bottom">
     <div class="d-flex flex-wrap gap-2 w-100">
         <div>
             <x-tabler.datatable-page-length dataTableId="keluarga-table" />
@@ -15,7 +15,7 @@
             </x-tabler.datatable-filter>
         </div>
     </div>
-</div>
+</x-tabler.card-header>
 <div class="table-responsive">
     <x-tabler.datatable
         id="keluarga-table"

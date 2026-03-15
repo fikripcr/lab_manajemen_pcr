@@ -13,7 +13,7 @@
 @section('content')
 <x-tabler.card>
     <x-tabler.card-header>
-        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+        <ul class="nav nav-tabs card-header-tabs" role="tablist" id="sys-log-tabs">
             <li class="nav-item">
                 <a class="nav-link {{ Route::is('sys.activity-log.*') ? 'active fw-bold' : '' }}" href="{{ route('sys.activity-log.index') }}">
                     <i class="ti ti-activity me-1"></i> Activity Log

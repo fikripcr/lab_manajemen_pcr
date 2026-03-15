@@ -25,8 +25,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
         <div class="col-sm-6 col-lg-2">
             <x-tabler.card class="card-sm shadow-sm border-0">
@@ -44,8 +44,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
         <div class="col-sm-6 col-lg-3">
             <x-tabler.card class="card-sm shadow-sm border-0">
@@ -63,8 +63,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
         <div class="col-sm-6 col-lg-2">
             <x-tabler.card class="card-sm shadow-sm border-0">
@@ -82,8 +82,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
         <div class="col-sm-6 col-lg-3">
             <x-tabler.card class="card-sm shadow-sm border-0">
@@ -101,8 +101,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     </div>
 
@@ -147,8 +147,8 @@
                             <i class="ti ti-eye me-1"></i>Detail
                         </a>
                     </div>
-                </div>
-            </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
         @endforeach
     </div>
@@ -205,7 +205,7 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </x-tabler.card>
         </div>
 
         <!-- Upcoming Activities -->
@@ -243,7 +243,7 @@
                     </div>
                     @endforelse
                 </div>
-            </div>
+            </x-tabler.card>
         </div>
     </div>
 @endsection

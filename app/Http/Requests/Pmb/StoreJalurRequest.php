@@ -5,10 +5,7 @@ use App\Http\Requests\BaseRequest;
 
 class StoreJalurRequest extends BaseRequest
 {
-    public function authorize()
-    {
-        return true;
-    }
+    
 
     public function rules()
     {

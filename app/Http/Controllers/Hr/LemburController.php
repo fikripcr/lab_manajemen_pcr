@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Hr;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\LemburRequest;
 use App\Models\Hr\Lembur;
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use App\Services\Hr\LemburService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;

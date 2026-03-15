@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Hr;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\KeluargaRequest;
 use App\Models\Hr\Keluarga;
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use App\Services\Hr\KeluargaService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -50,7 +50,7 @@ class KeluargaController extends Controller
 
     public function data(Request $request)
     {
-        $query = Keluarga::with('pegawai')->select('hr_keluarga.*');
+        $query = Keluarga::with('hr_pegawai')->select('hr_keluarga.*');
 
         if ($request->has('pegawai_id')) {
             $query->where('pegawai_id', decryptIdIfEncrypted($request->pegawai_id));

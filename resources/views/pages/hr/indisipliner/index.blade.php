@@ -23,8 +23,8 @@
 @endsection
 
 @section('content')
-<div class="card overflow-hidden">
-    <div class="card-header">
+<x-tabler.card class="overflow-hidden">
+    <x-tabler.card-header>
         <div class="d-flex flex-wrap gap-2 align-items-center">
             <div>
                 <x-tabler.datatable-page-length :dataTableId="'indisipliner-table'" />
@@ -33,22 +33,22 @@
                 <x-tabler.datatable-search :dataTableId="'indisipliner-table'" />
             </div>
         </div>
-    </div>
-    <div class="card-body p-0">
+    </x-tabler.card-header>
+    <x-tabler.card-body class="p-0">
         <x-tabler.datatable
             id="indisipliner-table"
             route="{{ route('hr.indisipliner.data') }}"
             :columns="[
                 ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '50px'],
                 ['data' => 'tgl_indisipliner', 'name' => 'tgl_indisipliner', 'title' => 'Tanggal', 'class' => 'text-center'],
-                ['data' => 'pegawai', 'name' => 'pegawai', 'title' => 'Pegawai', 'orderable' => false],
+                ['data' => 'hr_pegawai', 'name' => 'hr_pegawai', 'title' => 'Pegawai', 'orderable' => false],
                 ['data' => 'jenis', 'name' => 'jenis', 'title' => 'Jenis Pelanggaran'],
                 ['data' => 'keterangan', 'name' => 'keterangan', 'title' => 'Keterangan'],
                 ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '100px'],
             ]"
         />
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection
 
 @push('scripts')

@@ -7,7 +7,7 @@
 @section('content')
 <x-tabler.card>
     @include('pages.hr.data-diri.global-tab-nav')
-    <div class="card-body">
+    <x-tabler.card-body>
         <div class="table-responsive">
             <table class="table table-vcenter card-table">
                 <thead>
@@ -57,10 +57,10 @@
         </div>
         
         @if($approvals->hasPages())
-        <div class="card-footer d-flex align-items-center">
+        <x-tabler.card-footer class="d-flex align-items-center">
             {{ $approvals->links() }}
-        </div>
+        </x-tabler.card-footer>
         @endif
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection

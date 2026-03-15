@@ -165,19 +165,22 @@
                 </x-slot:actions>
             </x-tabler.card-header>
             <x-tabler.card-body>
-                @if($statsByJalur->count() > 0)
+                @if($jalurStats->count() > 0)
                     <div class="datagrid">
-                        @foreach($statsByJalur as $stat)
+                        @foreach($jalurStats as $stat)
                             <div class="datagrid-item">
                                 <div class="datagrid-title">{{ $stat->nama_jalur }}</div>
                                 <div class="datagrid-content">
-                                    <span class="badge bg-primary text-white">{{ $stat->total }} pendaftar</span>
+                                    <div class="d-flex align-items-center">
+                                        <div class="h2 mb-0 me-2">{{ $stat->total_pendaftar }}</div>
+                                        <div class="text-muted small">pendaftar</div>
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
                     </div>
                 @else
-                    <x-tabler.empty-state title="Belum ada data" text="Belum ada pendaftar pada periode ini." />
+                    <x-tabler.empty-state title="Belum ada data" text="Belum ada data pendaftar per jalur saat ini." />
                 @endif
             </x-tabler.card-body>
         </x-tabler.card>

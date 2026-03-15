@@ -43,6 +43,8 @@ document.addEventListener('click', function(e) {
     const btn = e.target.closest('.btn-jadwal-action');
     if (!btn) return;
 
+    e.preventDefault();
+
     const url = btn.dataset.url;
     btn.disabled = true;
 

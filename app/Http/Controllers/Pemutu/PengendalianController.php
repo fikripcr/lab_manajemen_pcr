@@ -29,39 +29,51 @@ class PengendalianController extends Controller
      */
     public function index()
     {
-        $periodes = $this->PeriodeSpmiService->getPeriodes();
+        // Bypass old period selection — use global siklus from session
+        $siklus = $this->PeriodeSpmiService->getSiklusData();
 
-        return view('pages.pemutu.pengendalian.index', compact('periodes'));
-    }
-
-    /**
-     * Halaman RTM + Pengendalian Standar (tabbed view).
-     */
-    public function show(PeriodeSpmi $periode, Request $request)
-    {
-        // Cek jadwal Pengendalian sudah diatur
-        $jadwalTersedia = $periode->pengendalian_awal && $periode->pengendalian_akhir;
-        if (! $jadwalTersedia) {
-            return view('pages.pemutu.pengendalian.show', [
-                'periode'        => $periode,
-                'jadwalTersedia' => $jadwalTersedia,
-                'rapat'          => null,
-                'unitId'         => null,
-            ]);
-        }
-
-        $unitId = $request->input('unit_id');
-
-        // Load the latest RTM rapat (if exists) with its relations
-        $rapat = $periode->latest_rtm_pengendalian;
-        if ($rapat) {
-            $rapat->load(['agendas', 'pesertas.user', 'ketua_user', 'notulen_user', 'author_user']);
-        }
+        $data = [
+            'pageTitle' => 'Pengendalian',
+            'siklus'    => $siklus,
+        ];
 
         $users = $this->PelaksanaanService->getUsersForSelect();
 
-        return view('pages.pemutu.pengendalian.show', compact('periode', 'unitId', 'rapat', 'users', 'jadwalTersedia'));
+        // Resolve user units and rapat for both periods
+        foreach (['akademik', 'non_akademik'] as $type) {
+            $periode = $siklus[$type];
+            $units   = collect();
+            $rapat   = null;
+            
+            if ($periode) {
+                // Resolved user units
+                $units = \App\Models\Pemutu\TimMutu::where('periodespmi_id', $periode->periodespmi_id)
+                    ->with('orgUnit')
+                    ->get()
+                    ->pluck('orgUnit')
+                    ->filter()
+                    ->unique('orgunit_id');
+
+                // Load the latest RTM rapat
+                $rapat = $periode->latest_rtm_pengendalian;
+                if ($rapat) {
+                    $rapat->load(['agendas', 'pesertas.user', 'ketua_user', 'notulen_user', 'author_user']);
+                }
+            }
+            
+            $data[$type . 'Units'] = $units;
+            $data[$type . 'Rapat'] = $rapat;
+            $data[$type . 'RootDoks'] = \App\Models\Pemutu\Dokumen::whereNull('parent_id')
+                ->where('periode', $siklus['tahun'])
+                ->orderBy('seq')
+                ->get();
+        }
+
+        $data['users'] = $users;
+
+        return view('pages.pemutu.pengendalian.index', $data);
     }
+
 
     /**
      * DataTable AJAX: daftar Indikator untuk satu periode.
@@ -175,7 +187,7 @@ class PengendalianController extends Controller
     {
         $this->PengendalianService->createRtm($periode, $request->validated());
 
-        return jsonSuccess('RTM berhasil dibuat dengan agenda default.', route('pemutu.pengendalian.show', $periode->encrypted_periodespmi_id));
+        return jsonSuccess('RTM berhasil dibuat dengan agenda default.', route('pemutu.pengendalian.index'));
     }
 
     /**

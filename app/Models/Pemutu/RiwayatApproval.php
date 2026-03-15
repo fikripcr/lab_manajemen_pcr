@@ -30,6 +30,7 @@ class RiwayatApproval extends Model
         'model',
         'model_id',
         'status', // Draft, Pending, Approved, Rejected
+        'pegawai_id',
         'pejabat',
         'jabatan',
         'catatan',

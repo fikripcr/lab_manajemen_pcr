@@ -38,10 +38,15 @@ class PeriodeSpmiService
      */
     public function getAvailableYears()
     {
-        return PeriodeSpmi::select('periode')
-            ->distinct()
-            ->orderBy('periode', 'desc')
-            ->pluck('periode');
+        $startYear = (int) env('SPMI_START_YEAR', 2021);
+        $endYear   = (int) date('Y') + 1;
+        
+        $years = [];
+        for ($y = $endYear; $y >= $startYear; $y--) {
+            $years[] = $y;
+        }
+
+        return collect($years);
     }
 
     /**
@@ -79,4 +84,42 @@ class PeriodeSpmiService
             $periode->delete();
         });
     }
+
+    /**
+     * Resolve the active Siklus SPMI year and return both Akademik & Non Akademik periodes.
+     * Reads from session `siklus_spmi_tahun`, falls back to the latest year available.
+     *
+     * @return array{tahun: int, years: \Illuminate\Support\Collection, akademik: ?PeriodeSpmi, non_akademik: ?PeriodeSpmi}
+     */
+    public function getSiklusData(): array
+    {
+        $years = $this->getAvailableYears();
+
+        if ($years->isEmpty()) {
+            return [
+                'tahun'        => (int) date('Y'),
+                'years'        => collect(),
+                'akademik'     => null,
+                'non_akademik' => null,
+            ];
+        }
+
+        $tahun = (int) (session('siklus_spmi_tahun') ?? $years->first());
+
+        // Ensure the session year is valid
+        if (! $years->contains($tahun)) {
+            $tahun = $years->first();
+            session(['siklus_spmi_tahun' => $tahun]);
+        }
+
+        $periodes = PeriodeSpmi::where('periode', $tahun)->get();
+
+        return [
+            'tahun'        => $tahun,
+            'years'        => $years,
+            'akademik'     => $periodes->firstWhere('jenis_periode', 'Akademik'),
+            'non_akademik' => $periodes->firstWhere('jenis_periode', 'Non Akademik'),
+        ];
+    }
 }
+

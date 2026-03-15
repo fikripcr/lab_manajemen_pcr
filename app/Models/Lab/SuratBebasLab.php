@@ -36,7 +36,7 @@ class SuratBebasLab extends Model
 
     public function student()
     {
-        return $this->belongsTo(User::class, 'student_id');
+        return $this->belongsTo(\App\Models\User::class, 'student_id');
     }
 
     public function latestApproval()

@@ -156,7 +156,7 @@ class JenisLayananController extends Controller
         return jsonSuccess('Info tambahan berhasil diperbarui.');
     }
 
-    public function updateIsianSeq(\App\Http\Requests\Shared\ReorderRequest $request)
+    public function updateIsianSeq(\App\Http\Requests\Hr\ReorderRequest $request)
     {
         $this->jenisLayananService->updateIsianSeq($request->validated('sequences'));
         return jsonSuccess('Urutan berhasil diperbarui.');

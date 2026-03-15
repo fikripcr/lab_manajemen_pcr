@@ -71,12 +71,12 @@ class RiwayatDataDiri extends Model
 
     public function departemen()
     {
-        return $this->belongsTo(OrgUnit::class, 'orgunit_departemen_id', 'orgunit_id');
+        return $this->belongsTo(StrukturOrganisasi::class, 'orgunit_departemen_id', 'orgunit_id');
     }
 
     public function posisi()
     {
-        return $this->belongsTo(OrgUnit::class, 'orgunit_posisi_id', 'orgunit_id');
+        return $this->belongsTo(StrukturOrganisasi::class, 'orgunit_posisi_id', 'orgunit_id');
     }
 
     public function approval()

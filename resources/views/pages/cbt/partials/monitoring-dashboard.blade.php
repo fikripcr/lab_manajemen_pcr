@@ -20,8 +20,8 @@
                 <div class="progress progress-sm">
                     <div class="progress-bar bg-green" style="width: 75%"></div>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     <div class="col-sm-6 col-lg-3">
@@ -45,8 +45,8 @@
                 <div class="progress progress-sm">
                     <div class="progress-bar bg-blue" style="width: {{ $stats['active_exams'] > 0 ? ($stats['students_taking_exam'] / $stats['active_exams']) * 100 : 0 }}%"></div>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     <div class="col-sm-6 col-lg-3">
@@ -72,8 +72,8 @@
                 <div class="progress progress-sm">
                     <div class="progress-bar bg-primary" style="width: 60%"></div>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     <div class="col-sm-6 col-lg-3">
@@ -97,8 +97,8 @@
                 <div class="progress progress-sm">
                     <div class="progress-bar bg-success" style="width: {{ $stats['total_exams_today'] > 0 ? ($stats['completed_exams_today'] / $stats['total_exams_today']) * 100 : 0 }}%"></div>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 </div>
 
@@ -175,7 +175,7 @@
                     <span class="badge bg-red text-white">{{ $recentViolations->count() }}</span>
                 </x-slot:actions>
             </x-tabler.card-header>
-            <div class="card-body">
+            <x-tabler.card-body>
                 @if($recentViolations->count() > 0)
                     <div class="timeline">
                         @foreach($recentViolations as $violation)

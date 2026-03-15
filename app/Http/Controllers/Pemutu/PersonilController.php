@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Pemutu;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\PersonilImportRequest;
 use App\Http\Requests\Pemutu\PersonilRequest;
-use App\Models\Pemutu\OrgUnit;
-use App\Models\Shared\Personil; // Import Service
+use App\Models\Hr\StrukturOrganisasi;
+use App\Models\Hr\Personil; // Import Service
 use App\Services\Pemutu\PersonilService;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -44,7 +44,7 @@ class PersonilController extends Controller
 
     public function create()
     {
-        $units = OrgUnit::orderBy('name')->get();
+        $units = StrukturOrganisasi::orderBy('name')->get();
         return view('pages.pemutu.personils.create', compact('units'));
     }
 
@@ -59,8 +59,8 @@ class PersonilController extends Controller
 
     public function edit(Personil $personil)
     {
-        $units = OrgUnit::orderBy('name')->get();
-        return view('pages.pemutu.personils.edit', compact('personil', 'units'));
+        $units = StrukturOrganisasi::orderBy('name')->get();
+        return view('pages.pemutu.personils.edit', compact('hr_personil', 'units'));
     }
 
     public function update(PersonilRequest $request, Personil $personil)

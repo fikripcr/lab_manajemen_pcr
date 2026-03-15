@@ -5,46 +5,52 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\DokumenApprovalRequest;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\RiwayatApproval;
-use App\Models\Shared\Personil;
+use App\Models\Hr\Pegawai;
 use Illuminate\Support\Facades\DB;
 
 class DokumenApprovalController extends Controller
 {
     public function create(Dokumen $dokumen)
     {
-        $pegawais = Personil::orderBy('nama')->get();
+        $pegawais = Pegawai::with('latestDataDiri')->get()->sortBy('nama');
         return view('pages.pemutu.dokumen._approval_form', compact('dokumen', 'pegawais'));
     }
 
     public function store(DokumenApprovalRequest $request, Dokumen $dokumen)
     {
-
         DB::beginTransaction();
 
-        // Standardization: terima -> Approved, tolak -> Rejected, tangguhkan -> Pending
-        $statusMapping = [
-            'terima'     => 'Approved',
-            'tolak'      => 'Rejected',
-            'tangguhkan' => 'Pending',
-        ];
+        // Sync Logic: Remove existing pending approvals first to replace with new list
+        $dokumen->riwayatApprovals()->where('status', 'Pending')->delete();
 
-        $status = $statusMapping[$request->status] ?? 'Pending';
+        $approvers = $request->input('approvers', []);
+        $addedNames = [];
 
-        $personil = Personil::findOrFail(decryptIdIfEncrypted($request->personil_id));
+        foreach ($approvers as $appData) {
+            // Skip empty rows if any (though required by validation)
+            if (empty($appData['pegawai_id'])) continue;
 
-        $approval = RiwayatApproval::create([
-            'model'    => Dokumen::class,
-            'model_id' => $dokumen->dok_id,
-            'status'   => $status,
-            'pejabat'  => $personil->nama,
-            'catatan'  => $request->komentar,
-        ]);
+            $pegawai = Pegawai::findOrFail($appData['pegawai_id']);
+
+            RiwayatApproval::create([
+                'model'      => Dokumen::class,
+                'model_id'   => $dokumen->dok_id,
+                'status'     => 'Pending',
+                'pegawai_id' => $pegawai->pegawai_id,
+                'pejabat'    => $pegawai->nama,
+                'jabatan'    => $appData['jabatan'] ?? '-',
+                'catatan'    => null,
+            ]);
+            
+            $addedNames[] = $pegawai->nama;
+        }
 
         DB::commit();
 
-        logActivity('pemutu', "Memberikan approval untuk dokumen: {$dokumen->judul} dengan status {$status}");
+        $namesString = implode(', ', $addedNames);
+        logActivity('pemutu', "Memperbarui daftar approval dokumen: {$dokumen->judul}. Total: " . count($addedNames) . " orang ({$namesString})");
 
-        return jsonSuccess('Approval berhasil disimpan');
+        return jsonSuccess(count($addedNames) . ' Approver berhasil disinkronisasi.');
     }
 
     public function destroy(RiwayatApproval $approval)

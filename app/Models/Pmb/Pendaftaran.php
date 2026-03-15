@@ -8,7 +8,7 @@ use App\Models\Pmb\Periode;
 use App\Models\Pmb\PesertaUjian;
 use App\Models\Pmb\PilihanProdi;
 use App\Models\Pmb\RiwayatPendaftaran;
-use App\Models\Shared\StrukturOrganisasi;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
@@ -48,7 +48,7 @@ class Pendaftaran extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(\App\Models\User::class, 'user_id');
     }
 
     public function periode()

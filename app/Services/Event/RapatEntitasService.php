@@ -5,7 +5,7 @@ use App\Models\Event\Rapat;
 use App\Models\Event\RapatEntitas;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\IndikatorOrgUnit;
-use App\Models\Shared\StrukturOrganisasi;
+use App\Models\Hr\StrukturOrganisasi;
 use Illuminate\Support\Facades\DB;
 
 class RapatEntitasService

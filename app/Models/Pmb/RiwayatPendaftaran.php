@@ -40,6 +40,6 @@ class RiwayatPendaftaran extends Model
 
     public function pelaku()
     {
-        return $this->belongsTo(User::class, 'user_pelaku_id');
+        return $this->belongsTo(\App\Models\User::class, 'user_pelaku_id');
     }
 }

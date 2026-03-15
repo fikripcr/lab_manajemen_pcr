@@ -15,7 +15,7 @@ class FilePegawaiController extends Controller
 
     public function create(Pegawai $pegawai)
     {
-        return view('pages.hr.pegawai.ajax.upload-file', compact('pegawai'));
+        return view('pages.hr.pegawai.ajax.upload-file', compact('hr_pegawai'));
     }
 
     /**

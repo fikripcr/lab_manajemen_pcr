@@ -31,34 +31,53 @@ class PeningkatanController extends Controller
      */
     public function index()
     {
-        $periodes = $this->PeriodeSpmiService->getPeriodes();
-
-        return view('pages.pemutu.peningkatan.index', compact('periodes'));
-    }
-
-    /**
-     * Halaman RTM + Peningkatan (tabbed view).
-     */
-    public function show(PeriodeSpmi $periode, Request $request)
-    {
-        // Cek jadwal Peningkatan sudah diatur
-        $jadwalTersedia = $periode->peningkatan_awal && $periode->peningkatan_akhir;
-        if (! $jadwalTersedia) {
-            return view('pages.pemutu.peningkatan.show', compact('periode', 'jadwalTersedia'));
-        }
-
-        $rapat = $periode->latest_rtm_peningkatan;
-        if ($rapat) {
-            $rapat->load(['agendas', 'pesertas.user', 'ketua_user', 'notulen_user', 'author_user']);
-        }
-
+        $siklus = $this->PeriodeSpmiService->getSiklusData();
         $users = $this->PelaksanaanService->getUsersForSelect();
 
-        // Cek apakah sudah pernah diduplikasi
-        $hasDuplicated = Indikator::where('origin_from', 'peningkatan_' . $periode->periode)->exists();
+        $data = [
+            'pageTitle' => 'Peningkatan',
+            'siklus'    => $siklus,
+            'users'     => $users,
+        ];
 
-        return view('pages.pemutu.peningkatan.show', compact('periode', 'rapat', 'users', 'hasDuplicated', 'jadwalTersedia'));
+        // Resolve units, RTM, and duplication status for both periods
+        foreach (['akademik', 'non_akademik'] as $type) {
+            $periode = $siklus[$type];
+            $units   = collect();
+            $rapat   = null;
+            $hasDuplicated = false;
+
+            if ($periode) {
+                // Resolved user units for filtering
+                $units = \App\Models\Pemutu\TimMutu::where('periodespmi_id', $periode->periodespmi_id)
+                    ->with('orgUnit')
+                    ->get()
+                    ->pluck('orgUnit')
+                    ->filter()
+                    ->unique('orgunit_id');
+
+                // Latest RTM Peningkatan
+                $rapat = $periode->latest_rtm_peningkatan;
+                if ($rapat) {
+                    $rapat->load(['agendas', 'pesertas.user', 'ketua_user', 'notulen_user', 'author_user']);
+                }
+
+                // Duplication check
+                $hasDuplicated = Indikator::where('origin_from', 'peningkatan_' . $periode->periode)->exists();
+            }
+
+            $data[$type . 'Units'] = $units;
+            $data[$type . 'Rapat'] = $rapat;
+            $data[$type . 'HasDuplicated'] = $hasDuplicated;
+            $data[$type . 'RootDoks'] = \App\Models\Pemutu\Dokumen::whereNull('parent_id')
+                ->where('periode', $siklus['tahun'])
+                ->orderBy('seq')
+                ->get();
+        }
+
+        return view('pages.pemutu.peningkatan.index', $data);
     }
+
 
     // ─── RTM Methods ──────────────────────────────────────────────
 
@@ -73,7 +92,7 @@ class PeningkatanController extends Controller
     {
         $this->PeningkatanService->createRtm($periode, $request->validated());
 
-        return jsonSuccess('RTM Peningkatan berhasil dibuat.', route('pemutu.peningkatan.show', $periode->encrypted_periodespmi_id));
+        return jsonSuccess('RTM Peningkatan berhasil dibuat.', route('pemutu.peningkatan.index'));
     }
 
     public function editRtm(PeriodeSpmi $periode, Rapat $rapat)
@@ -87,7 +106,7 @@ class PeningkatanController extends Controller
     {
         $this->PeningkatanService->updateRtm($rapat, $request->validated());
 
-        return jsonSuccess('Data RTM Peningkatan berhasil diperbarui.', route('pemutu.peningkatan.show', $periode->encrypted_periodespmi_id));
+        return jsonSuccess('Data RTM Peningkatan berhasil diperbarui.', route('pemutu.peningkatan.index'));
     }
 
     // ─── Duplikasi Methods ────────────────────────────────────────
@@ -136,8 +155,9 @@ class PeningkatanController extends Controller
                 ->exists();
 
             $standarLama->push([
-                'dok_id'             => $dok->dok_id,
-                'encrypted_id'       => $dok->encrypted_dok_id,
+                'id'                 => encryptId($dok->dok_id),
+                'dok_id'             => encryptId($dok->dok_id),
+                'encrypted_id'       => encryptId($dok->dok_id),
                 'kode'               => $dok->kode,
                 'judul'              => $dok->judul,
                 'indikator_count'    => $indikatorCount,
@@ -166,8 +186,9 @@ class PeningkatanController extends Controller
 
             // Tampilkan juga yang belum punya indikator (dokumen sudah ada tapi indikator belum dicopy)
             $standarBaru->push([
-                'dok_id'          => $dok->dok_id,
-                'encrypted_id'    => $dok->encrypted_dok_id,
+                'id'              => encryptId($dok->dok_id),
+                'dok_id'          => encryptId($dok->dok_id),
+                'encrypted_id'    => encryptId($dok->dok_id),
                 'kode'            => $dok->kode,
                 'judul'           => $dok->judul,
                 'indikator_count' => $indikatorCount,
@@ -208,7 +229,7 @@ class PeningkatanController extends Controller
     {
         $validated      = $request->validated();
         $targetPeriode  = (int) $validated['target_periode'];
-        $selectedDokIds = $validated['selected_dok_ids'];
+        $selectedDokIds = array_map('decryptIdIfEncrypted', $validated['selected_dok_ids']);
 
         $stats = $this->DuplikasiService->duplicateSelected($selectedDokIds, $periode->periode, $targetPeriode);
 
@@ -218,7 +239,7 @@ class PeningkatanController extends Controller
             . "(skip nonaktif: {$stats['indikator_skipped_nonaktif']}, skip KPI: {$stats['indikator_skipped_kpi']}), "
             . "OrgUnit: {$stats['orgunit_cloned']}";
 
-        return jsonSuccess($message, route('pemutu.peningkatan.show', $periode->encrypted_periodespmi_id) . '#section-duplikasi');
+        return jsonSuccess($message, route('pemutu.peningkatan.index'));
     }
 
     public function reviewData(Request $request, PeriodeSpmi $periode)
@@ -257,7 +278,7 @@ class PeningkatanController extends Controller
 
                 return $parts ? implode('<br>', $parts) : '<span class="text-muted">—</span>';
             })
-            ->rawColumns(['no', 'indikator_full', 'target', 'status_badge', 'keterangan_perubahan'])
+            ->rawColumns(['no', 'indikator_full', 'target', 'status_badge', 'dokumen_standar', 'keterangan_perubahan'])
             ->make(true);
     }
 
@@ -285,10 +306,10 @@ class PeningkatanController extends Controller
         $request->validate([
             'target_periode'     => 'required|integer',
             'selected_dok_ids'   => 'required|array|min:1',
-            'selected_dok_ids.*' => 'required|integer|exists:pemutu_dokumen,dok_id',
+            'selected_dok_ids.*' => 'required|string',
         ]);
 
-        $dokIds            = $request->selected_dok_ids;
+        $dokIds            = array_map('decryptIdIfEncrypted', $request->selected_dok_ids);
         $totalDeletedCount = 0;
 
         foreach ($dokIds as $dokId) {

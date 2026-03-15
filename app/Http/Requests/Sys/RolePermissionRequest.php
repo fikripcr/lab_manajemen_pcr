@@ -7,12 +7,7 @@ use App\Http\Requests\BaseRequest;
 class RolePermissionRequest extends BaseRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -26,14 +21,7 @@ class RolePermissionRequest extends BaseRequest
     }
 
     /**
-     * Get custom validation messages.
      */
-    public function messages(): array
-    {
-        return array_merge(parent::messages(), [
-            'permissions.required' => 'Setidaknya satu permission harus dipilih.',
-        ]);
-    }
 
     public function attributes(): array
     {

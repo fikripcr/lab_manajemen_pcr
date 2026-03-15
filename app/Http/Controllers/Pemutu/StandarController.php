@@ -7,7 +7,7 @@ use App\Http\Requests\Pemutu\StandarAssignmentRequest;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\LabelType;
-use App\Models\Pemutu\OrgUnit;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Services\Pemutu\IndikatorService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -86,7 +86,7 @@ class StandarController extends Controller
             $q->orderBy('name');
         }])->orderBy('name')->get();
 
-        $orgUnits = OrgUnit::with('children')->where('level', 1)->orderBy('seq')->get();
+        $orgUnits = StrukturOrganisasi::with('children')->where('level', 1)->orderBy('seq')->get();
 
         $dokumens = Dokumen::with('dokSubs')
             ->whereIn('jenis', ['standar'])
@@ -144,7 +144,7 @@ class StandarController extends Controller
 
     public function assign(Indikator $indikator)
     {
-        $orgUnits = OrgUnit::with('children')->where('level', 1)->orderBy('seq')->get();
+        $orgUnits = StrukturOrganisasi::with('children')->where('level', 1)->orderBy('seq')->get();
 
         // Get currently assigned units ids
         $assignedUnitIds = $indikator->orgUnits->pluck('orgunit_id')->toArray();

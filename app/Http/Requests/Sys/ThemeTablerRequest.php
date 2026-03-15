@@ -6,12 +6,7 @@ use App\Http\Requests\BaseRequest;
 class ThemeTablerRequest extends BaseRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -47,17 +42,9 @@ class ThemeTablerRequest extends BaseRequest
     }
 
     /**
-     * Get custom error messages for validation rules.
      *
      * @return array<string, string>
      */
-    public function messages(): array
-    {
-        return array_merge(parent::messages(), [
-            'mode.in'       => 'Mode harus sys, auth, atau tabler.',
-            'theme.in'      => 'Theme harus light atau dark.',
-        ]);
-    }
 
     public function attributes(): array
     {

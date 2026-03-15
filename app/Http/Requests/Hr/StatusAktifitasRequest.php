@@ -5,10 +5,6 @@ use App\Http\Requests\BaseRequest;
 
 class StatusAktifitasRequest extends BaseRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     public function rules()
     {

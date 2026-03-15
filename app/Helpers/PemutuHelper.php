@@ -50,7 +50,8 @@ if (! function_exists('pemutuChildLabel')) {
     function pemutuChildLabel($jenis)
     {
         return match (strtolower(trim($jenis))) {
-            'visi', 'misi', 'rjp', 'renstra', 'renop' => 'Poin', 'standar' => 'Poin',
+            'visi', 'misi', 'standar' => 'Poin',
+            'rjp', 'renstra', 'renop', 'kebijakan' => 'Indikator',
             default => 'Turunan'
         };
     }
@@ -63,8 +64,8 @@ if (! function_exists('pemutuIsDokSubBased')) {
     function pemutuIsDokSubBased($jenis)
     {
         return in_array(strtolower(trim($jenis)), [
-            'standar', 'formulir', 'manual_prosedur', 'renop',
-            'visi', 'misi', 'rjp', 'renstra',
+            'standar', 'formulir', 'manual_prosedur',
+            'visi', 'misi', 'rjp', 'renstra', 'kebijakan'
         ]);
     }
 }
@@ -87,6 +88,9 @@ if (! function_exists('pemutuFixedJenis')) {
     function pemutuFixedJenis($jenis)
     {
         return match (strtolower(trim($jenis))) {
+            'kebijakan' => 'standar',
+            'standar' => 'manual_prosedur',
+            'manual_prosedur' => 'formulir',
             'visi'    => 'misi',
             'misi'    => 'rjp',
             'rjp'     => 'renstra',
@@ -118,14 +122,16 @@ if (! function_exists('pemutuMappableJenis')) {
      * Returns which document type's points a given type can map to.
      * E.g. misi points can map to visi points, rpjp to misi, etc.
      */
-    function pemutuMappableJenis($jenis)
+    function pemutuMappableJenis($jenis): array
     {
         return match (strtolower(trim($jenis))) {
-            'misi'    => 'visi',
-            'rjp'     => 'misi',
-            'renstra' => 'rjp',
-            'renop'   => 'renstra',
-            default   => null, // visi: top level, no mapping target
+            'misi'     => ['visi'],
+            'rjp'      => ['misi'],
+            'renstra'  => ['rjp'],
+            'renop'    => ['renstra'],
+            'standar'  => ['kebijakan'],
+            'formulir' => ['standar', 'manual_prosedur'],
+            default    => [], // visi: top level, no mapping target
         };
     }
 }
@@ -136,7 +142,7 @@ if (! function_exists('pemutuKebijakanJenisList')) {
      */
     function pemutuKebijakanJenisList(): array
     {
-        return ['visi', 'misi', 'rjp', 'renstra', 'renop'];
+        return ['kebijakan', 'standar', 'manual_prosedur', 'formulir', 'visi', 'misi', 'rjp', 'renstra', 'renop'];
     }
 }
 
@@ -150,7 +156,7 @@ if (! function_exists('pemutuLabelBadge')) {
      */
     function pemutuLabelBadge($label, string $style = 'lt'): string
     {
-        $color = $label->type->color ?? 'secondary';
+        $color = $label->color ?? 'secondary';
 
         if ($style === 'solid') {
             return '<span class="badge text-bg-' . e($color) . '">' . e($label->name) . '</span>';
@@ -538,8 +544,9 @@ if (! function_exists('pemutuDtColLabelsList')) {
         // Support Eloquent related models format
         elseif (isset($row->labels) && ! is_string($row->labels) && $row->labels->isNotEmpty()) {
             foreach ($row->labels as $labelObj) {
+                // Determine name and color. The data might be an IndikatorLabel or just Label model.
                 $name      = $labelObj->name ?? $labelObj->label?->name;
-                $color     = $labelObj->type?->color ?? $labelObj->label?->type?->color ?? 'secondary';
+                $color     = $labelObj->color ?? $labelObj->label?->color ?? 'secondary';
                 $html     .= '<span class="status status-' . e($color) . '">' . e($name) . '</span>';
                 $hasLabel  = true;
             }
@@ -591,6 +598,7 @@ if (! function_exists('pemutuDtColStatusAmi')) {
         $amiHasil  = $pivot->ami_hasil_akhir ?? $row->ami_hasil_akhir ?? null;
         $label     = $row->ami_hasil_label ?? $row->ami_hasil_akhir_label ?? null;
         $amiTemuan = $pivot->ami_hasil_temuan ?? $row->ami_hasil_temuan ?? null;
+        $amiRekom  = $pivot->ami_hasil_temuan_rekom ?? $row->ami_hasil_temuan_rekom ?? null;
 
         if ($amiHasil !== null) {
             $colors = [0 => 'danger', 1 => 'success', 2 => 'info', 'KTS' => 'danger', 'Terpenuhi' => 'success', 'Terlampaui' => 'info'];
@@ -606,13 +614,20 @@ if (! function_exists('pemutuDtColStatusAmi')) {
                 }
             }
 
-            $html = '<div class="mb-1"><span class="badge bg-' . $color . '-lt text-' . $color . ' fs-6 px-2">' . e($label) . '</span></div>';
+            $html = '<div class="d-flex flex-column gap-1">';
+            $html .= '<div><span class="badge bg-' . $color . '-lt text-' . $color . ' fs-6 px-2">' . e($label) . '</span></div>';
 
-            if ($amiTemuan && $amiTemuan !== '-') {
+            if ($amiHasil == 0 && $amiRekom && $amiRekom !== '-') {
+                $html .= '<div style="max-height: 100px; overflow-y: auto; scrollbar-width: thin;" class="text-muted pe-1">';
+                $html .= '<span class="fw-bold d-block text-uppercase text-danger" style="font-size: 9px; opacity: 0.8;">Rekomendasi Auditor:</span>';
+                $html .= '<div class="small lh-sm">' . e($amiRekom) . '</div>';
+                $html .= '</div>';
+            } elseif ($amiTemuan && $amiTemuan !== '-') {
                 $excerpt  = \Str::limit($amiTemuan, 100);
                 $html    .= '<div class="text-muted small italic" title="' . e($amiTemuan) . '">' . e($excerpt) . '</div>';
             }
 
+            $html .= '</div>';
             return $html;
         }
 
@@ -657,6 +672,38 @@ if (! function_exists('pemutuDtColStatusPeningkatan')) {
         }
 
         $html .= '</div>';
+        return $html;
+    }
+}
+
+if (! function_exists('pemutuDtColRtp')) {
+    /**
+     * Render the RTP column for AMI DataTables.
+     */
+    function pemutuDtColRtp($row)
+    {
+        $pivot = null;
+        if (isset($row->orgUnits) && ! is_string($row->orgUnits) && $row->orgUnits->isNotEmpty()) {
+            $pivot = $row->orgUnits->first()->pivot;
+        } elseif (isset($row->ami_rtp_isi) || isset($row->indikorgunit_id)) {
+            $pivot = $row;
+        }
+
+        if (! $pivot || empty($pivot->ami_rtp_isi)) {
+            return '<span class="text-muted small fst-italic">-</span>';
+        }
+
+        $text = $pivot->ami_rtp_isi;
+        $tgl  = $pivot->ami_rtp_tgl_pelaksanaan ? formatTanggalIndo($pivot->ami_rtp_tgl_pelaksanaan) : '-';
+
+        $html = '<div class="d-flex flex-column gap-2">';
+        $html .= '<div style="max-height: 150px; overflow-y: auto; scrollbar-width: thin;" class="pe-1 small lh-base">' . $text . '</div>';
+        $html .= '<div class="mt-auto pt-1 border-top" style="font-size: 10px;">';
+        $html .= '<span class="text-muted text-uppercase fw-bold"><i class="ti ti-calendar-event me-1"></i>Pelaksanaan:</span>';
+        $html .= '<span class="ms-1 fw-semibold text-primary">' . e($tgl) . '</span>';
+        $html .= '</div>';
+        $html .= '</div>';
+
         return $html;
     }
 }

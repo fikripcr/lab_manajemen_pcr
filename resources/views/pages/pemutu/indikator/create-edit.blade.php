@@ -1,4 +1,4 @@
-﻿@php
+@php
     $isEdit = $indikator->exists;
     $title = $isEdit ? 'Edit Indikator' : 'Tambah Indikator Baru';
     $route = $isEdit ? route('pemutu.indikator.update', $indikator) : route('pemutu.indikator.store');
@@ -37,7 +37,7 @@
             <div class="col-lg-7">
                 <x-tabler.card>
                     <x-tabler.card-header>
-                        <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+                        <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" id="indikator-form-tabs">
                             <li class="nav-item">
                                 <a href="#tab-informasi-umum" class="nav-link active" data-bs-toggle="tab">
                                     <i class="ti ti-info-circle me-2"></i>Informasi Umum
@@ -123,19 +123,40 @@
                                     @endif
                                 </x-tabler.form-select>
 
+                                @if($isStandar)
+                                <x-tabler.form-select name="renstra_poin_id" type="select2" label="Mapping ke Poin Renstra" class="mb-3" data-placeholder="Pilih poin Renstra...">
+                                    <option value="">-- Tidak Dipetakan --</option>
+                                    @foreach($renstraOptions as $ro)
+                                        <option value="{{ $ro->encrypted_doksub_id }}" {{ old('renstra_poin_id', $indikator->renstra_poin_id) == $ro->doksub_id ? 'selected' : '' }}>
+                                            [{{ $ro->dokumen?->periode ?? 'RENSTRA' }}] {{ $ro->judul }} {{ $ro->kode ? '('.$ro->kode.')' : '' }}
+                                        </option>
+                                    @endforeach
+                                </x-tabler.form-select>
+                                @endif
+
                                 <div class="row mb-3">
-                                    @foreach($labelTypes as $type)
-                                    <div class="col-md-4">
-                                        <x-tabler.form-select name="labels" id="label-{{ $type->labeltype_id }}" type="select2" label="{{ $type->name }}" multiple="true" data-placeholder="Pilih {{ $type->name }}...">
+                                    <div class="col-md-12">
+                                        <x-tabler.form-select name="labels" id="label-selector" type="select2" label="Label" multiple="true" data-placeholder="Pilih Label (bisa pilih banyak)...">
                                             @php
-                                                $selectedLabelIds = $isEdit ? $indikator->labels->where('type_id', $type->labeltype_id)->pluck('label_id')->toArray() : [];
+                                                $selectedLabelIds = $isEdit ? $indikator->labels->pluck('label_id')->toArray() : [];
                                             @endphp
-                                            @foreach($type->labels as $label)
-                                                <option value="{{ $label->encrypted_label_id }}" {{ in_array($label->label_id, $selectedLabelIds) ? 'selected' : '' }}>{{ $label->name }}</option>
+                                            @foreach($labelParents as $parent)
+                                                @if($parent->children->count() > 0)
+                                                    <optgroup label="{{ $parent->name }}">
+                                                        @foreach($parent->children as $child)
+                                                            <option value="{{ $child->encrypted_label_id }}" {{ in_array($child->label_id, $selectedLabelIds) ? 'selected' : '' }}>
+                                                                {{ $parent->name }} - {{ $child->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </optgroup>
+                                                @else
+                                                    <option value="{{ $parent->encrypted_label_id }}" {{ in_array($parent->label_id, $selectedLabelIds) ? 'selected' : '' }}>
+                                                        {{ $parent->name }}
+                                                    </option>
+                                                @endif
                                             @endforeach
                                         </x-tabler.form-select>
                                     </div>
-                                    @endforeach
                                 </div>
 
                                 <x-tabler.form-textarea id="keterangan" name="keterangan" label="Definisi / Keterangan" height="300" :value="old('keterangan', $indikator->keterangan)" />

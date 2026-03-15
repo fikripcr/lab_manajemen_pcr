@@ -43,7 +43,7 @@ class AmiService
     public function getDetail(IndikatorOrgUnit $indOrg): array
     {
         $indOrg->load([
-            'indikator.labels.type',
+            'indikator.labels',
             'indikator.dokSubs.dokumen',
             'indikator.parent',
             'orgUnit',

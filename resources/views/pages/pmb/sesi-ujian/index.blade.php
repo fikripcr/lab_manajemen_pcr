@@ -12,7 +12,7 @@
 @section('content')
 
         <x-tabler.card>
-            <div class="card-body">
+            <x-tabler.card-body>
                 <x-tabler.datatable
                     id="table-sesi-ujian"
                     :columns="[
@@ -26,6 +26,6 @@
                     ]"
                     :url="route('pmb.sesi-ujian.data')"
                 />
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
 @endsection

@@ -6,7 +6,7 @@ use App\Http\Requests\Hr\PerizinanApproveRequest;
 use App\Http\Requests\Hr\PerizinanRequest;
 use App\Models\Hr\JenisIzin;
 use App\Models\Hr\Perizinan;
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use App\Services\Hr\PerizinanService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;

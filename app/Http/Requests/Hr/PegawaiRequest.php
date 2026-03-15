@@ -6,12 +6,7 @@ use App\Http\Requests\BaseRequest;
 class PegawaiRequest extends BaseRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -20,7 +15,7 @@ class PegawaiRequest extends BaseRequest
      */
     public function rules(): array
     {
-        $id = $this->route('pegawai'); // Get ID from route for updates
+        $id = $this->route('hr_pegawai'); // Get ID from route for updates
 
         // Note: Unique checks need to be against 'hr_riwayat_datadiri',
         // But since we store latest ID in hr_pegawai, it's a bit complex.

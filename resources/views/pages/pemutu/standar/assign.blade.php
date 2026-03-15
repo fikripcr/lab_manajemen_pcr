@@ -75,7 +75,7 @@
                     </table>
                 </div>
             </x-tabler.card-body>
-            <div class="card-footer text-end">
+            <x-tabler.card-footer class="text-end">
                 <x-tabler.button type="submit" text="Simpan Penugasan" />
             </div>
             </x-tabler.card>

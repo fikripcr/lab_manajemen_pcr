@@ -1,0 +1,38 @@
+@extends('layouts.tabler.app')
+
+@section('header')
+<x-tabler.page-header title="Mata Kuliah" pretitle="Daftar MK">
+    <x-slot:actions>
+        <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('akademik.mata-kuliah.create')" modal-title="Tambah Mata Kuliah" />
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
+
+@section('content')
+    <x-tabler.card class="overflow-hidden">
+        <x-tabler.card-header>
+            <div class="d-flex flex-wrap gap-2">
+                <div>
+                    <x-tabler.datatable-page-length dataTableId="mata-kuliah-table" />
+                </div>
+                <div>
+                    <x-tabler.datatable-search dataTableId="mata-kuliah-table" />
+                </div>
+            </div>
+        </x-tabler.card-header>
+        <x-tabler.card-body class="p-0">
+            <x-tabler.datatable
+                id="mata-kuliah-table"
+                :route="route('akademik.mata-kuliah.data')"
+                :columns="[
+                    ['title' => '#', 'data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
+                    ['title' => 'Kode MK', 'data' => 'kode_mk', 'name' => 'kode_mk'],
+                    ['title' => 'Nama MK', 'data' => 'nama_mk', 'name' => 'nama_mk'],
+                    ['title' => 'SKS', 'data' => 'sks', 'name' => 'sks', 'class' => 'text-center'],
+                    ['title' => 'Actions', 'data' => 'action', 'name' => 'action', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
+                ]"
+                :order="[[0, 'desc']]"
+            />
+        </x-tabler.card-body>
+    </x-tabler.card>
+@endsection

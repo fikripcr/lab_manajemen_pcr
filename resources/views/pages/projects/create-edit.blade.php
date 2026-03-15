@@ -13,7 +13,7 @@
 
 @section('content')
 <x-tabler.card>
-    <div class="card-body">
+    <x-tabler.card-body>
         <form action="{{ $project->exists ? route('projects.update', $project) : route('projects.store') }}" method="POST">
             @csrf
             @if($project->exists)
@@ -93,6 +93,6 @@
                 />
             </div>
         </form>
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection

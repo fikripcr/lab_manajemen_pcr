@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\RiwayatJabFungsionalRequest;
 use App\Models\Hr\JabatanFungsional;
 use App\Models\Hr\RiwayatJabFungsional;
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use App\Services\Hr\RiwayatJabFungsionalService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -25,7 +25,7 @@ class RiwayatJabFungsionalController extends Controller
     {
         $jabatan = JabatanFungsional::where('is_active', 1)->get();
         $riwayat = new RiwayatJabFungsional();
-        return view('pages.hr.pegawai.jabatan-fungsional.create-edit-ajax', compact('pegawai', 'jabatan', 'riwayat'));
+        return view('pages.hr.pegawai.jabatan-fungsional.create-edit-ajax', compact('hr_pegawai', 'jabatan', 'riwayat'));
     }
 
     public function store(RiwayatJabFungsionalRequest $request, Pegawai $pegawai)
@@ -36,7 +36,7 @@ class RiwayatJabFungsionalController extends Controller
 
     public function data(Request $request)
     {
-        $query = RiwayatJabFungsional::with(['pegawai', 'jabatanFungsional'])->select('hr_riwayat_jabfungsional.*');
+        $query = RiwayatJabFungsional::with(['hr_pegawai', 'jabatanFungsional'])->select('hr_riwayat_jabfungsional.*');
 
         if ($request->has('pegawai_id')) {
             $query->where('pegawai_id', decryptIdIfEncrypted($request->pegawai_id));

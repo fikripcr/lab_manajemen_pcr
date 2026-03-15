@@ -1,7 +1,7 @@
 <?php
 namespace Database\Seeders;
 
-use App\Models\Shared\FAQ;
+use App\Models\Cms\FAQ;
 use Illuminate\Database\Seeder;
 
 class FAQSeeder extends Seeder

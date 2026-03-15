@@ -42,12 +42,12 @@ class RiwayatStruktural extends Model
 
     public function orgUnit()
     {
-        return $this->belongsTo(OrgUnit::class, 'org_unit_id', 'orgunit_id');
+        return $this->belongsTo(StrukturOrganisasi::class, 'org_unit_id', 'orgunit_id');
     }
 
     public function approvedBy()
     {
-        return $this->belongsTo(User::class, 'approved_by');
+        return $this->belongsTo(\App\Models\User::class, 'approved_by');
     }
 
     // Helper to check if currently active

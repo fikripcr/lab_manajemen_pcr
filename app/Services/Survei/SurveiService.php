@@ -66,18 +66,18 @@ class SurveiService
 
             foreach ($survei->halaman as $halaman) {
                 $newHalaman            = $halaman->replicate();
-                $newHalaman->survei_id = $newSurvei->id;
+                $newHalaman->survei_id = $newSurvei->survei_id;
                 $newHalaman->save();
 
                 foreach ($halaman->pertanyaan as $pertanyaan) {
                     $newPertanyaan             = $pertanyaan->replicate();
-                    $newPertanyaan->survei_id  = $newSurvei->id;
-                    $newPertanyaan->halaman_id = $newHalaman->id;
+                    $newPertanyaan->survei_id  = $newSurvei->survei_id;
+                    $newPertanyaan->halaman_id = $newHalaman->halaman_id;
                     $newPertanyaan->save();
 
                     foreach ($pertanyaan->opsi as $opsi) {
                         $newOpsi                = $opsi->replicate();
-                        $newOpsi->pertanyaan_id = $newPertanyaan->id;
+                        $newOpsi->pertanyaan_id = $newPertanyaan->pertanyaan_id;
                         $newOpsi->save();
                     }
                 }

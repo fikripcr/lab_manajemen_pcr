@@ -31,10 +31,10 @@ class PendaftaranController extends Controller
         }
 
         $stats               = $this->pendaftaranService->getDashboardStats();
-        $recentRegistrations = $this->pendaftaranService->getRecentRegistrations(10);
-        $jalurStats          = $this->pendaftaranService->getStatsByJalur();
+        $recentPendaftar = $this->pendaftaranService->getRecentRegistrations(10);
+        $jalurStats      = $this->pendaftaranService->getStatsByJalur();
 
-        return view('pages.pmb.dashboard.index', compact('stats', 'recentRegistrations', 'jalurStats'));
+        return view('pages.pmb.dashboard.index', compact('stats', 'recentPendaftar', 'jalurStats'));
     }
 
     /**

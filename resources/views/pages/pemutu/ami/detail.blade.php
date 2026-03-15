@@ -98,7 +98,7 @@
         {{-- SECTION B: Tab Hasil Evaluasi Diri, Audit & Diskusi --}}
         <x-tabler.card class="mb-4">
             <x-tabler.card-header>
-                <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" role="tablist">
+                <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" role="tablist" id="ami-detail-tabs">
                     <li class="nav-item" role="presentation">
                         <a href="#tabs-ed" class="nav-link active" data-bs-toggle="tab" aria-selected="true" role="tab">
                             <i class="ti ti-clipboard-data me-2"></i>B1. Evaluasi Diri
@@ -122,7 +122,7 @@
             <div class="tab-content">
                 {{-- TAB: Hasil Evaluasi Diri --}}
                 <div class="tab-pane active show" id="tabs-ed" role="tabpanel">
-                    <div class="card-body">
+                    <x-tabler.card-body>
                         @if($indOrg->ed_capaian)
                         <div class="row g-3 mb-3">
                             <div class="col-md-4">
@@ -163,8 +163,8 @@
                                 $isChosen = ($indOrg->ed_skala !== null && (int)$indOrg->ed_skala === (int)$level);
                             @endphp
                             <div class="col-12">
-                                <div class="card mb-0 border {{ $isChosen ? 'border-primary bg-primary-lt border-2 shadow-sm' : 'border opacity-75' }}">
-                                    <div class="card-body p-2">
+                                <x-tabler.card class="mb-0 border {{ $isChosen ? 'border-primary bg-primary-lt border-2 shadow-sm' : 'border opacity-75' }}">
+                                    <x-tabler.card-body class="p-2">
                                         <div class="row align-items-center">
                                             <div class="col-auto pe-3 border-end">
                                                 <div class="fs-2 fw-bold {{ $isChosen ? 'text-primary' : 'text-muted' }} mb-0 ms-3">
@@ -195,12 +195,12 @@
                             <p class="mt-2">Evaluasi Diri belum diisi auditee.</p>
                         </div>
                         @endif
-                    </div>
+                    </x-tabler.card-body>
                 </div>
 
                 {{-- TAB: AUDIT (PENILAIAN) --}}
                 <div class="tab-pane" id="tabs-audit" role="tabpanel">
-                    <div class="card-body">
+                    <x-tabler.card-body>
                         <form action="{{ route('pemutu.ami.submit-nilai', $indOrg->encrypted_indorgunit_id) }}" method="POST" class="ajax-form" data-redirect="true">
                             @csrf
 
@@ -262,12 +262,12 @@
                                 </div>
                             </div>
                         </form>
-                    </div>
+                    </x-tabler.card-body>
                 </div>
 
                 {{-- TAB: DISKUSI --}}
                 <div class="tab-pane" id="tabs-diskusi" role="tabpanel">
-                    <div class="card-body">
+                    <x-tabler.card-body>
                         <div class="row">
                             <div class="col-md-7 border-end">
                                 {{-- Chat Messages --}}
@@ -287,8 +287,8 @@
                                                 <span class="badge bg-{{ $color }}-lt text-{{ $color }} py-0 px-1 smaller">{{ ucfirst($msg->jenis_pengirim) }}</span>
                                                 <span class="text-muted smaller">{{ $msg->created_at->diffForHumans() }}</span>
                                             </div>
-                                            <div class="card mb-0 {{ $isSelf ? 'bg-primary-lt' : 'bg-secondary-lt' }} border-0" style="border-radius: 12px;">
-                                                <div class="card-body py-2 px-3">
+                                            <x-tabler.card class="mb-0 {{ $isSelf ? 'bg-primary-lt' : 'bg-secondary-lt' }} border-0" style="border-radius: 12px;">
+                                                <x-tabler.card-body class="py-2 px-3">
                                                     <div class="small">{!! nl2br(e($msg->isi)) !!}</div>
                                                     @if($msg->attachment_file)
                                                     <div class="mt-2 border-top pt-1 text-{{ $isSelf ? 'end' : 'start' }}">
@@ -297,8 +297,8 @@
                                                         </a>
                                                     </div>
                                                     @endif
-                                                </div>
-                                            </div>
+                                                </x-tabler.card-body>
+                                            </x-tabler.card>
                                         </div>
                                     </div>
                                     @empty
@@ -340,7 +340,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </x-tabler.card-body>
                 </div>
             </div>
         </x-tabler.card>
@@ -390,26 +390,6 @@ document.querySelectorAll('input[name="ami_hasil_akhir"]').forEach(radio => {
 // Scroll chat ke bawah otomatis
 const chat = document.getElementById('chat-container');
 if (chat) chat.scrollTop = chat.scrollHeight;
-
-// Simpan state Tab Aktif menggunakan sessionStorage
-const tabKey = 'ami_detail_active_tab';
-
-// Restore active tab
-const savedHref = sessionStorage.getItem(tabKey);
-if (savedHref) {
-    const targetTab = document.querySelector(`a[data-bs-toggle="tab"][href="${savedHref}"]`);
-    if (targetTab) {
-        const tabEl = new bootstrap.Tab(targetTab);
-        tabEl.show();
-    }
-}
-
-// Save on tab change
-document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(tab => {
-    tab.addEventListener('shown.bs.tab', function (e) {
-        sessionStorage.setItem(tabKey, e.target.getAttribute('href'));
-    });
-});
 </script>
 @endpush
 @endsection

@@ -48,8 +48,8 @@
                         <x-tabler.button type="submit" icon="ti ti-check" text="Proses Daftar Ulang" />
                     </div>
                 </form>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 </div>
 @endsection

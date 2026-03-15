@@ -23,7 +23,7 @@
             route="{{ route('pemutu.evaluasi-kpi.data', $periode->encrypted_periode_kpi_id) }}"
             :columns="[
                 ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                ['data' => 'pegawai', 'name' => 'pegawai', 'title' => 'Pegawai', 'width' => '15%'],
+                ['data' => 'hr_pegawai', 'name' => 'hr_pegawai', 'title' => 'Pegawai', 'width' => '15%'],
                 ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator / Sasaran Kinerja'],
                 ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%', 'class' => 'text-center'],
                 ['data' => 'capaian', 'name' => 'capaian', 'title' => 'Capaian', 'width' => '15%'],

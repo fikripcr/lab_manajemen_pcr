@@ -37,6 +37,6 @@
                     'searchable' => false,
                 ],
             ]" />
-        </div>
-    </div>
+        </x-tabler.card-body>
+    </x-tabler.card>
 @endsection

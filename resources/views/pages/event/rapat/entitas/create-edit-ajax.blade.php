@@ -7,8 +7,8 @@
             $selectedEntityText = '[Indikator Unit] ' . $item->indikator->no_indikator . ' - ' . $item->indikator->indikator;
             $selectedEntityId   = 'IndikatorOrgUnit:' . $item->indikorgunit_id;
         }
-    } elseif ($entitas->exists && $entitas->model === \App\Models\Shared\StrukturOrganisasi::class) {
-        $item = \App\Models\Shared\StrukturOrganisasi::find($entitas->model_id);
+    } elseif ($entitas->exists && $entitas->model === \App\Models\Hr\StrukturOrganisasi::class) {
+        $item = \App\Models\Hr\StrukturOrganisasi::find($entitas->model_id);
         if ($item) {
             $selectedEntityText = '[Unit Kerja] ' . $item->name . ($item->code ? " ({$item->code})" : "");
             $selectedEntityId   = 'StrukturOrganisasi:' . $item->orgunit_id;

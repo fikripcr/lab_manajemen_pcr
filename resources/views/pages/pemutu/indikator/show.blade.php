@@ -123,9 +123,9 @@
                     @endforeach
                 </div>
             @else
-                <div class="card-body text-center py-4 text-muted small">
+                <x-tabler.card-body class="text-center py-4 text-muted small">
                     Indikator ini tidak memiliki rincian definisi Skala Capaian.
-                </div>
+                </x-tabler.card-body>
             @endif
         </x-tabler.card>
     </div>
@@ -134,7 +134,7 @@
     <div class="col-lg-4">
         {{-- Card: Labels --}}
         <x-tabler.card class="mb-3">
-            <x-tabler.card-header title='<i class="ti ti-tags text-blue me-2"></i>Label & Kategori' />
+            <x-tabler.card-header title='<i class="ti ti-tags text-blue me-2"></i>Label' />
             <x-tabler.card-body>
                 <div class="d-flex flex-wrap gap-2">
                 {!! pemutuDtColLabelsList($indikator) !!}
@@ -171,9 +171,9 @@
                 </x-tabler.datatable-client>
 
                 @if($indikator->orgUnits->isEmpty())
-                    <div class="text-center text-muted py-4 small italic">
+                    <x-tabler.card-body class="text-center text-muted py-4 small italic">
                         Belum ada unit penanggung jawab yang ditugaskan.
-                    </div>
+                    </x-tabler.card-body>
                 @endif
             </x-tabler.card>
         @else
@@ -208,9 +208,9 @@
                 </x-tabler.datatable-client>
                 
                 @if($indikator->pegawai->isEmpty())
-                    <div class="text-center text-muted py-4 small italic">
+                    <x-tabler.card-body class="text-center text-muted py-4 small italic">
                         Belum ada pegawai yang ditugaskan.
-                    </div>
+                    </x-tabler.card-body>
                 @endif
             </x-tabler.card>
         @endif
@@ -234,9 +234,9 @@
                         </div>
                     </a>
                 @empty
-                    <div class="card-body text-center py-4 small italic text-muted">
+                    <x-tabler.card-body class="text-center py-4 small italic text-muted">
                         Tidak ada referensi dokumen.
-                    </div>
+                    </x-tabler.card-body>
                 @endforelse
             </div>
         </x-tabler.card>

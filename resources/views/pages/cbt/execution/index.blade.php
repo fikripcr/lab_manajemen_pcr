@@ -18,13 +18,15 @@
 
         {{-- Center: Prominent Timer --}}
         <div class="mx-auto">
-            <div class="bg-dark text-white px-4 py-2 rounded-pill shadow-lg d-flex align-items-center gap-3 border border-secondary" id="timer-wrapper" style="min-width: 200px; transition: all 0.5s ease;">
-                <div class="d-flex align-items-center gap-2">
-                    <i class="ti ti-clock-filled fs-3 text-primary" id="timer-icon"></i>
-                    <span class="text-muted small text-uppercase fw-bold d-none d-lg-inline">Sisa Waktu</span>
-                </div>
-                <div class="h2 mb-0 font-monospace fw-bold text-center flex-fill" id="timer-display" style="letter-spacing: 1px;">--:--:--</div>
-            </div>
+            <x-tabler.card class="bg-dark text-white px-4 py-2 rounded-pill shadow-lg d-flex align-items-center gap-3 border border-secondary" id="timer-wrapper" style="min-width: 200px; transition: all 0.5s ease;">
+                <x-tabler.card-body class="p-0 d-flex align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="ti ti-clock-filled fs-3 text-primary" id="timer-icon"></i>
+                        <span class="text-muted small text-uppercase fw-bold d-none d-lg-inline">Sisa Waktu</span>
+                    </div>
+                    <div class="h2 mb-0 font-monospace fw-bold text-center flex-fill" id="timer-display" style="letter-spacing: 1px;">--:--:--</div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
 
         {{-- Right: User Info --}}
@@ -108,7 +110,7 @@
                                 {{-- Rendered via JS --}}
                             </div>
                         </x-tabler.card-body>
-                        <div class="card-footer bg-light border-0 py-3">
+                        <x-tabler.card-footer class="bg-light border-0 py-3">
                             <div class="d-flex gap-3 justify-content-center">
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="badge bg-success rounded-pill p-1"></span>
@@ -123,7 +125,7 @@
                                     <span class="small text-muted">Belum</span>
                                 </div>
                             </div>
-                        </div>
+                        </x-tabler.card-footer>
                     </x-tabler.card>
 
                     {{-- Action Card --}}
@@ -287,9 +289,11 @@ function renderQuestion(idx) {
             wrapper.appendChild(listGroup);
         } else {
             wrapper.innerHTML = `
-                <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
-                    <x-tabler.form-textarea id="essay-input" name="jawaban_esai" rows="8" placeholder="Tulis jawaban esai Anda di sini..." oninput="saveEssay(${soalId}, this.value)" />
-                </div>`;
+                <x-tabler.card class="shadow-sm border-0 rounded-3 overflow-hidden">
+                    <x-tabler.card-body class="p-0">
+                        <x-tabler.form-textarea id="essay-input" name="jawaban_esai" rows="8" placeholder="Tulis jawaban esai Anda di sini..." oninput="saveEssay(${soalId}, this.value)" />
+                    </x-tabler.card-body>
+                </x-tabler.card>`;
             setTimeout(() => {
                 const essayEl = document.getElementById('essay-input');
                 if (essayEl) essayEl.value = ans.jawaban_esai || '';

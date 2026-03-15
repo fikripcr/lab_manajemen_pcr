@@ -1,7 +1,7 @@
 <?php
 namespace App\Models\Pemutu;
 
-use App\Models\Shared\StrukturOrganisasi;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Model;
 

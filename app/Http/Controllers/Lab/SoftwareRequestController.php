@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Lab;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\SoftwareApprovalRequest;
 use App\Http\Requests\Lab\SoftwareRequest;
-use App\Models\Lab\MataKuliah;
+use App\Models\Akademik\MataKuliah;
 use App\Models\Lab\PeriodSoftRequest;
 use App\Models\Lab\RequestSoftware;
 use App\Services\Lab\SoftwareRequestService;
@@ -75,33 +75,33 @@ class SoftwareRequestController extends Controller
             ->addIndexColumn()
             ->editColumn('status', function ($request) {
                 $status     = $request->status;
-                $badgeClass = 'bg-label-secondary';
+                $badgeClass = 'secondary';
 
                 // Handle both Indonesian (legacy) and English (new) statuses
                 switch ($status) {
                     case 'menunggu_approval':
                     case 'pending':
-                        $badgeClass = 'bg-label-warning';
+                        $badgeClass = 'warning';
                         $statusText = 'Pending';
                         break;
                     case 'tangguhkan':
-                        $badgeClass = 'bg-label-info';
+                        $badgeClass = 'info';
                         $statusText = 'Tangguhkan';
                         break;
                     case 'disetujui':
                     case 'approved':
-                        $badgeClass = 'bg-label-success';
+                        $badgeClass = 'success';
                         $statusText = 'Approved';
                         break;
                     case 'ditolak':
                     case 'rejected':
-                        $badgeClass = 'bg-label-danger';
+                        $badgeClass = 'danger';
                         $statusText = 'Rejected';
                         break;
                     default:
                         $statusText = ucfirst(str_replace('_', ' ', $status));
                 }
-                return '<span class="badge ' . $badgeClass . '">' . $statusText . '</span>';
+                return '<span class="status status-' . $badgeClass . '"><span class="status-dot"></span> ' . $statusText . '</span>';
             })
             ->editColumn('mata_kuliah', function ($request) {
                 $mataKuliahNames = $request->mataKuliahs->map(function ($mk) {

@@ -24,13 +24,19 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    // Global Siklus SPMI Year Selector (session)
+    Route::post('set-siklus', function (\Illuminate\Http\Request $request) {
+        $request->validate(['siklus_tahun' => 'required|integer']);
+        session(['siklus_spmi_tahun' => (int) $request->siklus_tahun]);
+        return back();
+    })->name('set-siklus');
+
     // Periode KPI
     Route::get('periode-kpi/data', [PeriodeKpiController::class, 'data'])->name('periode-kpi.data');
     Route::post('periode-kpi/{periodeKpi}/activate', [PeriodeKpiController::class, 'activate'])->name('periode-kpi.activate');
     Route::resource('periode-kpi', PeriodeKpiController::class);
 
     // Label Type (modal forms only - no index page)
-    Route::resource('label-type', LabelTypeController::class)->except(['index', 'show']);
 
     // Label
     Route::get('api/label', [LabelController::class, 'data'])->name('label.data');
@@ -103,7 +109,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     // Tim Mutu
     Route::get('tim-mutu', [TimMutuController::class, 'index'])->name('tim-mutu.index');
     Route::get('tim-mutu/search-pegawai', [TimMutuController::class, 'searchPegawai'])->name('tim-mutu.search-pegawai');
-    Route::get('tim-mutu/{periode}/manage', [TimMutuController::class, 'manage'])->name('tim-mutu.manage');
+    // Route::get('tim-mutu/{periode}/manage', [TimMutuController::class, 'manage'])->name('tim-mutu.manage');
     Route::get('tim-mutu/{periode}/unit/{unit}/edit-auditee', [TimMutuController::class, 'editAuditee'])->name('tim-mutu.edit-auditee');
     Route::post('tim-mutu/{periode}/unit/{unit}/auditee', [TimMutuController::class, 'storeAuditee'])->name('tim-mutu.store-auditee');
     Route::get('tim-mutu/{periode}/unit/{unit}/edit-auditor', [TimMutuController::class, 'editAuditor'])->name('tim-mutu.edit-auditor');
@@ -126,7 +132,6 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
 
     // Evaluasi Diri
     Route::get('evaluasi-diri', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'index'])->name('evaluasi-diri.index');
-    Route::get('evaluasi-diri/{periode}', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'show'])->name('evaluasi-diri.show');
     Route::get('evaluasi-diri/{periode}/data', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'data'])->name('evaluasi-diri.data');
     Route::get('evaluasi-diri/{periode}/ptp-data', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'ptpData'])->name('evaluasi-diri.ptp-data');
     Route::get('evaluasi-diri/download/{id}', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'downloadAttachment'])->name('evaluasi-diri.download');
@@ -145,7 +150,6 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
 
     // AMI (Audit Mutu Internal)
     Route::get('ami', [App\Http\Controllers\Pemutu\AmiController::class, 'index'])->name('ami.index');
-    Route::get('ami/{periode}', [App\Http\Controllers\Pemutu\AmiController::class, 'show'])->name('ami.show');
     Route::get('ami/{periode}/data', [App\Http\Controllers\Pemutu\AmiController::class, 'data'])->name('ami.data');
     Route::get('ami/{periode}/te-data', [App\Http\Controllers\Pemutu\AmiController::class, 'teData'])->name('ami.te-data');
     Route::get('ami/detail/{indOrg}', [App\Http\Controllers\Pemutu\AmiController::class, 'detail'])->name('ami.detail');
@@ -161,7 +165,6 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
 
     // Pengendalian
     Route::get('pengendalian', [App\Http\Controllers\Pemutu\PengendalianController::class, 'index'])->name('pengendalian.index');
-    Route::get('pengendalian/{periode}', [App\Http\Controllers\Pemutu\PengendalianController::class, 'show'])->name('pengendalian.show');
     Route::get('pengendalian/{periode}/data', [App\Http\Controllers\Pemutu\PengendalianController::class, 'data'])->name('pengendalian.data');
     Route::get('pengendalian/modal/{indOrg}', [App\Http\Controllers\Pemutu\PengendalianController::class, 'editModal'])->name('pengendalian.edit-modal');
     Route::post('pengendalian/update/{indOrg}', [App\Http\Controllers\Pemutu\PengendalianController::class, 'update'])->name('pengendalian.update');
@@ -175,7 +178,6 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
 
     // Peningkatan
     Route::get('peningkatan', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'index'])->name('peningkatan.index');
-    Route::get('peningkatan/{periode}', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'show'])->name('peningkatan.show');
 
     // Peningkatan RTM (Rapat Tinjauan Manajemen)
     Route::get('peningkatan/{periode}/rtm/create', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'createRtm'])->name('peningkatan.rtm.create');

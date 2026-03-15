@@ -1,7 +1,7 @@
 <?php
 namespace App\Models\Pemutu;
 
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

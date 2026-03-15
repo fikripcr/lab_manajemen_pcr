@@ -22,8 +22,8 @@
                 Setiap perubahan data diri akan disimpan sebagai <strong>Draft / Menunggu Persetujuan</strong> dan tidak akan langsung mengubah data aktif sampai disetujui oleh Administrator.
             </div>
         @else
-            <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+            <x-tabler.card-header>
+                <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" id="pegawai-form-tabs">
                     <li class="nav-item">
                         <a href="#tab-datadiri" class="nav-link active" data-bs-toggle="tab">Data Diri</a>
                     </li>
@@ -31,10 +31,10 @@
                         <a href="#tab-kepegawaian" class="nav-link" data-bs-toggle="tab">Informasi Kepegawaian</a>
                     </li>
                 </ul>
-            </div>
+            </x-tabler.card-header>
         @endif
 
-        <div class="card-body">
+        <x-tabler.card-body>
             @if(!isset($pegawai) || !$pegawai->exists)
                 <div class="tab-content">
                     <!-- Tab Data Diri -->
@@ -130,10 +130,10 @@
                 </div>
             @endif
 
-        </div>
-        <div class="card-footer text-end">
+        </x-tabler.card-body>
+        <x-tabler.card-footer class="text-end">
             <x-tabler.button type="submit" icon="{{ isset($pegawai) && $pegawai->exists ? 'ti ti-check' : null }}" text="{{ isset($pegawai) && $pegawai->exists ? 'Ajukan Perubahan' : 'Simpan Pegawai' }}" />
-        </div>
-    </div>
+        </x-tabler.card-footer>
+    </x-tabler.card>
 </form>
 @endsection

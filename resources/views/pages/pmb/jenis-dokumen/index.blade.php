@@ -12,7 +12,7 @@
 @section('content')
 
         <x-tabler.card>
-            <div class="card-body">
+            <x-tabler.card-body>
                 <x-tabler.datatable
                     id="table-jenis-dokumen"
                     :columns="[
@@ -24,6 +24,6 @@
                     ]"
                     :url="route('pmb.jenis-dokumen.data')"
                 />
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
 @endsection

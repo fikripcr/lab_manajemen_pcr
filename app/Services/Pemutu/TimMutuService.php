@@ -1,10 +1,10 @@
 <?php
 namespace App\Services\Pemutu;
 
-use App\Models\Pemutu\OrgUnit;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Models\Pemutu\TimMutu;
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use Illuminate\Support\Facades\DB;
 
 class TimMutuService
@@ -106,7 +106,7 @@ class TimMutuService
     {
         return DB::transaction(function () use ($periodeId, $unitId, $auditeeId, $ketuaAuditorId, $auditorIds, $anggotaIds) {
             $periode = PeriodeSpmi::findOrFail($periodeId);
-            $unit    = OrgUnit::findOrFail($unitId);
+            $unit    = StrukturOrganisasi::findOrFail($unitId);
 
             // Delete existing
             TimMutu::forPeriode($periodeId)
@@ -171,7 +171,7 @@ class TimMutuService
     {
         return DB::transaction(function () use ($periodeId, $unitId, $auditeeId, $anggotaIds) {
             $periode = PeriodeSpmi::findOrFail($periodeId);
-            $unit    = OrgUnit::findOrFail($unitId);
+            $unit    = StrukturOrganisasi::findOrFail($unitId);
 
             // Delete existing auditee roles
             TimMutu::forPeriode($periodeId)
@@ -223,7 +223,7 @@ class TimMutuService
     {
         return DB::transaction(function () use ($periodeId, $unitId, $ketuaAuditorId, $auditorIds) {
             $periode = PeriodeSpmi::findOrFail($periodeId);
-            $unit    = OrgUnit::findOrFail($unitId);
+            $unit    = StrukturOrganisasi::findOrFail($unitId);
 
             // Delete existing auditor roles
             TimMutu::forPeriode($periodeId)
@@ -302,7 +302,7 @@ class TimMutuService
      */
     public function getOrgUnitsPaginated($perPage = 9)
     {
-        return OrgUnit::with('parent')
+        return StrukturOrganisasi::with('parent')
             ->orderBy('level')
             ->orderBy('seq')
             ->paginate($perPage);

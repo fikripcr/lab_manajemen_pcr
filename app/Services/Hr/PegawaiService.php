@@ -3,7 +3,7 @@ namespace App\Services\Hr;
 
 use App\Models\Hr\RiwayatApproval;
 use App\Models\Hr\RiwayatDataDiri;
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 

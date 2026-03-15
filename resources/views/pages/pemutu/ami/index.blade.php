@@ -1,63 +1,192 @@
 @extends('layouts.tabler.app')
-@section('title', 'Audit Mutu Internal (AMI)')
+@section('title', 'Audit Mutu Internal - Siklus ' . $siklus['tahun'])
 
 @section('header')
-<x-tabler.page-header title="Audit Mutu Internal" pretitle="SPMI / AMI">
+<x-tabler.page-header title="Audit Mutu Internal (AMI) {{ $siklus['tahun'] }}" pretitle="Evaluasi">
     <x-slot:actions>
-        <a href="{{ route('pemutu.evaluasi-diri.index') }}" class="btn btn-outline-secondary btn-sm">
-            <i class="ti ti-list-check me-1"></i> Evaluasi Diri
-        </a>
+        <div class="nav nav-pills" id="top-tabs" role="tablist">
+            <a href="#tab-akademik" class="nav-link active" data-bs-toggle="tab" role="tab">
+                <i class="ti ti-school me-2"></i>Akademik
+            </a>
+            <a href="#tab-non-akademik" class="nav-link" data-bs-toggle="tab" role="tab" tabindex="-1">
+                <i class="ti ti-building-community me-2"></i>Non Akademik
+            </a>
+        </div>
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
 
 @section('content')
+<div class="tab-content">
+    @foreach(['akademik', 'non_akademik'] as $type)
+        @php 
+            $periode = $siklus[$type]; 
+            $userUnits = ${$type . 'Units'};
+            $typeId = str_replace('_', '-', $type);
+            $prevYear = $periode ? (int)$periode->periode - 1 : null;
+        @endphp
+        <div class="tab-pane {{ $type == 'akademik' ? 'active show' : '' }}" id="tab-{{ $typeId }}" role="tabpanel">
+            @if($periode)
+                @php $jadwalTersedia = $periode->ami_awal && $periode->ami_akhir; @endphp
+                
+                <x-tabler.card>
+                    <x-tabler.card-header class="border-bottom-0 pt-4">
+                        <ul class="nav nav-pills card-header-pills" id="ami-tabs-{{ $typeId }}" data-bs-toggle="tabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a href="#tab-ami-{{ $typeId }}" class="nav-link active" data-bs-toggle="tab" role="tab">
+                                    <i class="ti ti-shield-check me-2"></i>Audit Mutu Internal
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a href="#tab-te-{{ $typeId }}" class="nav-link" data-bs-toggle="tab" role="tab" tabindex="-1">
+                                    <i class="ti ti-search me-2"></i>Tinjauan Efektivitas ({{ $prevYear }})
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a href="#tab-rtp-{{ $typeId }}" class="nav-link" data-bs-toggle="tab" role="tab" tabindex="-1">
+                                    <i class="ti ti-pennant me-2"></i>Rencana Tindakan Perbaikan (RTP)
+                                </a>
+                            </li>
+                        </ul>
+                    </x-tabler.card-header>
 
-
-@if($periodes->isEmpty())
-    <x-tabler.empty-state
-        title="Belum Ada Periode SPMI"
-        text="Tambahkan periode SPMI terlebih dahulu sebelum melakukan Audit Mutu Internal."
-        icon="ti ti-calendar-off"
-    />
-@else
-
-<div class="row row-cards">
-    @foreach($periodes as $periode)
-        <div class="col-12">
-            <x-tabler.card class="card-link card-link-pop">
-                <a href="{{ route('pemutu.ami.show', $periode->encrypted_periodespmi_id) }}" class="d-block w-100 text-reset text-decoration-none">
-                    <x-tabler.card-body>
-                        <div class="row align-items-center">
-                            <div class="col-auto">
-                                <span class="avatar avatar-md rounded bg-purple-lt"><i class="ti ti-zoom-scan fs-2"></i></span>
-                            </div>
-                            <div class="col">
-                                <div class="card-title mb-1">Periode {{ $periode->periode }}</div>
-                                <div class="text-muted">{{ $periode->jenis_periode }}</div>
-                            </div>
-                            <div class="col-auto">
-                                @if($periode->ami_awal && $periode->ami_akhir)
-                                    <span class="badge bg-green-lt">
-                                        <i class="ti ti-calendar me-1"></i>
-                                        {{ $periode->ami_awal->format('d M') }} - {{ $periode->ami_akhir->format('d M Y') }}
-                                    </span>
-                                @else
-                                    <span class="badge bg-secondary-lt">Jadwal Belum Diatur</span>
-                                @endif
-                                <i class="ti ti-chevron-right ms-3 text-muted"></i>
+                    <div class="tab-content">
+                        {{-- SUB-TAB: AMI --}}
+                        <div class="tab-pane active show" id="tab-ami-{{ $typeId }}" role="tabpanel">
+                            <x-tabler.card-body class="border-top">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h3 class="mb-1">Periode {{ $periode->jenis_periode }} {{ $periode->periode }}</h3>
+                                        <div class="text-muted small">
+                                            @if($jadwalTersedia)
+                                                <i class="ti ti-calendar me-1"></i>
+                                                Jadwal: {{ $periode->ami_awal->format('d M') }} - {{ $periode->ami_akhir->format('d M Y') }}
+                                            @else
+                                                <span class="text-warning"><i class="ti ti-alert-triangle me-1"></i> Jadwal Belum Diatur</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-auto d-flex gap-2">
+                                        <x-tabler.datatable-page-length :dataTableId="'table-ami-' . $typeId" />
+                                        <x-tabler.datatable-filter :dataTableId="'table-ami-' . $typeId">
+                                            <div class="row g-2">
+                                                <div class="col-12">
+                                                    <x-tabler.form-select name="unit_id" id="unit_id_{{ $typeId }}" label="Unit / Area" class="unit-filter" placeholder="Filter Area / Unit" :options="$userUnits->pluck('name', 'encrypted_org_unit_id')" type="select2" />
+                                                </div>
+                                                <div class="col-12">
+                                                    <x-tabler.form-select name="ami_hasil_akhir" id="ami_hasil_akhir_{{ $typeId }}" label="Hasil AMI">
+                                                        <option value="">Semua Hasil</option>
+                                                        <option value="empty">Belum Dinilai</option>
+                                                        <option value="0">KTS</option>
+                                                        <option value="1">Terpenuhi</option>
+                                                        <option value="2">Terlampaui</option>
+                                                    </x-tabler.form-select>
+                                                </div>
+                                                <div class="col-12">
+                                                    <x-tabler.form-select name="ed_status" id="ed_status_{{ $typeId }}" label="Status ED">
+                                                        <option value="">Semua Status</option>
+                                                        <option value="isi">Sudah Isi</option>
+                                                        <option value="kosong">Belum Isi</option>
+                                                    </x-tabler.form-select>
+                                                </div>
+                                            </div>
+                                        </x-tabler.datatable-filter>
+                                        <x-tabler.datatable-search :dataTableId="'table-ami-' . $typeId" />
+                                    </div>
+                                </div>
+                            </x-tabler.card-body>
+                            <div class="table-responsive border-top">
+                                <x-tabler.datatable
+                                    id="table-ami-{{ $typeId }}"
+                                    route="{{ route('pemutu.ami.data', $periode->encrypted_periodespmi_id) }}"
+                                    :columns="[
+                                        ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                                        ['data' => 'indikator_full', 'name' => 'indikator_full', 'title' => 'Indikator'],
+                                        ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%', 'class' => 'text-left'],
+                                        ['data' => 'status_ed', 'name' => 'status_ed', 'title' => 'Status ED', 'width' => '10%', 'class' => 'text-center', 'orderable' => false],
+                                        ['data' => 'status_ami', 'name' => 'status_ami', 'title' => 'Hasil AMI', 'width' => '15%', 'class' => 'text-left', 'orderable' => false],
+                                        ['data' => 'rtp', 'name' => 'rtp', 'title' => 'RTP', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                                        ['data' => 'action', 'name' => 'action', 'title' => 'AMI', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                                    ]"
+                                />
                             </div>
                         </div>
+
+                        {{-- SUB-TAB: TE --}}
+                        <div class="tab-pane" id="tab-te-{{ $typeId }}" role="tabpanel">
+                            <x-tabler.card-body class="border-top">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h3 class="mb-1">Tinjauan Efektivitas (Hasil AMI {{ $prevYear }})</h3>
+                                        <p class="text-muted mb-0 small">Daftar temuan KTS dari periode <span class="badge bg-purple-lt text-purple small">AMI {{ $prevYear }}</span> yang harus ditinjau perbaikannya.</p>
+                                    </div>
+                                    <div class="col-auto d-flex gap-2">
+                                        <x-tabler.datatable-page-length :dataTableId="'table-te-' . $typeId" />
+                                        <x-tabler.datatable-search :dataTableId="'table-te-' . $typeId" />
+                                    </div>
+                                </div>
+                            </x-tabler.card-body>
+                            <div class="table-responsive border-top">
+                                <x-tabler.datatable
+                                    id="table-te-{{ $typeId }}"
+                                    route="{{ route('pemutu.ami.te-data', $periode->encrypted_periodespmi_id) }}"
+                                    :columns="[
+                                        ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                                        ['data' => 'indikator_full', 'name' => 'indikator_full', 'title' => 'Indikator'],
+                                        ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%', 'class' => 'text-left'],
+                                        ['data' => 'rtp', 'name' => 'rtp', 'title' => 'Rencana (RTP)', 'width' => '15%'],
+                                        ['data' => 'ptp', 'name' => 'ptp', 'title' => 'Pelaksanaan (PTP)', 'width' => '15%'],
+                                        ['data' => 'te', 'name' => 'te', 'title' => 'Tinjauan (TE)', 'width' => '15%'],
+                                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                                    ]"
+                                />
+                            </div>
+                        </div>
+
+                        {{-- SUB-TAB: RTP ONLY (Findings) --}}
+                        <div class="tab-pane" id="tab-rtp-{{ $typeId }}" role="tabpanel">
+                            <x-tabler.card-body class="border-top">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h3 class="mb-1">Rencana Tindakan Perbaikan (RTP)</h3>
+                                        <p class="text-muted mb-0 small">Indikator dengan temuan Audit (KTS) yang memerlukan rencana perbaikan.</p>
+                                    </div>
+                                    <div class="col-auto d-flex gap-2">
+                                        <x-tabler.datatable-page-length :dataTableId="'table-rtp-only-' . $typeId" />
+                                        <x-tabler.datatable-search :dataTableId="'table-rtp-only-' . $typeId" />
+                                    </div>
+                                </div>
+                            </x-tabler.card-body>
+                            <div class="table-responsive border-top">
+                                <x-tabler.datatable
+                                    id="table-rtp-only-{{ $typeId }}"
+                                    route="{{ route('pemutu.ami.data', [$periode->encrypted_periodespmi_id, 'ami_hasil_akhir' => 0]) }}"
+                                    :columns="[
+                                        ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                                        ['data' => 'indikator_full', 'name' => 'indikator_full', 'title' => 'Indikator'],
+                                        ['data' => 'status_ami', 'name' => 'status_ami', 'title' => 'Hasil AMI', 'width' => '15%', 'orderable' => false, 'searchable' => false],
+                                        ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%', 'class' => 'text-left'],
+                                        ['data' => 'rtp', 'name' => 'rtp', 'title' => 'Rencana Tindakan Perbaikan', 'width' => '30%', 'class' => 'text-left', 'orderable' => false, 'searchable' => false],
+                                        ['data' => 'action_rtp', 'name' => 'action_rtp', 'title' => 'Aksi', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                                    ]"
+                                />
+                            </div>
+                    </div> {{-- end sub-tab content --}}
+                    </div> {{-- end tab-content --}}
+                </x-tabler.card>
+            @else
+                <x-tabler.card>
+                    <x-tabler.card-body class="py-5">
+                        <x-tabler.empty-state 
+                            title="Periode Belum Tersedia" 
+                            text="Data periode {{ str_replace('_', ' ', $type) }} untuk tahun {{ $siklus['tahun'] }} belum dibuat."
+                            icon="ti ti-calendar-off" 
+                        />
                     </x-tabler.card-body>
-                </a>
-            </x-tabler.card>
+                </x-tabler.card>
+            @endif
         </div>
     @endforeach
-    
-    <div class="d-flex justify-content-center mt-4">
-        {{ $periodes->links() }}
-    </div>
 </div>
-
-@endif
 @endsection
+

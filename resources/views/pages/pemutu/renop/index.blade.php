@@ -45,9 +45,9 @@
     </x-tabler.datatable-client>
 
     @if($renops->hasPages())
-    <div class="card-footer d-flex align-items-center">
+    <x-tabler.card-footer class="d-flex align-items-center">
         {{ $renops->links() }}
-    </div>
+    </x-tabler.card-footer>
     @endif
 </x-tabler.card>
 @endsection

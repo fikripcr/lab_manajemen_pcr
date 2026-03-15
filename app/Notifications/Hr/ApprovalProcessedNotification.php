@@ -2,7 +2,7 @@
 namespace App\Notifications\Hr;
 
 use App\Models\Hr\RiwayatApproval;
-use App\Models\Shared\Pegawai;
+use App\Models\Hr\Pegawai;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;

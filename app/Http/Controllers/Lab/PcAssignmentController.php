@@ -58,7 +58,7 @@ class PcAssignmentController extends Controller
     {
         $jadwal->load(['lab']);
         $mahasiswas = User::whereHas('roles', function ($q) {
-            $q->where('name', 'mahasiswa');
+            $q->where('name', 'akademik_mahasiswa');
         })->orderBy('name')->get();
 
         $totalPc     = 40;
