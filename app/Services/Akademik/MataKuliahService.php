@@ -1,5 +1,5 @@
 <?php
-namespace App\Services\Lab;
+namespace App\Services\Akademik;
 
 use App\Models\Akademik\MataKuliah;
 use Exception;

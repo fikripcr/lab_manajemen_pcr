@@ -240,8 +240,7 @@
         box-shadow: none !important;
     }
 
-    :root[data-bs-has-sidebar-bg] header.navbar-expand-md .navbar,
-    :root[data-bs-has-sidebar-bg] .layout-horizontal header.navbar-expand-md .navbar {
+    :root[data-bs-has-sidebar-bg] #navbar-secondary {
         background-color: var(--tblr-sidebar-bg) !important;
     }
 
@@ -274,34 +273,33 @@
     }
 
     /* --- Sidebar / Menu Color → Horizontal Layout (Secondary Menu Bar) --- */
-    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .navbar-nav>.nav-item>.nav-link,
-    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .navbar-nav>.nav-item>.nav-link>.nav-link-icon {
+    :root[data-bs-has-sidebar-bg] .layout-horizontal #navbar-secondary .nav-link,
+    :root[data-bs-has-sidebar-bg] .layout-horizontal #navbar-secondary .nav-link-icon {
         color: var(--tblr-sidebar-text) !important;
     }
 
-    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .navbar-nav>.nav-item>.nav-link>.nav-link-title {
+    :root[data-bs-has-sidebar-bg] .layout-horizontal #navbar-secondary .nav-link-title {
         color: var(--tblr-sidebar-text-muted) !important;
     }
 
     /* --- Header Top --- */
-    [data-bs-has-header-top-bg] .navbar {
+    [data-bs-has-header-top-bg] #header-main {
         background-color: var(--tblr-header-top-bg) !important;
         background-image: none !important;
     }
 
-    [data-bs-has-header-top-bg] .navbar .nav-link,
-    [data-bs-has-header-top-bg] .navbar .navbar-brand,
-    [data-bs-has-header-top-bg] .navbar .btn,
-    [data-bs-has-header-top-bg] .navbar .nav-item {
+    [data-bs-has-header-top-bg] #header-main .nav-link,
+    [data-bs-has-header-top-bg] #header-main .navbar-brand,
+    [data-bs-has-header-top-bg] #header-main .btn,
+    [data-bs-has-header-top-bg] #header-main .nav-item {
         color: var(--tblr-header-top-text) !important;
     }
 
-    [data-bs-has-header-top-bg] .navbar .text-secondary,
-    [data-bs-has-header-top-bg] .navbar .text-muted {
-        color: var(--tblr-header-top-text-muted) !important;
-    }
-
-    /* --- Page Header & Body --- */
+    [data-bs-has-header-top-bg] #header-main .text-secondary,
+    [data-bs-has-header-top-bg] #header-main .text-muted {
+        color: var(--tblr-header-top-text) !important;
+        opacity: 0.8;
+    }/* --- Page Header & Body --- */
     /* Condensed Layout: Page header sits inside the overlap area */
     :root[data-bs-has-header-overlap-bg] .layout-condensed .page-header .page-title,
     :root[data-bs-has-header-overlap-bg] .layout-condensed .page-header .page-pretitle,
@@ -535,15 +533,48 @@
         position: relative;
     }
 
-    /* Standard Tabler Dropdown management */
-    .navbar .dropdown-menu {
+    /* --- Header Stacking Hierarchy --- */
+    #header-main {
+        position: relative !important;
+        z-index: 1045 !important; /* Above secondary navbars, below modals */
+    }
+
+    #navbar-secondary {
+        position: relative !important;
+        z-index: 1040 !important; /* Secondary menu bars */
+    }
+
+    /* Standard Tabler Dropdown management - Restricted to horizontal headers to avoid sidebar glitches */
+    #header-main .dropdown-menu,
+    #navbar-secondary .dropdown-menu {
         z-index: 1040;
         background-color: var(--tblr-bg-surface, #ffffff) !important;
     }
 
-    /* Fix dropdown in navbar-overlap layout */
-    .navbar-overlap .dropdown-menu {
-        z-index: 1040;
+    /* Opaque Dropdown Utility (For fixed, non-transparent menus) */
+    .dropdown-opaque,
+    .dropdown-opaque .card,
+    .dropdown-opaque .card-header,
+    .dropdown-opaque .card-body,
+    .dropdown-opaque .list-group-item {
+        background-color: #ffffff !important;
+        opacity: 1 !important;
+        color: var(--tblr-body-color, #1d273b) !important;
+    }
+
+    .dropdown-opaque {
+        z-index: 1040 !important;
+        border: 1px solid rgba(0, 0, 0, 0.15) !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+        padding: 0 !important;
+    }
+
+    .dropdown-opaque .card-title {
+        color: inherit !important;
+    }
+
+    .dropdown-opaque .text-secondary {
+        color: #616876 !important; /* Ensure visibility for "Tidak ada notifikasi" */
     }
 
     /* Ensure the dropdown parent has proper stacking context */

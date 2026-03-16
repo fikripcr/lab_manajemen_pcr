@@ -1,7 +1,7 @@
 <?php
-namespace App\Services\Lab;
+namespace App\Services\Akademik;
 
-use App\Models\Lab\Mahasiswa;
+use App\Models\Akademik\Mahasiswa;
 use Illuminate\Support\Facades\DB;
 
 class MahasiswaService

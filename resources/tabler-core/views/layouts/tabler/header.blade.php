@@ -14,7 +14,7 @@
 @endphp
 
     {{-- Primary Header --}}
-    <header class="navbar navbar-expand-md{{ $dark ? ' navbar-dark text-white' : '' }}{{ $navbarClass ? ' ' . $navbarClass : '' }} {{ $headerStickyClass }} d-print-none"{!! $dark ? ' data-bs-theme="dark"' : '' !!}>
+    <header class="navbar navbar-expand-md{{ $dark ? ' navbar-dark text-white' : '' }}{{ $navbarClass ? ' ' . $navbarClass : '' }} {{ $headerStickyClass }} d-print-none" id="header-main" {!! $dark ? ' data-bs-theme="dark"' : '' !!}>
         <div class="{{ $layoutData['navbarContainerClass'] ?? 'container-xl' }}">
             {{-- Mobile Toggle --}}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu"
@@ -138,7 +138,7 @@
 
 
                 {{-- Notifications --}}
-                <div class="nav-item dropdown me-3 dropdown-notification">
+                <div class="nav-item dropdown me-3">
                     <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1" aria-label="Show notifications">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
                         @if(isset($unreadCount) && $unreadCount > 0)
@@ -147,10 +147,11 @@
                         <span class="badge bg-red badge-notification badge-pill notification-count" style="display: none;"></span>
                         @endif
                     </a>
-                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow dropdown-menu-card"{{ $dark ? ' data-bs-theme="light"' : '' }}>
+                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow dropdown-menu-card shadow dropdown-notification dropdown-opaque"
+                         {{ $dark ? ' data-bs-theme="light"' : '' }}>
                         <div class="card">
                             <div class="card-header d-flex">
-                                <h3 class="card-title">Notifications</h3>
+                                <h3 class="card-title">Notifikasi</h3>
                                 <div class="btn-close ms-auto" data-bs-dismiss="dropdown"></div>
                             </div>
                             <div class="list-group list-group-flush list-group-hoverable" id="notifications-list" style="max-height: 20rem; overflow-y: auto;">
@@ -162,7 +163,7 @@
                                                 <span class="status-dot {{ is_null($notification->read_at) ? 'status-dot-animated bg-red' : 'd-none' }} d-block"></span>
                                             </div>
                                             <div class="col text-truncate">
-                                                <a href="{{ $notification->data['action_url'] ?? '#' }}" class="text-body d-block">{{ $notification->data['title'] ?? 'Notification' }}</a>
+                                                <a href="{{ $notification->data['action_url'] ?? '#' }}" class="text-body d-block">{{ $notification->data['title'] ?? 'Notifikasi' }}</a>
                                                 <div class="d-block text-muted text-truncate mt-n1">
                                                     {{ \Illuminate\Support\Str::limit($notification->data['body'] ?? '', 80) }}
                                                 </div>
@@ -174,7 +175,7 @@
                                 <div class="list-group-item">
                                     <div class="row align-items-center">
                                         <div class="col text-truncate">
-                                            <p class="text-center mb-0 text-muted">No notifications found</p>
+                                            <p class="text-center mb-0 text-secondary fw-medium">Tidak ada notifikasi</p>
                                         </div>
                                     </div>
                                 </div>
@@ -185,14 +186,15 @@
                                     <div class="col">
                                         <form action="{{ route('sys.notifications.mark-all-as-read') }}" method="POST" id="markAllReadForm" style="display: inline;">
                                             @csrf
-                                            <button type="submit" class="btn w-100" id="markAllAsReadBtn" onclick="return confirm('Apakah Anda yakin ingin menandai semua notifikasi sebagai telah dibaca?');">
-                                                Mark all as read
+                                            <button type="submit" class="btn btn-secondary w-100" 
+                                                onclick="return confirm('Apakah Anda yakin ingin menandai semua notifikasi sebagai telah dibaca?');">
+                                                Tandai sudah dibaca
                                             </button>
                                         </form>
                                     </div>
                                     <div class="col">
-                                        <a href="{{ route('sys.profile') }}#tabs-notification" class="btn btn-primary font-white w-100">
-                                            View all
+                                        <a href="{{ route('sys.profile') }}#tabs-notification" class="btn btn-primary w-100 text-white">
+                                            Lihat semua
                                         </a>
                                     </div>
                                 </div>
@@ -210,7 +212,7 @@
                             <div class="mt-1 small text-secondary">{{ auth()->user()->roles->first()?->name ?? 'User' }}</div>
                         </div>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"{{ $dark ? ' data-bs-theme="light"' : '' }}>
+                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow dropdown-opaque"{{ $dark ? ' data-bs-theme="light"' : '' }}>
                         <a href="{{ route('sys.profile') }}" class="dropdown-item">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
                             My Profile
@@ -298,10 +300,13 @@
     {{-- Secondary Menu Bar (non-condensed only, and NO Sidebar) --}}
     {{-- If sidebar is present (e.g. combo layout), menu is likely there, so don't show secondary top bar --}}
     @if(!$condensed && empty($layoutData['layoutSidebar']))
-    <header class="navbar-expand-md">
-        <div class="collapse navbar-collapse" id="navbar-menu">
-            <div class="navbar"{{ isset($darkSecondary) && $darkSecondary ? ' data-bs-theme="dark"' : '' }}>
-                <div class="{{ $layoutData['navbarContainerClass'] ?? 'container-xl' }}">
+    <header class="navbar navbar-expand-md{{ isset($darkSecondary) && $darkSecondary ? ' navbar-dark text-white' : '' }} d-print-none" id="navbar-secondary">
+        <div class="{{ $layoutData['navbarContainerClass'] ?? 'container-xl' }}">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar-menu">
+                <div class="d-flex flex-column flex-md-row flex-fill align-items-stretch align-items-md-center">
                     <x-tabler.menu-renderer type="navbar" group="admin" />
                 </div>
             </div>

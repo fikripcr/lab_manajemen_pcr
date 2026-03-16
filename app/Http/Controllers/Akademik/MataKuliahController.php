@@ -2,9 +2,9 @@
 namespace App\Http\Controllers\Akademik;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Lab\MataKuliahRequest;
+use App\Http\Requests\Akademik\MataKuliahRequest;
 use App\Models\Akademik\MataKuliah;
-use App\Services\Lab\MataKuliahService;
+use App\Services\Akademik\MataKuliahService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 

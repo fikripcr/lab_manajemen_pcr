@@ -1,11 +1,11 @@
 <?php
-namespace App\Http\Controllers\Lab;
+namespace App\Http\Controllers\Cms;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Lab\PengumumanRequest;
+use App\Http\Requests\Cms\PengumumanRequest;
 use App\Models\Cms\Pengumuman;
 use App\Models\User;
-use App\Services\Lab\PengumumanService;
+use App\Services\Cms\PengumumanService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 

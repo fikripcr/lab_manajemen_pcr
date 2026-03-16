@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header :title="ucfirst($type)" pretitle="Management">
     <x-slot:actions>
-        <x-tabler.button type="create" :href="route('lab.'.$type . '.create', ['type' => $type])" :text="'Tambah ' . ucfirst($type)" />
+        <x-tabler.button type="create" :href="route('cms.'.$type . '.create', ['type' => $type])" :text="'Tambah ' . ucfirst($type)" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -72,7 +72,7 @@
                     ]
                 ];
             @endphp
-            <x-tabler.datatable id="pengumuman-table" :route="route('lab.'.$type.'.data')" :columns="$columns" :order="[[4, 'desc']]" />
+            <x-tabler.datatable id="pengumuman-table" :route="route('cms.'.$type.'.data')" :columns="$columns" :order="[[4, 'desc']]" />
         </x-tabler.card-body>
     </x-tabler.card>
 @endsection

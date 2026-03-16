@@ -2,9 +2,9 @@
 namespace App\Http\Controllers\Akademik;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Lab\MahasiswaRequest;
-use App\Models\Lab\Mahasiswa;
-use App\Services\Lab\MahasiswaService;
+use App\Http\Requests\Akademik\MahasiswaRequest;
+use App\Models\Akademik\Mahasiswa;
+use App\Services\Akademik\MahasiswaService;
 use App\Services\Hr\StrukturOrganisasiService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;

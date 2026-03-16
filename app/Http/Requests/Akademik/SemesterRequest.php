@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Requests\Lab;
+namespace App\Http\Requests\Akademik;
 
 use App\Http\Requests\BaseRequest;
 

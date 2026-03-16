@@ -17,7 +17,7 @@ class SlideshowController extends Controller
     public function index()
     {
         $slideshows = Slideshow::orderBy('seq')->get();
-        return view('pages.cms.slideshow.index', compact('cms_slideshows'));
+        return view('pages.cms.slideshow.index', compact('slideshows'));
     }
 
     public function reorder(ReorderRequest $request)

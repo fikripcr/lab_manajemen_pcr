@@ -2,9 +2,9 @@
 namespace App\Http\Controllers\Akademik;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Lab\SemesterRequest;
+use App\Http\Requests\Akademik\SemesterRequest;
 use App\Models\Akademik\Semester;
-use App\Services\Lab\SemesterService;
+use App\Services\Akademik\SemesterService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 

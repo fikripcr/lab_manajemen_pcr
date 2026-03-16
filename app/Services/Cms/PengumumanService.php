@@ -1,7 +1,7 @@
 <?php
-namespace App\Services\Lab;
+namespace App\Services\Cms;
 
-use App\Models\Lab\Pengumuman;
+use App\Models\Cms\Pengumuman;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;

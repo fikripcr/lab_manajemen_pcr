@@ -14,7 +14,7 @@ class FAQController extends Controller
     public function index()
     {
         $faqs = $this->faqService->getAllGrouped();
-        return view('pages.cms.faq.index', compact('cms_faqs'));
+        return view('pages.cms.faq.index', compact('faqs'));
     }
 
     public function create()
