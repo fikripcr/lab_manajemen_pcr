@@ -3,7 +3,7 @@
 @section('title', 'Data Lembur')
 
 @section('header')
-<x-tabler.page-header title="Data Lembur" pretitle="HR & Kepegawaian">
+<x-tabler.page-header title="Data Lembur" pretitle="SDM">
     <x-slot:actions>
         <div class="btn-list">
             <x-tabler.button type="create" text="Tambah Lembur" class="ajax-modal-btn" data-url="{{ route('hr.lembur.create') }}" data-modal-title="Form Tambah Lembur" />

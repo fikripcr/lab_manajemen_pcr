@@ -108,7 +108,7 @@
         <x-tabler.card>
             <x-tabler.card-header title="Ujian Sedang Berlangsung">
                 <x-slot:actions>
-                    <a href="{{ route('cbt.execution.index') }}" class="btn-action" title="View All Exams">
+                    <a href="{{ route('cbt.jadwal.index') }}" class="btn-action" title="View All Exams">
                         <i class="ti ti-arrow-right"></i>
                     </a>
                 </x-slot:actions>

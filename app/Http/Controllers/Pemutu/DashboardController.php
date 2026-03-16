@@ -133,7 +133,7 @@ class DashboardController extends Controller
 
         // Top 3 Unit
         $unitRanksRaw = (clone $baseCurr)
-            ->join('struktur_organisasi as so', 'pemutu_indikator_orgunit.org_unit_id', '=', 'so.orgunit_id')
+            ->join('hr_struktur_organisasi as so', 'pemutu_indikator_orgunit.org_unit_id', '=', 'so.orgunit_id')
             ->selectRaw('so.code as unit_name, AVG(pemutu_indikator_orgunit.ed_skala) as avg_skala')
             ->groupBy('so.code')
             ->havingRaw('avg_skala IS NOT NULL')

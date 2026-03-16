@@ -3,7 +3,7 @@
 @section('title', 'Data Perizinan')
 
 @section('header')
-<x-tabler.page-header title="Data Perizinan" pretitle="HR & Kepegawaian">
+<x-tabler.page-header title="Data Perizinan" pretitle="SDM">
     <x-slot:actions>
         <x-tabler.button type="create" text="Ajukan Izin" class="ajax-modal-btn" data-url="{{ route('hr.perizinan.create') }}" data-modal-title="Form Pengajuan Izin" />
     </x-slot:actions>

@@ -72,7 +72,7 @@
                     ]
                 ];
             @endphp
-            <x-tabler.datatable id="pengumuman-table" :route="route('cms.'.$type.'.data')" :columns="$columns" :order="[[4, 'desc']]" />
+            <x-tabler.datatable :id="$type . '-table'" :route="route('cms.'.$type.'.data')" :columns="$columns" :order="[[4, 'desc']]" />
         </x-tabler.card-body>
     </x-tabler.card>
 @endsection

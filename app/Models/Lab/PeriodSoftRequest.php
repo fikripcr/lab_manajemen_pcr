@@ -1,5 +1,7 @@
 <?php
 namespace App\Models\Lab;
+ 
+use App\Models\Akademik\Semester;
 
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;

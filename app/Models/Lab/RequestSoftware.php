@@ -1,5 +1,7 @@
 <?php
 namespace App\Models\Lab;
+ 
+use App\Models\Akademik\MataKuliah;
 
 use App\Models\User;
 use App\Traits\Blameable;

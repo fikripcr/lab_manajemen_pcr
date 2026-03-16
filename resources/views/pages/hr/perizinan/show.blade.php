@@ -3,7 +3,7 @@
 @section('title', 'Detail Pengajuan Izin')
 
 @section('header')
-<x-tabler.page-header title="Detail Pengajuan Izin" pretitle="HR & Kepegawaian">
+<x-tabler.page-header title="Detail Pengajuan Izin" pretitle="SDM">
     <x-slot:actions>
         <div class="btn-list">
             <x-tabler.button type="back" href="{{ route('hr.perizinan.index') }}" />

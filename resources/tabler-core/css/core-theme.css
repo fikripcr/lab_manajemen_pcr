@@ -299,7 +299,9 @@
     [data-bs-has-header-top-bg] #header-main .text-muted {
         color: var(--tblr-header-top-text) !important;
         opacity: 0.8;
-    }/* --- Page Header & Body --- */
+    }
+
+    /* --- Page Header & Body --- */
     /* Condensed Layout: Page header sits inside the overlap area */
     :root[data-bs-has-header-overlap-bg] .layout-condensed .page-header .page-title,
     :root[data-bs-has-header-overlap-bg] .layout-condensed .page-header .page-pretitle,
@@ -536,12 +538,14 @@
     /* --- Header Stacking Hierarchy --- */
     #header-main {
         position: relative !important;
-        z-index: 1045 !important; /* Above secondary navbars, below modals */
+        z-index: 1045 !important;
+        /* Above secondary navbars, below modals */
     }
 
     #navbar-secondary {
         position: relative !important;
-        z-index: 1040 !important; /* Secondary menu bars */
+        z-index: 1040 !important;
+        /* Secondary menu bars */
     }
 
     /* Standard Tabler Dropdown management - Restricted to horizontal headers to avoid sidebar glitches */
@@ -574,7 +578,8 @@
     }
 
     .dropdown-opaque .text-secondary {
-        color: #616876 !important; /* Ensure visibility for "Tidak ada notifikasi" */
+        color: #616876 !important;
+        /* Ensure visibility for "Tidak ada notifikasi" */
     }
 
     /* Ensure the dropdown parent has proper stacking context */
@@ -594,9 +599,35 @@
         z-index: 1060 !important;
     }
 
-    /* .modal-backdrop {
-        --tblr-backdrop-zindex: 1 !important;
-    } */
+    /* Notification Badge Refinement */
+    .notification-count {
+        position: absolute !important;
+        top: 0px !important;
+        right: 0px !important;
+        transform: translate(50%, -50%) !important;
+        border: 2px solid var(--tblr-bg-surface, #ffffff) !important;
+        padding: 0.25rem 0.4rem !important;
+        font-size: 0.65rem !important;
+        font-weight: 700 !important;
+        color: #ffffff !important;
+        min-width: 1.2rem !important;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05) !important;
+        pointer-events: none;
+    }
+
+    .nav-link[data-bs-toggle="dropdown"] {
+        position: relative;
+    }
+
+    .list-group-item-empty {
+        padding: 2.5rem 1rem !important;
+        background: transparent !important;
+    }
+
+    .notification-time {
+        font-size: 0.75rem;
+        color: var(--tblr-muted);
+    }
 
     /* ==========================================================================
        7. PREMIUM GRADIENT UTILITIES

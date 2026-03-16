@@ -19,7 +19,7 @@ class PengumumanController extends Controller
      */
     public function index(Request $request)
     {
-        return view('pages.cms.pengumuman.index', ['type' => 'cms_pengumuman']);
+        return view('pages.cms.pengumuman.index', ['type' => 'pengumuman']);
     }
 
     /**
@@ -30,12 +30,12 @@ class PengumumanController extends Controller
         return view('pages.cms.pengumuman.index', ['type' => 'berita']);
     }
 
-    public function create($type = 'cms_pengumuman')
+    public function create($type = 'pengumuman')
     {
         $penulisOptions = User::all();
         // Pass a new instance for the view to handle checks like $pengumuman->exists
         $pengumuman = new Pengumuman();
-        return view('pages.cms.pengumuman.create-edit', compact('type', 'penulisOptions', 'cms_pengumuman'));
+        return view('pages.cms.pengumuman.create-edit', compact('type', 'penulisOptions', 'pengumuman'));
     }
 
     /**
@@ -52,21 +52,21 @@ class PengumumanController extends Controller
         }
 
         $pengumuman    = $this->pengumumanService->createPengumuman($data);
-        $redirectRoute = $pengumuman->jenis === 'cms_pengumuman' ? 'cms.pengumuman.index' : 'cms.berita.index';
+        $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'cms.pengumuman.index' : 'cms.berita.index';
 
         return redirect()->route($redirectRoute)->with('success', ucfirst($pengumuman->jenis) . ' berhasil ditambahkan.');
     }
 
     public function show(Pengumuman $pengumuman)
     {
-        return view('pages.cms.pengumuman.show', compact('cms_pengumuman'));
+        return view('pages.cms.pengumuman.show', compact('pengumuman'));
     }
 
     public function edit(Pengumuman $pengumuman)
     {
         $penulisOptions = User::all();
         $type           = $pengumuman->jenis;
-        return view('pages.cms.pengumuman.create-edit', compact('cms_pengumuman', 'type', 'penulisOptions'));
+        return view('pages.cms.pengumuman.create-edit', compact('pengumuman', 'type', 'penulisOptions'));
     }
 
     /**
@@ -83,7 +83,7 @@ class PengumumanController extends Controller
         }
 
         $this->pengumumanService->updatePengumuman($pengumuman, $data);
-        $redirectRoute = $pengumuman->jenis === 'cms_pengumuman' ? 'cms.pengumuman.index' : 'cms.berita.index';
+        $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'cms.pengumuman.index' : 'cms.berita.index';
 
         return redirect()->route($redirectRoute)->with('success', ucfirst($pengumuman->jenis) . ' berhasil diperbarui.');
     }
@@ -95,7 +95,7 @@ class PengumumanController extends Controller
     {
         $jenis = $pengumuman->jenis;
         $this->pengumumanService->deletePengumuman($pengumuman);
-        $redirectRoute = $jenis === 'cms_pengumuman' ? 'cms.pengumuman.index' : 'cms.berita.index';
+        $redirectRoute = $jenis === 'pengumuman' ? 'cms.pengumuman.index' : 'cms.berita.index';
         return jsonSuccess(ucfirst($jenis) . ' deleted successfully.', route($redirectRoute));
     }
 
@@ -110,7 +110,7 @@ class PengumumanController extends Controller
         // If route('cms.pengumuman.data', it's pengumuman.
         // Or pass type as parameter?
         // Existing code checked route name.
-        $type = (str_contains($routeName, 'berita.data') || $request->type === 'berita') ? 'berita' : 'cms_pengumuman';
+        $type = (str_contains($routeName, 'berita') || $request->type === 'berita') ? 'berita' : 'pengumuman';
 
         // Use Service Query
         $query = $this->pengumumanService->getFilteredQuery($type);

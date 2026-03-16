@@ -70,10 +70,13 @@
                 ],
             ],
         ],
-
+        [
+            'type'  => 'header',
+            'title' => 'Modul',
+        ],
         [
             'type'          => 'dropdown',
-            'title'         => 'Info Publik',
+            'title'         => 'Konten Umum',
             'id'            => 'navbar-info-master',
             'icon'          => 'ti ti-info-circle',
             'active_routes' => ['cms.pengumuman.*', 'cms.berita.*', 'cms.slideshow.*', 'cms.faq.*', 'cms.public-menu.*', 'cms.public-page.*'],
@@ -110,12 +113,6 @@
                 ],
             ],
         ],
-
-        [
-            'type'  => 'header',
-            'title' => 'Modul',
-        ],
-
         [
             'type' => 'dropdown',
             'title' => 'Penjaminan Mutu',
@@ -410,7 +407,7 @@
         ],
         [
             'type'          => 'dropdown',
-            'title'         => 'HR & Kepegawaian',
+            'title'         => 'Sumber Daya Manusia',
             'id'            => 'navbar-hr',
             'icon'          => 'ti ti-briefcase',
             'active_routes' => ['hr.*'],
@@ -477,7 +474,7 @@
         ],
         [
             'type'          => 'dropdown',
-            'title'         => 'E-Office',
+            'title'         => 'Pelayanan',
             'id'            => 'navbar-eoffice',
             'icon'          => 'ti ti-mail-opened',
             'active_routes' => ['eoffice.*'],
@@ -530,7 +527,7 @@
         ],
         [
             'type'          => 'dropdown',
-            'title'         => 'Penerimaan (PMB)',
+            'title'         => 'Penerimaan Mahasiswa Baru',
             'id'            => 'navbar-pmb',
             'icon'          => 'ti ti-school',
             'active_routes' => ['pmb.*'],
@@ -589,7 +586,7 @@
         ],
         [
             'type'          => 'dropdown',
-            'title'         => 'CBT Engine',
+            'title'         => 'Computer Based Test',
             'id'            => 'navbar-cbt',
             'icon'          => 'ti ti-device-laptop',
             'active_routes' => ['cbt.*'],
@@ -626,7 +623,7 @@
         // 🔹 PROJECT MANAGEMENT MODULE
         // ==========================================
         [
-            'title'         => 'Project Management',
+            'title'         => 'Manajemen Proyek',
             'id'            => 'navbar-projects',
             'icon'          => 'ti ti-layout-dashboard',
             'route'         => 'projects.index',

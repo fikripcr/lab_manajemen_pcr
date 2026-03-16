@@ -1,7 +1,7 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-<x-tabler.page-header title="Master Data HR" pretitle="HR & Kepegawaian">
+<x-tabler.page-header title="Master Data" pretitle="SDM">
     <x-slot:actions>
         @if($activeTab == 'status-pegawai')
             <x-tabler.button type="create" text="Tambah Status Pegawai" class="ajax-modal-btn" data-url="{{ route('hr.status-pegawai.create') }}" data-modal-title="Tambah Status Pegawai" />

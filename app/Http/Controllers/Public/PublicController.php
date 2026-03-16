@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Public\PublicSoftwareRequest;
 use App\Models\Akademik\MataKuliah;
 use App\Models\Cms\Slideshow;
-use App\Models\Lab\Pengumuman;
+use App\Models\Cms\Pengumuman;
 use App\Models\Lab\RequestSoftware;
 use Illuminate\Http\Request;
 
@@ -37,7 +37,7 @@ class PublicController extends Controller
             ->get()
             ->groupBy('category');
 
-        return view('pages.public.home', compact('recentNews', 'approvedSoftwareRequests', 'cms_slideshows', 'cms_faqs'));
+        return view('pages.public.home', compact('recentNews', 'approvedSoftwareRequests', 'slideshows', 'faqs'));
     }
 
     public function showNews(Pengumuman $pengumuman)
@@ -47,7 +47,7 @@ class PublicController extends Controller
             abort(404);
         }
 
-        return view('pages.public.news.show', compact('cms_pengumuman'));
+        return view('pages.public.news.show', compact('pengumuman'));
     }
 
     public function requestSoftware()
@@ -99,7 +99,7 @@ class PublicController extends Controller
             ->get()
             ->map(function ($mk) {
                 return [
-                    'id'   => $mk->mata_kuliah_idid,
+                    'id'   => $mk->mata_kuliah_id,
                     'text' => $mk->kode_mk . ' - ' . $mk->nama_mk,
                 ];
             });

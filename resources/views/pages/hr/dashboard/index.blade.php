@@ -32,8 +32,8 @@
                         <div class="progress progress-sm mt-3">
                             <div class="progress-bar bg-primary" style="width: 100%"></div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <div class="col-sm-6 col-lg-3">
@@ -50,8 +50,8 @@
                         <div class="progress progress-sm mt-3">
                             <div class="progress-bar bg-green" style="width: {{ $stats['hadir_percentage'] ?? 0 }}%"></div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <div class="col-sm-6 col-lg-3">
@@ -68,8 +68,8 @@
                         <div class="progress progress-sm mt-3">
                             <div class="progress-bar bg-yellow" style="width: {{ $stats['cuti_percentage'] ?? 0 }}%"></div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <div class="col-sm-6 col-lg-3">
@@ -86,8 +86,8 @@
                         <div class="progress progress-sm mt-3">
                             <div class="progress-bar bg-red" style="width: {{ $stats['pending_approval'] > 0 ? 100 : 0 }}%"></div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <!-- Charts Row -->
@@ -98,8 +98,8 @@
                     </x-tabler.card-header>
                     <x-tabler.card-body>
                         <div id="chart-attendance-trend" style="height: 300px;"></div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <div class="col-lg-4">
@@ -109,8 +109,8 @@
                     </x-tabler.card-header>
                     <x-tabler.card-body>
                         <div id="chart-department-distribution" style="height: 300px;"></div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <!-- Bottom Section: Approvals & Stats -->
@@ -168,8 +168,8 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
 
             <div class="col-lg-4">
@@ -223,8 +223,8 @@
                                 <div class="h3 m-0 text-green fw-bold">{{ $stats['dinas_luar'] ?? 0 }}x</div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             </div>
         </div>
 @endsection

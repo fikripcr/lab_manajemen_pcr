@@ -1,7 +1,7 @@
 <x-tabler.form-modal
     id_form="{{ $pengumuman->exists ? 'editPengumumanForm' : 'createPengumumanForm' }}"
     title="{{ ($pengumuman->exists ? 'Edit ' : 'Buat ') . ucfirst($type) }}"
-    route="{{ $pengumuman->exists ? route('lab.pengumuman.update', $pengumuman->encrypted_pengumuman_id) : route('lab.pengumuman.store') }}"
+    route="{{ $pengumuman->exists ? route('cms.'.$type.'.update', $pengumuman->encrypted_pengumuman_id) : route('cms.'.$type.'.store') }}"
     method="{{ $pengumuman->exists ? 'PUT' : 'POST' }}"
     enctype="multipart/form-data"
 >
