@@ -336,11 +336,9 @@
                             <thead>
                                 <tr>
                                     <th>Unit</th>
-                                    <th>Status</th>
-                                    <th>Target</th>
-                                    <th>Analisis</th>
-                                    <th>Penyesuaian</th>
-                                    <th>Matriks</th>
+                                    <th>Auditee Review</th>
+                                    <th>Atasan Review</th>
+                                    <th>Matriks (Atasan)</th>
                                     <th>Update</th>
                                 </tr>
                             </thead>
@@ -353,6 +351,12 @@
                                         'belum' => 'danger',
                                         default => 'secondary',
                                     };
+                                    $statusColorAtsn = match(strtolower($pengend->pengend_status_atsn)) {
+                                        'selesai' => 'success',
+                                        'proses' => 'warning',
+                                        'nonaktif' => 'danger',
+                                        default => 'secondary',
+                                    };
                                 @endphp
                                 <tr>
                                     <td>
@@ -360,26 +364,26 @@
                                         <br><small class="text-muted">{{ $pengend->unit_code }}</small>
                                     </td>
                                     <td>
-                                        <span class="badge bg-{{ $statusColor }}-lt fs-6">{{ $pengend->pengend_status ?? '-' }}</span>
+                                        <span class="badge bg-{{ $statusColor }}-lt mb-1">{{ $pengend->pengend_status ?? '-' }}</span>
+                                        <div class="small text-muted text-truncate" style="max-width: 250px;" title="{{ strip_tags($pengend->pengend_analisis) }}">
+                                            {{ strip_tags($pengend->pengend_analisis) ?: '-' }}
+                                        </div>
                                     </td>
-                                    <td>{{ $pengend->pengend_target ?? '-' }}</td>
                                     <td>
-                                        {!! pemutuDtColAnalisisPengend($pengend) !!}
+                                        <span class="badge bg-{{ $statusColorAtsn }}-lt mb-1">{{ $pengend->pengend_status_atsn ?? 'Belum Di-Review' }}</span>
+                                        <div class="small text-muted text-truncate" style="max-width: 250px;" title="{{ strip_tags($pengend->pengend_analisis_atsn) }}">
+                                            {{ strip_tags($pengend->pengend_analisis_atsn) ?: '-' }}
+                                        </div>
                                     </td>
                                     <td>
-                                        @if($pengend->pengend_penyesuaian)
-                                            <x-tabler.button type="button" class="btn-link btn-sm"
-                                                data-bs-toggle="collapse" data-bs-target="#pengend-penyesuaian-{{ $loop->index }}"
-                                                text="Lihat Penyesuaian" />
-                                            <div class="collapse" id="pengend-penyesuaian-{{ $loop->index }}">
-                                                <x-tabler.card-body small bg-light">{{ $pengend->pengend_penyesuaian }}</x-tabler.card-body>
+                                        @if($pengend->pengend_important_matrix_atsn)
+                                            <div class="small">
+                                                <span class="badge badge-outline text-azure">{{ $pengend->pengend_important_matrix_atsn }}</span>
+                                                <span class="badge badge-outline text-purple">{{ $pengend->pengend_urgent_matrix_atsn }}</span>
                                             </div>
                                         @else
-                                            <span class="text-muted">-</span>
+                                            <span class="text-muted small">-</span>
                                         @endif
-                                    </td>
-                                    <td>
-                                        {!! pemutuDtColEisenhower($pengend) !!}
                                     </td>
                                     <td>{{ \Carbon\Carbon::parse($pengend->updated_at)->format('d/m/Y H:i') }}</td>
                                 </tr>

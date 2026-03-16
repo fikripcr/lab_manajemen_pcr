@@ -290,9 +290,14 @@ class DuplikasiService
                     'ami_hasil_akhir'          => null, 'ami_hasil_temuan'        => null,
                     'ami_hasil_temuan_sebab'   => null, 'ami_hasil_temuan_akibat' => null,
                     'ami_hasil_temuan_rekom'   => null,
-                    'pengend_status'           => null, 'pengend_target'          => null,
-                    'pengend_analisis'         => null, 'pengend_penyesuaian'     => null,
-                    'pengend_important_matrix' => null, 'pengend_urgent_matrix'   => null,
+                    'pengend_status'                => null,
+                    'pengend_status_atsn'           => null,
+                    'pengend_analisis'              => null,
+                    'pengend_analisis_atsn'         => null,
+                    'pengend_important_matrix'      => null,
+                    'pengend_important_matrix_atsn' => null,
+                    'pengend_urgent_matrix'         => null,
+                    'pengend_urgent_matrix_atsn'    => null,
                 ]);
                 $this->stats['orgunit_cloned']++;
             }

@@ -96,10 +96,11 @@ class IndikatorSummaryExport implements FromCollection, WithHeadings, WithMappin
             'Sebab KTS',
             'Akibat KTS',
             'Rekomendasi KTS',
-            'Status Pengendalian',
-            'Target/Faktor',
-            'Analisis Pengendalian',
-            'Tindakan Penyesuaian',
+            'Status Pengendalian (Auditee)',
+            'Analisis Pengendalian (Auditee)',
+            'Status Pengendalian (Atasan)',
+            'Analisis Pengendalian (Atasan)',
+            'Eisenhower Matrix',
         ];
     }
 
@@ -122,9 +123,10 @@ class IndikatorSummaryExport implements FromCollection, WithHeadings, WithMappin
             strip_tags($row->ami_hasil_temuan_akibat),
             strip_tags($row->ami_hasil_temuan_rekom),
             $row->pengend_status,
-            strip_tags($row->pengend_target),
             strip_tags($row->pengend_analisis),
-            strip_tags($row->pengend_penyesuaian),
+            $row->pengend_status_atsn,
+            strip_tags($row->pengend_analisis_atsn),
+            ($row->pengend_important_matrix_atsn ?? '-') . ' / ' . ($row->pengend_urgent_matrix_atsn ?? '-'),
         ];
     }
 

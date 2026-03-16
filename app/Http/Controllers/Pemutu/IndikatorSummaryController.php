@@ -146,7 +146,11 @@ class IndikatorSummaryController extends Controller
         $query = DB::table('pemutu_indikator_orgunit as io')
             ->join('vw_pemutu_summary_indikator_standar as v', 'io.indikator_id', '=', 'v.indikator_id')
             ->leftJoin('hr_struktur_organisasi as so', 'io.org_unit_id', '=', 'so.orgunit_id')
-            ->select('io.*', 'v.*', 'so.name as unit_name', 'so.code as unit_code');
+            ->select(
+                'io.indikorgunit_id', 'io.indikator_id', 'io.org_unit_id', 'io.target', 'io.ed_capaian', 'io.ed_analisis', 
+                'io.ami_hasil_akhir', 'io.ami_rtp_isi', 'io.ed_ptp_isi', 'io.ami_te_isi', 'io.pengend_status',
+                'v.*', 'so.name as unit_name', 'so.code as unit_code'
+            );
 
         // Filter by Kelompok
         if ($request->filled('kelompok_indikator')) {
@@ -457,11 +461,13 @@ class IndikatorSummaryController extends Controller
                 'hr_struktur_organisasi.name as unit_name',
                 'hr_struktur_organisasi.code as unit_code',
                 'pemutu_indikator_orgunit.pengend_status',
-                'pemutu_indikator_orgunit.pengend_target',
+                'pemutu_indikator_orgunit.pengend_status_atsn',
                 'pemutu_indikator_orgunit.pengend_analisis',
-                'pemutu_indikator_orgunit.pengend_penyesuaian',
+                'pemutu_indikator_orgunit.pengend_analisis_atsn',
                 'pemutu_indikator_orgunit.pengend_important_matrix',
+                'pemutu_indikator_orgunit.pengend_important_matrix_atsn',
                 'pemutu_indikator_orgunit.pengend_urgent_matrix',
+                'pemutu_indikator_orgunit.pengend_urgent_matrix_atsn',
                 'pemutu_indikator_orgunit.updated_at'
             )
             ->get();

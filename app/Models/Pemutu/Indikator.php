@@ -75,7 +75,8 @@ class Indikator extends Model
                 'indikorgunit_id', 'target', 'ed_capaian', 'ed_analisis', 'ed_attachment', 'ed_links', 'ed_skala',
                 'ami_hasil_akhir', 'ami_hasil_temuan', 'ami_hasil_temuan_sebab', 'ami_hasil_temuan_akibat', 'ami_hasil_temuan_rekom',
                 'ami_rtp_isi', 'ami_rtp_tgl_pelaksanaan', 'ami_te_isi',
-                'pengend_status', 'pengend_target', 'pengend_analisis', 'pengend_penyesuaian', 'pengend_important_matrix', 'pengend_urgent_matrix',
+                'pengend_status', 'pengend_status_atsn', 'pengend_analisis', 'pengend_analisis_atsn', 
+                'pengend_important_matrix', 'pengend_important_matrix_atsn', 'pengend_urgent_matrix', 'pengend_urgent_matrix_atsn',
                 'created_at'
             );
     }

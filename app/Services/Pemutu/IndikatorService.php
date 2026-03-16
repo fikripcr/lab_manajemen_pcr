@@ -72,11 +72,13 @@ class IndikatorService
                 'ami_hasil_temuan_akibat',
                 'ami_hasil_temuan_rekom',
                 'pengend_status',
-                'pengend_target',
+                'pengend_status_atsn',
                 'pengend_analisis',
-                'pengend_penyesuaian',
+                'pengend_analisis_atsn',
                 'pengend_important_matrix',
+                'pengend_important_matrix_atsn',
                 'pengend_urgent_matrix',
+                'pengend_urgent_matrix_atsn',
             ]);
         }, 'labels', 'parent']);
 
@@ -340,11 +342,13 @@ class IndikatorService
                 'ami_rtp_tgl_pelaksanaan',
                 'ami_te_isi',
                 'pengend_status',
-                'pengend_target',
+                'pengend_status_atsn',
                 'pengend_analisis',
-                'pengend_penyesuaian',
+                'pengend_analisis_atsn',
                 'pengend_important_matrix',
+                'pengend_important_matrix_atsn',
                 'pengend_urgent_matrix',
+                'pengend_urgent_matrix_atsn',
                 'prev_indikorgunit_id',
             ]);
         }, 'labels', 'parent', 'dokSubs.dokumen.parent']);
