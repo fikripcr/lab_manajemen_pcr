@@ -166,13 +166,13 @@
                     'id'            => 'navbar-penetapan',
                     'icon'          => 'ti ti-file-text',
                     'can'           => 'admin',
-                    'active_routes' => ['pemutu.dokumen.*', 'pemutu.dokumen-spmi.*', 'pemutu.standar.*', 'pemutu.indikator.*', 'pemutu.renop.*'],
+                    'active_routes' => ['pemutu.dokumen.*', 'pemutu.dokumen-spmi.index', 'pemutu.dokumen-spmi.show', 'pemutu.dokumen-spmi.create', 'pemutu.dokumen-spmi.edit', 'pemutu.standar.*', 'pemutu.indikator.*', 'pemutu.renop.*'],
                     'children'      => [
                         [
                             'title'         => 'Dokumen',
                             'route'         => 'pemutu.dokumen.index',
                             'query'         => ['jenis' => 'visi'],
-                            'active_routes' => ['pemutu.dokumen.*', 'pemutu.dokumen-spmi.*'],
+                            'active_routes' => ['pemutu.dokumen.*', 'pemutu.dokumen-spmi.index', 'pemutu.dokumen-spmi.show', 'pemutu.dokumen-spmi.create', 'pemutu.dokumen-spmi.edit'],
                             'icon'          => 'ti ti-file-text',
                         ],
                         [

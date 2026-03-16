@@ -19,7 +19,7 @@ class IndisiplinerRequest extends BaseRequest
             'jenisindisipliner_id' => 'required|exists:hr_jenis_indisipliner,jenisindisipliner_id',
             'tgl_indisipliner'     => 'required|date',
             'pegawai_id'           => 'required|array|min:1',
-            'pegawai_id.*'         => 'exists:pegawai,pegawai_id',
+            'pegawai_id.*'         => 'exists:hr_pegawai,pegawai_id',
             'keterangan'           => 'nullable|string|max:1000',
             'bukti'                => 'nullable|file|mimes:pdf,docx,doc,jpg,jpeg,png|max:5120',
         ];

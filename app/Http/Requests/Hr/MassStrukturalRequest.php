@@ -10,7 +10,7 @@ class MassStrukturalRequest extends BaseRequest
     {
         return [
             'org_unit_id' => 'required|exists:struktur_organisasi,orgunit_id',
-            'pegawai_id'  => 'required|exists:pegawai,pegawai_id',
+            'pegawai_id'  => 'required|exists:hr_pegawai,pegawai_id',
             'no_sk'       => 'nullable|string|max:100',
         ];
     }

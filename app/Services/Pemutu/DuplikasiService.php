@@ -274,7 +274,8 @@ class DuplikasiService
 
             // Clone IndikatorOrgUnit
             foreach ($oldIndik->indikatorOrgUnits as $oldOrgUnit) {
-                if ($oldOrgUnit->pengend_status === 'nonaktif') {
+                // Only duplicate indicators that are not marked as 'Nonaktif' by the superior
+                if ($oldOrgUnit->pengend_status_atsn === 'Nonaktif') {
                     $this->stats['orgunit_skipped']++;
                     continue;
                 }
@@ -283,7 +284,7 @@ class DuplikasiService
                     'indikator_id'             => $newIndik->indikator_id,
                     'org_unit_id'              => $oldOrgUnit->org_unit_id,
                     'prev_indikorgunit_id'     => $oldOrgUnit->indikorgunit_id,
-                    'target'                   => $oldOrgUnit->target,
+                    'target'                   => $oldOrgUnit->target, // Pure 1:1 Copy
                     'ed_capaian'               => null, 'ed_analisis'             => null,
                     'ed_attachment'            => null, 'ed_links'                => null, 'ed_skala' => null,
                     'ami_hasil_akhir'          => null, 'ami_hasil_temuan'        => null,

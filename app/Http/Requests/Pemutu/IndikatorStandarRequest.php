@@ -16,9 +16,8 @@ class IndikatorStandarRequest extends BaseRequest
     public function rules(): array
     {
         if ($this->route('indikator')) {
-            // Probably storeAssignment
             return [
-                'personil_id'  => 'required|exists:pegawai,pegawai_id',
+                'personil_id'  => 'required|exists:hr_pegawai,pegawai_id',
                 'year'         => 'required|integer',
                 'semester'     => 'required|integer',
                 'target_value' => 'nullable|string',

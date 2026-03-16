@@ -13,14 +13,11 @@
         @forelse($existingApprovals as $index => $approval)
             <div class="approver-row mb-3 pb-3 border-bottom">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <strong>Approver #<span class="row-number">{{ $index + 1 }}</span></strong>
-                    <button type="button" class="btn btn-sm btn-outline-danger btn-remove-approver">
-                        <i class="ti ti-trash"></i> Hapus
-                    </button>
+                    <strong class="text-muted">Approver #<span class="row-number">{{ $index + 1 }}</span></strong>
                 </div>
-                <div class="row">
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label required">Approver (Pegawai)</label>
+                <div class="d-flex align-items-start gap-3 w-100">
+                    <div class="flex-grow-1" style="flex: 1;">
+                        <label class="form-label required mb-1">Approver (Pegawai)</label>
                         <select name="approvers[{{ $index }}][pegawai_id]" class="form-select select2-approval" required data-dropdown-parent="#modalAction">
                             <option value="">Pilih Pegawai...</option>
                             @foreach($pegawais as $p)
@@ -30,14 +27,14 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-6 mb-2">
-                        <x-tabler.form-input 
-                            name="approvers[{{ $index }}][jabatan]" 
-                            label="Posisi / Jabatan" 
-                            placeholder="Contoh: Ketua Penjaminan Mutu" 
-                            required="true" 
-                            value="{{ $approval->jabatan }}"
-                        />
+                    <div class="flex-grow-1" style="flex: 1;">
+                        <label class="form-label required mb-1">Posisi / Jabatan</label>
+                        <input type="text" name="approvers[{{ $index }}][jabatan]" class="form-control" placeholder="Contoh: Ketua Penjaminan Mutu" required value="{{ $approval->jabatan }}">
+                    </div>
+                    <div class="pt-4 mt-1">
+                        <button type="button" class="btn btn-outline-danger btn-icon btn-remove-approver" title="Hapus" aria-label="Hapus">
+                            <i class="ti ti-trash"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -45,14 +42,11 @@
             <!-- Template Row if Empty -->
             <div class="approver-row mb-3 pb-3 border-bottom">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <strong>Approver #<span class="row-number">1</span></strong>
-                    <button type="button" class="btn btn-sm btn-outline-danger btn-remove-approver" style="display: none;">
-                        <i class="ti ti-trash"></i> Hapus
-                    </button>
+                    <strong class="text-muted">Approver #<span class="row-number">1</span></strong>
                 </div>
-                <div class="row">
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label required">Approver (Pegawai)</label>
+                <div class="d-flex align-items-start gap-3 w-100">
+                    <div class="flex-grow-1" style="flex: 1;">
+                        <label class="form-label required mb-1">Approver (Pegawai)</label>
                         <select name="approvers[0][pegawai_id]" class="form-select select2-approval" required data-dropdown-parent="#modalAction">
                             <option value="">Pilih Pegawai...</option>
                             @foreach($pegawais as $p)
@@ -60,8 +54,14 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-6 mb-2">
-                        <x-tabler.form-input name="approvers[0][jabatan]" label="Posisi / Jabatan" placeholder="Contoh: Ketua Penjaminan Mutu" required="true" />
+                    <div class="flex-grow-1" style="flex: 1;">
+                        <label class="form-label required mb-1">Posisi / Jabatan</label>
+                        <input type="text" name="approvers[0][jabatan]" class="form-control" placeholder="Contoh: Ketua Penjaminan Mutu" required>
+                    </div>
+                    <div class="pt-4 mt-1">
+                        <button type="button" class="btn btn-outline-danger btn-icon btn-remove-approver" style="display: none;" title="Hapus" aria-label="Hapus">
+                            <i class="ti ti-trash"></i>
+                        </button>
                     </div>
                 </div>
             </div>

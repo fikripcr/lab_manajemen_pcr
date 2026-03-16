@@ -23,129 +23,139 @@
         </div>
         @endif
 
-        {{-- Status Pengendalian --}}
-        <div class="mb-3">
-            <label class="form-label required fw-semibold">Status Indikator</label>
-            <div class="form-selectgroup">
-                <label class="form-selectgroup-item">
-                    <input type="radio" name="pengend_status" value="tetap" class="form-selectgroup-input"
-                           @checked(old('pengend_status', $indOrg->pengend_status) === 'tetap') required>
-                    <span class="form-selectgroup-label">
-                        <i class="ti ti-check me-1 text-success"></i> Tetap
-                    </span>
-                </label>
-                <label class="form-selectgroup-item">
-                    <input type="radio" name="pengend_status" value="penyesuaian" class="form-selectgroup-input"
-                           @checked(old('pengend_status', $indOrg->pengend_status) === 'penyesuaian') required>
-                    <span class="form-selectgroup-label">
-                        <i class="ti ti-edit me-1 text-warning"></i> Penyesuaian
-                    </span>
-                </label>
-                <label class="form-selectgroup-item">
-                    <input type="radio" name="pengend_status" value="nonaktif" class="form-selectgroup-input"
-                           @checked(old('pengend_status', $indOrg->pengend_status) === 'nonaktif') required>
-                    <span class="form-selectgroup-label">
-                        <i class="ti ti-ban me-1 text-danger"></i> Nonaktifkan
-                    </span>
-                </label>
-            </div>
-        </div>
-
-        {{-- Penyesuaian Fields (muncul jika status = penyesuaian) --}}
-        <div id="penyesuaian-fields" class="{{ old('pengend_status', $indOrg->pengend_status) === 'penyesuaian' ? '' : 'd-none' }}">
-            <div class="alert alert-warning p-2 mb-3">
-                <i class="ti ti-edit me-1"></i> Sesuaikan target atau berikan keterangan perubahan untuk indikator ini.
-            </div>
-            <div class="mb-3">
-                <x-tabler.form-input
-                    name="pengend_target"
-                    label="Target Penyesuaian"
-                    placeholder="Contoh: 85% atau deskripsi target baru"
-                    :value="$indOrg->pengend_target ?? ''"
-                />
-            </div>
-            <div class="mb-3">
-                <x-tabler.form-textarea
-                    name="pengend_penyesuaian"
-                    label="Keterangan Penyesuaian"
-                    rows="3"
-                    placeholder="Jelaskan alasan dan detail penyesuaian..."
-                    :value="$indOrg->pengend_penyesuaian ?? ''"
-                />
-            </div>
-        </div>
-
-        {{-- Eisenhower Matrix --}}
-        <div class="mb-3">
-            <label class="form-label fw-semibold">Eisenhower Matrix</label>
-            <div class="row g-2">
-                <div class="col-6">
-                    <div class="small text-muted mb-1">Tingkat Kepentingan</div>
+        {{-- Status Pengendalian (Usulan Unit) --}}
+        <div class="card mb-3 bg-light-lt">
+            <div class="card-body p-3">
+                <div class="d-flex align-items-center mb-2">
+                    <span class="avatar avatar-sm bg-blue-lt me-2"><i class="ti ti-user"></i></span>
+                    <h4 class="card-title mb-0">Usulan Unit / Pelaksana</h4>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label required small fw-bold text-uppercase">Status Indikator (Unit)</label>
                     <div class="form-selectgroup">
-                        <label class="form-selectgroup-item flex-fill">
-                            <input type="radio" name="pengend_important_matrix" value="important" class="form-selectgroup-input"
-                                   @checked(old('pengend_important_matrix', $indOrg->pengend_important_matrix) === 'important')>
-                            <span class="form-selectgroup-label w-100 text-center">
-                                <i class="ti ti-star me-1 text-danger"></i> Important
-                            </span>
+                        <label class="form-selectgroup-item">
+                            <input type="radio" name="pengend_status" value="tetap" class="form-selectgroup-input"
+                                   @checked(old('pengend_status', $indOrg->pengend_status) === 'tetap') required>
+                            <span class="form-selectgroup-label">Dipertahankan</span>
                         </label>
-                        <label class="form-selectgroup-item flex-fill">
-                            <input type="radio" name="pengend_important_matrix" value="not_important" class="form-selectgroup-input"
-                                   @checked(old('pengend_important_matrix', $indOrg->pengend_important_matrix) === 'not_important')>
-                            <span class="form-selectgroup-label w-100 text-center">
-                                <i class="ti ti-star-off me-1 text-muted"></i> Not Important
-                            </span>
+                        <label class="form-selectgroup-item">
+                            <input type="radio" name="pengend_status" value="penyesuaian" class="form-selectgroup-input"
+                                   @checked(old('pengend_status', $indOrg->pengend_status) === 'penyesuaian') required>
+                            <span class="form-selectgroup-label">Disesuaikan</span>
+                        </label>
+                        <label class="form-selectgroup-item">
+                            <input type="radio" name="pengend_status" value="ditingkatkan" class="form-selectgroup-input"
+                                   @checked(old('pengend_status', $indOrg->pengend_status) === 'ditingkatkan') required>
+                            <span class="form-selectgroup-label">Ditingkatkan</span>
+                        </label>
+                        <label class="form-selectgroup-item">
+                            <input type="radio" name="pengend_status" value="nonaktif" class="form-selectgroup-input"
+                                   @checked(old('pengend_status', $indOrg->pengend_status) === 'nonaktif') required>
+                            <span class="form-selectgroup-label">Nonaktif</span>
                         </label>
                     </div>
                 </div>
-                <div class="col-6">
-                    <div class="small text-muted mb-1">Tingkat Urgensitas</div>
-                    <div class="form-selectgroup">
-                        <label class="form-selectgroup-item flex-fill">
-                            <input type="radio" name="pengend_urgent_matrix" value="urgent" class="form-selectgroup-input"
-                                   @checked(old('pengend_urgent_matrix', $indOrg->pengend_urgent_matrix) === 'urgent')>
-                            <span class="form-selectgroup-label w-100 text-center">
-                                <i class="ti ti-bolt me-1 text-orange"></i> Urgent
-                            </span>
-                        </label>
-                        <label class="form-selectgroup-item flex-fill">
-                            <input type="radio" name="pengend_urgent_matrix" value="not_urgent" class="form-selectgroup-input"
-                                   @checked(old('pengend_urgent_matrix', $indOrg->pengend_urgent_matrix) === 'not_urgent')>
-                            <span class="form-selectgroup-label w-100 text-center">
-                                <i class="ti ti-bolt-off me-1 text-muted"></i> Not Urgent
-                            </span>
-                        </label>
+
+                <div class="mb-3">
+                    <x-tabler.form-textarea
+                        name="pengend_analisis"
+                        label="Deskripsi Analisis (Unit)"
+                        rows="3"
+                        required="true"
+                        :value="$indOrg->pengend_analisis ?? ''"
+                    />
+                </div>
+
+                <div class="row g-2">
+                    <div class="col-6">
+                        <div class="small text-muted mb-1">Matrix Important</div>
+                        <select name="pengend_important_matrix" class="form-select form-select-sm">
+                            <option value="important" @selected($indOrg->pengend_important_matrix === 'important')>Important</option>
+                            <option value="not_important" @selected($indOrg->pengend_important_matrix === 'not_important')>Not Important</option>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <div class="small text-muted mb-1">Matrix Urgent</div>
+                        <select name="pengend_urgent_matrix" class="form-select form-select-sm">
+                            <option value="urgent" @selected($indOrg->pengend_urgent_matrix === 'urgent')>Urgent</option>
+                            <option value="not_urgent" @selected($indOrg->pengend_urgent_matrix === 'not_urgent')>Not Urgent</option>
+                        </select>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Analisis --}}
-        <div class="mb-3">
-            <x-tabler.form-textarea
-                name="pengend_analisis"
-                label="Deskripsi Analisis"
-                rows="5"
-                required="true"
-                :value="$indOrg->pengend_analisis ?? ''"
-            />
+        {{-- Status Pengendalian (Keputusan Atasan) --}}
+        @php
+            // Idealnya pengecekan role dilakukan di sini, namun untuk demo kita tampilkan keduanya
+            // atau gunakan is_admin/is_pemutu logic
+            $canEditAtsn = true; 
+        @endphp
+
+        @if($canEditAtsn)
+        <div class="card mb-0 border-primary shadow-sm">
+            <div class="card-status-top bg-primary"></div>
+            <div class="card-body p-3">
+                <div class="d-flex align-items-center mb-3">
+                    <span class="avatar avatar-sm bg-primary text-white me-2"><i class="ti ti-crown"></i></span>
+                    <h4 class="card-title mb-0">Keputusan Atasan / Pemutu</h4>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label required small fw-bold text-uppercase text-primary">Status Akhir (Review)</label>
+                    <div class="form-selectgroup">
+                        <label class="form-selectgroup-item">
+                            <input type="radio" name="pengend_status_atsn" value="tetap" class="form-selectgroup-input"
+                                   @checked(old('pengend_status_atsn', $indOrg->pengend_status_atsn) === 'tetap') required>
+                            <span class="form-selectgroup-label border-primary-subtle">Dipertahankan</span>
+                        </label>
+                        <label class="form-selectgroup-item">
+                            <input type="radio" name="pengend_status_atsn" value="penyesuaian" class="form-selectgroup-input"
+                                   @checked(old('pengend_status_atsn', $indOrg->pengend_status_atsn) === 'penyesuaian') required>
+                            <span class="form-selectgroup-label border-primary-subtle">Disesuaikan</span>
+                        </label>
+                        <label class="form-selectgroup-item">
+                            <input type="radio" name="pengend_status_atsn" value="ditingkatkan" class="form-selectgroup-input"
+                                   @checked(old('pengend_status_atsn', $indOrg->pengend_status_atsn) === 'ditingkatkan') required>
+                            <span class="form-selectgroup-label border-primary-subtle">Ditingkatkan</span>
+                        </label>
+                        <label class="form-selectgroup-item">
+                            <input type="radio" name="pengend_status_atsn" value="nonaktif" class="form-selectgroup-input"
+                                   @checked(old('pengend_status_atsn', $indOrg->pengend_status_atsn) === 'nonaktif') required>
+                            <span class="form-selectgroup-label border-primary-subtle">Nonaktif</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <x-tabler.form-textarea
+                        name="pengend_analisis_atsn"
+                        label="Catatan/Analisis Atasan"
+                        rows="3"
+                        placeholder="Berikan catatan tambahan jika ada perubahan keputusan..."
+                        :value="$indOrg->pengend_analisis_atsn ?? ''"
+                    />
+                </div>
+
+                <div class="row g-2">
+                    <div class="col-6">
+                        <div class="small text-muted mb-1">Matrix Important (Final)</div>
+                        <select name="pengend_important_matrix_atsn" class="form-select form-select-sm border-primary-subtle">
+                            <option value="important" @selected($indOrg->pengend_important_matrix_atsn === 'important')>Important</option>
+                            <option value="not_important" @selected($indOrg->pengend_important_matrix_atsn === 'not_important')>Not Important</option>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <div class="small text-muted mb-1">Matrix Urgent (Final)</div>
+                        <select name="pengend_urgent_matrix_atsn" class="form-select form-select-sm border-primary-subtle">
+                            <option value="urgent" @selected($indOrg->pengend_urgent_matrix_atsn === 'urgent')>Urgent</option>
+                            <option value="not_urgent" @selected($indOrg->pengend_urgent_matrix_atsn === 'not_urgent')>Not Urgent</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
+        @endif
 </x-tabler.form-modal>
 
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Toggle penyesuaian fields based on status radio
-    const statusRadios = document.querySelectorAll('input[name="pengend_status"]');
-    const penyesuaianFields = document.getElementById('penyesuaian-fields');
-
-    if (statusRadios.length && penyesuaianFields) {
-        statusRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                penyesuaianFields.classList.toggle('d-none', this.value !== 'penyesuaian');
-            });
-        });
-    }
-});
-</script>
-@endpush

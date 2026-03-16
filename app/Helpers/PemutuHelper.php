@@ -433,21 +433,41 @@ if (! function_exists('pemutuDtColStatusPengend')) {
     function pemutuDtColStatusPengend($row)
     {
         $status = null;
+        $statusAtsn = null;
+
         if (isset($row->orgUnits) && ! is_string($row->orgUnits) && $row->orgUnits->isNotEmpty()) {
-            $status = $row->orgUnits->first()->pivot->pengend_status ?? null;
+            $pivot      = $row->orgUnits->first()->pivot;
+            $status     = $pivot->pengend_status ?? null;
+            $statusAtsn = $pivot->pengend_status_atsn ?? null;
         } else {
-            $status = $row->pengend_status ?? null;
+            $status     = $row->pengend_status ?? null;
+            $statusAtsn = $row->pengend_status_atsn ?? null;
         }
 
         $map = [
-            'tetap'       => ['label' => 'Tetap', 'color' => 'success'],
-            'penyesuaian' => ['label' => 'Penyesuaian', 'color' => 'warning'],
-            'nonaktif'    => ['label' => 'Nonaktif', 'color' => 'danger'],
+            'tetap'       => ['label' => 'Dipertahankan', 'color' => 'success'],
+            'penyesuaian' => ['label' => 'Disesuaikan', 'color' => 'warning'],
+            'ditingkatkan' => ['label' => 'Ditingkatkan', 'color' => 'blue'],
+            'nonaktif'    => ['label' => 'Di-nonaktifkan', 'color' => 'danger'],
         ];
 
+        $html = '';
         if ($status && isset($map[$status])) {
-            $m = $map[$status];
-            return '<span class="badge bg-' . $m['color'] . '-lt text-' . $m['color'] . '">' . $m['label'] . '</span>';
+            $m     = $map[$status];
+            $html .= '<div class="d-flex flex-column gap-1">';
+            $html .= '<span class="badge bg-' . $m['color'] . '-lt text-' . $m['color'] . '" title="Usulan Unit">' . $m['label'] . '</span>';
+            
+            // Show superior status if different or specifically confirmed
+            if ($statusAtsn && isset($map[$statusAtsn])) {
+                $mAtsn = $map[$statusAtsn];
+                if ($statusAtsn !== $status) {
+                    $html .= '<span class="badge bg-' . $mAtsn['color'] . ' text-white" title="Keputusan Atasan"><i class="ti ti-crown me-1"></i>' . $mAtsn['label'] . '</span>';
+                } else {
+                    $html .= '<span class="badge bg-secondary-lt text-secondary" style="font-size: 8px;"><i class="ti ti-check me-1"></i>Validated</span>';
+                }
+            }
+            $html .= '</div>';
+            return $html;
         }
 
         return '<span class="badge bg-secondary-lt text-secondary">Belum Diisi</span>';
@@ -635,46 +655,24 @@ if (! function_exists('pemutuDtColStatusAmi')) {
     }
 }
 
-if (! function_exists('pemutuDtColStatusPeningkatan')) {
-    /**
-     * Render the Status for Peningkatan module review.
-     */
     function pemutuDtColStatusPeningkatan($row)
     {
-        $status    = $row->prev_pengend_status ?? null;
-        $target    = $row->target_lama ?? null;
-        $adjTarget = $row->prev_pengend_target ?? null;
+        $status = $row->prev_pengend_status_atsn ?? ($row->prev_ou->pengend_status_atsn ?? null);
+        
+        $map = [
+            'tetap'        => ['label' => 'Dipertahankan', 'color' => 'success'],
+            'penyesuaian'  => ['label' => 'Disesuaikan', 'color' => 'warning'],
+            'ditingkatkan' => ['label' => 'Ditingkatkan', 'color' => 'blue'],
+            'nonaktif'     => ['label' => 'Nonaktif', 'color' => 'danger'],
+        ];
 
-        $html = '<div class="d-flex flex-column align-items-center gap-1">';
-
-        // Display Target Info
-        if ($status === 'penyesuaian' && $adjTarget) {
-            if ($target && $target !== $adjTarget) {
-                $html .= '<div class="small fw-bold text-muted" style="font-size: 10px;">' . e($target) . ' <i class="ti ti-arrow-right mx-1"></i> <span class="text-orange">' . e($adjTarget) . '</span></div>';
-            } else {
-                $html .= '<div class="small fw-bold text-orange" style="font-size: 10px;">' . e($adjTarget) . '</div>';
-            }
-        } elseif ($target) {
-            $html .= '<div class="small fw-bold" style="font-size: 10px;">' . e($target) . '</div>';
+        if ($status && isset($map[$status])) {
+            $m = $map[$status];
+            return '<span class="badge bg-' . $m['color'] . '-lt text-' . $m['color'] . '">' . $m['label'] . '</span>';
         }
 
-        // Display Status Badge
-        if (! $status) {
-            $html .= '<span class="badge bg-blue-lt">Dilanjutkan</span>';
-        } else {
-            $colors  = [
-                'tetap'       => 'green',
-                'penyesuaian' => 'yellow',
-                'nonaktif'    => 'red',
-            ];
-            $color  = $colors[$status] ?? 'secondary';
-            $html  .= '<span class="badge bg-' . $color . '-lt">' . e(ucfirst($status)) . '</span>';
-        }
-
-        $html .= '</div>';
-        return $html;
+        return '<span class="badge bg-blue-lt">Dipertahankan</span>'; // Default for followed-up indicators
     }
-}
 
 if (! function_exists('pemutuDtColRtp')) {
     /**

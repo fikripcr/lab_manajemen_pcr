@@ -443,21 +443,21 @@ class IndikatorService
         if ($status && $status !== 'all') {
             if ($status === 'empty') {
                 $query->where(function ($q) {
-                    $q->whereNull('prev_ou.pengend_status')->orWhere('prev_ou.pengend_status', '');
+                    $q->whereNull('prev_ou.pengend_status_atsn')->orWhere('prev_ou.pengend_status_atsn', '');
                 });
             } else {
-                $query->where('prev_ou.pengend_status', $status);
+                $query->where('prev_ou.pengend_status_atsn', $status);
             }
         }
 
         $important = $filters['pengend_important_matrix'] ?? null;
         if ($important && $important !== 'all') {
-            $query->where('prev_ou.pengend_important_matrix', $important);
+            $query->where('prev_ou.pengend_important_matrix_atsn', $important);
         }
 
         $urgent = $filters['pengend_urgent_matrix'] ?? null;
         if ($urgent && $urgent !== 'all') {
-            $query->where('prev_ou.pengend_urgent_matrix', $urgent);
+            $query->where('prev_ou.pengend_urgent_matrix_atsn', $urgent);
         }
         if (! empty($filters['dok_id'])) {
             $query->where('d.dok_id', decryptIdIfEncrypted($filters['dok_id']));
@@ -475,11 +475,10 @@ class IndikatorService
             'pemutu_indikator_orgunit.target',
             'pemutu_indikator_orgunit.target as target_baru',
             'prev_ou.target as target_lama',
-            'prev_ou.pengend_status as prev_pengend_status',
-            'prev_ou.pengend_target as prev_pengend_target',
-            'prev_ou.pengend_penyesuaian as prev_pengend_penyesuaian',
-            'prev_ou.pengend_important_matrix as prev_important',
-            'prev_ou.pengend_urgent_matrix as prev_urgent',
+            'prev_ou.pengend_status_atsn as prev_pengend_status_atsn',
+            'prev_ou.pengend_analisis_atsn as prev_pengend_analisis_atsn',
+            'prev_ou.pengend_important_matrix_atsn as prev_important_atsn',
+            'prev_ou.pengend_urgent_matrix_atsn as prev_urgent_atsn',
             'd.judul as dokumen_judul',
         ])
             ->groupBy([
@@ -491,11 +490,10 @@ class IndikatorService
                 'org.name',
                 'pemutu_indikator_orgunit.target',
                 'prev_ou.target',
-                'prev_ou.pengend_status',
-                'prev_ou.pengend_target',
-                'prev_ou.pengend_penyesuaian',
-                'prev_ou.pengend_important_matrix',
-                'prev_ou.pengend_urgent_matrix',
+                'prev_ou.pengend_status_atsn',
+                'prev_ou.pengend_analisis_atsn',
+                'prev_ou.pengend_important_matrix_atsn',
+                'prev_ou.pengend_urgent_matrix_atsn',
                 'd.judul',
             ])
             ->orderBy('pemutu_indikator.no_indikator')

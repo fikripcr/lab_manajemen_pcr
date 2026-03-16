@@ -44,12 +44,20 @@ class PengendalianService
      */
     public function submitPengendalian(IndikatorOrgUnit $indOrg, array $data): IndikatorOrgUnit
     {
-        $indOrg->update([
+        $payload = [
             'pengend_status'           => $data['pengend_status'],
             'pengend_analisis'         => $data['pengend_analisis'] ?? null,
             'pengend_important_matrix' => $data['pengend_important_matrix'] ?? null,
             'pengend_urgent_matrix'    => $data['pengend_urgent_matrix'] ?? null,
-        ]);
+        ];
+
+        // Initial Sync to Superior Columns (draft)
+        $payload['pengend_status_atsn']           = $payload['pengend_status'];
+        $payload['pengend_analisis_atsn']         = $payload['pengend_analisis'];
+        $payload['pengend_important_matrix_atsn'] = $payload['pengend_important_matrix'];
+        $payload['pengend_urgent_matrix_atsn']    = $payload['pengend_urgent_matrix'];
+
+        $indOrg->update($payload);
 
         logActivity('pemutu', 'Submit pengendalian: indikator #' . $indOrg->indikator_id . ' unit #' . $indOrg->org_unit_id, $indOrg);
 
@@ -61,10 +69,16 @@ class PengendalianService
      */
     public function updateMatrix(IndikatorOrgUnit $indOrg, array $data): IndikatorOrgUnit
     {
-        $indOrg->update([
+        $payload = [
             'pengend_important_matrix' => $data['pengend_important_matrix'] ?? null,
             'pengend_urgent_matrix'    => $data['pengend_urgent_matrix'] ?? null,
-        ]);
+        ];
+
+        // Also sync to superior columns
+        $payload['pengend_important_matrix_atsn'] = $payload['pengend_important_matrix'];
+        $payload['pengend_urgent_matrix_atsn']    = $payload['pengend_urgent_matrix'];
+
+        $indOrg->update($payload);
 
         return $indOrg;
     }

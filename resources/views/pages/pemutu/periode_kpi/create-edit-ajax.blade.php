@@ -20,26 +20,8 @@
             <x-tabler.form-input 
                 name="nama" 
                 label="Nama Periode" 
-                placeholder="Contoh: Semester Ganjil 2024/2025" 
+                placeholder="Contoh: Periode KPI 2024" 
                 value="{{ $item->nama }}" 
-                required 
-            />
-        </div>
-        <div class="col-md-6 mb-3">
-            <x-tabler.form-select 
-                name="semester" 
-                label="Semester" 
-                :options="['Ganjil' => 'Ganjil', 'Genap' => 'Genap']" 
-                :selected="$item->semester" 
-                required 
-            />
-        </div>
-        <div class="col-md-6 mb-3">
-            <x-tabler.form-input 
-                name="tahun_akademik" 
-                label="Tahun Akademik" 
-                placeholder="Contoh: 2024/2025" 
-                value="{{ $item->tahun_akademik }}" 
                 required 
             />
         </div>

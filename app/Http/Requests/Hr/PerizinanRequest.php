@@ -46,7 +46,7 @@ class PerizinanRequest extends BaseRequest
     {
         return [
             'jenisizin_id'           => 'required|exists:hr_jenis_izin,jenisizin_id',
-            'pengusul'               => 'required|exists:pegawai,pegawai_id',
+            'pengusul'               => 'required|exists:hr_pegawai,pegawai_id',
             'pekerjaan_ditinggalkan' => 'nullable|string|max:500',
             'keterangan'             => 'nullable|string|max:1000',
             'alamat_izin'            => 'nullable|string',

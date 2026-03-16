@@ -37,7 +37,7 @@ class DokumenApprovalRequest extends BaseRequest
     {
         return [
             'approvers'              => 'required|array|min:1',
-            'approvers.*.pegawai_id' => 'required|exists:pegawai,pegawai_id',
+            'approvers.*.pegawai_id' => 'required|exists:hr_pegawai,pegawai_id',
             'approvers.*.jabatan'    => 'required|string|max:191',
         ];
     }

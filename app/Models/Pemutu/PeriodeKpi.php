@@ -21,8 +21,6 @@ class PeriodeKpi extends Model
     }
     protected $fillable = [
         'nama',
-        'semester',
-        'tahun_akademik',
         'tahun',
         'tanggal_mulai',
         'tanggal_selesai',

@@ -266,11 +266,8 @@ class PeningkatanController extends Controller
             ->addColumn('keterangan_perubahan', function ($row) {
                 $parts = [];
 
-                if ($row->prev_pengend_status === 'penyesuaian' && $row->prev_pengend_target) {
-                    $parts[] = '<small class="text-muted">Target disesuaikan:</small> <span class="text-orange">' . e($row->prev_pengend_target) . '</span>';
-                }
-                if ($row->prev_pengend_penyesuaian) {
-                    $parts[] = '<small class="text-muted">Catatan:</small> ' . $row->prev_pengend_penyesuaian;
+                if ($row->prev_pengend_analisis_atsn) {
+                    $parts[] = '<small class="text-muted">Analisis Atasan:</small> ' . $row->prev_pengend_analisis_atsn;
                 }
                 if ($row->target_lama && $row->target_lama !== $row->target_baru) {
                     $parts[] = '<small class="text-muted">Target lama:</small> ' . e($row->target_lama) . ' → ' . e($row->target_baru);

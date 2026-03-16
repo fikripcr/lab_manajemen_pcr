@@ -13,8 +13,7 @@
 <div class="row row-cards">
     @forelse($periodes as $periode)
         @php
-            $isGanjil = str_contains($periode->nama, 'Ganjil');
-            $themeColor = $isGanjil ? 'emerald' : 'primary';
+            $themeColor = 'primary';
             $isOngoing = $periode->is_active && now()->between($periode->tanggal_mulai, $periode->tanggal_selesai);
         @endphp
         <div class="col-md-6 col-lg-4">
@@ -25,7 +24,7 @@
                 {{-- Card Stamp for Depth --}}
                 <div class="card-stamp card-stamp-lg z-0">
                     <div class="card-stamp-icon bg-{{ $themeColor }} opacity-10">
-                        <i class="ti ti-{{ $isGanjil ? 'leaf' : 'snowflake' }}"></i>
+                        <i class="ti ti-leaf"></i>
                     </div>
                 </div>
 
@@ -62,13 +61,7 @@
                     </x-slot:actions>
                 </x-tabler.card-header>
 
-                <x-tabler.card-body class="p-4 pt-3 z-1">
-                    <div class="mb-4">
-                        <div class="d-flex align-items-center gap-2 text-muted">
-                            <i class="ti ti-calendar-event fs-2"></i>
-                            <span class="fw-medium">Tahun Akademik {{ $periode->tahun_akademik }}</span>
-                        </div>
-                    </div>
+                <x-tabler.card-body class="p-4 pt-4 z-1">
 
                     <div class="p-3 rounded-3 bg-{{ $themeColor }}-lt border border-{{ $themeColor }} border-opacity-10">
                         <div class="text-{{ $themeColor }} small fw-bold text-uppercase mb-2 tracking-wider">Durasi Periode</div>

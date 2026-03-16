@@ -5,7 +5,7 @@ use App\Models\Hr\JabatanFungsional;
 use App\Models\Hr\JenisIndisipliner;
 use App\Models\Hr\JenisIzin;
 use App\Models\Hr\JenisShift;
-use App\Models\Hr\OrgUnit;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Hr\Pegawai;
 use App\Models\Hr\RiwayatDataDiri;
 use App\Models\Hr\StatusAktifitas;
@@ -62,12 +62,12 @@ class MainHrSeeder extends Seeder
     {
         $this->command->info('Seeding Org Units...');
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        OrgUnit::truncate();
+        StrukturOrganisasi::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         DB::transaction(function () {
             // Level 1: Institusi / Root
-            $pcr = OrgUnit::create([
+            $pcr = StrukturOrganisasi::create([
                 'name'       => 'Politeknik Chevron Riau',
                 'type'       => 'Institusi',
                 'level'      => 1,
@@ -152,7 +152,7 @@ class MainHrSeeder extends Seeder
 
     private function createUnit($parent, $name, $type, $sort_order, $code = null)
     {
-        return OrgUnit::create([
+        return StrukturOrganisasi::create([
             'parent_id'  => $parent->orgunit_id,
             'name'       => $name,
             'type'       => $type,
@@ -278,13 +278,13 @@ class MainHrSeeder extends Seeder
         $faker     = Faker::create('id_ID');
         $sysUserId = 1;
 
-        $depts          = OrgUnit::where('type', 'Jurusan')->get();
-        $posisis        = OrgUnit::where('type', 'posisi')->get();
+        $depts          = StrukturOrganisasi::where('type', 'Jurusan')->get();
+        $posisis        = StrukturOrganisasi::where('type', 'posisi')->get();
         $statusPegawais = StatusPegawai::all();
         $statusAktifs   = StatusAktifitas::where('nama_status', 'Aktif')->first();
         $jabFungsionals = JabatanFungsional::all();
-        $orgUnits       = OrgUnit::whereIn('type', ['Bagian', 'Prodi', 'posisi'])->get();
-        $strUnits       = OrgUnit::where('type', 'jabatan_struktural')->get();
+        $orgUnits       = StrukturOrganisasi::whereIn('type', ['Bagian', 'Prodi', 'posisi'])->get();
+        $strUnits       = StrukturOrganisasi::where('type', 'jabatan_struktural')->get();
 
         if ($orgUnits->whereIn('type', ['Bagian', 'Prodi'])->isEmpty() || $orgUnits->where('type', 'posisi')->isEmpty()) {
             return;

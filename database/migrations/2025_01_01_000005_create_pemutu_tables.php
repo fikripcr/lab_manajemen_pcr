@@ -105,11 +105,9 @@ return new class extends Migration
         Schema::create('pemutu_periode_kpi', function (Blueprint $table) {
             $table->id('periode_kpi_id');
             $table->string('nama', 100);
-            $table->enum('semester', ['Ganjil', 'Genap']);
-            $table->string('tahun_akademik', 20);
             $table->integer('tahun');
-            $table->date('tanggal_mulai');
-            $table->date('tanggal_selesai');
+            $table->date('tanggal_mulai')->nullable();
+            $table->date('tanggal_selesai')->nullable();
             $table->boolean('is_active')->default(false);
             $table->timestamps();
             $table->string('created_by')->nullable();

@@ -551,6 +551,10 @@ class MainPemutuSeeder extends Seeder
             $data['ami_hasil_akhir'] = 1; // Terpenuhi
         }
 
+        // Default matrix values
+        $important = rand(0, 1) ? 'important' : 'not_important';
+        $urgent    = rand(0, 1) ? 'urgent' : 'not_urgent';
+
         // Generate findings and RTP if it's KTS
         if ($data['ami_hasil_akhir'] === 0) {
             $data['ami_hasil_temuan']        = 'Capaian indikator belum mencapai target yang ditetapkan secara signifikan.';
@@ -563,33 +567,33 @@ class MainPemutuSeeder extends Seeder
 
             // Pengendalian
             $data['pengend_status']           = 'penyesuaian';
-            $data['pengend_target']           = 'Peningkatan capaian minimal 50% dari gap yang ada.';
             $data['pengend_analisis']         = 'Berdasarkan pemantauan, RTP telah berjalan namun hasil belum maksimal.';
-            $data['pengend_penyesuaian']      = 'Menambah frekuensi monitoring menjadi dua minggu sekali.';
-            $data['pengend_important_matrix'] = rand(0, 1);
-            $data['pengend_urgent_matrix']    = rand(0, 1);
+            $data['pengend_important_matrix'] = 'important';
+            $data['pengend_urgent_matrix']    = 'urgent';
 
             $data['ami_te_isi'] = 'Tindakan perbaikan terbukti efektif menyelesaikan masalah akar penyebab.';
 
         } elseif ($data['ami_hasil_akhir'] === 2) {
             // Peningkatan if Terlampaui
-            $data['pengend_status']           = 'peningkatan';
-            $data['pengend_target']           = 'Mempertahankan tren positif capaian saat ini.';
+            $data['pengend_status']           = 'ditingkatkan';
             $data['pengend_analisis']         = 'Strategi yang diterapkan sangat efektif melampaui target.';
-            $data['pengend_penyesuaian']      = 'Menaikkan standar/target capaian untuk periode berikutnya.';
-            $data['pengend_important_matrix'] = 1;
-            $data['pengend_urgent_matrix']    = 0;
+            $data['pengend_important_matrix'] = 'important';
+            $data['pengend_urgent_matrix']    = 'not_urgent';
 
             $data['ami_te_isi'] = 'Strategi pencapaian sangat memuaskan, efektivitas pencapaian terbukti.';
         } else {
             // Terpenuhi
             $data['pengend_status']           = 'tetap';
-            $data['pengend_target']           = 'Menjaga performa tetap pada target.';
             $data['pengend_analisis']         = 'Target tercapai dengan baik sesuai rencana.';
-            $data['pengend_penyesuaian']      = 'Melanjutkan program yang sudah berjalan.';
-            $data['pengend_important_matrix'] = rand(0, 1);
-            $data['pengend_urgent_matrix']    = rand(0, 1);
+            $data['pengend_important_matrix'] = $important;
+            $data['pengend_urgent_matrix']    = $urgent;
         }
+
+        // Superior Sync (Draft Keputusan Atasan)
+        $data['pengend_status_atsn']           = $data['pengend_status'];
+        $data['pengend_analisis_atsn']         = $data['pengend_analisis'] ?? null;
+        $data['pengend_important_matrix_atsn'] = $data['pengend_important_matrix'] ?? null;
+        $data['pengend_urgent_matrix_atsn']    = $data['pengend_urgent_matrix'] ?? null;
 
         return $data;
     }

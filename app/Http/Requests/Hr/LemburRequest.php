@@ -24,7 +24,7 @@ class LemburRequest extends BaseRequest
         }
 
         return [
-            'pengusul_id'      => 'required|exists:pegawai,pegawai_id',
+            'pengusul_id'      => 'required|exists:hr_pegawai,pegawai_id',
             'judul'            => 'required|string|max:255',
             'uraian_pekerjaan' => 'nullable|string',
             'alasan'           => 'nullable|string',

@@ -241,13 +241,7 @@
                     @if($item->jenis === 'renop')
                         <div class="tab-pane" id="tab-indikator-renop" role="tabpanel">
                             <x-tabler.card class="bg-transparent shadow-none border">
-                                <x-tabler.card-header title="Daftar Indikator Labeled RENOP">
-                                    <x-slot:actions>
-                                        <x-tabler.button type="create" class="btn-success"
-                                            href="{{ route('pemutu.indikator.index', ['type' => 'standar']) }}"
-                                            text="Kelola Indikator Standar" size="sm" />
-                                    </x-slot:actions>
-                                </x-tabler.card-header>
+                                <x-tabler.card-header title="Daftar Indikator Labeled RENOP"/>
                                 <x-tabler.datatable
                                     id="indikator-renop-table"
                                     :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'renop_indikator', 'id' => $item->encrypted_dok_id])"
@@ -281,7 +275,7 @@
                     @if($isKebijakan && $mappableJenis)
                         <div class="tab-pane" id="tab-mapping" role="tabpanel">
                             <div class="border px-3">
-                                    <div class="my-3 text-muted">Pilih poin {{ pemutuJenisLabel($mappableJenis) }} yang ingin dihubungkan dengan poin {{ strtoupper($item->dokumen->jenis) }} (opsional):</div>
+                                    <div class="my-3 text-muted">Pilih poin {{ implode(' atau ', array_map('pemutuJenisLabel', $mappableJenis)) }} yang ingin dihubungkan dengan poin {{ strtoupper($item->dokumen->jenis) }} (opsional):</div>
                                     <div class="row mb-3">
                                         <div class="col">
                                             <select id="select-mapping-target" class="form-select">
@@ -326,7 +320,7 @@
                                         </div>
                                     @else
                                         <div class="text-muted text-center py-2">
-                                            <i class="ti ti-link-off"></i> Belum ada mapping ke poin {{ pemutuJenisLabel($mappableJenis) }}.
+                                            <i class="ti ti-link-off"></i> Belum ada mapping ke poin {{ implode(' atau ', array_map('pemutuJenisLabel', $mappableJenis)) }}.
                                         </div>
                                     @endif
                             </div>
