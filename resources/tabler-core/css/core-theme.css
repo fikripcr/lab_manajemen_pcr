@@ -274,15 +274,12 @@
     }
 
     /* --- Sidebar / Menu Color → Horizontal Layout (Secondary Menu Bar) --- */
-    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .nav-link,
-    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .dropdown-toggle,
-    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .nav-link-icon,
-    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .dropdown-menu .dropdown-item {
+    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .navbar-nav>.nav-item>.nav-link,
+    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .navbar-nav>.nav-item>.nav-link>.nav-link-icon {
         color: var(--tblr-sidebar-text) !important;
     }
 
-    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .nav-link-title,
-    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .dropdown-menu .dropdown-item-icon {
+    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .navbar-nav>.nav-item>.nav-link>.nav-link-title {
         color: var(--tblr-sidebar-text-muted) !important;
     }
 
@@ -540,18 +537,19 @@
 
     /* Standard Tabler Dropdown management */
     .navbar .dropdown-menu {
-        z-index: 1050 !important;
+        z-index: 1040;
+        background-color: var(--tblr-bg-surface, #ffffff) !important;
     }
 
     /* Fix dropdown in navbar-overlap layout */
     .navbar-overlap .dropdown-menu {
-        z-index: 1050 !important;
+        z-index: 1040;
     }
 
     /* Ensure the dropdown parent has proper stacking context */
     .navbar .dropdown {
         position: relative;
-        z-index: 1040;
+        z-index: 1030;
     }
 
     /* Fix DataTable dropdown buttons */
