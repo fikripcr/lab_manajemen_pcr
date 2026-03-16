@@ -47,8 +47,8 @@ class EventController extends Controller
     {
         $pageTitle = 'Tambah Kegiatan';
         $users     = User::all();
-        $Kegiatan  = new Event();
-        return view('pages.event.kegiatans.create-edit', compact('pageTitle', 'users', 'Kegiatan'));
+        $kegiatan  = new Event();
+        return view('pages.event.kegiatans.create-edit', compact('pageTitle', 'users', 'kegiatan'));
     }
 
     public function store(EventRequest $request)
