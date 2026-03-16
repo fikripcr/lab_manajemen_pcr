@@ -125,6 +125,18 @@
             // Removed parent 'can' => 'admin' to allow Auditees to see My KPI / Evaluasi Diri
             'children'      => [
                 [
+                    'title' => 'Jadwal Rapat',
+                    'route' => 'Kegiatan.rapat.index',
+                    'active_routes' => ['Kegiatan.rapat.*'],
+                    'icon' => 'ti ti-calendar-event',
+                ],
+                [
+                    'title' => 'Data Pegawai',
+                    'route' => 'hr.pegawai.index',
+                    'active_routes' => ['hr.pegawai.*'],
+                    'icon' => 'ti ti-user-circle',
+                ],
+                [
                     'title' => 'Label',
                     'route' => 'pemutu.label.index',
                     'active_routes' => ['pemutu.label.*', 'pemutu.label-type.*'],

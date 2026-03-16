@@ -1,4 +1,4 @@
-﻿/*
+/*
  * THEME TABLER CUSTOM CSS
  * ==========================================================================
  * This file contains ALL custom CSS overrides for the application.
@@ -270,6 +270,19 @@
 
     :root[data-bs-has-sidebar-bg] .navbar-vertical .nav-link-title,
     :root[data-bs-has-sidebar-bg] .navbar-vertical .dropdown-menu .dropdown-item-icon {
+        color: var(--tblr-sidebar-text-muted) !important;
+    }
+
+    /* --- Sidebar / Menu Color → Horizontal Layout (Secondary Menu Bar) --- */
+    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .nav-link,
+    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .dropdown-toggle,
+    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .nav-link-icon,
+    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .dropdown-menu .dropdown-item {
+        color: var(--tblr-sidebar-text) !important;
+    }
+
+    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .nav-link-title,
+    :root[data-bs-has-sidebar-bg] .layout-horizontal .navbar-expand-md .navbar .dropdown-menu .dropdown-item-icon {
         color: var(--tblr-sidebar-text-muted) !important;
     }
 

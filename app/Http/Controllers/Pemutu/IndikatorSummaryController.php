@@ -145,7 +145,7 @@ class IndikatorSummaryController extends Controller
     {
         $query = DB::table('pemutu_indikator_orgunit as io')
             ->join('vw_pemutu_summary_indikator_standar as v', 'io.indikator_id', '=', 'v.indikator_id')
-            ->leftJoin('struktur_organisasi as so', 'io.org_unit_id', '=', 'so.orgunit_id')
+            ->leftJoin('hr_struktur_organisasi as so', 'io.org_unit_id', '=', 'so.orgunit_id')
             ->select('io.*', 'v.*', 'so.name as unit_name', 'so.code as unit_code');
 
         // Filter by Kelompok
@@ -418,12 +418,12 @@ class IndikatorSummaryController extends Controller
 
         // Get detailed data from related tables
         $edDetails = DB::table('pemutu_indikator_orgunit')
-            ->join('hr_struktur_organisasi', 'pemutu_indikator_orgunit.org_unit_id', '=', 'struktur_organisasi.orgunit_id')
+            ->join('hr_struktur_organisasi', 'pemutu_indikator_orgunit.org_unit_id', '=', 'hr_struktur_organisasi.orgunit_id')
             ->where('pemutu_indikator_orgunit.indikator_id', $indikator->indikator_id)
             ->whereNotNull('pemutu_indikator_orgunit.ed_capaian')
             ->select(
-                'struktur_organisasi.name as unit_name',
-                'struktur_organisasi.code as unit_code',
+                'hr_struktur_organisasi.name as unit_name',
+                'hr_struktur_organisasi.code as unit_code',
                 'pemutu_indikator_orgunit.ed_capaian',
                 'pemutu_indikator_orgunit.ed_analisis',
                 'pemutu_indikator_orgunit.ed_skala',
@@ -434,12 +434,12 @@ class IndikatorSummaryController extends Controller
             ->get();
 
         $amiDetails = DB::table('pemutu_indikator_orgunit')
-            ->join('hr_struktur_organisasi', 'pemutu_indikator_orgunit.org_unit_id', '=', 'struktur_organisasi.orgunit_id')
+            ->join('hr_struktur_organisasi', 'pemutu_indikator_orgunit.org_unit_id', '=', 'hr_struktur_organisasi.orgunit_id')
             ->where('pemutu_indikator_orgunit.indikator_id', $indikator->indikator_id)
             ->whereNotNull('pemutu_indikator_orgunit.ami_hasil_akhir')
             ->select(
-                'struktur_organisasi.name as unit_name',
-                'struktur_organisasi.code as unit_code',
+                'hr_struktur_organisasi.name as unit_name',
+                'hr_struktur_organisasi.code as unit_code',
                 'pemutu_indikator_orgunit.ami_hasil_akhir',
                 'pemutu_indikator_orgunit.ami_hasil_temuan',
                 'pemutu_indikator_orgunit.ami_hasil_temuan_sebab',
@@ -450,12 +450,12 @@ class IndikatorSummaryController extends Controller
             ->get();
 
         $pengendDetails = DB::table('pemutu_indikator_orgunit')
-            ->join('hr_struktur_organisasi', 'pemutu_indikator_orgunit.org_unit_id', '=', 'struktur_organisasi.orgunit_id')
+            ->join('hr_struktur_organisasi', 'pemutu_indikator_orgunit.org_unit_id', '=', 'hr_struktur_organisasi.orgunit_id')
             ->where('pemutu_indikator_orgunit.indikator_id', $indikator->indikator_id)
             ->whereNotNull('pemutu_indikator_orgunit.pengend_status')
             ->select(
-                'struktur_organisasi.name as unit_name',
-                'struktur_organisasi.code as unit_code',
+                'hr_struktur_organisasi.name as unit_name',
+                'hr_struktur_organisasi.code as unit_code',
                 'pemutu_indikator_orgunit.pengend_status',
                 'pemutu_indikator_orgunit.pengend_target',
                 'pemutu_indikator_orgunit.pengend_analisis',
@@ -525,7 +525,7 @@ class IndikatorSummaryController extends Controller
     {
         $query = DB::table('pemutu_indikator_orgunit as io')
             ->join('vw_pemutu_summary_indikator_standar as v', 'io.indikator_id', '=', 'v.indikator_id')
-            ->leftJoin('struktur_organisasi as so', 'io.org_unit_id', '=', 'so.orgunit_id');
+            ->leftJoin('hr_struktur_organisasi as so', 'io.org_unit_id', '=', 'so.orgunit_id');
 
         // Apply same filters as dataStandar
         if ($request->filled('kelompok_indikator')) {
