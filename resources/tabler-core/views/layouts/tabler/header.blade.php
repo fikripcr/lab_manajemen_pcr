@@ -301,10 +301,8 @@
     <header class="navbar-expand-md">
         <div class="collapse navbar-collapse" id="navbar-menu">
             <div class="navbar"{{ isset($darkSecondary) && $darkSecondary ? ' data-bs-theme="dark"' : '' }}>
-                <div class="collapse navbar-collapse" id="navbar-menu">
-                    <div class="d-flex flex-column flex-md-row flex-fill align-items-stretch align-items-md-center">
-                        <x-tabler.menu-renderer type="navbar" group="admin" />
-                    </div>
+                <div class="{{ $layoutData['navbarContainerClass'] ?? 'container-xl' }}">
+                    <x-tabler.menu-renderer type="navbar" group="admin" />
                 </div>
             </div>
         </div>
