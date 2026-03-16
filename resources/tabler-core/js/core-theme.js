@@ -315,6 +315,7 @@ class ThemeTabler {
                 // Auto-Contrast logic
                 if (name === 'theme-sidebar-bg') this._updateContrast(root, value, '--tblr-sidebar-text', '--tblr-sidebar-text-muted');
                 if (name === 'theme-header-top-bg') this._updateContrast(root, value, '--tblr-header-top-text', '--tblr-header-top-text-muted');
+                if (name === 'theme-header-overlap-bg') this._updateContrast(root, value, '--tblr-header-overlap-text', '--tblr-header-overlap-text-muted');
                 if (name === 'theme-bg') this._updateContrast(root, value, '--tblr-body-text');
             }
         }
@@ -327,6 +328,7 @@ class ThemeTabler {
         // Clean up contrast vars
         if (name === 'theme-sidebar-bg') { root.style.removeProperty('--tblr-sidebar-text'); root.style.removeProperty('--tblr-sidebar-text-muted'); }
         if (name === 'theme-header-top-bg') { root.style.removeProperty('--tblr-header-top-text'); root.style.removeProperty('--tblr-header-top-text-muted'); }
+        if (name === 'theme-header-overlap-bg') { root.style.removeProperty('--tblr-header-overlap-text'); root.style.removeProperty('--tblr-header-overlap-text-muted'); }
         if (name === 'theme-bg') { root.style.removeProperty('--tblr-body-text'); }
     }
 

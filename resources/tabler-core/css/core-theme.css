@@ -305,6 +305,19 @@
     }
 
     /* --- Page Header & Body --- */
+    /* Condensed Layout: Page header sits inside the overlap area */
+    :root[data-bs-has-header-overlap-bg] .layout-condensed .page-header .page-title,
+    :root[data-bs-has-header-overlap-bg] .layout-condensed .page-header .page-pretitle,
+    :root[data-bs-has-header-overlap-bg] .layout-condensed .page-header .breadcrumb-item,
+    :root[data-bs-has-header-overlap-bg] .layout-condensed .page-header .breadcrumb-item a,
+    :root[data-bs-has-header-overlap-bg] .layout-condensed .page-header .breadcrumb-item.active {
+        color: var(--tblr-header-overlap-text, #ffffff) !important;
+    }
+
+    :root[data-bs-has-header-overlap-bg] .layout-condensed .page-header .breadcrumb-item+.breadcrumb-item::before {
+        color: var(--tblr-header-overlap-text-muted, rgba(255, 255, 255, 0.7)) !important;
+    }
+
     :root[data-bs-has-theme-bg] .page-header .page-title,
     :root[data-bs-has-theme-bg] .page-header .page-pretitle,
     :root[data-bs-has-theme-bg] .breadcrumb-item,
