@@ -694,7 +694,7 @@
                                             $isChildActive = $isActive($child['active_routes'] ?? []);
                                         @endphp
                                         <div class="dropend">
-                                            <a class="dropdown-item dropdown-toggle{{ $isChildActive ? ' show' : '' }}"
+                                            <a class="dropdown-item dropdown-toggle{{ $isChildActive ? ' active' : '' }}"
                                                href="#{{ $child['id'] ?? 'submenu-'.Str::random(5) }}"
                                                data-bs-toggle="dropdown"
                                                data-bs-auto-close="false"
@@ -705,7 +705,7 @@
                                                 @endif
                                                 {{ $child['title'] ?? '' }}
                                             </a>
-                                            <div class="dropdown-menu{{ $isChildActive ? ' show' : '' }}">
+                                            <div class="dropdown-menu">
                                                 @foreach($child['children'] as $subchild)
                                                     @php
                                                         $subHref = (isset($subchild['route']) && $subchild['route'] !== '#')
@@ -781,7 +781,7 @@
                                     @elseif(isset($child['children']) && count($child['children']) > 0)
                                         @php $isChildActive = $isActive($child['active_routes'] ?? []); @endphp
                                         <div class="dropend">
-                                            <a class="dropdown-item dropdown-toggle{{ $isChildActive ? ' show' : '' }}"
+                                            <a class="dropdown-item dropdown-toggle{{ $isChildActive ? ' active' : '' }}"
                                                href="javascript:void(0)"
                                                data-bs-toggle="dropdown"
                                                data-bs-auto-close="outside"
@@ -792,7 +792,7 @@
                                                 @endif
                                                 {{ $child['title'] ?? '' }}
                                             </a>
-                                            <div class="dropdown-menu{{ $isChildActive ? ' show' : '' }}">
+                                            <div class="dropdown-menu">
                                                 @foreach($child['children'] as $subchild)
                                                     <a class="dropdown-item{{ $isActive($subchild['route'] ?? null) ? ' active' : '' }}"
                                                        href="{{ (isset($subchild['route']) && $subchild['route'] !== '#') ? route($subchild['route']) : '#' }}">
