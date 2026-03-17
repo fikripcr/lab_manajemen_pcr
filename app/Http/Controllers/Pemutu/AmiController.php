@@ -5,8 +5,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\AmiRequest;
 use App\Http\Requests\Pemutu\RtpRequest;
 use App\Http\Requests\Pemutu\TeRequest;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
+use App\Services\Hr\StrukturOrganisasiService;
 use App\Services\Pemutu\AmiService;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\PeriodeSpmiService;
@@ -19,6 +21,7 @@ class AmiController extends Controller
         protected AmiService $AmiService,
         protected PeriodeSpmiService $PeriodeSpmiService,
         protected IndikatorService $IndikatorService,
+        protected StrukturOrganisasiService $StrukturOrganisasiService,
     ) {}
 
     /**
@@ -29,23 +32,18 @@ class AmiController extends Controller
         // Bypass old period selection — use global siklus from session
         $siklus = $this->PeriodeSpmiService->getSiklusData();
 
+        // Fetch root documents for filter
+        $rootDoks = \App\Models\Pemutu\Dokumen::whereNull('parent_id')
+            ->where('periode', $siklus['tahun'])
+            ->orderBy('seq')
+            ->get();
+
         $data = [
             'pageTitle' => 'Audit Mutu Internal (AMI)',
             'siklus'    => $siklus,
+            'units'     => $this->StrukturOrganisasiService->getHierarchicalList(),
+            'rootDoks'  => $rootDoks,
         ];
-
-        // Resolve user units for both periods to populate filters
-        foreach (['akademik', 'non_akademik'] as $type) {
-            $periode = $siklus[$type];
-            $units   = collect();
-            
-            if ($periode) {
-                // Use the service to get available units
-                $units = $this->AmiService->getAvailableUnits($periode);
-            }
-            
-            $data[$type . 'Units'] = $units;
-        }
 
         return view('pages.pemutu.ami.index', $data);
     }
@@ -58,7 +56,7 @@ class AmiController extends Controller
     public function data(PeriodeSpmi $periode, Request $request)
     {
         $unitId  = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
-        $filters = $request->only(['ami_hasil_akhir', 'ed_status', 'dok_id']);
+        $filters = $request->only(['ami_hasil_akhir', 'ed_status', 'dok_id', 'rtp_status']);
         $query   = $this->IndikatorService->getUnifiedSpmiQuery($periode, $unitId, $filters);
 
         return datatables()->of($query)
@@ -85,8 +83,15 @@ class AmiController extends Controller
                     ? '<a href="' . route('pemutu.ami.detail', encryptId($indikorgunit)) . '" class="btn btn-sm btn-primary"><i class="ti ti-zoom-scan me-1"></i>Isi</a>'
                     : '<span class="text-muted small">-</span>';
             })
-            ->addColumn('rtp', function ($row) {
-                return pemutuDtColRtp($row);
+            ->addColumn('rtp_isi', function ($row) {
+                return $row->orgUnits->first()?->pivot->ami_rtp_isi ?? '<span class="text-muted small">-</span>';
+            })
+            ->addColumn('rtp_tgl', function ($row) {
+                $tgl = $row->orgUnits->first()?->pivot->ami_rtp_tgl_pelaksanaan;
+                return $tgl ? formatTanggalIndo($tgl) : '<span class="text-muted small">-</span>';
+            })
+            ->addColumn('auditor_recom', function ($row) {
+                return $row->orgUnits->first()?->pivot->ami_hasil_temuan_rekom ?? '<span class="text-muted small">-</span>';
             })
             ->addColumn('action_rtp', function ($row) {
                 $pivot = $row->orgUnits->first()?->pivot;
@@ -113,7 +118,7 @@ class AmiController extends Controller
                         ->orWhere('no_indikator', 'like', "%{$keyword}%");
                 });
             })
-            ->rawColumns(['no', 'indikator_full', 'target', 'status_ed', 'status_ami', 'action', 'rtp', 'action_rtp'])
+            ->rawColumns(['no', 'indikator_full', 'target', 'status_ed', 'status_ami', 'action', 'rtp_isi', 'rtp_tgl', 'auditor_recom', 'action_rtp'])
             ->make(true);
     }
 
@@ -170,9 +175,13 @@ class AmiController extends Controller
             return DataTables::of(collect([]))->make(true);
         }
 
+        $unitId  = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
+        
         // Ambil indikator KTS dari periode tahun lalu
-        $query = $this->IndikatorService->getUnifiedSpmiQuery($prevPeriod, null, [
+        $query = $this->IndikatorService->getUnifiedSpmiQuery($prevPeriod, $unitId, [
             'ami_hasil_akhir' => 0, // KTS
+            'dok_id'          => $request->input('dok_id'),
+            'te_status'       => $request->input('te_status'),
         ]);
 
         return DataTables::of($query)

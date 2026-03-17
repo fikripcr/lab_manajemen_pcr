@@ -76,9 +76,10 @@ class StrukturOrganisasiService
     /**
      * Get flattened hierarchical list for dropdowns (e.g. parent selection)
      */
-    public function getHierarchicalList($parentId = null, $prefix = '', $excludeId = null)
+    public function getHierarchicalList($parentId = null, $prefix = '', $excludeId = null, array $types = [])
     {
         $query = StrukturOrganisasi::where('parent_id', $parentId)
+            ->active()
             ->orderBy('sort_order')
             ->orderBy('seq')
             ->orderBy('name');
@@ -91,10 +92,16 @@ class StrukturOrganisasiService
 
         $result = [];
         foreach ($units as $unit) {
-            $unit->name_display = $prefix . ' ' . $unit->name;
-            $result[]           = $unit;
-            $result             = array_merge($result, $this->getHierarchicalList($unit->orgunit_id, $prefix . '--', $excludeId));
+            // Only add to result if types matches OR if no types specified
+            if (empty($types) || in_array($unit->type, $types)) {
+                $unit->name_display = $prefix . ' ' . $unit->name;
+                $result[]           = $unit;
+            }
+
+            // Always recurse to find children that might match the type
+            $result = array_merge($result, $this->getHierarchicalList($unit->orgunit_id, $prefix . '--', $excludeId, $types));
         }
+
         return $result;
     }
 

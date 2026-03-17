@@ -59,8 +59,8 @@
                             <div class="tab-pane active show" id="tab-informasi-umum">
                                 <input type="hidden" name="type" value="{{ $type }}">
                                 
-                                <div class="row  mb-3">
-                                    <div class="col-md-4">
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
                                         <label class="form-label text-muted small">Tipe Indikator</label>
                                         <div class="form-control-plaintext fw-bold text-primary">
                                             <i class="ti ti-tag me-1"></i> 
@@ -71,7 +71,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label class="form-label text-muted small">No Indikator</label>
                                         <div class="form-control-plaintext">
                                             @if($isEdit)
@@ -82,7 +82,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <x-tabler.form-select
                                             name="kelompok_indikator"
                                             label="Kelompok"
@@ -95,7 +95,7 @@
                                         />
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <x-tabler.form-select
                                             name="jenis_data"
                                             label="Jenis Data"
@@ -111,23 +111,25 @@
 
                                 <x-tabler.form-textarea name="indikator" label="Nama Indikator" rows="2" placeholder="Masukkan nama indikator..." value="{{ old('indikator', $indikator->indikator) }}" />
 
-                                <x-tabler.form-select name="doksub_ids" label="Dokumen Terkait" class="select2-ajax mb-3" multiple="true" data-placeholder="Cari & pilih dokumen penjaminan mutu..." data-ajax-url="{{ route('pemutu.indikator.search-doksub') }}">
-                                    @if(isset($selectedDokSubs))
-                                        @foreach($selectedDokSubs as $ds)
-                                            @if($ds instanceof \App\Models\Pemutu\DokSub)
-                                                <option value="{{ $ds->encrypted_doksub_id }}" selected>
-                                                    [{{ strtoupper($ds->dokumen?->jenis ?? 'DOC') }}] {{ $ds->dokumen?->judul ?? '-' }} &raquo; {{ $ds->judul }}
-                                                </option>
-                                            @endif
-                                        @endforeach
-                                    @endif
+                                <x-tabler.form-select name="doksub_ids[]" label="Dokumen Standar" type="select2" class="mb-3" data-placeholder="Pilih dokumen standar...">
+                                    <option value="">-- Pilih Dokumen Standar --</option>
+                                    @foreach($standardOptions as $so)
+                                        @php
+                                            $isSelected = (isset($selectedDokSubs) && $selectedDokSubs->pluck('doksub_id')->contains($so->doksub_id)) || 
+                                                          (is_array(old('doksub_ids')) && in_array($so->encrypted_doksub_id, old('doksub_ids'))) ||
+                                                          (old('doksub_ids') == $so->encrypted_doksub_id);
+                                        @endphp
+                                        <option value="{{ $so->encrypted_doksub_id }}" {{ $isSelected ? 'selected' : '' }}>
+                                            [{{ $so->dokumen?->periode ?? 'STANDAR' }}] {{ $so->dokumen?->judul ?? '-' }} &raquo; {{ $so->judul }}
+                                        </option>
+                                    @endforeach
                                 </x-tabler.form-select>
 
                                 @if($isStandar)
                                 <x-tabler.form-select name="renstra_poin_id" type="select2" label="Mapping ke Poin Renstra" class="mb-3" data-placeholder="Pilih poin Renstra...">
                                     <option value="">-- Tidak Dipetakan --</option>
                                     @foreach($renstraOptions as $ro)
-                                        <option value="{{ $ro->encrypted_doksub_id }}" {{ old('renstra_poin_id', $indikator->renstra_poin_id) == $ro->doksub_id ? 'selected' : '' }}>
+                                        <option value="{{ $ro->encrypted_doksub_id }}" {{ decryptIdIfEncrypted(old('renstra_poin_id', $indikator->renstra_poin_id)) == $ro->doksub_id ? 'selected' : '' }}>
                                             [{{ $ro->dokumen?->periode ?? 'RENSTRA' }}] {{ $ro->judul }} {{ $ro->kode ? '('.$ro->kode.')' : '' }}
                                         </option>
                                     @endforeach

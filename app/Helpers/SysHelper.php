@@ -21,20 +21,20 @@ if (! function_exists('decryptId')) {
      * @param bool $throwException Whether to throw exception on failure
      * @return int|null
      */
-    function decryptId($hash, $throwException = true)
+    function decryptId($hash, $throwException = false)
     {
         if (! $hash) {
             if ($throwException) {
-                abort(403, 'Data tidak ditemukan.');
+                abort(404, 'Data tidak ditemukan.');
             }
             return null;
         }
 
-        $decoded = app('hashids')->decode($hash);
+        $decoded = app('hashids')->decode((string) $hash);
 
         if (empty($decoded)) {
             if ($throwException) {
-                abort(403, 'Data tidak ditemukan.');
+                abort(404, 'Data tidak ditemukan.');
             }
             return null;
         }
@@ -51,13 +51,35 @@ if (! function_exists('decryptIdIfEncrypted')) {
      * @param bool $throwException
      * @return int|null
      */
-    function decryptIdIfEncrypted($id, $throwException = true)
+    function decryptIdIfEncrypted($id, $throwException = false)
     {
+        if (is_array($id)) {
+            return array_map(function ($item) use ($throwException) {
+                return decryptIdIfEncrypted($item, $throwException);
+            }, $id);
+        }
+
+        if (! $id) {
+            return null;
+        }
+
         if (is_numeric($id)) {
             return (int) $id;
         }
 
-        return decryptId($id, $throwException);
+        // Try to decrypt
+        $decrypted = decryptId($id, false);
+        if ($decrypted !== null) {
+            return $decrypted;
+        }
+
+        // If decryption failed but we must throw
+        if ($throwException) {
+            abort(404, 'Data tidak ditemukan.');
+        }
+
+        // Return as-is if not numeric and not a valid hash
+        return $id;
     }
 }
 

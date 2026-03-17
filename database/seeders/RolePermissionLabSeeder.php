@@ -47,10 +47,10 @@ class RolePermissionLabSeeder extends Seeder
             ['name' => 'lab.jadwal.update', 'category' => 'Layanan Lab', 'sub_category' => 'Master Data – Jadwal Perkuliahan', 'description' => 'Mengatur plotting jadwal ruangan'],
 
             // ── MASTER DATA ── Semester & Mata Kuliah ─────────────────────────
-            ['name' => 'lab.semesters.view', 'category' => 'Layanan Lab', 'sub_category' => 'Master Data – Semester', 'description' => 'Melihat daftar semester aktif'],
-            ['name' => 'lab.semesters.data', 'category' => 'Layanan Lab', 'sub_category' => 'Master Data – Semester', 'description' => 'Mengambil data semester (DataTables)'],
-            ['name' => 'lab.mata-kuliah.view', 'category' => 'Layanan Lab', 'sub_category' => 'Master Data – Mata Kuliah', 'description' => 'Melihat daftar mata kuliah'],
-            ['name' => 'lab.mata-kuliah.data', 'category' => 'Layanan Lab', 'sub_category' => 'Master Data – Mata Kuliah', 'description' => 'Mengambil data mata kuliah (DataTables)'],
+            ['name' => 'akademik.semesters.view', 'category' => 'Layanan Lab', 'sub_category' => 'Master Data – Semester', 'description' => 'Melihat daftar semester aktif'],
+            ['name' => 'akademik.semesters.data', 'category' => 'Layanan Lab', 'sub_category' => 'Master Data – Semester', 'description' => 'Mengambil data semester (DataTables)'],
+            ['name' => 'akademik.mata-kuliah.view', 'category' => 'Layanan Lab', 'sub_category' => 'Master Data – Mata Kuliah', 'description' => 'Melihat daftar mata kuliah'],
+            ['name' => 'akademik.mata-kuliah.data', 'category' => 'Layanan Lab', 'sub_category' => 'Master Data – Mata Kuliah', 'description' => 'Mengambil data mata kuliah (DataTables)'],
 
             // ── PEMINJAMAN LAB ────────────────────────────────────────────────
             ['name' => 'lab.kegiatan.view', 'category' => 'Layanan Lab', 'sub_category' => 'Peminjaman Lab', 'description' => 'Melihat daftar permohonan pinjam lab'],
@@ -80,14 +80,14 @@ class RolePermissionLabSeeder extends Seeder
             ['name' => 'lab.software-requests.update', 'category' => 'Layanan Lab', 'sub_category' => 'Software Requests', 'description' => 'Memproses / mengubah status request software'],
 
             // ── DATA UMUM ─────────────────────────────────────────────────────
-            ['name' => 'lab.mahasiswa.view', 'category' => 'Layanan Lab', 'sub_category' => 'Data Mahasiswa', 'description' => 'Melihat daftar mahasiswa'],
-            ['name' => 'lab.mahasiswa.data', 'category' => 'Layanan Lab', 'sub_category' => 'Data Mahasiswa', 'description' => 'Mengambil data mahasiswa (DataTables)'],
-            ['name' => 'lab.personil.view', 'category' => 'Layanan Lab', 'sub_category' => 'Data Personil', 'description' => 'Melihat daftar personil lab'],
-            ['name' => 'lab.personil.data', 'category' => 'Layanan Lab', 'sub_category' => 'Data Personil', 'description' => 'Mengambil data personil lab (DataTables)'],
-            ['name' => 'lab.pengumuman.view', 'category' => 'Layanan Lab', 'sub_category' => 'Info Publik', 'description' => 'Melihat pengumuman lab'],
-            ['name' => 'lab.pengumuman.data', 'category' => 'Layanan Lab', 'sub_category' => 'Info Publik', 'description' => 'Mengambil data pengumuman (DataTables)'],
-            ['name' => 'lab.berita.view', 'category' => 'Layanan Lab', 'sub_category' => 'Info Publik', 'description' => 'Melihat berita lab'],
-            ['name' => 'lab.berita.data', 'category' => 'Layanan Lab', 'sub_category' => 'Info Publik', 'description' => 'Mengambil data berita (DataTables)'],
+            ['name' => 'akademik.mahasiswa.view', 'category' => 'Layanan Lab', 'sub_category' => 'Data Mahasiswa', 'description' => 'Melihat daftar mahasiswa'],
+            ['name' => 'akademik.mahasiswa.data', 'category' => 'Layanan Lab', 'sub_category' => 'Data Mahasiswa', 'description' => 'Mengambil data mahasiswa (DataTables)'],
+            ['name' => 'hr.personil.view', 'category' => 'Layanan Lab', 'sub_category' => 'Data Personil', 'description' => 'Melihat daftar personil lab'],
+            ['name' => 'hr.personil.data', 'category' => 'Layanan Lab', 'sub_category' => 'Data Personil', 'description' => 'Mengambil data personil lab (DataTables)'],
+            ['name' => 'cms.pengumuman.view', 'category' => 'Layanan Lab', 'sub_category' => 'Info Publik', 'description' => 'Melihat pengumuman lab'],
+            ['name' => 'cms.pengumuman.data', 'category' => 'Layanan Lab', 'sub_category' => 'Info Publik', 'description' => 'Mengambil data pengumuman (DataTables)'],
+            ['name' => 'cms.berita.view', 'category' => 'Layanan Lab', 'sub_category' => 'Info Publik', 'description' => 'Melihat berita lab'],
+            ['name' => 'cms.berita.data', 'category' => 'Layanan Lab', 'sub_category' => 'Info Publik', 'description' => 'Mengambil data berita (DataTables)'],
         ];
 
         foreach ($permissionData as $permission) {

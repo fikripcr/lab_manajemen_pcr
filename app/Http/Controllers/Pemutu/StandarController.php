@@ -14,7 +14,10 @@ use Yajra\DataTables\Facades\DataTables;
 
 class StandarController extends Controller
 {
-    public function __construct(protected IndikatorService $indikatorService)
+    public function __construct(
+        protected IndikatorService $indikatorService,
+        protected \App\Services\Hr\StrukturOrganisasiService $StrukturOrganisasiService
+    )
     {}
 
     public function index()
@@ -25,7 +28,9 @@ class StandarController extends Controller
             ->pluck('judul', 'dok_id')
             ->toArray();
 
-        return view('pages.pemutu.standar.index', compact('dokumens'));
+        $units = $this->StrukturOrganisasiService->getHierarchicalList();
+
+        return view('pages.pemutu.standar.index', compact('dokumens', 'units'));
     }
 
     public function data(Request $request)

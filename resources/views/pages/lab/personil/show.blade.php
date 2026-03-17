@@ -3,8 +3,8 @@
 @section('header')
     <x-tabler.page-header title="Detail Personil" pretitle="Master Data / Personil / Detail">
         <x-slot:actions>
-            <x-tabler.button type="edit" href="{{ route('lab.personil.edit', encryptId($personil->personil_id)) }}" />
-            <x-tabler.button type="back" href="{{ route('lab.personil.index') }}" />
+            <x-tabler.button type="edit" href="{{ route('hr.personil.edit', encryptId($personil->personil_id)) }}" />
+            <x-tabler.button type="back" href="{{ route('hr.personil.index') }}" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection

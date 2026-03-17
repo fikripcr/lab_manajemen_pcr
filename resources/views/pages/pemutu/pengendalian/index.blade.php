@@ -21,7 +21,6 @@
     @foreach(['akademik', 'non_akademik'] as $type)
         @php 
             $periode = $siklus[$type]; 
-            $userUnits = ${$type . 'Units'};
             $rapat = ${$type . 'Rapat'};
             $rootDoks = ${$type . 'RootDoks'};
             $typeId = str_replace('_', '-', $type);
@@ -64,43 +63,57 @@
                                     </div>
                                     <div class="col-auto d-flex gap-2">
                                         <x-tabler.datatable-page-length :dataTableId="'table-pengend-' . $typeId" />
-                                        <x-tabler.datatable-filter :dataTableId="'table-pengend-' . $typeId">
-                                            <div class="row g-2">
-                                                <div class="col-12">
-                                                    <x-tabler.form-select name="unit_id" id="unit_id_{{ $typeId }}" label="Unit / Area" class="unit-filter" placeholder="Filter Area / Unit" :options="$userUnits->pluck('name', 'encrypted_org_unit_id')" type="select2" />
-                                                </div>
-                                                <div class="col-12">
-                                                    <x-tabler.form-select name="dok_id" id="dok_id_{{ $typeId }}" label="Standar / Dokumen" placeholder="Filter Standar" :options="$rootDoks->pluck('judul', 'encrypted_dok_id')" type="select2" />
-                                                </div>
-                                                <div class="col-12">
-                                                    <x-tabler.form-select name="pengend_status" id="pengend_status_{{ $typeId }}" label="Status Pengendalian">
-                                                        <option value="all">Semua</option>
-                                                        <option value="tetap">Tetap</option>
-                                                        <option value="penyesuaian">Penyesuaian</option>
-                                                        <option value="nonaktif">Nonaktif</option>
-                                                        <option value="empty">Belum Diisi</option>
-                                                    </x-tabler.form-select>
-                                                </div>
-                                                <div class="col-12">
-                                                    <x-tabler.form-select name="pengend_important_matrix" id="pengend_important_matrix_{{ $typeId }}" label="Kepentingan">
-                                                        <option value="all">Semua</option>
-                                                        <option value="important">Important</option>
-                                                        <option value="not_important">Not Important</option>
-                                                    </x-tabler.form-select>
-                                                </div>
-                                                <div class="col-12">
-                                                    <x-tabler.form-select name="pengend_urgent_matrix" id="pengend_urgent_matrix_{{ $typeId }}" label="Urgensi">
-                                                        <option value="all">Semua</option>
-                                                        <option value="urgent">Urgent</option>
-                                                        <option value="not_urgent">Not Urgent</option>
-                                                    </x-tabler.form-select>
-                                                </div>
-                                            </div>
-                                        </x-tabler.datatable-filter>
+                                        <x-tabler.datatable-filter :dataTableId="'table-pengend-' . $typeId" type="button" :target="'#table-pengend-' . $typeId . '-filter-area'" />
                                         <x-tabler.datatable-search :dataTableId="'table-pengend-' . $typeId" />
                                     </div>
                                 </div>
                             </x-tabler.card-body>
+                            <div class="collapse" id="table-pengend-{{ $typeId }}-filter-area">
+                                <x-tabler.datatable-filter :dataTableId="'table-pengend-' . $typeId" type="bare">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <x-tabler.form-select name="unit_id" id="unit_id_{{ $typeId }}" label="Unit / Area" placeholder="">
+                                        <option value="">Semua Unit</option>
+                                        @foreach($units as $unit)
+                                            <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
+                                        @endforeach
+                                    </x-tabler.form-select>
+                                </div>
+                                <div class="col-md-3">
+                                    <x-tabler.form-select name="dok_id" id="dok_id_{{ $typeId }}" label="Standar / Dokumen" placeholder="">
+                                        <option value="">Semua Standar</option>
+                                        @foreach($rootDoks as $dok)
+                                            <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->judul }}</option>
+                                        @endforeach
+                                    </x-tabler.form-select>
+                                </div>
+                                <div class="col-md-2">
+                                    <x-tabler.form-select name="pengend_status" id="pengend_status_{{ $typeId }}" label="Status Pengendalian" placeholder="">
+                                        <option value="">Semua</option>
+                                        <option value="tetap">Tetap</option>
+                                        <option value="penyesuaian">Penyesuaian</option>
+                                        <option value="nonaktif">Nonaktif</option>
+                                        <option value="filled">Sudah Diisi (Ada Status)</option>
+                                        <option value="empty">Belum Diisi (Tanpa Status)</option>
+                                    </x-tabler.form-select>
+                                </div>
+                                <div class="col-md-2">
+                                    <x-tabler.form-select name="pengend_important_matrix" id="pengend_important_matrix_{{ $typeId }}" label="Kepentingan" placeholder="">
+                                        <option value="">Semua</option>
+                                        <option value="important">Important</option>
+                                        <option value="not_important">Not Important</option>
+                                    </x-tabler.form-select>
+                                </div>
+                                <div class="col-md-2">
+                                    <x-tabler.form-select name="pengend_urgent_matrix" id="pengend_urgent_matrix_{{ $typeId }}" label="Urgensi" placeholder="">
+                                        <option value="">Semua</option>
+                                        <option value="urgent">Urgent</option>
+                                        <option value="not_urgent">Not Urgent</option>
+                                    </x-tabler.form-select>
+                                </div>
+                            </div>
+                                </x-tabler.datatable-filter>
+                            </div>
                             <div class="table-responsive border-top">
                                 <x-tabler.datatable
                                     id="table-pengend-{{ $typeId }}"

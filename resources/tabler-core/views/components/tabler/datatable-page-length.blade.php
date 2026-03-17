@@ -23,13 +23,14 @@
 </div>
 
 <!-- Hidden input to store the actual value for DataTable -->
-<input type="hidden" id="{{ $dataTableId }}-pageLength" value="10">
+<input type="hidden" name="length" id="{{ $dataTableId }}-pageLength" value="10" form="{{ $dataTableId }}-filter">
 
 @push('scripts')
 <script>
 function updatePageLength(dataTableId, value, element) {
     // Update hidden input
-    document.getElementById(`${dataTableId}-pageLength`).value = value;
+    const input = document.getElementById(`${dataTableId}-pageLength`);
+    input.value = value;
     
     // Update button text
     document.getElementById(`${dataTableId}-pageLength-text`).textContent = value;
@@ -41,12 +42,8 @@ function updatePageLength(dataTableId, value, element) {
     });
     element.classList.add('active');
     
-    // Trigger DataTable page length change
-    const table = $(`#${dataTableId}`).DataTable();
-    if (table) {
-        const pageLength = value === 'All' ? -1 : parseInt(value);
-        table.page.len(pageLength).draw();
-    }
+    // Trigger change event so DataTable can react
+    input.dispatchEvent(new Event('change', { bubbles: true }));
 }
 </script>
 @endpush

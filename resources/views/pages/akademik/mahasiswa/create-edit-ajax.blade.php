@@ -1,7 +1,7 @@
 <x-tabler.form-modal
     id_form="{{ $mahasiswa->exists ? 'editMahasiswaForm' : 'createMahasiswaForm' }}"
     title="{{ $mahasiswa->exists ? 'Update Data Mahasiswa' : 'Tambah Data Mahasiswa' }}"
-    route="{{ $mahasiswa->exists ? route('lab.mahasiswa.update', $mahasiswa->encrypted_mahasiswa_id) : route('lab.mahasiswa.store') }}"
+    route="{{ $mahasiswa->exists ? route('akademik.mahasiswa.update', $mahasiswa->encrypted_mahasiswa_id) : route('akademik.mahasiswa.store') }}"
     method="{{ $mahasiswa->exists ? 'PUT' : 'POST' }}"
 >
     <div class="mb-3">

@@ -11,7 +11,18 @@ class PegawaiService
 {
     public function getFilteredQuery(array $filters = [])
     {
-        return Pegawai::with(['orgUnit', 'user']);
+        $query = Pegawai::with(['orgUnit', 'user']);
+
+        if (! empty($filters['org_unit_id'])) {
+            $unitId = decryptId($filters['org_unit_id']);
+            $query->where('org_unit_id', $unitId);
+        }
+
+        if (! empty($filters['jenis'])) {
+            $query->where('jenis', $filters['jenis']);
+        }
+
+        return $query;
     }
 
     public function getPegawaiById(int $id): ?Pegawai

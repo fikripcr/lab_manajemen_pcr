@@ -49,6 +49,13 @@ class StrukturOrganisasi extends Model
         return encryptId($this->orgunit_id);
     }
 
+    public function getIndentedNameAttribute()
+    {
+        $padding = max(0, ($this->level - 1)) * 3;
+        $indent = str_repeat('&nbsp;', $padding);
+        return $indent . $this->name;
+    }
+
     // Scopes
     public function scopeActive($query)
     {

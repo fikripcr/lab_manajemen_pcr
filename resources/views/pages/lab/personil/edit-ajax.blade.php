@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     title="Edit Personil"
-    route="{{ route('lab.personil.update', $personil) }}"
+    route="{{ route('hr.personil.update', $personil) }}"
     method="PUT"
     submitText="Simpan Perubahan"
 >

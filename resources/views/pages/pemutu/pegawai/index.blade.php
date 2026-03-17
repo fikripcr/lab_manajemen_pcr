@@ -15,16 +15,38 @@
 @section('content')
     <x-tabler.card>
         <x-tabler.card-header>
-            <div class="d-flex flex-wrap gap-2">
-                <div>
+            <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
+                <div class="d-flex flex-wrap gap-2">
                     <x-tabler.datatable-page-length dataTableId="pegawai-table" />
-                </div>
-                <div>
                     <x-tabler.datatable-search dataTableId="pegawai-table" />
+                </div>
+                <div class="ms-auto">
+                    <x-tabler.datatable-filter dataTableId="pegawai-table" type="button" target="#pegawai-filter-area" />
                 </div>
             </div>
         </x-tabler.card-header>
         <x-tabler.card-body class="p-0">
+            <div class="collapse" id="pegawai-filter-area">
+                <x-tabler.datatable-filter dataTableId="pegawai-table" type="bare">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <x-tabler.form-select name="org_unit_id" label="Unit / Area" placeholder="Semua Unit">
+                                <option value="">Semua Unit</option>
+                                @foreach($units as $unit)
+                                    <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
+                                @endforeach
+                            </x-tabler.form-select>
+                        </div>
+                        <div class="col-md-6">
+                            <x-tabler.form-select name="jenis" label="Jenis Pegawai" placeholder="Semua Jenis">
+                                <option value="">Semua Jenis</option>
+                                <option value="Dosen">Dosen</option>
+                                <option value="Tendik">Tendik</option>
+                            </x-tabler.form-select>
+                        </div>
+                    </div>
+                </x-tabler.datatable-filter>
+            </div>
             <x-tabler.datatable
                 id="pegawai-table"
                 :route="route('pemutu.pegawai.data')"

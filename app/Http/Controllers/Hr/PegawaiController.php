@@ -10,6 +10,7 @@ use App\Models\Hr\StatusPegawai;
 use App\Models\Hr\Pegawai;
 use App\Services\Hr\PegawaiService;
 use App\Services\Hr\RiwayatDataDiriService;
+use App\Services\Hr\StrukturOrganisasiService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -17,7 +18,8 @@ class PegawaiController extends Controller
 {
     public function __construct(
         protected PegawaiService $pegawaiService,
-        protected RiwayatDataDiriService $dataDiriService
+        protected RiwayatDataDiriService $dataDiriService,
+        protected StrukturOrganisasiService $strukturOrganisasiService
     ) {}
 
     /**
@@ -49,8 +51,8 @@ class PegawaiController extends Controller
      */
     public function index(Request $request)
     {
-        $posisi = StrukturOrganisasi::where('type', 'posisi')->get();
-        $units  = StrukturOrganisasi::whereIn('type', ['Bagian', 'Jurusan', 'Prodi', 'Unit'])->get();
+        $posisi = $this->strukturOrganisasiService->getHierarchicalList(types: ['posisi']);
+        $units  = $this->strukturOrganisasiService->getHierarchicalList(types: ['bagian', 'jurusan', 'prodi', 'unit']);
         return view('pages.hr.data-diri.index', compact('posisi', 'units'));
     }
 

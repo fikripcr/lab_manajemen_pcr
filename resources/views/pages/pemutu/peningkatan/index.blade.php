@@ -21,7 +21,6 @@
     @foreach(['akademik', 'non_akademik'] as $type)
         @php 
             $periode = $siklus[$type]; 
-            $userUnits = ${$type . 'Units'};
             $rapat = ${$type . 'Rapat'};
             $hasDuplicated = ${$type . 'HasDuplicated'};
             $rootDoks = ${$type . 'RootDoks'};
@@ -69,28 +68,43 @@
                                     </div>
                                     <div class="col-auto d-flex gap-2">
                                         <x-tabler.datatable-page-length :dataTableId="'table-review-' . $typeId" />
-                                        <x-tabler.datatable-filter :dataTableId="'table-review-' . $typeId">
-                                            <div class="row g-2">
-                                                <div class="col-12">
-                                                    <x-tabler.form-select name="unit_id" id="unit_id_{{ $typeId }}" label="Unit / Area" placeholder="Filter Area / Unit" :options="$userUnits->pluck('name', 'encrypted_org_unit_id')" type="select2" />
-                                                </div>
-                                                <div class="col-12">
-                                                    <x-tabler.form-select name="dok_id" id="dok_id_{{ $typeId }}" label="Standar / Dokumen" placeholder="Filter Standar" :options="$rootDoks->pluck('judul', 'encrypted_dok_id')" type="select2" />
-                                                </div>
-                                                <div class="col-12">
-                                                    <x-tabler.form-select name="pengend_status" id="pengend_status_{{ $typeId }}" label="Status Thn Lalu">
-                                                        <option value="all">Semua</option>
-                                                        <option value="tetap">Tetap</option>
-                                                        <option value="penyesuaian">Penyesuaian</option>
-                                                        <option value="nonaktif">Nonaktif</option>
-                                                    </x-tabler.form-select>
-                                                </div>
-                                            </div>
-                                        </x-tabler.datatable-filter>
+                                        <x-tabler.datatable-filter :dataTableId="'table-review-' . $typeId" type="button" :target="'#table-review-' . $typeId . '-filter-area'" />
                                         <x-tabler.datatable-search :dataTableId="'table-review-' . $typeId" />
                                     </div>
                                 </div>
                             </x-tabler.card-body>
+                            <div class="collapse" id="table-review-{{ $typeId }}-filter-area">
+                                <x-tabler.datatable-filter :dataTableId="'table-review-' . $typeId" type="bare">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <x-tabler.form-select name="unit_id" id="unit_id_{{ $typeId }}" label="Unit / Area" placeholder="">
+                                                <option value="">Semua Unit</option>
+                                                @foreach($units as $unit)
+                                                    <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
+                                                @endforeach
+                                            </x-tabler.form-select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <x-tabler.form-select name="dok_id" id="dok_id_{{ $typeId }}" label="Standar / Dokumen" placeholder="">
+                                                <option value="">Semua Standar</option>
+                                                @foreach($rootDoks as $dok)
+                                                    <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->judul }}</option>
+                                                @endforeach
+                                            </x-tabler.form-select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <x-tabler.form-select name="pengend_status" id="pengend_status_{{ $typeId }}" label="Status Thn Lalu" placeholder="">
+                                                <option value="">Semua</option>
+                                                <option value="tetap">Tetap</option>
+                                                <option value="penyesuaian">Penyesuaian</option>
+                                                <option value="nonaktif">Nonaktif</option>
+                                                <option value="filled">Sudah Review</option>
+                                                <option value="empty">Belum Review</option>
+                                            </x-tabler.form-select>
+                                        </div>
+                                    </div>
+                                </x-tabler.datatable-filter>
+                            </div>
                             
                             @if(!$hasDuplicated)
                                 <x-tabler.card-body class="text-center py-5 border-top">

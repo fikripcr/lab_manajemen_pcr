@@ -106,4 +106,22 @@ class DokumenService
             ->orderBy('seq')
             ->get();
     }
+
+    /**
+     * Get unique standard documents for a given year.
+     *
+     * @param string $year
+     * @return array
+     */
+    public function getStandardDocumentsByYear(string $year): array
+    {
+        return \App\Models\Pemutu\Dokumen::where('jenis', 'standar')
+            ->where('periode', 'like', "%{$year}%")
+            ->whereNull('parent_id')
+            ->orderBy('judul')
+            ->get()
+            ->unique('judul')
+            ->pluck('judul', 'dok_id')
+            ->toArray();
+    }
 }

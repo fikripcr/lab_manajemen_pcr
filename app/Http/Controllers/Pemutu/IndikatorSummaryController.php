@@ -7,10 +7,15 @@ use App\Models\Pemutu\PeriodeSpmi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Services\Hr\StrukturOrganisasiService;
 use Yajra\DataTables\Facades\DataTables;
 
 class IndikatorSummaryController extends Controller
 {
+    public function __construct(
+        protected StrukturOrganisasiService $strukturOrganisasiService
+    ) {}
+
     /**
      * Redirect to default tab (Standar).
      */
@@ -25,7 +30,6 @@ class IndikatorSummaryController extends Controller
     public function standar()
     {
         $pageTitle = 'Summary Indikator Standar';
-        $periodes  = PeriodeSpmi::orderBy('periode', 'desc')->get();
 
         // Global summary statistics untuk Standar
         $totalIndikator       = DB::table('pemutu_indikator')->where('type', 'standar')->count();
@@ -82,7 +86,6 @@ class IndikatorSummaryController extends Controller
 
         return view('pages.pemutu.indikator-summary.standar', compact(
             'pageTitle',
-            'periodes',
             'totalIndikator',
             'totalIndikatorActive',
             'edTotalUnits',
@@ -102,7 +105,6 @@ class IndikatorSummaryController extends Controller
     public function performa()
     {
         $pageTitle = 'Summary Indikator Performa (KPI)';
-        $periodes  = PeriodeSpmi::orderBy('periode', 'desc')->get();
 
         // Global summary statistics untuk Performa
         $totalIndikator       = DB::table('pemutu_indikator')->where('type', 'performa')->count();
@@ -124,11 +126,10 @@ class IndikatorSummaryController extends Controller
             return $pegawai->nama;
         });
 
-        $units = \App\Models\Hr\StrukturOrganisasi::orderBy('name')->get();
+        $units = $this->strukturOrganisasiService->getHierarchicalList();
 
         return view('pages.pemutu.indikator-summary.performa', compact(
             'pageTitle',
-            'periodes',
             'totalIndikator',
             'totalIndikatorActive',
             'kpiTotalPegawai',
@@ -157,10 +158,6 @@ class IndikatorSummaryController extends Controller
             $query->where('v.kelompok_indikator', $request->kelompok_indikator);
         }
 
-        // Filter by Year
-        if ($request->filled('year')) {
-            $query->whereYear('v.periode_mulai', $request->year);
-        }
 
         // Filter by ED Status
         if ($request->filled('ed_status')) {
@@ -493,7 +490,7 @@ class IndikatorSummaryController extends Controller
             return Excel::download(new \App\Exports\Pemutu\IndikatorSummaryPerformaExport($request), $fileName);
         }
 
-        $filters  = $request->only(['kelompok_indikator', 'year', 'search', 'ed_status', 'ami_hasil', 'pengend_status']);
+        $filters  = $request->only(['kelompok_indikator', 'search', 'ed_status', 'ami_hasil', 'pengend_status']);
         $fileName = 'summary_indikator_standar_' . date('Ymd_His') . '.xlsx';
 
         return Excel::download(new \App\Exports\Pemutu\IndikatorSummaryExport($filters), $fileName);
@@ -537,9 +534,7 @@ class IndikatorSummaryController extends Controller
         if ($request->filled('kelompok_indikator')) {
             $query->where('v.kelompok_indikator', $request->kelompok_indikator);
         }
-        if ($request->filled('year')) {
-            $query->whereYear('v.periode_mulai', $request->year);
-        }
+
         if ($request->filled('ed_status')) {
             if ($request->ed_status === 'filled') {
                 $query->whereNotNull('io.ed_capaian')->where('io.ed_capaian', '!=', '');

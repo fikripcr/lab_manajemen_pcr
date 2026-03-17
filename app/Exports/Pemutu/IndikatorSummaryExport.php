@@ -27,11 +27,6 @@ class IndikatorSummaryExport implements FromCollection, WithHeadings, WithMappin
             $query->where('kelompok_indikator', $this->filters['kelompok_indikator']);
         }
 
-        // Filter by year
-        if (! empty($this->filters['year'])) {
-            $query->whereYear('periode_mulai', $this->filters['year']);
-        }
-
         // Filter by ED Status
         if (! empty($this->filters['ed_status'])) {
             if ($this->filters['ed_status'] === 'filled') {

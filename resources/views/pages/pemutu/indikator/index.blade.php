@@ -42,31 +42,43 @@
                         </ul>
                     </x-tabler.card-body>
                     <x-tabler.card-header>
-                        <div class="d-flex flex-wrap gap-2 w-100">
+                        <div class="ms-auto d-flex gap-2 align-items-center">
                             <x-tabler.datatable-page-length :dataTableId="'indikator-table-' . $typeId" />
-                            <div class="ms-auto d-flex gap-2">
-                                <x-tabler.datatable-filter :dataTableId="'indikator-table-' . $typeId">
-                                    <div class="mb-2">
-                                        <x-tabler.form-select name="dokumen_id" id="dokumen_id_{{ $typeId }}" placeholder="Filter Dokumen" :options="$dokumens" type="select2" />
-                                    </div>
-                                    <div>
-                                        <x-tabler.form-select name="label_id" id="label_id_{{ $typeId }}" placeholder="Filter Label" :options="$labelParents" type="select2" />
-                                    </div>
-                                </x-tabler.datatable-filter>
-                                <x-tabler.datatable-search :dataTableId="'indikator-table-' . $typeId" />
-                            </div>
+                            <x-tabler.datatable-filter :dataTableId="'indikator-table-' . $typeId" type="button" :target="'#indikator-table-' . $typeId . '-filter-area'" />
+                            <x-tabler.datatable-search :dataTableId="'indikator-table-' . $typeId" />
                         </div>
                     </x-tabler.card-header>
+                    <div class="collapse" id="indikator-table-{{ $typeId }}-filter-area">
+                        <x-tabler.datatable-filter :dataTableId="'indikator-table-' . $typeId" type="bare">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <x-tabler.form-select name="dokumen_id" id="dokumen_id_{{ $typeId }}" label="Standar / Dokumen" type="select2" placeholder="" :options="$dokumens">
+                                        <option value="">Semua Standar</option>
+                                    </x-tabler.form-select>
+                                </div>
+                                <div class="col-md-4">
+                                    <x-tabler.form-select name="renstra_poin_id" id="renstra_poin_id_{{ $typeId }}" label="Poin Renstra" type="select2" placeholder="" :options="$renstraOptions">
+                                        <option value="">Semua Poin Renstra</option>
+                                    </x-tabler.form-select>
+                                </div>
+                                <div class="col-md-4">
+                                    <x-tabler.form-select name="label_ids[]" id="label_ids_{{ $typeId }}" label="Label Indikator" type="select2" placeholder="" :options="$labelParents" multiple="true">
+                                    </x-tabler.form-select>
+                                </div>
+                            </div>
+                        </x-tabler.datatable-filter>
+                    </div>
                     <x-tabler.card-body class="p-0">
                         <x-tabler.datatable
                             id="indikator-table-{{ $typeId }}"
                             route="{{ route('pemutu.indikator.data', ['type' => $activeType, 'periode' => $periode->periode]) }}"
                             :columns="[
                                 ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '5%'],
-                                ['data' => 'no_indikator', 'name' => 'no_indikator', 'title' => 'No. Indikator', 'width' => '10%'],
-                                ['data' => 'indikator', 'name' => 'indikator', 'title' => 'Indikator'],
-                                ['data' => 'target', 'name' => 'target', 'title' => 'Target','class' => 'text-center', 'width' => '10%'],
                                 ['data' => 'dokumen_judul', 'name' => 'dokumen_judul', 'title' => 'Dokumen Induk', 'searchable' => false, 'orderable' => false],
+                                ['data' => 'indikator', 'name' => 'indikator', 'title' => 'Indikator'],
+                                ['data' => 'kelompok_indikator', 'name' => 'kelompok_indikator', 'title' => 'Kelompok', 'class' => 'text-center', 'orderable' => false],
+                                ['data' => 'jenis_data', 'name' => 'jenis_data', 'title' => 'Jenis Data', 'class' => 'text-center', 'orderable' => false],
+                                ['data' => 'renstra_poin', 'name' => 'renstra_poin', 'title' => 'Poin Renstra', 'searchable' => false, 'orderable' => false],
                                 ['data' => 'labels', 'name' => 'labels', 'title' => 'Labels', 'orderable' => false, 'searchable' => false],
                                 ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '10%']
                             ]"

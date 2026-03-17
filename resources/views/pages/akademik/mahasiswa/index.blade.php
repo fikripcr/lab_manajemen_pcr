@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Master Mahasiswa" pretitle="Master Data">
     <x-slot:actions>
-        <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.mahasiswa.create')" modal-title="Tambah Mahasiswa" />
+        <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('akademik.mahasiswa.create')" modal-title="Tambah Mahasiswa" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -22,7 +22,7 @@
         </x-tabler.card-header>
         <x-tabler.card-body class="p-0">
             <x-tabler.datatable
-                id="mahasiswa-table" route="{{ route('lab.mahasiswa.data') }}" :columns="[
+                id="mahasiswa-table" route="{{ route('akademik.mahasiswa.data') }}" :columns="[
                 [
                     'title' => 'NIM',
                     'data' => 'nim',

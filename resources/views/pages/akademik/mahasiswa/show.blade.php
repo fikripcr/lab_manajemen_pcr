@@ -3,8 +3,8 @@
 @section('header')
     <x-tabler.page-header title="Detail Mahasiswa" pretitle="Master Data / Mahasiswa / Detail">
         <x-slot:actions>
-            <x-tabler.button type="edit" href="{{ route('lab.mahasiswa.edit', encryptId($mahasiswa->mahasiswa_id)) }}" />
-            <x-tabler.button type="back" href="{{ route('lab.mahasiswa.index') }}" />
+            <x-tabler.button type="edit" href="{{ route('akademik.mahasiswa.edit', encryptId($mahasiswa->mahasiswa_id)) }}" />
+            <x-tabler.button type="back" href="{{ route('akademik.mahasiswa.index') }}" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection

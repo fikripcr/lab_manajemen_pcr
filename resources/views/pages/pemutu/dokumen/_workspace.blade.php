@@ -240,7 +240,7 @@
                 @if($type === 'dokumen')
                     @if($item->jenis === 'renop')
                         <div class="tab-pane" id="tab-indikator-renop" role="tabpanel">
-                            <x-tabler.card class="bg-transparent shadow-none border">
+                            <x-tabler.card>
                                 <x-tabler.card-header title="Daftar Indikator Labeled RENOP"/>
                                 <x-tabler.datatable
                                     id="indikator-renop-table"
@@ -251,7 +251,7 @@
                         </div>
                     @else
                         <div class="tab-pane" id="tab-subdokumen" role="tabpanel">
-                            <x-tabler.card class="bg-transparent shadow-none border">
+                            <x-tabler.card>
                                 <x-tabler.card-header title="Daftar {{ $childLabel ?? 'Turunan' }}">
                                     <x-slot:actions>
                                         <x-tabler.button type="create" class="ajax-modal-btn"
@@ -330,7 +330,7 @@
                     {{-- RENOP POIN: Indikator Section --}}
                     @if($isRenopPoint)
                         <div class="tab-pane" id="tab-indikator" role="tabpanel">
-                            <x-tabler.card class="bg-transparent shadow-none border mb-3">
+                            <x-tabler.card class=" border mb-3">
                                 <x-tabler.card-header>
                                     <x-slot:title>
                                         Daftar Indikator Renop
@@ -357,7 +357,7 @@
                     @if(!$isKebijakan)
                         <div class="tab-pane" id="tab-subdokumen" role="tabpanel">
                             @if($item->is_hasilkan_indikator)
-                                <x-tabler.card class="bg-transparent shadow-none border mb-3">
+                                <x-tabler.card class=" border mb-3">
                                     <x-tabler.card-header>
                                         <x-slot:title>
                                             Terdapat <span class="badge bg-muted-lt">{{ $item->indikators->count() }}</span> Indikator
@@ -378,7 +378,7 @@
                             @endif
 
                             @if(!$item->is_hasilkan_indikator && $item->childDokumens->count() > 0)
-                                <x-tabler.card class="bg-transparent shadow-none border">
+                                <x-tabler.card>
                                     <x-tabler.card-header title="Poin ini memiliki beberapa Dokumen Turunan:">
                                         <x-slot:actions>
                                             <x-tabler.button type="create" class="ajax-modal-btn"

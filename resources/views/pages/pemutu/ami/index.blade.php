@@ -21,7 +21,6 @@
     @foreach(['akademik', 'non_akademik'] as $type)
         @php 
             $periode = $siklus[$type]; 
-            $userUnits = ${$type . 'Units'};
             $typeId = str_replace('_', '-', $type);
             $prevYear = $periode ? (int)$periode->periode - 1 : null;
         @endphp
@@ -68,33 +67,49 @@
                                     </div>
                                     <div class="col-auto d-flex gap-2">
                                         <x-tabler.datatable-page-length :dataTableId="'table-ami-' . $typeId" />
-                                        <x-tabler.datatable-filter :dataTableId="'table-ami-' . $typeId">
-                                            <div class="row g-2">
-                                                <div class="col-12">
-                                                    <x-tabler.form-select name="unit_id" id="unit_id_{{ $typeId }}" label="Unit / Area" class="unit-filter" placeholder="Filter Area / Unit" :options="$userUnits->pluck('name', 'encrypted_org_unit_id')" type="select2" />
-                                                </div>
-                                                <div class="col-12">
-                                                    <x-tabler.form-select name="ami_hasil_akhir" id="ami_hasil_akhir_{{ $typeId }}" label="Hasil AMI">
-                                                        <option value="">Semua Hasil</option>
-                                                        <option value="empty">Belum Dinilai</option>
-                                                        <option value="0">KTS</option>
-                                                        <option value="1">Terpenuhi</option>
-                                                        <option value="2">Terlampaui</option>
-                                                    </x-tabler.form-select>
-                                                </div>
-                                                <div class="col-12">
-                                                    <x-tabler.form-select name="ed_status" id="ed_status_{{ $typeId }}" label="Status ED">
-                                                        <option value="">Semua Status</option>
-                                                        <option value="isi">Sudah Isi</option>
-                                                        <option value="kosong">Belum Isi</option>
-                                                    </x-tabler.form-select>
-                                                </div>
-                                            </div>
-                                        </x-tabler.datatable-filter>
+                                        <x-tabler.datatable-filter :dataTableId="'table-ami-' . $typeId" type="button" :target="'#table-ami-' . $typeId . '-filter-area'" />
                                         <x-tabler.datatable-search :dataTableId="'table-ami-' . $typeId" />
                                     </div>
                                 </div>
                             </x-tabler.card-body>
+                            <div class="collapse" id="table-ami-{{ $typeId }}-filter-area">
+                                <x-tabler.datatable-filter :dataTableId="'table-ami-' . $typeId" type="bare">
+                                    <div class="row g-3">
+                                        <div class="col-md-3">
+                                            <x-tabler.form-select name="unit_id" id="unit_id_{{ $typeId }}" label="Unit / Area" placeholder="">
+                                                <option value="">Semua Unit</option>
+                                                @foreach($units as $unit)
+                                                    <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
+                                                @endforeach
+                                            </x-tabler.form-select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <x-tabler.form-select name="dok_id" id="dok_id_{{ $typeId }}" label="Standar / Dokumen" placeholder="">
+                                                <option value="">Semua Standar</option>
+                                                @foreach($rootDoks as $dok)
+                                                    <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->judul }}</option>
+                                                @endforeach
+                                            </x-tabler.form-select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <x-tabler.form-select name="ami_hasil_akhir" id="ami_hasil_akhir_{{ $typeId }}" label="Hasil AMI" placeholder="">
+                                                <option value="">Semua Hasil</option>
+                                                <option value="empty">Belum Dinilai</option>
+                                                <option value="0">KTS</option>
+                                                <option value="1">Terpenuhi</option>
+                                                <option value="2">Terlampaui</option>
+                                            </x-tabler.form-select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <x-tabler.form-select name="ed_status" id="ed_status_{{ $typeId }}" label="Status ED" placeholder="">
+                                                <option value="">Semua Status</option>
+                                                <option value="filled">Sudah Isi</option>
+                                                <option value="empty">Belum Isi</option>
+                                            </x-tabler.form-select>
+                                        </div>
+                                    </div>
+                                </x-tabler.datatable-filter>
+                            </div>
                             <div class="table-responsive border-top">
                                 <x-tabler.datatable
                                     id="table-ami-{{ $typeId }}"
@@ -105,7 +120,6 @@
                                         ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%', 'class' => 'text-left'],
                                         ['data' => 'status_ed', 'name' => 'status_ed', 'title' => 'Status ED', 'width' => '10%', 'class' => 'text-center', 'orderable' => false],
                                         ['data' => 'status_ami', 'name' => 'status_ami', 'title' => 'Hasil AMI', 'width' => '15%', 'class' => 'text-left', 'orderable' => false],
-                                        ['data' => 'rtp', 'name' => 'rtp', 'title' => 'RTP', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                                         ['data' => 'action', 'name' => 'action', 'title' => 'AMI', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                                     ]"
                                 />
@@ -122,10 +136,40 @@
                                     </div>
                                     <div class="col-auto d-flex gap-2">
                                         <x-tabler.datatable-page-length :dataTableId="'table-te-' . $typeId" />
+                                        <x-tabler.datatable-filter :dataTableId="'table-te-' . $typeId" type="button" :target="'#table-te-' . $typeId . '-filter-area'" />
                                         <x-tabler.datatable-search :dataTableId="'table-te-' . $typeId" />
                                     </div>
                                 </div>
                             </x-tabler.card-body>
+                            <div class="collapse" id="table-te-{{ $typeId }}-filter-area">
+                                <x-tabler.datatable-filter :dataTableId="'table-te-' . $typeId" type="bare">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <x-tabler.form-select name="unit_id" id="unit_id_te_{{ $typeId }}" label="Unit / Area" placeholder="">
+                                                <option value="">Semua Unit</option>
+                                                @foreach($units as $unit)
+                                                    <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
+                                                @endforeach
+                                            </x-tabler.form-select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <x-tabler.form-select name="dok_id" id="dok_id_te_{{ $typeId }}" label="Standar / Dokumen" placeholder="">
+                                                <option value="">Semua Standar</option>
+                                                @foreach($rootDoks as $dok)
+                                                    <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->judul }}</option>
+                                                @endforeach
+                                            </x-tabler.form-select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <x-tabler.form-select name="te_status" id="te_status_{{ $typeId }}" label="Status Tinjauan" placeholder="">
+                                                <option value="">Semua Status</option>
+                                                <option value="filled">Sudah Ditinjau</option>
+                                                <option value="empty">Belum Ditinjau</option>
+                                            </x-tabler.form-select>
+                                        </div>
+                                    </div>
+                                </x-tabler.datatable-filter>
+                            </div>
                             <div class="table-responsive border-top">
                                 <x-tabler.datatable
                                     id="table-te-{{ $typeId }}"
@@ -153,10 +197,40 @@
                                     </div>
                                     <div class="col-auto d-flex gap-2">
                                         <x-tabler.datatable-page-length :dataTableId="'table-rtp-only-' . $typeId" />
+                                        <x-tabler.datatable-filter :dataTableId="'table-rtp-only-' . $typeId" type="button" :target="'#table-rtp-only-' . $typeId . '-filter-area'" />
                                         <x-tabler.datatable-search :dataTableId="'table-rtp-only-' . $typeId" />
                                     </div>
                                 </div>
                             </x-tabler.card-body>
+                            <div class="collapse" id="table-rtp-only-{{ $typeId }}-filter-area">
+                                <x-tabler.datatable-filter :dataTableId="'table-rtp-only-' . $typeId" type="bare">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <x-tabler.form-select name="unit_id" id="unit_id_rtp_{{ $typeId }}" label="Unit / Area" placeholder="">
+                                                <option value="">Semua Unit</option>
+                                                @foreach($units as $unit)
+                                                    <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
+                                                @endforeach
+                                            </x-tabler.form-select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <x-tabler.form-select name="dok_id" id="dok_id_rtp_{{ $typeId }}" label="Standar / Dokumen" placeholder="">
+                                                <option value="">Semua Standar</option>
+                                                @foreach($rootDoks as $dok)
+                                                    <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->judul }}</option>
+                                                @endforeach
+                                            </x-tabler.form-select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <x-tabler.form-select name="rtp_status" id="rtp_status_{{ $typeId }}" label="Status RTP" placeholder="">
+                                                <option value="">Semua Status</option>
+                                                <option value="filled">Sudah Mengisi</option>
+                                                <option value="empty">Belum Mengisi</option>
+                                            </x-tabler.form-select>
+                                        </div>
+                                    </div>
+                                </x-tabler.datatable-filter>
+                            </div>
                             <div class="table-responsive border-top">
                                 <x-tabler.datatable
                                     id="table-rtp-only-{{ $typeId }}"
@@ -164,9 +238,10 @@
                                     :columns="[
                                         ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                                         ['data' => 'indikator_full', 'name' => 'indikator_full', 'title' => 'Indikator'],
-                                        ['data' => 'status_ami', 'name' => 'status_ami', 'title' => 'Hasil AMI', 'width' => '15%', 'orderable' => false, 'searchable' => false],
+                                        ['data' => 'auditor_recom', 'name' => 'auditor_recom', 'title' => 'Rekomendasi Auditor', 'width' => '15%'],
                                         ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%', 'class' => 'text-left'],
-                                        ['data' => 'rtp', 'name' => 'rtp', 'title' => 'Rencana Tindakan Perbaikan', 'width' => '30%', 'class' => 'text-left', 'orderable' => false, 'searchable' => false],
+                                        ['data' => 'rtp_isi', 'name' => 'rtp_isi', 'title' => 'Rencana Perbaikan', 'width' => '20%', 'class' => 'text-left', 'orderable' => false, 'searchable' => false],
+                                        ['data' => 'rtp_tgl', 'name' => 'rtp_tgl', 'title' => 'Tgl Pelaksanaan', 'width' => '10%', 'class' => 'text-center'],
                                         ['data' => 'action_rtp', 'name' => 'action_rtp', 'title' => 'Aksi', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                                     ]"
                                 />

@@ -10,47 +10,41 @@
                     <x-tabler.datatable-page-length dataTableId="table-performa" />
                     <x-tabler.datatable-search dataTableId="table-performa" />
                     
-                    <x-tabler.datatable-filter dataTableId="table-performa">
-                        <div class="row g-2">
-                            <div class="col-12">
-                                <x-tabler.form-select name="kelompok_indikator" label="Kelompok" class="mb-2">
-                                    <option value="">Semua Kelompok</option>
-                                    <option value="Akademik">Akademik</option>
-                                    <option value="Non Akademik">Non Akademik</option>
-                                </x-tabler.form-select>
-                            </div>
-                            <div class="col-12">
-                                <x-tabler.form-select name="year" label="Tahun Periode" class="mb-2">
-                                    <option value="">Semua Tahun</option>
-                                    @foreach($periodes as $periode)
-                                        <option value="{{ $periode->tahun }}">{{ $periode->periode }}</option>
-                                    @endforeach
-                                </x-tabler.form-select>
-                            </div>
-                            <div class="col-12">
-                                <x-tabler.form-select name="pegawai_id" id="performa-filter-pegawai" label="Pegawai" class="mb-2" type="select2">
-                                    <option value="">Semua Pegawai</option>
-                                    @foreach($pegawais as $pegawai)
-                                        <option value="{{ $pegawai->pegawai_id }}">{{ $pegawai->nama }}</option>
-                                    @endforeach
-                                </x-tabler.form-select>
-                            </div>
-                            <div class="col-12">
-                                <x-tabler.form-select name="unit_id" id="performa-filter-unit" label="Unit" class="mb-0" type="select2">
-                                    <option value="">Semua Unit</option>
-                                    @foreach($units as $unit)
-                                        <option value="{{ $unit->orgunit_id }}">{{ $unit->name }}</option>
-                                    @endforeach
-                                </x-tabler.form-select>
-                            </div>
-                        </div>
-                    </x-tabler.datatable-filter>
-
+                    <x-tabler.datatable-filter dataTableId="table-performa" type="button" target="#table-performa-filter-area" />
                     <x-tabler.button type="button" class="btn-success" onclick="exportExcel()" icon="ti ti-file-export" text="Export" />
                 </div>
             </div>
         </x-tabler.card-header>
         <x-tabler.card-body class="p-0">
+            <div class="collapse" id="table-performa-filter-area">
+                <x-tabler.datatable-filter dataTableId="table-performa" type="bare">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <x-tabler.form-select name="kelompok_indikator" label="Kelompok" placeholder="">
+                                <option value="">Semua Kelompok</option>
+                                <option value="Akademik">Akademik</option>
+                                <option value="Non Akademik">Non Akademik</option>
+                            </x-tabler.form-select>
+                        </div>
+                        <div class="col-md-3">
+                            <x-tabler.form-select name="pegawai_id" id="performa-filter-pegawai" label="Pegawai" placeholder="">
+                                <option value="">Semua Pegawai</option>
+                                @foreach($pegawais as $pegawai)
+                                    <option value="{{ $pegawai->pegawai_id }}">{{ $pegawai->nama }}</option>
+                                @endforeach
+                            </x-tabler.form-select>
+                        </div>
+                        <div class="col-md-3">
+                            <x-tabler.form-select name="unit_id" id="performa-filter-unit" label="Unit" placeholder="">
+                                <option value="">Semua Unit</option>
+                                @foreach($units as $unit)
+                                    <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
+                                @endforeach
+                            </x-tabler.form-select>
+                        </div>
+                    </div>
+                </x-tabler.datatable-filter>
+            </div>
             {{-- Summary Cards --}}
             <div class="row p-3">
                 <div class="col-sm-6 col-lg-4">

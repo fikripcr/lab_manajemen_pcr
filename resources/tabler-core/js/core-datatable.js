@@ -16,6 +16,8 @@ export default class CustomDataTables {
         this.selectedIds = new Set();
         this.table = null;
         this.stateName = 'DataTables_' + this.tableId + '_' + window.location.pathname;
+        this.isRestoring = false;
+        this.refreshTimeout = null;
 
         this.init();
     }
@@ -35,9 +37,12 @@ export default class CustomDataTables {
             processing: true,
             serverSide: true,
             stateSave: true,
+            stateDuration: 60 * 60 * 24 * 7, // 1 week
+            stateSaveInterval: 0, // Save state immediately
             responsive: false, // Disable DT responsive to use native scrolling
             order: [[0, 'desc']],
-            pageLength: this.options.pageLengthValue || 10,
+            pageLength: 10,
+            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             ajax: {
                 url: this.options.route,
                 data: (d) => this.addFilterData(d, SELECTOR.filterForm),
@@ -46,7 +51,7 @@ export default class CustomDataTables {
             dom: "<'table-responsive'tr>" +
                 "<'card-footer d-flex align-items-center'<'text-muted'i><'ms-auto'p>>",
             stateLoadCallback: (settings, callback) => this.loadState(callback, SELECTOR),
-            stateSaveCallback: (settings, data) => this.saveState(data, SELECTOR.filterForm),
+            stateSaveCallback: (settings, data) => this.saveState(settings, data, SELECTOR.filterForm),
         });
 
         // Pasang semua event listener
@@ -59,11 +64,19 @@ export default class CustomDataTables {
 
     addFilterData(d, filterFormSelector) {
         const filterForm = document.querySelector(filterFormSelector);
+        
         if (filterForm && filterForm instanceof HTMLFormElement) {
             const formData = new FormData(filterForm);
             for (const [key, value] of formData.entries()) {
+                // Form data overrides default DataTables params if they exist
                 d[key] = value;
             }
+        }
+
+        // Also check if there's a standalone pageLength input NOT inside the form
+        const standaloneLen = document.getElementById(`${this.tableId}-pageLength`);
+        if (standaloneLen && standaloneLen.value) {
+            d['length'] = standaloneLen.value === 'All' ? -1 : standaloneLen.value;
         }
 
         const storedState = localStorage.getItem(this.stateName);
@@ -71,7 +84,8 @@ export default class CustomDataTables {
             const state = JSON.parse(storedState);
             if (state.customFilter) {
                 for (const [key, value] of Object.entries(state.customFilter)) {
-                    if (d[key] === undefined || d[key] === '') {
+                    // Backfill other custom filters if not present in the current request
+                    if (d[key] === undefined) {
                         d[key] = value;
                     }
                 }
@@ -115,65 +129,105 @@ export default class CustomDataTables {
         const stored = localStorage.getItem(this.stateName);
         if (stored) {
             const state = JSON.parse(stored);
-
-            // Set the page length from the stored state before loading
-            if (state.length !== undefined) {
-                this.options.pageLengthValue = state.length;
-            }
-
+            this.isRestoring = true;
             callback(state);
 
+            // Sync UI in next tick to ensure table instance is available
             setTimeout(() => {
-                // Sync UI
-                const pageLengthEl = $(`#${this.tableId}-pagelength`);
-                if (pageLengthEl.length) pageLengthEl.val(state.length);
-
-                if (this.options.search && state.search?.search) {
-                    $(`#${this.tableId}-search`).val(state.search.search);
-                }
-
+                // Sync filter form
                 const form = document.getElementById(`${this.tableId}-filter`);
                 if (form && state.customFilter) {
+                    form.dataset.isRestoring = 'true';
                     for (const [key, value] of Object.entries(state.customFilter)) {
                         const el = form.querySelector(`[name="${key}"]`);
                         if (el) {
-                            el.value = value;
-                            // Trigger native change event for UI sync (counts, badges)
-                            el.dispatchEvent(new Event('change', { bubbles: true }));
-                            // Special handling for Select2 if used
-                            if (window.jQuery && $(el).data('select2')) {
-                                $(el).trigger('change.select2');
-                            }
+                            $(el).val(value);
+                            if ($(el).data('select2')) $(el).trigger('change.select2');
                         }
                     }
+                    delete form.dataset.isRestoring;
                     this.updateActiveFilters();
                 }
+
+                // Sync page length UI - explicitly check the hidden input
+                const api = this.table;
+                if (api) {
+                    const currentLen = api.page.len();
+                    const displayLen = currentLen === -1 ? 'All' : currentLen;
+                    
+                    const textEl = document.getElementById(`${this.tableId}-pageLength-text`);
+                    if (textEl) textEl.textContent = displayLen;
+
+                    const inputEl = document.getElementById(`${this.tableId}-pageLength`);
+                    if (inputEl) inputEl.value = displayLen;
+
+                    const menu = document.getElementById(`${this.tableId}-pageLength-menu`);
+                    if (menu) {
+                        menu.querySelectorAll('.dropdown-item').forEach(item => {
+                            if (item.getAttribute('data-value') == displayLen) {
+                                item.classList.add('active');
+                            } else {
+                                item.classList.remove('active');
+                            }
+                        });
+                    }
+                }
+                // Give all triggered 'change' events and Select2 settled time before unguarding
+                setTimeout(() => {
+                    this.isRestoring = false;
+                    this.updateActiveFilters();
+                }, 200);
             }, 50);
         } else {
             callback(null);
         }
     }
 
-    saveState(data, filterFormSelector) {
-        if (!this.table) return;
-
+    saveState(settings, data, filterFormSelector) {
         const filterForm = document.querySelector(filterFormSelector);
         if (filterForm && filterForm instanceof HTMLFormElement) {
             const formData = new FormData(filterForm);
-            data.customFilter = Object.fromEntries(formData.entries());
+            const customFilter = {};
+            for (const [key, value] of formData.entries()) {
+                customFilter[key] = value;
+            }
+            data.customFilter = customFilter;
         }
-
-        // Ensure page length is preserved in state
-        data.length = this.table.page.len();
 
         localStorage.setItem(this.stateName, JSON.stringify(data));
     }
 
     bindEvents(SELECTOR) {
-        // Refresh
+        const refreshTable = () => {
+            if (this.isRestoring) return;
+            
+            // Debounce the refresh to batch multiple changes (e.g. from Select2 or multi-input updates)
+            clearTimeout(this.refreshTimeout);
+            this.refreshTimeout = setTimeout(() => {
+                if (this.isRestoring) return;
+
+                // Sync page length from hidden input if it exists
+                const pageLenEl = document.getElementById(`${this.tableId}-pageLength`);
+                if (pageLenEl) {
+                    const val = pageLenEl.value;
+                    const len = val === 'All' ? -1 : parseInt(val);
+                    if (this.table.page.len() !== len) {
+                        this.table.page.len(len);
+                    }
+                }
+
+                this.updateActiveFilters();
+                this.table.ajax.reload();
+            }, 100); // 100ms debounce
+        };
+
+        // Refresh Button
         const refreshBtn = document.querySelector(`#${this.tableId}-refresh`);
         if (refreshBtn) {
-            refreshBtn.addEventListener('click', () => this.table.draw());
+            refreshBtn.addEventListener('click', () => {
+                if (this.isRestoring) return;
+                this.table.draw();
+            });
         }
 
         // Search
@@ -183,6 +237,7 @@ export default class CustomDataTables {
             const clearBtn = document.getElementById(`${this.tableId}-clear-search`);
             if (searchInput) {
                 searchInput.addEventListener('input', (e) => {
+                    if (this.isRestoring) return;
                     clearTimeout(timeout);
                     const q = e.target.value.trim();
                     if (clearBtn) clearBtn.classList.toggle('d-none', !q);
@@ -190,6 +245,7 @@ export default class CustomDataTables {
                 });
                 if (clearBtn) {
                     clearBtn.addEventListener('click', () => {
+                        if (this.isRestoring) return;
                         searchInput.value = '';
                         clearBtn.classList.add('d-none');
                         this.table.search('').draw();
@@ -198,31 +254,20 @@ export default class CustomDataTables {
             }
         }
 
-        // Page Length
-        if (this.options.pageLength) {
-            const pageLenEl = document.querySelector(SELECTOR.pageLength);
-            if (pageLenEl) {
-                // Atur nilai awal berdasarkan state atau nilai default DataTables
-                const initialPageLength = this.table.context[0]._iDisplayLength;
-                pageLenEl.value = initialPageLength;
-
-                pageLenEl.addEventListener('change', (e) => {
-                    const val = e.target.value;
-                    const len = val === 'All' ? -1 : parseInt(val);
-                    this.table.page.len(len).draw();
-                });
-            }
-        }
-
-        // Filter Form
+        // Combined Filter Form & Page Length Listener
         const filterForm = document.querySelector(SELECTOR.filterForm);
         if (filterForm) {
-            filterForm.addEventListener('change', () => {
-                this.updateActiveFilters();
-                this.table.ajax.reload();
-            });
+            filterForm.addEventListener('change', refreshTable);
             this.updateActiveFilters();
         }
+
+        // Fallback for standalone page length if it's NOT inside a form
+        const pageLenEl = document.querySelector(SELECTOR.pageLength);
+        if (pageLenEl && (!filterForm || !filterForm.contains(pageLenEl))) {
+            pageLenEl.addEventListener('change', refreshTable);
+        }
+
+        // Checkbox
 
         // Checkbox
         if (this.options.checkbox) {

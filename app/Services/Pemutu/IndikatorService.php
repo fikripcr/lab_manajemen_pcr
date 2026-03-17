@@ -12,7 +12,7 @@ class IndikatorService
 {
     public function getFilteredQuery(array $filters)
     {
-        $query = Indikator::with(['dokSubs.dokumen', 'labels', 'parent', 'orgUnits']);
+        $query = Indikator::with(['dokSubs.dokumen', 'labels', 'parent', 'orgUnits', 'renstraPoin.dokumen']);
 
         if (! empty($filters['dokumen_id'])) {
             $dokId = decryptIdIfEncrypted($filters['dokumen_id']);
@@ -29,10 +29,24 @@ class IndikatorService
             $query->where('parent_id', decryptIdIfEncrypted($filters['parent_id']));
         }
 
+        if (! empty($filters['renstra_poin_id'])) {
+            $query->where('renstra_poin_id', decryptIdIfEncrypted($filters['renstra_poin_id']));
+        }
+
+        if (! empty($filters['label_ids']) || ! empty($filters['label_ids[]'])) {
+            $labelIds = $filters['label_ids'] ?? $filters['label_ids[]'];
+            $labelIds = is_array($labelIds) ? $labelIds : [$labelIds];
+            $labelIds = array_map('decryptIdIfEncrypted', $labelIds);
+            $query->whereHas('labels', function ($q) use ($labelIds) {
+                $q->whereIn('pemutu_label.label_id', $labelIds);
+            });
+        }
+
         // Filter by year (Dokumen.periode)
         if (! empty($filters['periode'])) {
-            $query->whereHas('dokSubs.dokumen', function ($q) use ($filters) {
-                $q->where('periode', $filters['periode']);
+            $periode = $filters['periode'];
+            $query->whereHas('dokSubs.dokumen', function ($q) use ($periode) {
+                $q->where('periode', 'like', '%' . $periode . '%');
             });
         }
 
@@ -310,15 +324,23 @@ class IndikatorService
             // Apply same result filters to the loaded units to ensure context consistency
             if (isset($additionalFilters['ami_hasil_akhir']) && $additionalFilters['ami_hasil_akhir'] !== '') {
                 $val = $additionalFilters['ami_hasil_akhir'];
-                is_array($val) ? $q->whereIn('ami_hasil_akhir', $val) : $q->where('ami_hasil_akhir', $val);
+                if ($val === 'empty') {
+                    $q->where(function ($sq) {
+                        $sq->whereNull('ami_hasil_akhir')->orWhere('ami_hasil_akhir', '');
+                    });
+                } else {
+                    is_array($val) ? $q->whereIn('ami_hasil_akhir', $val) : $q->where('ami_hasil_akhir', $val);
+                }
             }
 
-            if (isset($additionalFilters['pengend_status']) && $additionalFilters['pengend_status'] !== 'all') {
+            if (! empty($additionalFilters['pengend_status'])) {
                 $status = $additionalFilters['pengend_status'];
                 if ($status === 'empty') {
                     $q->where(function ($sq) {
                         $sq->whereNull('pengend_status')->orWhere('pengend_status', '');
                     });
+                } elseif ($status === 'filled') {
+                    $q->whereNotNull('pengend_status')->where('pengend_status', '!=', '');
                 } else {
                     is_array($status) ? $q->whereIn('pengend_status', $status) : $q->where('pengend_status', $status);
                 }
@@ -358,11 +380,11 @@ class IndikatorService
                 $q->where('pemutu_indikator_orgunit.org_unit_id', $unitId);
             }
 
-            // Status ED: 'isi' or 'kosong'
+            // Status ED: 'filled' or 'empty'
             if (! empty($additionalFilters['ed_status'])) {
-                if ($additionalFilters['ed_status'] === 'isi') {
+                if ($additionalFilters['ed_status'] === 'filled') {
                     $q->whereNotNull('ed_capaian')->where('ed_capaian', '!=', '');
-                } elseif ($additionalFilters['ed_status'] === 'kosong') {
+                } elseif ($additionalFilters['ed_status'] === 'empty') {
                     $q->where(function ($sq) {
                         $sq->whereNull('ed_capaian')->orWhere('ed_capaian', '');
                     });
@@ -378,29 +400,70 @@ class IndikatorService
             // Filter by AMI Hasil Akhir (exact or array)
             if (isset($additionalFilters['ami_hasil_akhir']) && $additionalFilters['ami_hasil_akhir'] !== '') {
                 $val = $additionalFilters['ami_hasil_akhir'];
-                is_array($val) ? $q->whereIn('ami_hasil_akhir', $val) : $q->where('ami_hasil_akhir', $val);
+                if ($val === 'empty') {
+                    $q->where(function ($sq) {
+                        $sq->whereNull('ami_hasil_akhir')->orWhere('ami_hasil_akhir', '');
+                    });
+                } else {
+                    is_array($val) ? $q->whereIn('ami_hasil_akhir', $val) : $q->where('ami_hasil_akhir', $val);
+                }
             }
 
             // Filter Pengendalian Status
             $status = $additionalFilters['pengend_status'] ?? null;
-            if ($status && $status !== 'all') {
+            if (! empty($status)) {
                 if ($status === 'empty') {
                     $q->where(function ($sq) {
                         $sq->whereNull('pengend_status')->orWhere('pengend_status', '');
                     });
+                } elseif ($status === 'filled') {
+                    $q->whereNotNull('pengend_status')->where('pengend_status', '!=', '');
                 } else {
                     is_array($status) ? $q->whereIn('pengend_status', $status) : $q->where('pengend_status', $status);
                 }
             }
 
+            // RTP Status
+            if (! empty($additionalFilters['rtp_status'])) {
+                if ($additionalFilters['rtp_status'] === 'filled') {
+                    $q->whereNotNull('ami_rtp_isi')->where('ami_rtp_isi', '!=', '');
+                } elseif ($additionalFilters['rtp_status'] === 'empty') {
+                    $q->where(function ($sq) {
+                        $sq->whereNull('ami_rtp_isi')->orWhere('ami_rtp_isi', '');
+                    });
+                }
+            }
+
+            // TE Status
+            if (! empty($additionalFilters['te_status'])) {
+                if ($additionalFilters['te_status'] === 'filled') {
+                    $q->whereNotNull('ami_te_isi')->where('ami_te_isi', '!=', '');
+                } elseif ($additionalFilters['te_status'] === 'empty') {
+                    $q->where(function ($sq) {
+                        $sq->whereNull('ami_te_isi')->orWhere('ami_te_isi', '');
+                    });
+                }
+            }
+
+            // PTP Status
+            if (! empty($additionalFilters['ptp_status'])) {
+                if ($additionalFilters['ptp_status'] === 'filled') {
+                    $q->whereNotNull('ed_ptp_isi')->where('ed_ptp_isi', '!=', '');
+                } elseif ($additionalFilters['ptp_status'] === 'empty') {
+                    $q->where(function ($sq) {
+                        $sq->whereNull('ed_ptp_isi')->orWhere('ed_ptp_isi', '');
+                    });
+                }
+            }
+
             // Filter Eisenhower Matrix
             $important = $additionalFilters['pengend_important_matrix'] ?? null;
-            if ($important && $important !== 'all') {
+            if (! empty($important)) {
                 $q->where('pengend_important_matrix', $important);
             }
 
             $urgent = $additionalFilters['pengend_urgent_matrix'] ?? null;
-            if ($urgent && $urgent !== 'all') {
+            if (! empty($urgent)) {
                 $q->where('pengend_urgent_matrix', $urgent);
             }
         });
@@ -414,9 +477,10 @@ class IndikatorService
             // Filter specific document (Standar/Root) if provided
             if (! empty($additionalFilters['dok_id'])) {
                 $dokId = decryptIdIfEncrypted($additionalFilters['dok_id']);
-                // Check if it matches dok_id or its parents (if we want to filter by root)
-                // For simplicity, we filter by the specific dok_id linked to the indicator
-                $q->where('dok_id', $dokId);
+                $q->where(function ($sq) use ($dokId) {
+                    $sq->where('dok_id', $dokId)
+                        ->orWhere('parent_id', $dokId);
+                });
             }
         });
 
@@ -444,7 +508,7 @@ class IndikatorService
 
         // Apply Filters
         $status = $filters['pengend_status'] ?? null;
-        if ($status && $status !== 'all') {
+        if (! empty($status)) {
             if ($status === 'empty') {
                 $query->where(function ($q) {
                     $q->whereNull('prev_ou.pengend_status_atsn')->orWhere('prev_ou.pengend_status_atsn', '');
@@ -455,16 +519,20 @@ class IndikatorService
         }
 
         $important = $filters['pengend_important_matrix'] ?? null;
-        if ($important && $important !== 'all') {
+        if (! empty($important)) {
             $query->where('prev_ou.pengend_important_matrix_atsn', $important);
         }
 
         $urgent = $filters['pengend_urgent_matrix'] ?? null;
-        if ($urgent && $urgent !== 'all') {
+        if (! empty($urgent)) {
             $query->where('prev_ou.pengend_urgent_matrix_atsn', $urgent);
         }
         if (! empty($filters['dok_id'])) {
-            $query->where('d.dok_id', decryptIdIfEncrypted($filters['dok_id']));
+            $dokId = decryptIdIfEncrypted($filters['dok_id']);
+            $query->where(function ($q) use ($dokId) {
+                $q->where('d.dok_id', $dokId)
+                    ->orWhere('d.parent_id', $dokId);
+            });
         }
         if (! empty($filters['unit_id'])) {
             $query->where('pemutu_indikator_orgunit.org_unit_id', decryptIdIfEncrypted($filters['unit_id']));

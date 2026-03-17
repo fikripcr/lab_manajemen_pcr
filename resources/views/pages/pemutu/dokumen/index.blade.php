@@ -98,7 +98,7 @@
                         @php $dok = $dokData->first(); @endphp
                         @if($dok)
                             <div class="mb-1">
-                                <div class="tree-node-row rounded">
+                                <div class="tree-node-row rounded" id="tree-node-dok-{{ $dok->encrypted_dok_id }}">
                                     <a href="#" class="tree-item-link w-100 d-flex align-items-center text-decoration-none px-2 py-1"
                                        data-url="{{ route('pemutu.dokumen-spmi.show', ['type' => 'dokumen', 'id' => $dok->encrypted_dok_id]) }}"
                                        data-jenis="{{ $dok->jenis }}">

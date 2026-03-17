@@ -9,53 +9,48 @@
                 <div class="ms-auto d-flex flex-wrap gap-2">
                     <x-tabler.datatable-page-length dataTableId="table-standar" />
                     <x-tabler.datatable-search dataTableId="table-standar" />
-                    <x-tabler.datatable-filter dataTableId="table-standar">
-                        <div class="row g-2">
-                            <div class="col-12">
-                                <x-tabler.form-select name="kelompok_indikator" label="Kelompok" class="mb-2">
-                                    <option value="">Semua Kelompok</option>
-                                    <option value="Akademik">Akademik</option>
-                                    <option value="Non Akademik">Non Akademik</option>
-                                </x-tabler.form-select>
-                            </div>
-                            <div class="col-12">
-                                <x-tabler.form-select name="year" label="Tahun Periode" class="mb-2">
-                                    <option value="">Semua Tahun</option>
-                                    @foreach($periodes as $periode)
-                                        <option value="{{ $periode->tahun }}">{{ $periode->periode }}</option>
-                                    @endforeach
-                                </x-tabler.form-select>
-                            </div>
-                            <div class="col-12">
-                                <x-tabler.form-select name="ed_status" label="Status ED (Evaluasi Diri)" class="mb-2">
-                                    <option value="">Semua Status</option>
-                                    <option value="filled">Sudah Isi</option>
-                                    <option value="empty">Belum Isi</option>
-                                </x-tabler.form-select>
-                            </div>
-                            <div class="col-12">
-                                <x-tabler.form-select name="ami_hasil" label="Hasil AMI" class="mb-2">
-                                    <option value="">Semua Hasil</option>
-                                    <option value="empty">Belum Dinilai</option>
-                                    <option value="0">KTS (Kesesuaian Tidak Terpenuhi)</option>
-                                    <option value="1">Terpenuhi</option>
-                                    <option value="2">Terlampaui</option>
-                                </x-tabler.form-select>
-                            </div>
-                            <div class="col-12">
-                                <x-tabler.form-select name="pengend_status" label="Status Pengendalian" class="mb-0">
-                                    <option value="">Semua Status</option>
-                                    <option value="filled">Sudah Isi</option>
-                                    <option value="empty">Belum Isi</option>
-                                </x-tabler.form-select>
-                            </div>
-                        </div>
-                    </x-tabler.datatable-filter>
+                    <x-tabler.datatable-filter dataTableId="table-standar" type="button" target="#table-standar-filter-area" />
                     <x-tabler.button type="button" class="btn-success" onclick="exportExcel()" icon="ti ti-file-export" text="Export" />
                 </div>
             </div>
         </x-tabler.card-header>
         <x-tabler.card-body class="p-0">
+            <div class="collapse" id="table-standar-filter-area">
+                <x-tabler.datatable-filter dataTableId="table-standar" type="bare">
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <x-tabler.form-select name="kelompok_indikator" label="Kelompok" class="mb-2" placeholder="">
+                                <option value="">Semua Kelompok</option>
+                                <option value="Akademik">Akademik</option>
+                                <option value="Non Akademik">Non Akademik</option>
+                            </x-tabler.form-select>
+                        </div>
+                        <div class="col-md-3">
+                            <x-tabler.form-select name="ed_status" label="Status ED" class="mb-2" placeholder="">
+                                <option value="">Semua Status</option>
+                                <option value="filled">Sudah Isi</option>
+                                <option value="empty">Belum Isi</option>
+                            </x-tabler.form-select>
+                        </div>
+                        <div class="col-md-3">
+                            <x-tabler.form-select name="ami_hasil" label="Hasil AMI" class="mb-2" placeholder="">
+                                <option value="">Semua Hasil</option>
+                                <option value="empty">Belum Dinilai</option>
+                                <option value="0">KTS</option>
+                                <option value="1">Terpenuhi</option>
+                                <option value="2">Terlampaui</option>
+                            </x-tabler.form-select>
+                        </div>
+                        <div class="col-md-3">
+                            <x-tabler.form-select name="pengend_status" label="Status Pengendalian" class="mb-0" placeholder="">
+                                <option value="">Semua Status</option>
+                                <option value="filled">Sudah Isi</option>
+                                <option value="empty">Belum Isi</option>
+                            </x-tabler.form-select>
+                        </div>
+                    </div>
+                </x-tabler.datatable-filter>
+            </div>
             <div class="row p-3">
                 <div class="col-sm-6 col-lg-3">
                     <x-tabler.card class="bg-light-lt border-0 shadow-none">

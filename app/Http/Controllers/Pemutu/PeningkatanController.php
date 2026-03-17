@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Pemutu;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\DuplikasiRequest;
 use App\Http\Requests\Pemutu\PeningkatanRtmRequest;
+use App\Models\Hr\StrukturOrganisasi;
+use App\Services\Hr\StrukturOrganisasiService;
 use App\Models\Event\Rapat;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
@@ -24,6 +26,7 @@ class PeningkatanController extends Controller
         protected DuplikasiService $DuplikasiService,
         protected PelaksanaanService $PelaksanaanService,
         protected IndikatorService $IndikatorService,
+        protected StrukturOrganisasiService $StrukturOrganisasiService,
     ) {}
 
     /**
@@ -38,24 +41,16 @@ class PeningkatanController extends Controller
             'pageTitle' => 'Peningkatan',
             'siklus'    => $siklus,
             'users'     => $users,
+            'units'     => $this->StrukturOrganisasiService->getHierarchicalList(),
         ];
 
-        // Resolve units, RTM, and duplication status for both periods
+        // Fetch RTM and duplication status for both periods
         foreach (['akademik', 'non_akademik'] as $type) {
             $periode = $siklus[$type];
-            $units   = collect();
             $rapat   = null;
             $hasDuplicated = false;
 
             if ($periode) {
-                // Resolved user units for filtering
-                $units = \App\Models\Pemutu\TimMutu::where('periodespmi_id', $periode->periodespmi_id)
-                    ->with('orgUnit')
-                    ->get()
-                    ->pluck('orgUnit')
-                    ->filter()
-                    ->unique('orgunit_id');
-
                 // Latest RTM Peningkatan
                 $rapat = $periode->latest_rtm_peningkatan;
                 if ($rapat) {
@@ -66,7 +61,6 @@ class PeningkatanController extends Controller
                 $hasDuplicated = Indikator::where('origin_from', 'peningkatan_' . $periode->periode)->exists();
             }
 
-            $data[$type . 'Units'] = $units;
             $data[$type . 'Rapat'] = $rapat;
             $data[$type . 'HasDuplicated'] = $hasDuplicated;
             $data[$type . 'RootDoks'] = \App\Models\Pemutu\Dokumen::whereNull('parent_id')

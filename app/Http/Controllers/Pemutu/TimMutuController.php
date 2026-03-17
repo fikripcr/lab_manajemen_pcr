@@ -26,23 +26,23 @@ class TimMutuController extends Controller
     public function index()
     {
         $siklus = $this->PeriodeSpmiService->getSiklusData();
-        $orgUnits = $this->timMutuService->getOrgUnitsPaginated();
-
+        
         $data = [
             'pageTitle' => 'Tim Mutu',
             'siklus'    => $siklus,
-            'orgUnits'  => $orgUnits,
+            'units'     => \App\Services\Hr\StrukturOrganisasiService::getHierarchicalList(),
         ];
 
+        $assignmentMap = [];
+        
         foreach (['akademik', 'non_akademik'] as $type) {
             $periode = $siklus[$type];
-            $assignmentMap = [];
-            
             if ($periode) {
                 $assignments = $this->timMutuService->getByPeriode($periode->periodespmi_id);
                 foreach ($assignments as $unitId => $items) {
                     $encryptedId = encryptId($unitId);
                     $assignmentMap[$encryptedId] = [
+                        'periode_id'    => $periode->encrypted_periodespmi_id,
                         'auditee'       => $items->where('role', 'auditee')->first(),
                         'ketua_auditor' => $items->where('role', 'ketua_auditor')->first(),
                         'auditor'       => $items->where('role', 'auditor')->values(),
@@ -50,9 +50,9 @@ class TimMutuController extends Controller
                     ];
                 }
             }
-            
-            $data[$type . 'AssignmentMap'] = $assignmentMap;
         }
+        
+        $data['assignmentMap'] = $assignmentMap;
 
         return view('pages.pemutu.tim-mutu.index', $data);
     }

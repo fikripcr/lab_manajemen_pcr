@@ -15,12 +15,14 @@ class PegawaiController extends Controller
 
     public function index()
     {
-        return view('pages.pemutu.pegawai.index');
+        $units = \App\Services\Hr\StrukturOrganisasiService::getHierarchicalList();
+        return view('pages.pemutu.pegawai.index', compact('units'));
     }
 
     public function data()
     {
-        $query = $this->pegawaiService->getFilteredQuery();
+        $filters = request()->only(['org_unit_id', 'jenis']);
+        $query = $this->pegawaiService->getFilteredQuery($filters);
 
         return DataTables::of($query)
             ->addIndexColumn()

@@ -9,6 +9,7 @@ use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Models\Pemutu\TimMutu;
 use App\Models\Hr\StrukturOrganisasi;
+use App\Services\Hr\StrukturOrganisasiService;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
@@ -21,6 +22,7 @@ class EvaluasiDiriController extends Controller
     public function __construct(
         protected PeriodeSpmiService $PeriodeSpmiService,
         protected IndikatorService $IndikatorService,
+        protected StrukturOrganisasiService $StrukturOrganisasiService,
     ) {}
 
     public function index()
@@ -29,27 +31,18 @@ class EvaluasiDiriController extends Controller
         $siklus = $this->PeriodeSpmiService->getSiklusData();
         $user   = auth()->user();
 
+        // Fetch root documents for filter
+        $rootDoks = \App\Models\Pemutu\Dokumen::whereNull('parent_id')
+            ->where('periode', $siklus['tahun'])
+            ->orderBy('seq')
+            ->get();
+
         $data = [
             'pageTitle' => 'Evaluasi Diri',
             'siklus'    => $siklus,
+            'units'     => $this->StrukturOrganisasiService->getHierarchicalList(),
+            'rootDoks'  => $rootDoks,
         ];
-
-        // Resolve user units for both periods to populate filters
-        foreach (['akademik', 'non_akademik'] as $type) {
-            $periode = $siklus[$type];
-            $units   = collect();
-            
-            if ($periode) {
-                $units = TimMutu::where('periodespmi_id', $periode->periodespmi_id)
-                    ->with('orgUnit')
-                    ->get()
-                    ->pluck('orgUnit')
-                    ->filter()
-                    ->unique('orgunit_id');
-            }
-            
-            $data[$type . 'Units'] = $units;
-        }
 
         return view('pages.pemutu.evaluasi-diri.index', $data);
     }
@@ -58,8 +51,12 @@ class EvaluasiDiriController extends Controller
     public function data(Request $request, PeriodeSpmi $periode)
     {
         $unitId = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
+        $edStatus = $request->input('ed_status');
 
-        $query = $this->IndikatorService->getUnifiedSpmiQuery($periode, $unitId);
+        $query = $this->IndikatorService->getUnifiedSpmiQuery($periode, $unitId, [
+            'ed_status' => $edStatus,
+            'dok_id'    => $request->input('dok_id'),
+        ]);
 
         return DataTables::of($query)
             ->addColumn('no', function ($row) {
@@ -264,6 +261,8 @@ class EvaluasiDiriController extends Controller
         // Ambil indikator KTS dari periode tahun lalu
         $query = $this->IndikatorService->getUnifiedSpmiQuery($prevPeriod, $unitId, [
             'ami_hasil_akhir' => 0, // KTS
+            'dok_id'          => $request->input('dok_id'),
+            'ptp_status'      => $request->input('ptp_status'),
         ]);
 
         return DataTables::of($query)

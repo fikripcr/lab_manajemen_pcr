@@ -1,7 +1,7 @@
 <x-tabler.form-modal
     id_form="{{ $personil->exists ? 'editPersonilForm' : 'createPersonilForm' }}"
     title="{{ $personil->exists ? 'Update Data Personil' : 'Tambah Data Personil' }}"
-    route="{{ $personil->exists ? route('lab.personil.update', $personil->encrypted_personil_id) : route('lab.personil.store') }}"
+    route="{{ $personil->exists ? route('hr.personil.update', $personil->encrypted_personil_id) : route('hr.personil.store') }}"
     method="{{ $personil->exists ? 'PUT' : 'POST' }}"
 >
     <div class="mb-3">

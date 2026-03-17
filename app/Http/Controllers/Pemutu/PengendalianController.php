@@ -5,6 +5,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\PengendalianRequest;
 use App\Http\Requests\Pemutu\RtmRequest;
 use App\Http\Requests\Pemutu\UpdateMatrixRequest;
+use App\Models\Hr\StrukturOrganisasi;
+use App\Services\Hr\StrukturOrganisasiService;
 use App\Models\Event\Rapat;
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
@@ -22,6 +24,7 @@ class PengendalianController extends Controller
         protected PeriodeSpmiService $PeriodeSpmiService,
         protected PelaksanaanService $PelaksanaanService,
         protected IndikatorService $IndikatorService,
+        protected StrukturOrganisasiService $StrukturOrganisasiService,
     ) {}
 
     /**
@@ -35,25 +38,17 @@ class PengendalianController extends Controller
         $data = [
             'pageTitle' => 'Pengendalian',
             'siklus'    => $siklus,
+            'units'     => $this->StrukturOrganisasiService->getHierarchicalList(),
         ];
 
         $users = $this->PelaksanaanService->getUsersForSelect();
 
-        // Resolve user units and rapat for both periods
+        // Fetch rapat for both periods
         foreach (['akademik', 'non_akademik'] as $type) {
             $periode = $siklus[$type];
-            $units   = collect();
             $rapat   = null;
             
             if ($periode) {
-                // Resolved user units
-                $units = \App\Models\Pemutu\TimMutu::where('periodespmi_id', $periode->periodespmi_id)
-                    ->with('orgUnit')
-                    ->get()
-                    ->pluck('orgUnit')
-                    ->filter()
-                    ->unique('orgunit_id');
-
                 // Load the latest RTM rapat
                 $rapat = $periode->latest_rtm_pengendalian;
                 if ($rapat) {
@@ -61,7 +56,6 @@ class PengendalianController extends Controller
                 }
             }
             
-            $data[$type . 'Units'] = $units;
             $data[$type . 'Rapat'] = $rapat;
             $data[$type . 'RootDoks'] = \App\Models\Pemutu\Dokumen::whereNull('parent_id')
                 ->where('periode', $siklus['tahun'])
