@@ -58,44 +58,23 @@
             <div class="d-flex gap-2 flex-shrink-0">
                 <div class="btn-group">
                     @if($type === 'dokumen')
-                        @if(!$isKebijakan)
-                            {{-- Edit/Delete only for non-kebijakan (standar, etc) --}}
-                            <x-tabler.button type="success" class="btn-sm ajax-modal-btn" text="Approval" icon="ti ti-users"
-                                data-url="{{ route('pemutu.dokumen.approve.create', $item->encrypted_dok_id) }}"
-                                data-modal-title="Form Approval Dokumen"
-                                data-approval="true" />
-                            <x-tabler.button type="primary" class="btn-sm btn-secondary ajax-modal-btn me-0" text="" icon="ti ti-edit"
-                                data-url="{{ route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id, 'mode' => 'title']) }}"
-                                data-modal-title="Ubah Judul Dokumen" />
-                            <x-tabler.button type="delete" class="btn-sm ajax-delete" text="" icon="ti ti-trash"
-                                data-url="{{ route('pemutu.dokumen-spmi.destroy', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id]) }}"
-                                data-title="Hapus Dokumen ini?" />
-                        @else
-                            {{-- Kebijakan: only edit title allowed --}}
-                            <x-tabler.button type="success" class="btn-sm ajax-modal-btn" text="Approval" icon="ti ti-users"
-                                data-url="{{ route('pemutu.dokumen.approve.create', $item->encrypted_dok_id) }}"
-                                data-modal-title="Form Approval Dokumen"
-                                data-approval="true" />
-                            <x-tabler.button type="primary" class="btn-sm btn-secondary ajax-modal-btn me-0" text="" icon="ti ti-edit"
-                                data-url="{{ route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id, 'mode' => 'title']) }}"
-                                data-modal-title="Ubah Judul Dokumen" />
-                        @endif
+                        {{-- Common Buttons for all document types --}}
+                        <x-tabler.button type="success" class="btn-sm ajax-modal-btn" text="Approval" icon="ti ti-users"
+                            data-url="{{ route('pemutu.dokumen.approve.create', $item->encrypted_dok_id) }}"
+                            data-modal-title="Form Approval Dokumen"
+                            data-approval="true" />
+                        <x-tabler.button type="primary" class="btn-sm btn-secondary ajax-modal-btn me-0" text="" icon="ti ti-edit"
+                            data-url="{{ route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id, 'mode' => 'title']) }}"
+                            data-modal-title="Ubah Judul Dokumen" />
+                        <x-tabler.button type="delete" class="btn-sm ajax-delete" text="" icon="ti ti-trash"
+                            data-url="{{ route('pemutu.dokumen-spmi.destroy', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id]) }}"
+                            data-title="Hapus Dokumen ini?" />
                     @elseif($type === 'poin')
-                        @if($isKebijakan && $isRenopPoint && $item->is_hasilkan_indikator)
-                            <x-tabler.button type="create" class="btn-success"
-                                href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'renop', 'is_renop_context' => 1, 'redirect_to' => url()->current()]) }}"
-                                text="Tambah Indikator" />
-                        @elseif(!$isKebijakan && ($item->is_hasilkan_indikator || $isRenopPoint))
+                        @if(!$isKebijakan && $item->is_hasilkan_indikator)
                             {{-- Standar poin: create indikator --}}
-                            @if($isRenopPoint)
-                                <x-tabler.button type="create" class="btn-success"
-                                    href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'renop', 'is_renop_context' => 1, 'redirect_to' => url()->current()]) }}"
-                                    text="Tambah Indikator" />
-                            @else
-                                <x-tabler.button type="create" class="btn-success"
-                                    href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'spmi', 'is_renop_context' => 0, 'redirect_to' => url()->current()]) }}"
-                                    text="Tambah Indikator" />
-                            @endif
+                            <x-tabler.button type="create" class="btn-success"
+                                href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'spmi', 'is_renop_context' => 0, 'redirect_to' => url()->current()]) }}"
+                                text="Tambah Indikator" />
                         @endif
 
                         {{-- Edit/Delete poin --}}
@@ -138,10 +117,10 @@
                         </a>
                     </li>
                 @elseif($type === 'poin')
-                    @if($isRenopPoint || (!$isKebijakan))
+                    @if(!$isKebijakan)
                         @if($item->is_hasilkan_indikator || (!$isKebijakan && !$item->is_hasilkan_indikator && $item->childDokumens->count() > 0))
                         <li class="nav-item" role="presentation">
-                            <a href="{{ $isRenopPoint ? '#tab-indikator' : '#tab-subdokumen' }}" class="nav-link" data-bs-toggle="tab" role="tab">
+                            <a href="#tab-subdokumen" class="nav-link" data-bs-toggle="tab" role="tab">
                                 <i class="ti ti-target icon me-1"></i> Daftar Indikator
                             </a>
                         </li>
@@ -241,7 +220,13 @@
                     @if($item->jenis === 'renop')
                         <div class="tab-pane" id="tab-indikator-renop" role="tabpanel">
                             <x-tabler.card>
-                                <x-tabler.card-header title="Daftar Indikator Labeled RENOP"/>
+                                <x-tabler.card-header title="Daftar Indikator RENOP">
+                                    <x-slot:actions>
+                                        <x-tabler.button type="create" class="btn-success"
+                                            href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'type' => 'renop', 'is_renop_context' => 1, 'redirect_to' => url()->current()]) }}"
+                                            text="Tambah Indikator" size="sm" />
+                                    </x-slot:actions>
+                                </x-tabler.card-header>
                                 <x-tabler.datatable
                                     id="indikator-renop-table"
                                     :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'renop_indikator', 'id' => $item->encrypted_dok_id])"
@@ -327,31 +312,6 @@
                         </div>
                     @endif
                     
-                    {{-- RENOP POIN: Indikator Section --}}
-                    @if($isRenopPoint)
-                        <div class="tab-pane" id="tab-indikator" role="tabpanel">
-                            <x-tabler.card class=" border mb-3">
-                                <x-tabler.card-header>
-                                    <x-slot:title>
-                                        Daftar Indikator Renop
-                                        <span class="badge bg-muted-lt ms-2">{{ $item->indikators->count() }}</span>
-                                    </x-slot:title>
-                                    <x-slot:actions>
-                                        @if($item->is_hasilkan_indikator)
-                                        <x-tabler.button type="create" class="btn-success"
-                                            href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'renop', 'is_renop_context' => 1, 'redirect_to' => url()->current()]) }}"
-                                            text="Tambah Indikator" size="sm" />
-                                        @endif
-                                    </x-slot:actions>
-                                </x-tabler.card-header>
-                                <x-tabler.datatable
-                                    id="indikator-table"
-                                    :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'poin_indikator', 'id' => $item->encrypted_doksub_id])"
-                                    :columns="$indikatorColumns"
-                                    ajax-load />
-                            </x-tabler.card>
-                        </div>
-                    @endif
 
                     {{-- NON-KEBIJAKAN POIN: Standar indikator + child docs --}}
                     @if(!$isKebijakan)

@@ -50,6 +50,32 @@ class DokumenSpmiService
             }
 
             $dokumen = Dokumen::create($data);
+
+            // Auto-create default sub-documents (points) for Standar and Kebijakan
+            if (in_array(strtolower($dokumen->jenis), ['standar', 'kebijakan'])) {
+                if (function_exists('pemutuDefaultSubDocuments')) {
+                    $defaultPoints = pemutuDefaultSubDocuments($dokumen->jenis);
+                    foreach ($defaultPoints as $idx => $judul) {
+                        // is_hasilkan_indikator: True ONLY for Standar point #5
+                        $isHasilkan = (strtolower($dokumen->jenis) === 'standar' && $judul === 'Pernyataan Isi Standar / Indikator Capaian');
+                        
+                        // Generate Kode if document has one
+                        $subKode = null;
+                        if ($dokumen->kode) {
+                            $subKode = $dokumen->kode . '.' . ($idx + 1);
+                        }
+
+                        $dokumen->dokSubs()->create([
+                            'judul'                 => $judul,
+                            'kode'                  => $subKode,
+                            'seq'                   => $idx + 1,
+                            'is_hasilkan_indikator' => $isHasilkan,
+                            'created_by'            => $data['created_by'] ?? (auth()->id() ?? 1),
+                        ]);
+                    }
+                }
+            }
+
             logActivity('dokumen_spmi', "Membuat dokumen: {$dokumen->judul}");
             return $dokumen;
         });
@@ -70,10 +96,35 @@ class DokumenSpmiService
         return DB::transaction(function () use ($id) {
             $dokumen = Dokumen::findOrFail($id);
             $judul   = $dokumen->judul;
-            $dokumen->delete();
+
+            $this->performRecursiveDelete($dokumen);
+
             logActivity('dokumen_spmi', "Menghapus dokumen: {$judul}");
             return true;
         });
+    }
+
+    /**
+     * Recursive deletion helper for Dokumen hierarchy.
+     */
+    private function performRecursiveDelete(Dokumen $dokumen)
+    {
+        // 1. Delete all DokSubs (points)
+        foreach ($dokumen->dokSubs as $sub) {
+            // Delete child documents rooted at this point
+            foreach ($sub->childDokumens as $child) {
+                $this->performRecursiveDelete($child);
+            }
+            $sub->delete();
+        }
+
+        // 2. Delete all child documents
+        foreach ($dokumen->children as $child) {
+            $this->performRecursiveDelete($child);
+        }
+
+        // 3. Delete the document itself
+        $dokumen->delete();
     }
 
     // ==========================================

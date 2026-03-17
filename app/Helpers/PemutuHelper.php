@@ -705,3 +705,35 @@ if (! function_exists('pemutuDtColRtp')) {
         return $html;
     }
 }
+
+if (! function_exists('pemutuDefaultSubDocuments')) {
+    /**
+     * Get default sub-documents (points) for a document type.
+     */
+    function pemutuDefaultSubDocuments($jenis): array
+    {
+        $points = [
+            'Visi, Misi dan Tujuan',
+            'Rasional Standar',
+            'Definisi Istilah',
+            'Pihak yang Bertanggungjawab',
+            'Pernyataan Isi Standar / Indikator Capaian',
+            'Strategi Pelaksanaan',
+            'Dokumen Terkait',
+            'Referensi',
+        ];
+
+        $jenis = strtolower(trim($jenis));
+
+        if ($jenis === 'kebijakan') {
+            unset($points[4]); // Remove "Pernyataan Isi Standar / Indikator Capaian" (index 4 is No 5)
+            return array_values($points);
+        }
+
+        if ($jenis === 'standar') {
+            return $points;
+        }
+
+        return [];
+    }
+}

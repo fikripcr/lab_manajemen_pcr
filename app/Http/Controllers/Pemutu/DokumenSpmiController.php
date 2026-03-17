@@ -415,9 +415,12 @@ class DokumenSpmiController extends Controller
                 ->make(true);
         } elseif ($type === 'renop_indikator') {
             $query = Indikator::with('orgUnits')
-                ->where('type', 'standar')
+                ->whereIn('type', ['standar', 'renop'])
                 ->whereHas('labels', function($q) {
                     $q->where('name', 'RENOP');
+                })
+                ->whereHas('dokSubs', function($q) use ($decryptedId) {
+                    $q->where('dok_id', $decryptedId);
                 });
             return DataTables::of($query)
                 ->addIndexColumn()

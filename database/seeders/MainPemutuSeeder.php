@@ -163,9 +163,6 @@ class MainPemutuSeeder extends Seeder
 
                 // Renop: all points generate indicators
                 $isHasilkan = false;
-                if ($jenis === 'renop') {
-                    $isHasilkan = true;
-                }
 
                 $sub = DokSub::create([
                     'dok_id'                => $dok->dok_id,
@@ -375,8 +372,9 @@ class MainPemutuSeeder extends Seeder
     private function seedRenopIndicators(int $year, array $poinMap)
     {
         $renopPoin = $poinMap['renop'] ?? [];
+        $renopLabel = \App\Models\Pemutu\Label::where('name', 'RENOP')->first();
 
-                                                     // Generate many more indicators for ALL 5 Renop points to ensure variety in Misi/Renstra branches
+        // Generate many more indicators for ALL 5 Renop points to ensure variety in Misi/Renstra branches
         $unitIds = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; // 10 units
 
         foreach ($renopPoin as $poinIdx => $sub) {
@@ -432,6 +430,9 @@ class MainPemutuSeeder extends Seeder
 
                 $this->prevIndikators[$year]['renop'][$poinIdx][$i] = $ind->indikator_id;
                 $ind->dokSubs()->attach($sub->doksub_id, ['is_hasilkan_indikator' => true]);
+                if ($renopLabel) {
+                    $ind->labels()->attach($renopLabel->label_id);
+                }
 
                 // Map to all 10 units
                 foreach ($unitIds as $uIdx => $unitId) {
