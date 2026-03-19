@@ -153,14 +153,14 @@ class IndikatorSummaryController extends Controller
                 'v.*', 'so.name as unit_name', 'so.code as unit_code'
             );
 
-        // Filter by Kelompok
-        if ($request->filled('kelompok_indikator')) {
+        // Filter by Kelompok (skip if 'all')
+        if ($request->filled('kelompok_indikator') && $request->kelompok_indikator !== 'all') {
             $query->where('v.kelompok_indikator', $request->kelompok_indikator);
         }
 
 
-        // Filter by ED Status
-        if ($request->filled('ed_status')) {
+        // Filter by ED Status (skip if 'all')
+        if ($request->filled('ed_status') && $request->ed_status !== 'all') {
             if ($request->ed_status === 'filled') {
                 $query->whereNotNull('io.ed_capaian')->where('io.ed_capaian', '!=', '');
             } elseif ($request->ed_status === 'empty') {
@@ -170,8 +170,8 @@ class IndikatorSummaryController extends Controller
             }
         }
 
-        // Filter by AMI Hasil
-        if ($request->filled('ami_hasil')) {
+        // Filter by AMI Hasil (skip if 'all')
+        if ($request->filled('ami_hasil') && $request->ami_hasil !== 'all') {
             if ($request->ami_hasil === 'empty') {
                 $query->whereNull('io.ami_hasil_akhir');
             } else {
@@ -179,8 +179,8 @@ class IndikatorSummaryController extends Controller
             }
         }
 
-        // Filter by Pengendalian Status
-        if ($request->filled('pengend_status')) {
+        // Filter by Pengendalian Status (skip if 'all')
+        if ($request->filled('pengend_status') && $request->pengend_status !== 'all') {
             if ($request->pengend_status === 'filled') {
                 $query->whereNotNull('io.pengend_status')->where('io.pengend_status', '!=', '');
             } elseif ($request->pengend_status === 'empty') {
@@ -490,7 +490,16 @@ class IndikatorSummaryController extends Controller
             return Excel::download(new \App\Exports\Pemutu\IndikatorSummaryPerformaExport($request), $fileName);
         }
 
-        $filters  = $request->only(['kelompok_indikator', 'search', 'ed_status', 'ami_hasil', 'pengend_status']);
+        // SIMPLE LOGIC: If not 'all', add to filters
+        $filters = [];
+        foreach ($request->only(['kelompok_indikator', 'ed_status', 'ami_hasil', 'pengend_status']) as $key => $value) {
+            if ($value !== 'all') {
+                $filters[$key] = $value;
+            }
+        }
+        if ($request->filled('search')) {
+            $filters['search'] = $request->input('search');
+        }
         $fileName = 'summary_indikator_standar_' . date('Ymd_His') . '.xlsx';
 
         return Excel::download(new \App\Exports\Pemutu\IndikatorSummaryExport($filters), $fileName);
@@ -530,12 +539,12 @@ class IndikatorSummaryController extends Controller
             ->join('vw_pemutu_summary_indikator_standar as v', 'io.indikator_id', '=', 'v.indikator_id')
             ->leftJoin('hr_struktur_organisasi as so', 'io.org_unit_id', '=', 'so.orgunit_id');
 
-        // Apply same filters as dataStandar
-        if ($request->filled('kelompok_indikator')) {
+        // Apply same filters as dataStandar (skip if 'all')
+        if ($request->filled('kelompok_indikator') && $request->kelompok_indikator !== 'all') {
             $query->where('v.kelompok_indikator', $request->kelompok_indikator);
         }
 
-        if ($request->filled('ed_status')) {
+        if ($request->filled('ed_status') && $request->ed_status !== 'all') {
             if ($request->ed_status === 'filled') {
                 $query->whereNotNull('io.ed_capaian')->where('io.ed_capaian', '!=', '');
             } elseif ($request->ed_status === 'empty') {
@@ -544,14 +553,14 @@ class IndikatorSummaryController extends Controller
                 });
             }
         }
-        if ($request->filled('ami_hasil')) {
+        if ($request->filled('ami_hasil') && $request->ami_hasil !== 'all') {
             if ($request->ami_hasil === 'empty') {
                 $query->whereNull('io.ami_hasil_akhir');
             } else {
                 $query->where('io.ami_hasil_akhir', $request->ami_hasil);
             }
         }
-        if ($request->filled('pengend_status')) {
+        if ($request->filled('pengend_status') && $request->pengend_status !== 'all') {
             if ($request->pengend_status === 'filled') {
                 $query->whereNotNull('io.pengend_status')->where('io.pengend_status', '!=', '');
             } elseif ($request->pengend_status === 'empty') {

@@ -53,12 +53,12 @@
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <x-tabler.form-select name="dokumen_id" id="dokumen_id_{{ $typeId }}" label="Standar / Dokumen" type="select2" placeholder="" :options="$dokumens">
-                                        <option value="">Semua Standar</option>
+                                        <option value="all">Semua Standar</option>
                                     </x-tabler.form-select>
                                 </div>
                                 <div class="col-md-4">
                                     <x-tabler.form-select name="renstra_poin_id" id="renstra_poin_id_{{ $typeId }}" label="Poin Renstra" type="select2" placeholder="" :options="$renstraOptions">
-                                        <option value="">Semua Poin Renstra</option>
+                                        <option value="all">Semua Poin Renstra</option>
                                     </x-tabler.form-select>
                                 </div>
                                 <div class="col-md-4">
@@ -73,7 +73,7 @@
                             id="indikator-table-{{ $typeId }}"
                             route="{{ route('pemutu.indikator.data', ['type' => $activeType, 'periode' => $periode->periode]) }}"
                             :columns="[
-                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '5%'],
+                                ['data' => 'no', 'name' => 'no', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '5%'],
                                 ['data' => 'dokumen_judul', 'name' => 'dokumen_judul', 'title' => 'Dokumen Induk', 'searchable' => false, 'orderable' => false],
                                 ['data' => 'indikator', 'name' => 'indikator', 'title' => 'Indikator'],
                                 ['data' => 'kelompok_indikator', 'name' => 'kelompok_indikator', 'title' => 'Kelompok', 'class' => 'text-center', 'orderable' => false],

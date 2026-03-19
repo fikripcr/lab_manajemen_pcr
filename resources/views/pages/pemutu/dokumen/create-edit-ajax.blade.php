@@ -1,31 +1,42 @@
 @php
-    $isEdit = false;
-    $title = '';
-    $route = '';
-    $method = 'POST';
-    $mode = $mode ?? null;
+use App\Config\PemutuDokumenConfig;
 
-    // TYPE: 'dokumen', 'poin', 'indikator'
-    if (!isset($type)) {
-        $type = 'dokumen';
-    }
+$isEdit = false;
+$title = '';
+$route = '';
+$method = 'POST';
+$mode = $mode ?? null;
 
-    if ($type === 'dokumen') {
-        $isEdit = isset($dokumen) && $dokumen->exists;
-        $title = $isEdit ? ($mode === 'title' ? "Ubah Judul Dokumen" : ($mode === 'content' ? "Ubah Isi Dokumen" : "Ubah Dokumen")) : "Tambah Dokumen";
-        $route = $isEdit ? route('pemutu.dokumen-spmi.update', ['type' => 'dokumen', 'id' => $dokumen->encrypted_dok_id]) : route('pemutu.dokumen-spmi.store', ['type' => 'dokumen']);
-        $method = $isEdit ? 'PUT' : 'POST';
-    } elseif ($type === 'poin') {
-        $isEdit = isset($dokSub) && $dokSub->exists;
-        $title = $isEdit ? ($mode === 'title' ? "Ubah Judul Poin" : ($mode === 'content' ? "Ubah Isi Poin" : "Ubah Poin")) : "Tambah Poin / Kegiatan";
-        $route = $isEdit ? route('pemutu.dokumen-spmi.update', ['type' => 'poin', 'id' => $dokSub->encrypted_doksub_id]) : route('pemutu.dokumen-spmi.store', ['type' => 'poin']);
-        $method = $isEdit ? 'PUT' : 'POST';
-    } elseif ($type === 'indikator') {
-        $isEdit = isset($indikator) && $indikator->exists;
-        $title = $isEdit ? "Ubah Indikator" : "Tambah Indikator";
-        $route = $isEdit ? route('pemutu.dokumen-spmi.update', ['type' => 'indikator', 'id' => $indikator->encrypted_indikator_id]) : route('pemutu.dokumen-spmi.store', ['type' => 'indikator']);
-        $method = $isEdit ? 'PUT' : 'POST';
-    }
+// TYPE: 'dokumen', 'poin', 'indikator'
+$type = $type ?? 'dokumen';
+
+if ($type === 'dokumen') {
+    $isEdit = isset($dokumen) && $dokumen->exists;
+    $title = $isEdit ? ($mode === 'title' ? "Ubah Judul Dokumen" : ($mode === 'content' ? "Ubah Isi Dokumen" : "Ubah Dokumen")) : "Tambah Dokumen";
+    $route = $isEdit ? route('pemutu.dokumen-spmi.update', ['type' => 'dokumen', 'id' => $dokumen->encrypted_dok_id]) : route('pemutu.dokumen-spmi.store', ['type' => 'dokumen']);
+    $method = $isEdit ? 'PUT' : 'POST';
+} elseif ($type === 'poin') {
+    $isEdit = isset($dokSub) && $dokSub->exists;
+    $title = $isEdit ? ($mode === 'title' ? "Ubah Judul Poin" : ($mode === 'content' ? "Ubah Isi Poin" : "Ubah Poin")) : "Tambah Poin / Kegiatan";
+    $route = $isEdit ? route('pemutu.dokumen-spmi.update', ['type' => 'poin', 'id' => $dokSub->encrypted_doksub_id]) : route('pemutu.dokumen-spmi.store', ['type' => 'poin']);
+    $method = $isEdit ? 'PUT' : 'POST';
+} elseif ($type === 'indikator') {
+    $isEdit = isset($indikator) && $indikator->exists;
+    $title = $isEdit ? "Ubah Indikator" : "Tambah Indikator";
+    $route = $isEdit ? route('pemutu.dokumen-spmi.update', ['type' => 'indikator', 'id' => $indikator->encrypted_indikator_id]) : route('pemutu.dokumen-spmi.store', ['type' => 'indikator']);
+    $method = $isEdit ? 'PUT' : 'POST';
+}
+
+// Get document config if jenis is available
+$jenis = null;
+$config = null;
+if (isset($fixedJenis)) {
+    $jenis = $fixedJenis;
+    $config = PemutuDokumenConfig::for($jenis);
+} elseif (isset($dokumen) && $dokumen->exists) {
+    $jenis = $dokumen->jenis;
+    $config = PemutuDokumenConfig::for($jenis);
+}
 @endphp
 
 <x-tabler.form-modal

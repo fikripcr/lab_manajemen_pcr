@@ -134,6 +134,15 @@ class DokumenSpmiService
     {
         return DB::transaction(function () use ($data) {
             $data['is_hasilkan_indikator'] = isset($data['is_hasilkan_indikator']) ? (bool) $data['is_hasilkan_indikator'] : false;
+            
+            // Auto-fill jenis from parent dokumen
+            if (empty($data['jenis']) && isset($data['dok_id'])) {
+                $dokumen = Dokumen::find($data['dok_id']);
+                if ($dokumen) {
+                    $data['jenis'] = 'poin_' . $dokumen->jenis;
+                }
+            }
+            
             if (empty($data['seq'])) {
                 $data['seq'] = DokSub::where('dok_id', $data['dok_id'])->max('seq') + 1;
             }

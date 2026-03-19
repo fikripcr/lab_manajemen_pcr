@@ -617,7 +617,7 @@ class DokumenSpmiController extends Controller
             $data[$type . 'DokumentByJenis'] = $dokumentByJenis;
         }
 
-        return view('pages.pemutu.dokumen.summary', $data);
+        return view('pages.pemutu.summary.summary', $data);
     }
 
     /**
@@ -745,7 +745,7 @@ class DokumenSpmiController extends Controller
             'kts'       => $total > 0 ? round(($amiCounts['kts'] / $total) * 100, 1) : 0,
         ];
 
-        return view('pages.pemutu.dokumen._summary_data', compact(
+        return view('pages.pemutu.summary._summary_data', compact(
             'title', 'jenis', 'indicators', 'unitsEvaluated', 'amiCounts', 'percentages', 'detailUnits'
         ));
     }

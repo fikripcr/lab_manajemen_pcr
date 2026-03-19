@@ -56,7 +56,15 @@ class AmiController extends Controller
     public function data(PeriodeSpmi $periode, Request $request)
     {
         $unitId  = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
-        $filters = $request->only(['ami_hasil_akhir', 'ed_status', 'dok_id', 'rtp_status']);
+        
+        // SIMPLE LOGIC: If not 'all', add to filters
+        $filters = [];
+        foreach ($request->only(['ami_hasil_akhir', 'ed_status', 'dok_id', 'rtp_status']) as $key => $value) {
+            if ($value !== 'all') {
+                $filters[$key] = $value;
+            }
+        }
+        
         $query   = $this->IndikatorService->getUnifiedSpmiQuery($periode, $unitId, $filters);
 
         return datatables()->of($query)

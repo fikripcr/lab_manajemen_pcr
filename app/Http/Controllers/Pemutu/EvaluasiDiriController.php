@@ -31,9 +31,10 @@ class EvaluasiDiriController extends Controller
         $siklus = $this->PeriodeSpmiService->getSiklusData();
         $user   = auth()->user();
 
-        // Fetch root documents for filter
+        // Fetch ONLY Standar documents for filter (not Visi, Misi, etc.)
         $rootDoks = \App\Models\Pemutu\Dokumen::whereNull('parent_id')
             ->where('periode', $siklus['tahun'])
+            ->where('jenis', 'standar') // ← FIX: Only Standar documents
             ->orderBy('seq')
             ->get();
 
@@ -51,12 +52,21 @@ class EvaluasiDiriController extends Controller
     public function data(Request $request, PeriodeSpmi $periode)
     {
         $unitId = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
+        
+        // SIMPLE LOGIC: If not 'all', add to filters
+        $filters = [];
+        
         $edStatus = $request->input('ed_status');
+        if ($edStatus !== 'all') {
+            $filters['ed_status'] = $edStatus;
+        }
+        
+        $dokId = $request->input('dok_id');
+        if ($dokId !== 'all') {
+            $filters['dok_id'] = $dokId;
+        }
 
-        $query = $this->IndikatorService->getUnifiedSpmiQuery($periode, $unitId, [
-            'ed_status' => $edStatus,
-            'dok_id'    => $request->input('dok_id'),
-        ]);
+        $query = $this->IndikatorService->getUnifiedSpmiQuery($periode, $unitId, $filters);
 
         return DataTables::of($query)
             ->addColumn('no', function ($row) {

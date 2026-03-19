@@ -35,35 +35,31 @@ class StandarController extends Controller
 
     public function data(Request $request)
     {
-        $filters         = $request->all();
+        // SIMPLE LOGIC: If not 'all', add to filters
+        $filters = [];
+        foreach ($request->only(['dokumen_id', 'kelompok_indikator', 'label_ids']) as $key => $value) {
+            if ($value !== 'all' && $value !== null && $value !== '') {
+                $filters[$key] = $value;
+            }
+        }
         $filters['type'] = 'standar';
 
         $query = $this->indikatorService->getFilteredQuery($filters)->with(['orgUnits']);
 
         return DataTables::of($query)
-            ->addIndexColumn()
+            ->addColumn('no', function ($row) {
+                return pemutuDtColNo($row);
+            })
+            ->addColumn('indikator', function ($row) {
+                return pemutuDtColIndikator($row);
+            })
             ->addColumn('doksub_judul', function ($row) {
                 return $row->dokSubs->map(function ($ds) {
                     return $ds->judul;
                 })->implode(', ') ?: '-';
             })
-            ->editColumn('indikator', function ($row) {
-                $html = '<div class="font-weight-medium">' . e($row->indikator) . '</div>';
-
-                if ($row->orgUnits->isNotEmpty()) {
-                    $html .= '<div class="mt-1">';
-                    foreach ($row->orgUnits as $unit) {
-                        $html .= '<span class="badge bg-blue-lt me-1 mb-1">' . e($unit->name) . '</span>';
-                    }
-                    $html .= '</div>';
-                }
-                return $html;
-            })
             ->addColumn('target_info', function ($row) {
-                if ($row->target) {
-                    return '<div class="font-weight-bold">' . e($row->target) . ' ' . e($row->unit_ukuran) . '</div>';
-                }
-                return '<span class="text-muted">-</span>';
+                return pemutuDtColTarget($row);
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
@@ -80,7 +76,7 @@ class StandarController extends Controller
                     ],
                 ])->render();
             })
-            ->rawColumns(['doksub_judul', 'indikator', 'target_info', 'action'])
+            ->rawColumns(['indikator', 'target_info', 'action'])
             ->make(true);
     }
 

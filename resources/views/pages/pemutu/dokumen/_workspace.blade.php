@@ -1,91 +1,128 @@
 @php
-    $isKebijakan = $isKebijakan ?? false;
-    $parentJenis = '';
-    $mappableOptions = $mappableOptions ?? collect();
+use App\Config\PemutuDokumenConfig;
 
-    if ($type === 'poin') {
-        $parentJenis = strtolower(trim($item->dokumen->jenis ?? ''));
-        $isRenopPoint = $parentJenis === 'renop';
-        $showIndikatorSection = $isRenopPoint && $item->is_hasilkan_indikator;
-        $mappableJenis = pemutuMappableJenis($parentJenis);
-    } else {
-        $parentJenis = strtolower(trim($item->jenis));
-        $isRenopPoint = false;
-        $showIndikatorSection = false;
-        $mappableJenis = pemutuMappableJenis($parentJenis);
-    }
+// Initialize configuration
+$jenis = $type === 'poin' ? strtolower(trim($item->dokumen->jenis ?? '')) : strtolower(trim($item->jenis ?? ''));
+$config = PemutuDokumenConfig::for($jenis);
 
-    $childrenColumns = [
-        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
-        ['data' => 'kode', 'name' => 'kode', 'title' => 'Kode'],
-        ['data' => 'judul', 'name' => 'judul', 'title' => 'Judul / Nama'],
-        ['data' => 'jumlah_turunan', 'name' => 'jumlah_turunan', 'title' => 'Jumlah Turunan'],
-        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false],
-    ];
+// Determine properties
+$isKebijakan = !in_array($jenis, ['standar', 'renop']);
+$isRenopPoint = $jenis === 'renop';
+$showIndikatorSection = $isRenopPoint && ($item->is_hasilkan_indikator ?? false);
+$mappableJenis = $config->mappableTo();
 
-    $indikatorColumns = [
-        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
-        ['data' => 'no_indikator', 'name' => 'no_indikator', 'title' => 'No / Kode'],
-        ['data' => 'indikator', 'name' => 'indikator', 'title' => 'Nama Indikator'],
-        ['data' => 'unit_target', 'name' => 'unit_target', 'title' => 'Unit & Target', 'orderable' => false, 'searchable' => false],
-        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false],
-    ];
-
-    $mappingColumns = [
-        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
-        ['data' => 'judul', 'name' => 'judul', 'title' => 'Poin Tujuan'],
-        ['data' => 'kode', 'name' => 'kode', 'title' => 'Kode'],
-        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false],
-    ];
-
-    $poinChildrenColumns = [
-        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
-        ['data' => 'judul', 'name' => 'judul', 'title' => 'Sub-Dokumen'],
-        ['data' => 'jenis', 'name' => 'jenis', 'title' => 'Jenis'],
-        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false],
-    ];
+// Column definitions (reusable)
+$columns = [
+    'children' => [
+        ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
+        ['data' => 'kode', 'title' => 'Kode'],
+        ['data' => 'judul', 'title' => 'Judul / Nama'],
+        ['data' => 'jumlah_turunan', 'title' => 'Jumlah Turunan'],
+        ['data' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false],
+    ],
+    'indikator' => [
+        ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
+        ['data' => 'no_indikator', 'title' => 'No / Kode'],
+        ['data' => 'indikator', 'title' => 'Nama Indikator'],
+        ['data' => 'unit_target', 'title' => 'Unit & Target', 'orderable' => false, 'searchable' => false],
+        ['data' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false],
+    ],
+    'mapping' => [
+        ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
+        ['data' => 'judul', 'title' => 'Poin Tujuan'],
+        ['data' => 'kode', 'title' => 'Kode'],
+        ['data' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false],
+    ],
+    'poinChildren' => [
+        ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
+        ['data' => 'judul', 'title' => 'Sub-Dokumen'],
+        ['data' => 'jenis', 'title' => 'Jenis'],
+        ['data' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false],
+    ],
+];
 @endphp
 
 <x-tabler.card>
     <x-tabler.card-body>
         <div class="d-flex justify-content-between align-items-start mb-1">
             <div>
-                @if($type === 'dokumen')
-                    <div class="badge bg-primary-lt">DOKUMEN {{ strtoupper($item->jenis) }}</div>
-                @elseif($type === 'poin')
-                    <div class="badge bg-secondary-lt">POIN {{ strtoupper($item->dokumen->jenis) }}</div>
-                @endif
+                <span class="badge bg-{{ $type === 'dokumen' ? 'primary' : 'secondary' }}-lt">
+                    {{ $type === 'dokumen' ? 'DOKUMEN' : 'POIN' }} {{ strtoupper($config->label()) }}
+                </span>
             </div>
             <div class="d-flex gap-2 flex-shrink-0">
                 <div class="btn-group">
                     @if($type === 'dokumen')
-                        {{-- Common Buttons for all document types --}}
-                        <x-tabler.button type="success" class="btn-sm ajax-modal-btn" text="Approval" icon="ti ti-users"
-                            data-url="{{ route('pemutu.dokumen.approve.create', $item->encrypted_dok_id) }}"
-                            data-modal-title="Form Approval Dokumen"
-                            data-approval="true" />
-                        <x-tabler.button type="primary" class="btn-sm btn-secondary ajax-modal-btn me-0" text="" icon="ti ti-edit"
-                            data-url="{{ route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id, 'mode' => 'title']) }}"
-                            data-modal-title="Ubah Judul Dokumen" />
-                        <x-tabler.button type="delete" class="btn-sm ajax-delete" text="" icon="ti ti-trash"
-                            data-url="{{ route('pemutu.dokumen-spmi.destroy', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id]) }}"
-                            data-title="Hapus Dokumen ini?" />
-                    @elseif($type === 'poin')
-                        @if(!$isKebijakan && $item->is_hasilkan_indikator)
-                            {{-- Standar poin: create indikator --}}
-                            <x-tabler.button type="create" class="btn-success"
-                                href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'spmi', 'is_renop_context' => 0, 'redirect_to' => url()->current()]) }}"
-                                text="Tambah Indikator" />
+                        {{-- Approval Button --}}
+                        @if($config->showApproval())
+                            <x-tabler.button
+                                type="success"
+                                class="btn-sm ajax-modal-btn"
+                                text="Approval"
+                                icon="ti ti-users"
+                                :data-url="route('pemutu.dokumen.approve.create', $item->encrypted_dok_id)"
+                                data-modal-title="Form Approval Dokumen"
+                                data-approval="true"
+                            />
                         @endif
-
-                        {{-- Edit/Delete poin --}}
-                        <x-tabler.button type="primary" class="btn-sm btn-secondary ajax-modal-btn me-0" text="" icon="ti ti-edit"
-                            data-url="{{ route('pemutu.dokumen-spmi.edit', ['type' => 'poin', 'id' => $item->encrypted_doksub_id]) }}"
+                        
+                        {{-- Edit Button --}}
+                        <x-tabler.button 
+                            type="primary" 
+                            class="btn-sm btn-secondary ajax-modal-btn me-0" 
+                            text="" 
+                            icon="ti ti-edit"
+                            :data-url="route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id, 'mode' => 'title'])"
+                            data-modal-title="Ubah Judul Dokumen" 
+                        />
+                        
+                        {{-- Delete Button --}}
+                        <x-tabler.button 
+                            type="delete" 
+                            class="btn-sm ajax-delete" 
+                            text="" 
+                            icon="ti ti-trash"
+                            :data-url="route('pemutu.dokumen-spmi.destroy', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id])"
+                            data-title="Hapus Dokumen ini?" 
+                        />
+                        
+                    @elseif($type === 'poin')
+                        {{-- Add Indikator Button (if can generate) --}}
+                        @if(!$isKebijakan && $item->is_hasilkan_indikator)
+                            <x-tabler.button 
+                                type="create" 
+                                class="btn-success"
+                                :href="route('pemutu.indikator.create', [
+                                    'parent_dok_id' => $item->encrypted_dok_id,
+                                    'parent_doksub_id' => $item->encrypted_doksub_id,
+                                    'type' => 'spmi',
+                                    'is_renop_context' => 0,
+                                    'redirect_to' => url()->current()
+                                ])"
+                                text="Tambah Indikator" 
+                            />
+                        @endif
+                        
+                        {{-- Edit Button --}}
+                        <x-tabler.button 
+                            type="primary" 
+                            class="btn-sm btn-secondary ajax-modal-btn me-0" 
+                            text="" 
+                            icon="ti ti-edit"
+                            :data-url="route('pemutu.dokumen-spmi.edit', ['type' => 'poin', 'id' => $item->encrypted_doksub_id])"
                             data-modal-title="Ubah Poin"
-                            data-modal-size="modal-xl" />
-                        <x-tabler.button type="delete" class="btn-sm ajax-delete" text="" icon="ti ti-trash"
-                            data-url="{{ route('pemutu.dokumen-spmi.destroy', ['type' => 'poin', 'id' => $item->encrypted_doksub_id]) }}"
-                            data-title="Hapus Poin ini?" />
+                            data-modal-size="modal-xl" 
+                        />
+                        
+                        {{-- Delete Button --}}
+                        <x-tabler.button 
+                            type="delete" 
+                            class="btn-sm ajax-delete" 
+                            text="" 
+                            icon="ti ti-trash"
+                            :data-url="route('pemutu.dokumen-spmi.destroy', ['type' => 'poin', 'id' => $item->encrypted_doksub_id])"
+                            data-title="Hapus Poin ini?" 
+                        />
                     @endif
                 </div>
             </div>
@@ -93,48 +130,59 @@
         <h2>{{ ($item->kode ?? '') . ' ' . $item->judul }} <span class="text-muted small">(Tahun {{ $item->periode ?? ($item->dokumen->periode ?? '') }})</span></h2>
         <div class="p-2">
             <ul class="nav nav-tabs card-header-tabs my-2" id="workspace-tabs-{{ $item->encrypted_doksub_id ?? ($item->encrypted_dok_id ?? 'root') }}" role="tablist">
+                {{-- Overview Tab (Always shown) --}}
                 <li class="nav-item" role="presentation">
                     <a href="#tab-overview" class="nav-link active" data-bs-toggle="tab" role="tab" aria-selected="true">
                         <i class="ti ti-eye icon me-1"></i> Overview
                     </a>
                 </li>
+
                 @if($type === 'dokumen')
-                    @if($item->jenis === 'renop')
+                    {{-- DOKUMEN TYPE TABS --}}
+                    @if($jenis === 'renop')
                         <li class="nav-item" role="presentation">
-                            <a href="#tab-indikator-renop" class="nav-link" data-bs-toggle="tab" role="tab" aria-selected="false">
+                            <a href="#tab-indikator-renop" class="nav-link" data-bs-toggle="tab" role="tab">
                                 <i class="ti ti-target icon me-1"></i> Indikator RENOP
                             </a>
                         </li>
-                    @elseif($item->jenis === 'formulir')
+                    @elseif($jenis === 'formulir')
                         <li class="nav-item" role="presentation">
                             <a href="#tab-mapping" class="nav-link" data-bs-toggle="tab" role="tab">
                                 <i class="ti ti-link icon me-1"></i> Mapping
                             </a>
                         </li>
-                    @elseif($item->jenis != 'manual_prosedur')
+                    @elseif($jenis !== 'manual_prosedur')
                         <li class="nav-item" role="presentation">
-                            <a href="#tab-subdokumen" class="nav-link" data-bs-toggle="tab" role="tab" aria-selected="false">
+                            <a href="#tab-subdokumen" class="nav-link" data-bs-toggle="tab" role="tab">
                                 <i class="ti ti-file-description icon me-1"></i> Poin
                             </a>
                         </li>
                     @endif
+                    
+                    {{-- Approval Tab for Dokumen --}}
                     <li class="nav-item" role="presentation">
-                        <a href="#tab-informasi" class="nav-link" data-bs-toggle="tab" role="tab" aria-selected="false">
+                        <a href="#tab-informasi" class="nav-link" data-bs-toggle="tab" role="tab">
                             <i class="ti ti-info-circle icon me-1"></i> Approval Dokumen
                         </a>
                     </li>
+                    
                 @elseif($type === 'poin')
-                    @if(!$isKebijakan)
-                        @if($item->is_hasilkan_indikator || (!$isKebijakan && !$item->is_hasilkan_indikator && $item->childDokumens->count() > 0))
+                    {{-- POIN TYPE TABS - Simplified with jenis column --}}
+                    @php
+                        $poinJenis = $item->jenis; // Always exists, auto-filled on create
+                    @endphp
+                    
+                    {{-- Tab Indikator - For Renop & Standar poin --}}
+                    @if(in_array($poinJenis, ['poin_renop', 'poin_standar']) && $item->is_hasilkan_indikator)
                         <li class="nav-item" role="presentation">
                             <a href="#tab-subdokumen" class="nav-link" data-bs-toggle="tab" role="tab">
                                 <i class="ti ti-target icon me-1"></i> Daftar Indikator
                             </a>
                         </li>
-                        @endif
                     @endif
 
-                    @if($mappableJenis)
+                    {{-- Tab Mapping - Only for specific poin types --}}
+                    @if(in_array($poinJenis, ['poin_misi', 'poin_rjp', 'poin_renstra', 'poin_renop']))
                         <li class="nav-item" role="presentation">
                             <a href="#tab-mapping" class="nav-link" data-bs-toggle="tab" role="tab">
                                 <i class="ti ti-link icon me-1"></i> Mapping
@@ -237,7 +285,7 @@
                                 <x-tabler.datatable
                                     id="indikator-renop-table"
                                     :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'renop_indikator', 'id' => $item->encrypted_dok_id])"
-                                    :columns="$indikatorColumns"
+                                    :columns="$columns['indikator']"
                                     ajax-load />
                             </x-tabler.card>
                         </div>
@@ -259,7 +307,7 @@
                                 <x-tabler.datatable
                                     id="children-table"
                                     :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id])"
-                                    :columns="$childrenColumns"
+                                    :columns="$columns['children']"
                                     ajax-load />
                             </x-tabler.card>
                         </div>
@@ -285,7 +333,7 @@
                                     <x-tabler.datatable
                                         id="indikators-table"
                                         :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'poin_indikator', 'id' => $item->encrypted_doksub_id])"
-                                        :columns="$indikatorColumns"
+                                        :columns="$columns['indikator']"
                                         ajax-load />
                                 </x-tabler.card>
                             @endif
@@ -303,7 +351,7 @@
                                     <x-tabler.datatable
                                         id="poin-children-table"
                                         :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'poin_dokumen', 'id' => $item->encrypted_doksub_id])"
-                                        :columns="$poinChildrenColumns"
+                                        :columns="$columns['poinChildren']"
                                         ajax-load />
                                 </x-tabler.card>
                             @endif
@@ -538,7 +586,11 @@
     document.getElementById('btn-add-mapping')?.addEventListener('click', function() {
         const select = document.getElementById('select-mapping-target');
         const mappedIds = $(select).val();
-        if (!mappedIds || mappedIds.length === 0) return;
+        if (!mappedIds || mappedIds.length === 0) {
+            if(typeof showErrorMessage === 'function') showErrorMessage('Perhatian', 'Pilih dokumen/poin yang akan dipetakan terlebih dahulu.');
+            else alert('Pilih dokumen/poin yang akan dipetakan terlebih dahulu.');
+            return;
+        }
 
         if (typeof showLoadingMessage === 'function') showLoadingMessage('Memetakan...', 'Mohon tunggu');
 
@@ -553,9 +605,10 @@
         .then(response => {
             if (response.data.success !== false) {
                 if(typeof showSuccessMessage === 'function') showSuccessMessage(response.data.message || 'Berhasil menyimpan mapping');
-                // Reload the detail panel
-                const activeLink = document.querySelector('.tree-item-link.active');
-                if (activeLink) activeLink.click();
+                // Reload halaman penuh untuk refresh mapping
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
             } else {
                 if(typeof showErrorMessage === 'function') showErrorMessage('Gagal', response.data.message || 'Gagal menambah mapping.');
                 else alert(response.data.message || 'Gagal menambah mapping.');

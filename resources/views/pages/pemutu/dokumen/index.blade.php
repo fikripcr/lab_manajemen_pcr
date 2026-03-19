@@ -3,18 +3,25 @@
 @section('title', 'Dokumen SPMI')
 
 @php
-    $allTabs = [
-        'visi' => 'VISI', 
-        'misi' => 'MISI', 
-        'rjp' => 'RPJP', 
-        'renstra' => 'RENSTRA', 
-        'renop' => 'RENOP',
-        'kebijakan' => 'KEBIJAKAN',
-        'standar' => 'STANDAR',
-        'manual_prosedur' => 'MANUAL PROSEDUR',
-        'formulir' => 'FORMULIR',
-    ];
-    $activeJenis = request('jenis', 'kebijakan');
+use App\Config\PemutuDokumenConfig;
+
+$allTabs = [
+    'visi' => 'VISI',
+    'misi' => 'MISI',
+    'rjp' => 'RPJP',
+    'renstra' => 'RENSTRA',
+    'renop' => 'RENOP',
+    'kebijakan' => 'KEBIJAKAN',
+    'standar' => 'STANDAR',
+    'manual_prosedur' => 'MANUAL PROSEDUR',
+    'formulir' => 'FORMULIR',
+];
+
+$activeJenis = request('jenis', 'kebijakan');
+$config = PemutuDokumenConfig::for($activeJenis);
+$isTreeBased = $config->isTreeBased();
+$dokData = $dokumentByJenis[$activeJenis] ?? collect();
+$rootDoc = $isTreeBased ? null : $dokData->first();
 @endphp
 
 @section('header')
@@ -33,21 +40,17 @@
 @endsection
 
 @section('content')
-@php
-    $isTreeBased = in_array($activeJenis, ['standar', 'formulir', 'manual_prosedur', 'kebijakan']);
-    $dokData = $dokumentByJenis[$activeJenis] ?? collect();
-    $rootDoc = $isTreeBased ? null : $dokData->first();
-@endphp
 <div class="row row-cards">
     <!-- Tree View Sidebar -->
     <div class="col-lg-5">
-        <x-tabler.card> 
+        <x-tabler.card>
             <x-tabler.card-body class="border-bottom bg-transparent p-0">
+                {{-- Tab Navigation --}}
                 <div class="p-2 border-bottom">
                     <ul class="nav nav-pills nav-fill gap-1 px-2">
                         @foreach(array_slice($allTabs, 0, 5, true) as $key => $label)
                         <li class="nav-item">
-                            <a href="{{ route('pemutu.dokumen.index', ['jenis' => $key]) }}" 
+                            <a href="{{ route('pemutu.dokumen.index', ['jenis' => $key]) }}"
                                class="nav-link py-1 px-2 small {{ $activeJenis == $key ? 'active shadow-sm' : '' }}">
                                 {{ $label }}
                             </a>
@@ -59,7 +62,7 @@
                     <ul class="nav nav-pills nav-fill gap-1 px-2">
                         @foreach(array_slice($allTabs, 5, null, true) as $key => $label)
                         <li class="nav-item">
-                            <a href="{{ route('pemutu.dokumen.index', ['jenis' => $key]) }}" 
+                            <a href="{{ route('pemutu.dokumen.index', ['jenis' => $key]) }}"
                                class="nav-link py-1 px-2 small {{ $activeJenis == $key ? 'active shadow-sm' : '' }}">
                                 {{ $label }}
                             </a>
@@ -67,34 +70,55 @@
                         @endforeach
                     </ul>
                 </div>
-                {{-- Global Add Button for Standar/Formulir (Tree Based) --}}
-                @if($isTreeBased)
+                
+                {{-- Add Button (Tree-based only) --}}
+                @if($config->isTreeBased())
                 <div class="p-3 bg-light-lt">
-                    <x-tabler.button type="create" text="Tambah {{ $allTabs[$activeJenis] }}" class="btn-primary w-100 ajax-modal-btn" 
-                        data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'tabs' => 'standar', 'fixed_jenis' => $activeJenis]) }}" 
-                        data-modal-title="Tambah Dokumen {{ $allTabs[$activeJenis] }}" />
+                    <x-tabler.button 
+                        type="create" 
+                        :text="'Tambah ' . $config->labelFull()" 
+                        class="btn-primary w-100 ajax-modal-btn"
+                        :data-url="route('pemutu.dokumen-spmi.create', [
+                            'type' => 'dokumen',
+                            'tabs' => $config->category(),
+                            'fixed_jenis' => $activeJenis
+                        ])"
+                        :data-modal-title="'Tambah Dokumen ' . $config->labelFull()" 
+                    />
                 </div>
                 @endif
             </x-tabler.card-body>
             
             <x-tabler.card-body class="p-0 overflow-auto" id="document-tree" style="max-height: 65vh;">
                 <div class="p-3">
-                    @if($isTreeBased)
-                        {{-- Tree view for Standar, Formulir, Manual Prosedur --}}
+                    @if($config->isTreeBased())
+                        {{-- Tree View --}}
                         <ul class="list-unstyled nested-sortable mb-0">
                             @forelse($dokData ?? [] as $dok)
-                                @include('pages.pemutu.dokumen._tree_item', ['dok' => $dok, 'level' => 0, 'collapsed' => true])
+                                @include('pages.pemutu.dokumen._tree_item', [
+                                    'dok' => $dok, 
+                                    'level' => 0, 
+                                    'collapsed' => true
+                                ])
                             @empty
                                 <li class="text-muted text-center py-3">
-                                    <div>Tidak ada dokumen {{ $allTabs[$activeJenis] }}.</div>
-                                    <x-tabler.button type="create" text="Tambah {{ $allTabs[$activeJenis] }}" class="btn-sm btn-outline-primary ajax-modal-btn mt-2" 
-                                        data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'tabs' => 'standar', 'fixed_jenis' => $activeJenis]) }}" 
-                                        data-modal-title="Dokumen {{ $allTabs[$activeJenis] }}" />
+                                    <div>Tidak ada dokumen {{ $config->labelFull() }}.</div>
+                                    <x-tabler.button 
+                                        type="create" 
+                                        :text="'Tambah ' . $config->labelFull()" 
+                                        class="btn-sm btn-outline-primary ajax-modal-btn mt-2"
+                                        :data-url="route('pemutu.dokumen-spmi.create', [
+                                            'type' => 'dokumen',
+                                            'tabs' => $config->category(),
+                                            'fixed_jenis' => $activeJenis
+                                        ])"
+                                        :data-modal-title="$config->labelFull()" 
+                                    />
                                 </li>
                             @endforelse
                         </ul>
                     @else
-                        {{-- Specialized view for Visi, Misi, RPJP, etc --}}
+                        {{-- Single Document View (Visi, Misi, etc) --}}
                         @php $dok = $dokData->first(); @endphp
                         @if($dok)
                             <div class="mb-1">

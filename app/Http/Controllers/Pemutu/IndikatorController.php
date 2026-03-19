@@ -60,12 +60,22 @@ class IndikatorController extends Controller
 
     public function data(Request $request)
     {
-        $query = $this->indikatorService->getFilteredQuery($request->all());
+        // SIMPLE LOGIC: If not 'all', add to filters
+        $filters = [];
+        foreach ($request->only(['dokumen_id', 'renstra_poin_id', 'label_ids', 'kelompok_indikator', 'jenis_data']) as $key => $value) {
+            if ($value !== 'all' && $value !== null && $value !== '') {
+                $filters[$key] = $value;
+            }
+        }
+        
+        $query = $this->indikatorService->getFilteredQuery($filters);
 
         return DataTables::of($query)
-            ->addIndexColumn()
-            ->editColumn('indikator', function ($row) {
-                return '[' . $row->no_indikator . '] ' . $row->indikator;
+            ->addColumn('no', function ($row) {
+                return pemutuDtColNo($row);
+            })
+            ->addColumn('indikator', function ($row) {
+                return pemutuDtColIndikator($row);
             })
             ->addColumn('dokumen_judul', function ($row) {
                 $html = '';
@@ -105,10 +115,7 @@ class IndikatorController extends Controller
                 return '-';
             })
             ->addColumn('labels', function ($row) {
-                return '<div class="d-flex flex-wrap gap-1">' . $row->labels->map(function ($label) {
-                    $color = $label->color ?? 'blue';
-                    return '<span class="badge bg-' . $color . '-lt text-' . $color . '">' . e($label->name) . '</span>';
-                })->implode('') . '</div>';
+                return pemutuLabelBadges($row->labels);
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
@@ -118,7 +125,7 @@ class IndikatorController extends Controller
                     'deleteUrl' => route('pemutu.indikator.destroy', $row->encrypted_indikator_id),
                 ])->render();
             })
-            ->rawColumns(['tipe', 'labels', 'action', 'renstra_poin', 'dokumen_judul', 'kelompok_indikator', 'jenis_data'])
+            ->rawColumns(['indikator', 'labels', 'action', 'renstra_poin', 'dokumen_judul', 'kelompok_indikator', 'jenis_data'])
             ->make(true);
     }
 

@@ -23,6 +23,7 @@ class DokSub extends Model implements HasMedia
     }
     protected $fillable = [
         'dok_id',
+        'jenis', // poin_visi, poin_misi, poin_rjp, etc.
         'judul',
         'kode',
         'isi',

@@ -79,30 +79,39 @@
 
 <script>
     if (typeof initApprovalForm !== 'function') {
+        let approvalFormInitialized = false;
+        
         function initApprovalForm() {
+            // Prevent double initialization
+            if (approvalFormInitialized) return;
+            approvalFormInitialized = true;
+            
             const container = document.getElementById('approver-container');
             const btnAdd = document.getElementById('btn-add-approver');
             let rowIndex = container.querySelectorAll('.approver-row').length;
-            
-            // Initial Select2 init for all existing rows
+
+            // Initialize Select2 for all existing rows FIRST
             container.querySelectorAll('.approver-row').forEach(row => {
-               initSelect2InRow(row);
+                initSelect2InRow(row);
             });
 
             btnAdd.addEventListener('click', function() {
                 const firstRow = container.querySelector('.approver-row');
                 const newRow = firstRow.cloneNode(true);
-                
+
                 // Update names and indexing
                 const select = newRow.querySelector('select');
                 const input = newRow.querySelector('input[type="text"]');
                 const rowNo = newRow.querySelector('.row-number');
                 const btnRemove = newRow.querySelector('.btn-remove-approver');
-                
-                // Clear old Select2 container if cloned
-                const select2Span = newRow.querySelector('.select2-container');
-                if (select2Span) { select2Span.remove(); }
-                
+
+                // Destroy old Select2 if exists (important!)
+                const $select = $(select);
+                if ($select.hasClass('select2-hidden-accessible') && typeof $.fn.select2 !== 'undefined') {
+                    $select.select2('destroy');
+                }
+
+                // Clean Select2 attributes
                 select.classList.remove('select2-hidden-accessible');
                 select.removeAttribute('data-select2-id');
                 select.removeAttribute('tabindex');
@@ -111,25 +120,28 @@
                     opt.removeAttribute('data-select2-id');
                     opt.removeAttribute('selected');
                 });
-                
+
                 select.name = `approvers[${rowIndex}][pegawai_id]`;
                 select.value = "";
-                
+
                 input.name = `approvers[${rowIndex}][jabatan]`;
                 input.value = "";
-                
+
                 rowNo.textContent = rowIndex + 1;
                 btnRemove.style.display = 'inline-flex';
-                
+
                 container.appendChild(newRow);
-                initSelect2InRow(newRow);
                 
+                // Re-init Select2 for new row (will be caught by global init or manual)
+                // But we do it immediately for better UX
+                initSelect2InRow(newRow);
+
                 // Ensure first row is removable if count > 1
                 if(container.children.length > 1) {
                     const allRemoveBtns = container.querySelectorAll('.btn-remove-approver');
                     allRemoveBtns.forEach(btn => btn.style.display = 'inline-flex');
                 }
-                
+
                 rowIndex++;
             });
 
@@ -150,7 +162,7 @@
                     row.querySelector('.row-number').textContent = index + 1;
                     row.querySelector('select').name = `approvers[${index}][pegawai_id]`;
                     row.querySelector('input[type="text"]').name = `approvers[${index}][jabatan]`;
-                    
+
                     const btnRemove = row.querySelector('.btn-remove-approver');
                     if (rows.length === 1) {
                         btnRemove.style.display = 'none';
@@ -163,25 +175,69 @@
 
             function initSelect2InRow(row) {
                 const select = row.querySelector('.select2-approval');
-                if (select && typeof $ !== 'undefined' && $.fn.select2) {
-                    // Avoid re-initializing if already done
-                    if (!$(select).hasClass("select2-hidden-accessible")) {
-                        $(select).select2({
-                            dropdownParent: $('#modalAction'),
-                            placeholder: "Pilih Pegawai...",
-                            allowClear: true,
-                            width: '100%',
-                        });
-                    }
+                if (!select) return;
+
+                const $select = $(select);
+
+                // Skip if already initialized
+                if ($select.hasClass('select2-hidden-accessible')) return;
+                
+                // Ensure Select2 library is loaded
+                if (typeof $.fn.select2 === 'undefined') {
+                    console.warn('Select2 not loaded yet, skipping initialization');
+                    return;
                 }
+
+                // Initialize Select2 with Bootstrap 5 theme
+                $select.select2({
+                    dropdownParent: $('#modalAction'),
+                    placeholder: "Pilih Pegawai...",
+                    allowClear: true,
+                    width: '100%',
+                    theme: 'bootstrap-5'
+                });
             }
         }
-        
+
+        // Wait for Select2 to be FULLY loaded before initializing
+        const initApprovalWithSelect2 = () => {
+            if (typeof $.fn.select2 === 'undefined') {
+                if (typeof window.loadSelect2 === 'function') {
+                    // Show loading state
+                    const btn = document.getElementById('btn-add-approver');
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
+                    }
+                    
+                    window.loadSelect2().then(() => {
+                        // Select2 fully loaded with theme
+                        initApprovalForm();
+                        
+                        // Restore button
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="ti ti-plus me-1"></i> Tambah Approver';
+                        }
+                    }).catch(err => {
+                        console.error('Failed to load Select2:', err);
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="ti ti-plus me-1"></i> Tambah Approver';
+                        }
+                    });
+                }
+            } else {
+                // Already loaded
+                initApprovalForm();
+            }
+        };
+
         if ($('#modalAction').hasClass('show')) {
-            initApprovalForm();
+            initApprovalWithSelect2();
         } else {
             $('#modalAction').on('shown.bs.modal', function () {
-                initApprovalForm();
+                initApprovalWithSelect2();
                 $('#modalAction').off('shown.bs.modal', arguments.callee);
             });
         }

@@ -79,15 +79,15 @@
                                         </div>
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="dok_id" id="dok_id_{{ $typeId }}" label="Standar / Dokumen" placeholder="">
-                                                <option value="">Semua Standar</option>
+                                                <option value="all">Semua Standar</option>
                                                 @foreach($rootDoks as $dok)
-                                                    <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->judul }}</option>
+                                                    <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->kode ?? '' }} - {{ $dok->judul }}</option>
                                                 @endforeach
                                             </x-tabler.form-select>
                                         </div>
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="ed_status" id="ed_status_{{ $typeId }}" label="Status Pengisian ED" placeholder="">
-                                                <option value="">Semua</option>
+                                                <option value="all">Semua</option>
                                                 <option value="filled">Sudah Isi</option>
                                                 <option value="empty">Belum Isi</option>
                                             </x-tabler.form-select>

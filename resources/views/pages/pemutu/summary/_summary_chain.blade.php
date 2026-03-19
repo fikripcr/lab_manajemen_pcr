@@ -122,7 +122,7 @@
 
     {{-- Continue chain recursion --}}
     @if($hasChain)
-        @include('pages.pemutu.dokumen._summary_chain', ['chain' => $node['chain'], 'depth' => $depth + 1])
+        @include('pemutu.summary._summary_chain', ['chain' => $node['chain'], 'depth' => $depth + 1])
     @endif
 </div>
 @endforeach

@@ -26,7 +26,7 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <x-tabler.form-select name="unit_id" label="Unit / Area" placeholder="Semua Unit">
-                                <option value="">Semua Unit</option>
+                                <option value="all">Semua Unit</option>
                                 @foreach($units as $unit)
                                     <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
                                 @endforeach

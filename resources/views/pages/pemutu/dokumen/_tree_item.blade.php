@@ -1,10 +1,16 @@
+@php
+use App\Config\PemutuDokumenConfig;
+
+$hasChildDocs = !empty($dok->children) && $dok->children->count() > 0;
+$hasDokSubs = !empty($dok->dokSubs) && $dok->dokSubs->count() > 0;
+$hasChildren = $hasChildDocs || $hasDokSubs;
+
+// Get config for icon/color
+$config = App\Config\PemutuDokumenConfig::for($dok->jenis ?? 'standar');
+@endphp
+
 <li data-id="{{ $dok->encrypted_dok_id }}" data-jenis="{{ $dok->jenis }}" id="tree-node-dok-{{ $dok->encrypted_dok_id }}">
     <div class="d-flex align-items-start mb-2 tree-node-row" draggable="true">
-        @php
-            $hasChildDocs = !empty($dok->children) && $dok->children->count() > 0;
-            $hasDokSubs = !empty($dok->dokSubs) && $dok->dokSubs->count() > 0;
-            $hasChildren = $hasChildDocs || $hasDokSubs;
-        @endphp
         @if($hasChildren)
             <span class="tree-toggle text-muted me-2 mt-1">
                 <i class="ti ti-chevron-{{ isset($collapsed) && $collapsed ? 'right' : 'down' }}"></i>

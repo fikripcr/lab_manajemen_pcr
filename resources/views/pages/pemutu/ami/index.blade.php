@@ -85,7 +85,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <x-tabler.form-select name="dok_id" id="dok_id_{{ $typeId }}" label="Standar / Dokumen" placeholder="">
-                                                <option value="">Semua Standar</option>
+                                                <option value="all">Semua Standar</option>
                                                 @foreach($rootDoks as $dok)
                                                     <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->judul }}</option>
                                                 @endforeach
@@ -93,7 +93,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <x-tabler.form-select name="ami_hasil_akhir" id="ami_hasil_akhir_{{ $typeId }}" label="Hasil AMI" placeholder="">
-                                                <option value="">Semua Hasil</option>
+                                                <option value="all">Semua Hasil</option>
                                                 <option value="empty">Belum Dinilai</option>
                                                 <option value="0">KTS</option>
                                                 <option value="1">Terpenuhi</option>
@@ -102,7 +102,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <x-tabler.form-select name="ed_status" id="ed_status_{{ $typeId }}" label="Status ED" placeholder="">
-                                                <option value="">Semua Status</option>
+                                                <option value="all">Semua Status</option>
                                                 <option value="filled">Sudah Isi</option>
                                                 <option value="empty">Belum Isi</option>
                                             </x-tabler.form-select>

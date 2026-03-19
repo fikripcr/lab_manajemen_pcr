@@ -16,7 +16,7 @@
     </button>
 @elseif($type === 'bare')
     <!-- Bare Form Mode: To be used inside a collapsible container -->
-    <div {{ $attributes->merge(['class' => 'card card-body bg-light border-0 border-bottom rounded-0 mb-0']) }}>
+    <div {{ $attributes->merge(['class' => 'card card-body border-0 border-bottom rounded-0 mb-0']) }}>
         <form id="{{ $dataTableId }}-filter">
             <div class="row g-3">
                 {{$slot}}

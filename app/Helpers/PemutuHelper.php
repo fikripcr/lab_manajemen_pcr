@@ -1,59 +1,65 @@
 <?php
 
+use App\Config\PemutuDokumenConfig;
+
+/**
+ * Pemutu Helper Functions - DEPRECATED
+ *
+ * These functions are kept for backward compatibility only.
+ * Please use PemutuDokumenConfig class directly in new code:
+ *
+ *   OLD: pemutuJenisLabel('standar')
+ *   NEW: PemutuDokumenConfig::for('standar')->label()
+ *
+ *   OLD: pemutuMappableJenis('misi')
+ *   NEW: PemutuDokumenConfig::for('misi')->mappableTo()
+ *
+ *   OLD: pemutuDefaultSubDocuments('standar')
+ *   NEW: PemutuDokumenConfig::for('standar')->getDefaultPoin()
+ */
+
 if (! function_exists('pemutuJenisLabel')) {
     /**
-     * Get human-readable label for a document type (jenis).
-     * Single source of truth for all display labels.
+     * @deprecated Use PemutuDokumenConfig::for($jenis)->label() instead
      */
-    function pemutuJenisLabel($jenis)
+    function pemutuJenisLabel($jenis): string
     {
-        return match (strtolower(trim($jenis))) {
-            'visi'            => 'Visi',
-            'misi'            => 'Misi',
-            'rjp'             => 'RPJP',
-            'renstra'         => 'Renstra',
-            'renop'           => 'Renop',
-            'standar'         => 'Standar',
-            'formulir'        => 'Formulir',
-            'manual_prosedur' => 'Manual Prosedur',
-            'kebijakan'       => 'Kebijakan',
-            default           => ucfirst($jenis ?? '-'),
-        };
+        return App\Config\PemutuDokumenConfig::for($jenis)->label();
     }
 }
 
 if (! function_exists('pemutuJenisLabelFull')) {
     /**
-     * Get full human-readable label for a document type (jenis).
+     * @deprecated Use PemutuDokumenConfig::for($jenis)->labelFull() instead
      */
-    function pemutuJenisLabelFull($jenis)
+    function pemutuJenisLabelFull($jenis): string
     {
-        return match (strtolower(trim($jenis))) {
-            'visi'            => 'Visi',
-            'misi'            => 'Misi',
-            'rjp'             => 'Rencana Pembangunan Jangka Panjang (RPJP)',
-            'renstra'         => 'Rencana Strategis (Renstra)',
-            'renop'           => 'Rencana Operasional (Renop)',
-            'standar'         => 'Standar',
-            'formulir'        => 'Formulir',
-            'manual_prosedur' => 'Manual Prosedur',
-            'kebijakan'       => 'Kebijakan',
-            default           => ucfirst($jenis ?? '-'),
-        };
+        return App\Config\PemutuDokumenConfig::for($jenis)->labelFull();
+    }
+}
+
+if (! function_exists('pemutuTabByJenis')) {
+    /**
+     * @deprecated Use PemutuDokumenConfig::for($jenis)->category() instead
+     */
+    function pemutuTabByJenis($jenis): string
+    {
+        return App\Config\PemutuDokumenConfig::for($jenis)->category();
     }
 }
 
 if (! function_exists('pemutuChildLabel')) {
     /**
      * Get label for child elements based on parent document type.
+     * @deprecated Will be replaced in future versions
      */
-    function pemutuChildLabel($jenis)
+    function pemutuChildLabel($jenis): string
     {
         return match (strtolower(trim($jenis))) {
             'visi', 'misi', 'standar' => 'Poin',
             'rjp', 'renstra', 'renop', 'kebijakan' => 'Indikator',
             'formulir' => 'Mapping',
-            default => 'Turunan'
+            default    => 'Turunan'
         };
     }
 }
@@ -61,42 +67,53 @@ if (! function_exists('pemutuChildLabel')) {
 if (! function_exists('pemutuIsDokSubBased')) {
     /**
      * Check if document type uses Sub-Documents (DokSub) for its children.
+     * @deprecated Will be replaced in future versions
      */
-    function pemutuIsDokSubBased($jenis)
+    function pemutuIsDokSubBased($jenis): bool
     {
         return in_array(strtolower(trim($jenis)), [
             'standar', 'manual_prosedur',
-            'visi', 'misi', 'rjp', 'renstra', 'kebijakan'
+            'visi', 'misi', 'rjp', 'renstra', 'kebijakan',
         ]);
     }
 }
 
-if (! function_exists('pemutuTabByJenis')) {
+if (! function_exists('pemutuMappableJenis')) {
     /**
-     * Get the active tab category for document type.
+     * @deprecated Use PemutuDokumenConfig::for($jenis)->mappableTo() instead
      */
-    function pemutuTabByJenis($jenis)
+    function pemutuMappableJenis($jenis): ?array
     {
-        $standarTypes = ['standar', 'formulir', 'manual_prosedur'];
-        return in_array(strtolower(trim($jenis)), $standarTypes) ? 'standar' : 'kebijakan';
+        return App\Config\PemutuDokumenConfig::for($jenis)->mappableTo();
+    }
+}
+
+if (! function_exists('pemutuDefaultSubDocuments')) {
+    /**
+     * @deprecated Use PemutuDokumenConfig::for($jenis)->getDefaultPoin() instead
+     */
+    function pemutuDefaultSubDocuments($jenis): array
+    {
+        return App\Config\PemutuDokumenConfig::for($jenis)->getDefaultPoin();
     }
 }
 
 if (! function_exists('pemutuFixedJenis')) {
     /**
      * Get the next document type in the hierarchy chain.
+     * @deprecated Will be replaced in future versions
      */
-    function pemutuFixedJenis($jenis)
+    function pemutuFixedJenis($jenis): ?string
     {
         return match (strtolower(trim($jenis))) {
-            'kebijakan' => 'standar',
-            'standar' => 'manual_prosedur',
+            'kebijakan'       => 'standar',
+            'standar'         => 'manual_prosedur',
             'manual_prosedur' => 'formulir',
-            'visi'    => 'misi',
-            'misi'    => 'rjp',
-            'rjp'     => 'renstra',
-            'renstra' => 'renop',
-            default   => null,
+            'visi'            => 'misi',
+            'misi'            => 'rjp',
+            'rjp'             => 'renstra',
+            'renstra'         => 'renop',
+            default           => null,
         };
     }
 }
@@ -104,8 +121,9 @@ if (! function_exists('pemutuFixedJenis')) {
 if (! function_exists('pemutuIndikatorTypeInfo')) {
     /**
      * Get label and color for indicator type.
+     * @deprecated Will be replaced in future versions
      */
-    function pemutuIndikatorTypeInfo($type)
+    function pemutuIndikatorTypeInfo($type): array
     {
         $data = [
             'standar'  => ['color' => 'primary', 'label' => 'Indikator Standar', 'short-label' => 'ISTD'],
@@ -117,29 +135,10 @@ if (! function_exists('pemutuIndikatorTypeInfo')) {
     }
 }
 
-if (! function_exists('pemutuMappableJenis')) {
-    /**
-     * Get the valid target document type for point-to-point mapping.
-     * Returns which document type's points a given type can map to.
-     * E.g. misi points can map to visi points, rpjp to misi, etc.
-     */
-    function pemutuMappableJenis($jenis)
-    {
-        return match (strtolower(trim($jenis))) {
-            'misi'     => ['visi'],
-            'rjp'      => ['misi'],
-            'renstra'  => ['rjp'],
-            'renop'    => ['renstra'],
-            'kebijakan' => ['standar'],
-            'formulir' => ['standar', 'manual_prosedur'],
-            default    => null,
-        };
-    }
-}
-
 if (! function_exists('pemutuKebijakanJenisList')) {
     /**
-     * Get the ordered list of 5 kebijakan document types.
+     * Get the ordered list of kebijakan document types.
+     * @deprecated Use PemutuDokumenConfig::all() instead
      */
     function pemutuKebijakanJenisList(): array
     {
@@ -147,13 +146,33 @@ if (! function_exists('pemutuKebijakanJenisList')) {
     }
 }
 
+if (! function_exists('pemutuTreeBasedTypes')) {
+    /**
+     * @deprecated Use PemutuDokumenConfig::treeBasedTypes() instead
+     */
+    function pemutuTreeBasedTypes(): array
+    {
+        return App\Config\PemutuDokumenConfig::treeBasedTypes();
+    }
+}
+
+if (! function_exists('pemutuIndikatorGenerators')) {
+    /**
+     * @deprecated Use PemutuDokumenConfig::indikatorGeneratorTypes() instead
+     */
+    function pemutuIndikatorGenerators(): array
+    {
+        return App\Config\PemutuDokumenConfig::indikatorGeneratorTypes();
+    }
+}
+
+// ─────────────────────────────────────────────────────────
+// HELPER FUNCTIONS THAT ARE STILL NEEDED (Not in Config)
+// ─────────────────────────────────────────────────────────
+
 if (! function_exists('pemutuLabelBadge')) {
     /**
      * Render a single label badge HTML with correct color from its LabelType.
-     *
-     * @param  \App\Models\Pemutu\Label  $label
-     * @param  string  $style  'lt' (light) or 'solid'
-     * @return string  HTML badge string
      */
     function pemutuLabelBadge($label, string $style = 'lt'): string
     {
@@ -169,17 +188,18 @@ if (! function_exists('pemutuLabelBadge')) {
 
 if (! function_exists('pemutuLabelBadges')) {
     /**
-     * Render multiple label badges from a collection, joined with spaces.
-     *
-     * @param  \Illuminate\Support\Collection  $labels
-     * @param  string  $style  'lt' (light) or 'solid'
-     * @return string  HTML string of all badges
+     * Render multiple label badges HTML.
      */
     function pemutuLabelBadges($labels, string $style = 'lt'): string
     {
-        return $labels->map(fn($l) => pemutuLabelBadge($l, $style))->implode(' ');
+        $badges = [];
+        foreach ($labels as $label) {
+            $badges[] = pemutuLabelBadge($label, $style);
+        }
+        return implode(' ', $badges);
     }
 }
+
 if (! function_exists('pemutuDtColNo')) {
     /**
      * Render the first column (# / No) for Indikator DataTables.
@@ -358,6 +378,13 @@ if (! function_exists('pemutuDtColTarget')) {
     }
 }
 
+// ─────────────────────────────────────────────────────────
+// DATA TABLES COLUMN RENDERERS (Still needed, not in Config)
+
+// ─────────────────────────────────────────────────────────
+// DATA TABLES COLUMN RENDERERS (Still needed, not in Config)
+// ─────────────────────────────────────────────────────────
+
 if (! function_exists('pemutuDtColAnalisisEd')) {
     /**
      * Render the Analisis column for Evaluasi Diri DataTables.
@@ -401,7 +428,6 @@ if (! function_exists('pemutuDtColAnalisisEd')) {
 
             // 2. Show File Attachment
             if ($hasFile) {
-                // In summary controller it might be ID directly.
                 $itemId = $pivot->indikorgunit_id ?? null;
                 if ($itemId) {
                     $url           = route('pemutu.evaluasi-diri.download', encryptId($itemId));
@@ -446,10 +472,10 @@ if (! function_exists('pemutuDtColStatusPengend')) {
         }
 
         $map = [
-            'tetap'       => ['label' => 'Dipertahankan', 'color' => 'success'],
-            'penyesuaian' => ['label' => 'Disesuaikan', 'color' => 'warning'],
+            'tetap'        => ['label' => 'Dipertahankan', 'color' => 'success'],
+            'penyesuaian'  => ['label' => 'Disesuaikan', 'color' => 'warning'],
             'ditingkatkan' => ['label' => 'Ditingkatkan', 'color' => 'blue'],
-            'nonaktif'    => ['label' => 'Di-nonaktifkan', 'color' => 'danger'],
+            'nonaktif'     => ['label' => 'Di-nonaktifkan', 'color' => 'danger'],
         ];
 
         $html = '';
@@ -458,7 +484,6 @@ if (! function_exists('pemutuDtColStatusPengend')) {
             $html .= '<div class="d-flex flex-column gap-1">';
             $html .= '<span class="badge bg-' . $m['color'] . '-lt text-' . $m['color'] . '" title="Usulan Unit">' . $m['label'] . '</span>';
             
-            // Show superior status if different or specifically confirmed
             if ($statusAtsn && isset($map[$statusAtsn])) {
                 $mAtsn = $map[$statusAtsn];
                 if ($statusAtsn !== $status) {
@@ -476,9 +501,6 @@ if (! function_exists('pemutuDtColStatusPengend')) {
 }
 
 if (! function_exists('pemutuDtColEisenhower')) {
-    /**
-     * Render the Eisenhower Matrix column for Pengendalian DataTables.
-     */
     function pemutuDtColEisenhower($row)
     {
         $important = null;
@@ -509,9 +531,6 @@ if (! function_exists('pemutuDtColEisenhower')) {
 }
 
 if (! function_exists('pemutuDtColAnalisisPengend')) {
-    /**
-     * Render the Analisis column for Pengendalian DataTables.
-     */
     function pemutuDtColAnalisisPengend($row)
     {
         $analisis = null;
@@ -524,7 +543,6 @@ if (! function_exists('pemutuDtColAnalisisPengend')) {
         if (! $analisis || $analisis === '-') {
             return '<span class="text-muted small fst-italic">Belum diisi</span>';
         }
-        // Strip HTML tags dan truncate
         $plain   = strip_tags($analisis);
         $preview = mb_strlen($plain) > 80 ? mb_substr($plain, 0, 80) . '…' : $plain;
         return '<span class="small text-muted" title="' . e($plain) . '">' . e($preview) . '</span>';
@@ -532,15 +550,11 @@ if (! function_exists('pemutuDtColAnalisisPengend')) {
 }
 
 if (! function_exists('pemutuDtColLabelsList')) {
-    /**
-     * Render the Labels as a flex-wrap container list (for summary/detail separate column).
-     */
     function pemutuDtColLabelsList($row)
     {
         $html     = '<div class="d-flex flex-wrap gap-1">';
         $hasLabel = false;
 
-        // Support concatenated label_details format (name|color, name|color)
         if (isset($row->label_details) && $row->label_details !== '-') {
             $labels = explode(', ', $row->label_details);
             foreach ($labels as $label) {
@@ -550,9 +564,7 @@ if (! function_exists('pemutuDtColLabelsList')) {
                     $hasLabel        = true;
                 }
             }
-        }
-        // Support all_labels and all_label_colors format (from IndikatorSummary model view)
-        elseif (isset($row->all_labels) && $row->all_labels !== '') {
+        } elseif (isset($row->all_labels) && $row->all_labels !== '') {
             $names  = explode(', ', $row->all_labels);
             $colors = explode(', ', $row->all_label_colors ?? '');
 
@@ -561,11 +573,8 @@ if (! function_exists('pemutuDtColLabelsList')) {
                 $html     .= '<span class="status status-' . e($color) . '">' . e($name) . '</span>';
                 $hasLabel  = true;
             }
-        }
-        // Support Eloquent related models format
-        elseif (isset($row->labels) && ! is_string($row->labels) && $row->labels->isNotEmpty()) {
+        } elseif (isset($row->labels) && ! is_string($row->labels) && $row->labels->isNotEmpty()) {
             foreach ($row->labels as $labelObj) {
-                // Determine name and color. The data might be an IndikatorLabel or just Label model.
                 $name      = $labelObj->name ?? $labelObj->label?->name;
                 $color     = $labelObj->color ?? $labelObj->label?->color ?? 'secondary';
                 $html     .= '<span class="status status-' . e($color) . '">' . e($name) . '</span>';
@@ -580,9 +589,6 @@ if (! function_exists('pemutuDtColLabelsList')) {
 }
 
 if (! function_exists('pemutuDtColStatusEd')) {
-    /**
-     * Render the Status of Evaluasi Diri (ED) for DataTables.
-     */
     function pemutuDtColStatusEd($row)
     {
         $pivot = null;
@@ -606,9 +612,6 @@ if (! function_exists('pemutuDtColStatusEd')) {
 }
 
 if (! function_exists('pemutuDtColStatusAmi')) {
-    /**
-     * Render the Status of AMI (Audit Mutu Internal) for DataTables.
-     */
     function pemutuDtColStatusAmi($row)
     {
         $pivot = null;
@@ -625,7 +628,6 @@ if (! function_exists('pemutuDtColStatusAmi')) {
             $colors = [0 => 'danger', 1 => 'success', 2 => 'info', 'KTS' => 'danger', 'Terpenuhi' => 'success', 'Terlampaui' => 'info'];
             $color  = $colors[$amiHasil] ?? 'secondary';
 
-            // Fallback label if not provided in row
             if (! $label) {
                 if (is_numeric($amiHasil)) {
                     $labels = [0 => 'KTS', 1 => 'Terpenuhi', 2 => 'Terlampaui'];
@@ -656,6 +658,7 @@ if (! function_exists('pemutuDtColStatusAmi')) {
     }
 }
 
+if (! function_exists('pemutuDtColStatusPeningkatan')) {
     function pemutuDtColStatusPeningkatan($row)
     {
         $status = $row->prev_pengend_status_atsn ?? ($row->prev_ou->pengend_status_atsn ?? null);
@@ -672,13 +675,11 @@ if (! function_exists('pemutuDtColStatusAmi')) {
             return '<span class="badge bg-' . $m['color'] . '-lt text-' . $m['color'] . '">' . $m['label'] . '</span>';
         }
 
-        return '<span class="badge bg-blue-lt">Dipertahankan</span>'; // Default for followed-up indicators
+        return '<span class="badge bg-blue-lt">Dipertahankan</span>';
     }
+}
 
 if (! function_exists('pemutuDtColRtp')) {
-    /**
-     * Render the RTP column for AMI DataTables.
-     */
     function pemutuDtColRtp($row)
     {
         $pivot = null;
@@ -704,37 +705,5 @@ if (! function_exists('pemutuDtColRtp')) {
         $html .= '</div>';
 
         return $html;
-    }
-}
-
-if (! function_exists('pemutuDefaultSubDocuments')) {
-    /**
-     * Get default sub-documents (points) for a document type.
-     */
-    function pemutuDefaultSubDocuments($jenis): array
-    {
-        $points = [
-            'Visi, Misi dan Tujuan',
-            'Rasional Standar',
-            'Definisi Istilah',
-            'Pihak yang Bertanggungjawab',
-            'Pernyataan Isi Standar / Indikator Capaian',
-            'Strategi Pelaksanaan',
-            'Dokumen Terkait',
-            'Referensi',
-        ];
-
-        $jenis = strtolower(trim($jenis));
-
-        if ($jenis === 'kebijakan') {
-            unset($points[4]); // Remove "Pernyataan Isi Standar / Indikator Capaian" (index 4 is No 5)
-            return array_values($points);
-        }
-
-        if ($jenis === 'standar') {
-            return $points;
-        }
-
-        return [];
     }
 }
