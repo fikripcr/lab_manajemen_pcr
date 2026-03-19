@@ -6,16 +6,20 @@ use App\Http\Requests\Pemutu\PegawaiImportRequest;
 use App\Http\Requests\Pemutu\PegawaiRequest;
 use App\Models\Hr\StrukturOrganisasi;
 use App\Services\Pemutu\PegawaiService;
+use App\Services\Hr\StrukturOrganisasiService;
 use Yajra\DataTables\DataTables;
 
 class PegawaiController extends Controller
 {
-    public function __construct(protected PegawaiService $pegawaiService)
+    public function __construct(
+        protected PegawaiService $pegawaiService,
+        protected StrukturOrganisasiService $strukturOrganisasiService,
+    )
     {}
 
     public function index()
     {
-        $units = \App\Services\Hr\StrukturOrganisasiService::getHierarchicalList();
+        $units = $this->strukturOrganisasiService->getHierarchicalList();
         return view('pages.pemutu.pegawai.index', compact('units'));
     }
 

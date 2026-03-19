@@ -57,7 +57,7 @@ class Indikator extends Model
     // Relationships
     public function dokSubs()
     {
-        return $this->belongsToMany(DokSub::class, 'pemutu_indikator_doksub', 'indikator_id', 'doksub_id')
+        return $this->morphToMany(DokSub::class, 'source', 'pemutu_indikator_doksub', 'source_id', 'doksub_id')
             ->withPivot('is_hasilkan_indikator')
             ->withTimestamps();
     }

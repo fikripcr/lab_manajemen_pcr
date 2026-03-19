@@ -108,6 +108,24 @@ class DokumenService
     }
 
     /**
+     * Get Mappable Parent Dokumen Options for a given Jenis (e.g. Formulir mapping to Standar/Manual)
+     */
+    public function getMappableDokumenOptions(string $sourceJenis, int $periode): \Illuminate\Support\Collection
+    {
+        $targetJenis = pemutuMappableJenis($sourceJenis);
+
+        if (empty($targetJenis)) {
+            return collect();
+        }
+
+        return \App\Models\Pemutu\Dokumen::whereIn('jenis', $targetJenis)
+            ->where('periode', $periode)
+            ->orderBy('kode')
+            ->orderBy('judul')
+            ->get();
+    }
+
+    /**
      * Get unique standard documents for a given year.
      *
      * @param string $year

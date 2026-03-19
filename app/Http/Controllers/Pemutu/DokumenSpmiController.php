@@ -54,12 +54,22 @@ class DokumenSpmiController extends Controller
     public function show(Request $request, $type, $id)
     {
         if ($type === 'dokumen') {
-            $item          = Dokumen::findOrFail(decryptIdIfEncrypted($id));
+            $item          = Dokumen::with('mappedDokSubs.dokumen')->findOrFail(decryptIdIfEncrypted($id));
             $parentJenis   = strtolower(trim($item->jenis));
             $childLabel    = pemutuChildLabel($parentJenis);
             $isDokSubBased = pemutuIsDokSubBased($parentJenis);
             $isKebijakan   = in_array($parentJenis, pemutuKebijakanJenisList());
-            return view('pages.pemutu.dokumen._workspace', compact('type', 'item', 'childLabel', 'isDokSubBased', 'isKebijakan'));
+
+            // For Formulir: load available mapping options (targets: Standar or Manual Prosedur parent documents)
+            $mappableOptions = collect();
+            if ($parentJenis === 'formulir') {
+                $mappableOptions = $this->dokumenService->getMappableDokumenOptions(
+                    $parentJenis,
+                    $item->periode ?? (int) date('Y')
+                );
+            }
+
+            return view('pages.pemutu.dokumen._workspace', compact('type', 'item', 'childLabel', 'isDokSubBased', 'isKebijakan', 'mappableOptions'));
         } elseif ($type === 'poin') {
             $item        = DokSub::with('dokumen', 'mappedTo.dokumen', 'mappedFrom.dokumen')->findOrFail(decryptIdIfEncrypted($id));
             $parentJenis = strtolower(trim($item->dokumen->jenis ?? ''));
@@ -481,33 +491,51 @@ class DokumenSpmiController extends Controller
     public function mappingSync(Request $request)
     {
         $request->validate([
-            'doksub_id'        => 'required',
-            'mapped_doksub_id' => 'required',
-            'action'           => 'required|in:attach,detach',
+            'source_id'   => 'required',
+            'source_type' => 'required|in:dokumen,poin',
+            'mapped_id'   => 'required', // can be dok_id or doksub_id
+            'action'      => 'required|in:attach,detach',
         ]);
 
-        $doksubId       = decryptIdIfEncrypted($request->doksub_id);
-        $mappedDoksubId = decryptIdIfEncrypted($request->mapped_doksub_id);
+        $sourceId = decryptIdIfEncrypted($request->source_id);
+        $action   = $request->action;
+        $mappedInput = is_array($request->mapped_id) ? $request->mapped_id : [$request->mapped_id];
+        $mappedIds   = array_map('decryptIdIfEncrypted', $mappedInput);
 
-        $doksub = DokSub::with('dokumen')->findOrFail($doksubId);
-        $mapped = DokSub::with('dokumen')->findOrFail($mappedDoksubId);
-
-        // Validate: mapping must be to the correct level above
-        $sourceJenis    = strtolower(trim($doksub->dokumen->jenis ?? ''));
-        $targetJenis    = strtolower(trim($mapped->dokumen->jenis ?? ''));
-        $expectedTargets = pemutuMappableJenis($sourceJenis);
-
-        if (!in_array($targetJenis, $expectedTargets)) {
-            $targetLabels = implode(' atau ', array_map('pemutuJenisLabel', $expectedTargets));
-            return jsonError("Poin {$sourceJenis} hanya bisa dipetakan ke poin " . $targetLabels . '.');
+        if ($request->source_type === 'dokumen') {
+            $source = Dokumen::findOrFail($sourceId);
+            $sourceJenis = strtolower(trim($source->jenis));
+            // For Formulir documents, we map to PARENT Dokumen (Standar/Manual)
+            $relation = $source->mappedDokTargets();
+        } else {
+            $source = DokSub::with('dokumen')->findOrFail($sourceId);
+            $sourceJenis = strtolower(trim($source->dokumen->jenis ?? ''));
+            // For Kebijakan points, we map to SUB points (DokSub)
+            $relation = $source->mappedTo();
         }
 
-        if ($request->action === 'attach') {
-            $doksub->mappedTo()->syncWithoutDetaching([$mappedDoksubId]);
+        $expectedTargetJenis = pemutuMappableJenis($sourceJenis);
+        
+        // Validate target jenis for all IDs
+        foreach ($mappedIds as $mId) {
+            $target = ($request->source_type === 'dokumen') 
+                ? Dokumen::findOrFail($mId)
+                : DokSub::with('dokumen')->findOrFail($mId);
+            
+            $targetJenis = strtolower(trim(($request->source_type === 'dokumen') ? $target->jenis : ($target->dokumen->jenis ?? '')));
+
+            if (! in_array($targetJenis, ($expectedTargetJenis ?: []))) {
+                $targetLabels = implode(' atau ', array_map('pemutuJenisLabel', $expectedTargetJenis ?: []));
+                return jsonError('Mapping tidak valid. Target harus berupa ' . ($targetLabels ?: 'tipe yang sesuai') . '.');
+            }
+        }
+
+        if ($action === 'attach') {
+            $relation->syncWithoutDetaching($mappedIds);
             return jsonSuccess('Mapping berhasil ditambahkan.');
         } else {
-            $doksub->mappedTo()->detach($mappedDoksubId);
-            return jsonSuccess('Mapping berhasil dihapus.');
+            $relation->detach($mappedIds);
+            return jsonSuccess('Mapping berhasil dilepas.');
         }
     }
 

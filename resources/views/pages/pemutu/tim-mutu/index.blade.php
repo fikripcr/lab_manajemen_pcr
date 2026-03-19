@@ -37,8 +37,7 @@
         @endphp
         <div class="col-md-6 col-lg-4 unit-card" data-unit-name="{{ strtolower($unit->name) }}">
             <x-tabler.card class="h-100">
-                <x-tabler.card-header>
-                    <x-tabler.card-title>{!! $unit->indented_name !!}</x-tabler.card-title>
+                <x-tabler.card-header :title="$unit->indented_name">
                     @if($periodeId)
                         <x-slot:actions>
                             <x-tabler.dropdown trigger="button" buttonClass="btn-sm px-2 py-1 btn-outline-primary" icon="ti ti-settings" text="Set Tim">

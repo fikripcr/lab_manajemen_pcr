@@ -9,9 +9,10 @@
         $showIndikatorSection = $isRenopPoint && $item->is_hasilkan_indikator;
         $mappableJenis = pemutuMappableJenis($parentJenis);
     } else {
+        $parentJenis = strtolower(trim($item->jenis));
         $isRenopPoint = false;
         $showIndikatorSection = false;
-        $mappableJenis = null;
+        $mappableJenis = pemutuMappableJenis($parentJenis);
     }
 
     $childrenColumns = [
@@ -104,7 +105,13 @@
                                 <i class="ti ti-target icon me-1"></i> Indikator RENOP
                             </a>
                         </li>
-                    @else
+                    @elseif($item->jenis === 'formulir')
+                        <li class="nav-item" role="presentation">
+                            <a href="#tab-mapping" class="nav-link" data-bs-toggle="tab" role="tab">
+                                <i class="ti ti-link icon me-1"></i> Mapping
+                            </a>
+                        </li>
+                    @elseif($item->jenis != 'manual_prosedur')
                         <li class="nav-item" role="presentation">
                             <a href="#tab-subdokumen" class="nav-link" data-bs-toggle="tab" role="tab" aria-selected="false">
                                 <i class="ti ti-file-description icon me-1"></i> Poin
@@ -127,7 +134,7 @@
                         @endif
                     @endif
 
-                    @if($isKebijakan && $mappableJenis)
+                    @if($mappableJenis)
                         <li class="nav-item" role="presentation">
                             <a href="#tab-mapping" class="nav-link" data-bs-toggle="tab" role="tab">
                                 <i class="ti ti-link icon me-1"></i> Mapping
@@ -234,6 +241,8 @@
                                     ajax-load />
                             </x-tabler.card>
                         </div>
+                    @elseif($item->jenis === 'formulir')
+                        {{-- Mapping content is handled in the unified mapping section below --}}
                     @else
                         <div class="tab-pane" id="tab-subdokumen" role="tabpanel">
                             <x-tabler.card>
@@ -256,64 +265,8 @@
                         </div>
                     @endif
                 @elseif($type === 'poin')
-                    {{-- Mapping Section --}}
-                    @if($isKebijakan && $mappableJenis)
-                        <div class="tab-pane" id="tab-mapping" role="tabpanel">
-                            <div class="border px-3">
-                                    <div class="my-3 text-muted">Pilih poin {{ implode(' atau ', array_map('pemutuJenisLabel', $mappableJenis)) }} yang ingin dihubungkan dengan poin {{ strtoupper($item->dokumen->jenis) }} (opsional):</div>
-                                    <div class="row mb-3">
-                                        <div class="col">
-                                            <select id="select-mapping-target" class="form-select">
-                                                <option value="">-- Pilih Poin --</option>
-                                                @foreach($mappableOptions as $opt)
-                                                    @if(!$item->mappedTo->contains('doksub_id', $opt->doksub_id))
-                                                    <option value="{{ $opt->encrypted_doksub_id }}">
-                                                        {{ $opt->seq ? "#{$opt->seq} " : '' }}{{ $opt->judul }}
-                                                        {{ $opt->kode ? "({$opt->kode})" : '' }}
-                                                    </option>
-                                                    @endif
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-auto">
-                                            <button type="button" class="btn btn-primary" id="btn-add-mapping"
-                                                data-doksub-id="{{ $item->encrypted_doksub_id }}"
-                                                data-url="{{ route('pemutu.dokumen-spmi.mapping-sync') }}">
-                                                <i class="ti ti-link"></i> Petakan
-                                            </button>
-                                        </div>
-                                    </div>
-                                    @if($item->mappedTo->isNotEmpty())
-                                        <div class="list-group list-group-flush">
-                                            @foreach($item->mappedTo as $mapped)
-                                            <div class="list-group-item d-flex justify-content-between align-items-center" id="mapping-row-{{ $mapped->encrypted_doksub_id }}">
-                                                <div>
-                                                    <div class="fw-bold">{{ $mapped->judul }}</div>
-                                                    <small class="text-muted">
-                                                        {{ pemutuJenisLabel($mapped->dokumen->jenis ?? '') }}
-                                                        {{ $mapped->kode ? "· {$mapped->kode}" : '' }}
-                                                    </small>
-                                                </div>
-                                                <button class="btn btn-sm btn-outline-danger btn-remove-mapping"
-                                                    data-doksub-id="{{ $item->encrypted_doksub_id }}"
-                                                    data-mapped-id="{{ $mapped->encrypted_doksub_id }}"
-                                                    data-url="{{ route('pemutu.dokumen-spmi.mapping-sync') }}">
-                                                    <i class="ti ti-unlink"></i> Lepas
-                                                </button>
-                                            </div>
-                                            @endforeach
-                                        </div>
-                                    @else
-                                        <div class="text-muted text-center py-2">
-                                            <i class="ti ti-link-off"></i> Belum ada mapping ke poin {{ implode(' atau ', array_map('pemutuJenisLabel', $mappableJenis)) }}.
-                                        </div>
-                                    @endif
-                            </div>
-                        </div>
-                    @endif
-                    
-
                     {{-- NON-KEBIJAKAN POIN: Standar indikator + child docs --}}
+
                     @if(!$isKebijakan)
                         <div class="tab-pane" id="tab-subdokumen" role="tabpanel">
                             @if($item->is_hasilkan_indikator)
@@ -356,6 +309,82 @@
                             @endif
                         </div>
                     @endif
+                @endif
+
+                {{-- Unified Mapping Section --}}
+                @if($mappableJenis && (($type === 'poin' && $isKebijakan) || ($type === 'dokumen' && $item->jenis === 'formulir')))
+                    @php
+                        $mappedCollection = $type === 'poin' ? $item->mappedTo : $item->mappedDokSubs;
+                        $sourceId = $type === 'poin' ? $item->encrypted_doksub_id : $item->encrypted_dok_id;
+                    @endphp
+                    <div class="tab-pane" id="tab-mapping" role="tabpanel">
+                        <div class="border px-3">
+                                <div class="my-3 text-muted">Pilih {{ implode(' atau ', array_map('pemutuJenisLabel', $mappableJenis)) }} yang ingin dihubungkan dengan {{ $type === 'poin' ? 'poin' : 'dokumen' }} {{ strtoupper($type === 'poin' ? $item->dokumen->jenis : $item->jenis) }} (opsional):</div>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <x-tabler.form-select 
+                                            id="select-mapping-target"
+                                            name="mapped_id"
+                                        >
+                                            @foreach($mappableOptions as $opt)
+                                                @php
+                                                    $optId = ($type === 'poin') ? $opt->doksub_id : $opt->dok_id;
+                                                    $isAlreadyMapped = ($type === 'poin') 
+                                                        ? $mappedCollection->contains('doksub_id', $optId)
+                                                        : $mappedCollection->contains('dok_id', $optId);
+                                                @endphp
+
+                                                @if(!$isAlreadyMapped)
+                                                <option value="{{ ($type === 'poin') ? $opt->encrypted_doksub_id : $opt->encrypted_dok_id }}">
+                                                    [{{ strtoupper($opt->jenis ?? $opt->dokumen->jenis ?? '-') }}] 
+                                                    @if($type === 'poin') {{ $opt->seq ? "#{$opt->seq} " : '' }} @endif
+                                                    {{ $opt->judul }}
+                                                    {{ $opt->kode ? "({$opt->kode})" : '' }}
+                                                </option>
+                                                @endif
+                                            @endforeach
+                                        </x-tabler.form-select>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="button" class="btn btn-primary" id="btn-add-mapping"
+                                            data-source-id="{{ $sourceId }}"
+                                            data-source-type="{{ $type }}"
+                                            data-url="{{ route('pemutu.dokumen-spmi.mapping-sync') }}">
+                                            <i class="ti ti-link"></i> Petakan
+                                        </button>
+                                    </div>
+                                </div>
+                                @if($mappedCollection->isNotEmpty())
+                                    <div class="list-group list-group-flush">
+                                        @foreach($mappedCollection as $mapped)
+                                        @php
+                                            $mappedId = ($type === 'poin') ? $mapped->encrypted_doksub_id : $mapped->encrypted_dok_id;
+                                        @endphp
+                                        <div class="list-group-item d-flex justify-content-between align-items-center" id="mapping-row-{{ $mappedId }}">
+                                            <div>
+                                                <div class="fw-bold">{{ $mapped->judul }}</div>
+                                                <small class="text-muted">
+                                                    {{ pemutuJenisLabel($mapped->jenis ?? $mapped->dokumen->jenis ?? '') }}
+                                                    {{ $mapped->kode ? "· {$mapped->kode}" : '' }}
+                                                </small>
+                                            </div>
+                                            <button class="btn btn-sm btn-outline-danger btn-remove-mapping"
+                                                data-source-id="{{ $sourceId }}"
+                                                data-source-type="{{ $type }}"
+                                                data-mapped-id="{{ $mappedId }}"
+                                                data-url="{{ route('pemutu.dokumen-spmi.mapping-sync') }}">
+                                                <i class="ti ti-unlink"></i> Lepas
+                                            </button>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="text-muted text-center py-2">
+                                        <i class="ti ti-link-off"></i> Belum ada mapping ke poin {{ implode(' atau ', array_map('pemutuJenisLabel', $mappableJenis)) }}.
+                                    </div>
+                                @endif
+                        </div>
+                    </div>
                 @endif
 
 
@@ -498,23 +527,25 @@
 </script>
 
 {{-- Mapping AJAX Script --}}
-@if($type === 'poin' && $isKebijakan && $mappableJenis)
+@if($mappableJenis && (($type === 'poin' && $isKebijakan) || ($type === 'dokumen' && $item->jenis === 'formulir')))
 <script>
 (function() {
     const mappingSyncUrl = @json(route('pemutu.dokumen-spmi.mapping-sync'));
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
+
     // Add Mapping
     document.getElementById('btn-add-mapping')?.addEventListener('click', function() {
         const select = document.getElementById('select-mapping-target');
-        const mappedId = select?.value;
-        if (!mappedId) return;
+        const mappedIds = $(select).val();
+        if (!mappedIds || mappedIds.length === 0) return;
 
         if (typeof showLoadingMessage === 'function') showLoadingMessage('Memetakan...', 'Mohon tunggu');
 
         axios.post(mappingSyncUrl, {
-            doksub_id: this.dataset.doksubId,
-            mapped_doksub_id: mappedId,
+            source_id: this.dataset.sourceId,
+            source_type: this.dataset.sourceType,
+            mapped_id: mappedIds,
             action: 'attach'
         }, {
             headers: { 'X-CSRF-TOKEN': csrfToken }
@@ -549,14 +580,15 @@
                     }
                 });
             } else {
-                if (!confirm('Lepaskan mapping poin ini?')) return;
+                if (!confirm('Lepaskan mapping ini?')) return;
                 executeRemoveMapping(self);
             }
 
             function executeRemoveMapping(btnElement) {
                 axios.post(btnElement.dataset.url || mappingSyncUrl, {
-                    doksub_id: btnElement.dataset.doksubId,
-                    mapped_doksub_id: btnElement.dataset.mappedId,
+                    source_id: btnElement.dataset.sourceId,
+                    source_type: btnElement.dataset.sourceType,
+                    mapped_id: btnElement.dataset.mappedId,
                     action: 'detach'
                 }, {
                     headers: { 'X-CSRF-TOKEN': csrfToken }

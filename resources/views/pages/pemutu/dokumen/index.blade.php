@@ -11,8 +11,8 @@
         'renop' => 'RENOP',
         'kebijakan' => 'KEBIJAKAN',
         'standar' => 'STANDAR',
+        'manual_prosedur' => 'MANUAL PROSEDUR',
         'formulir' => 'FORMULIR',
-        'manual_prosedur' => 'MANUAL PROSEDUR'
     ];
     $activeJenis = request('jenis', 'kebijakan');
 @endphp
@@ -108,7 +108,7 @@
                                         <div>
                                             <div class="fw-bold text-reset">{{ $dok->judul }}</div>
                                             <div class="text-muted small">
-                                                <i class="ti ti-file-description me-1"></i> Dokument Induk &bull; {{ $dok->dokSubs ? $dok->dokSubs->count() : 0 }} poin
+                                                <i class="ti ti-file-description me-1"></i> {{ $dok->dokSubs ? $dok->dokSubs->count() : 0 }} poin
                                             </div>
                                         </div>
                                     </a>

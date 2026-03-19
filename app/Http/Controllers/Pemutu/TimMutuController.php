@@ -9,12 +9,14 @@ use App\Models\Pemutu\TimMutu;
 use App\Models\Hr\StrukturOrganisasi;
 use App\Services\Pemutu\PeriodeSpmiService;
 use App\Services\Pemutu\TimMutuService;
+use App\Services\Hr\StrukturOrganisasiService;
 
 class TimMutuController extends Controller
 {
     public function __construct(
         protected TimMutuService $timMutuService,
         protected PeriodeSpmiService $PeriodeSpmiService,
+        protected StrukturOrganisasiService $strukturOrganisasiService,
     ) {
         // $this->authorizeResourcePermissions('pemutu.tim-mutu');
         // $this->middleware('permission:pemutu.tim-mutu.update')->only(['editAuditee', 'storeAuditee', 'editAuditor', 'storeAuditor', 'manage']);
@@ -30,10 +32,11 @@ class TimMutuController extends Controller
         $data = [
             'pageTitle' => 'Tim Mutu',
             'siklus'    => $siklus,
-            'units'     => \App\Services\Hr\StrukturOrganisasiService::getHierarchicalList(),
+            'units'     => $this->strukturOrganisasiService->getHierarchicalList(),
         ];
 
         $assignmentMap = [];
+        $units = $this->strukturOrganisasiService->getHierarchicalList();
         
         foreach (['akademik', 'non_akademik'] as $type) {
             $periode = $siklus[$type];
@@ -51,10 +54,50 @@ class TimMutuController extends Controller
                 }
             }
         }
+
+        // Ensure ALL units have a period assigned (for "Set Tim" button)
+        foreach ($units as $unit) {
+            $encUnitId = encryptId($unit->orgunit_id);
+            if (! isset($assignmentMap[$encUnitId])) {
+                $periode = $this->getBestPeriodeForUnit($unit, $siklus);
+                if ($periode) {
+                    $assignmentMap[$encUnitId] = [
+                        'periode_id'    => $periode->encrypted_periodespmi_id,
+                        'auditee'       => null,
+                        'ketua_auditor' => null,
+                        'auditor'       => collect(),
+                        'anggota'       => collect(),
+                    ];
+                }
+            }
+        }
         
-        $data['assignmentMap'] = $assignmentMap;
+        $data = [
+            'pageTitle'     => 'Tim Mutu',
+            'siklus'        => $siklus,
+            'units'         => $units,
+            'assignmentMap' => $assignmentMap,
+        ];
 
         return view('pages.pemutu.tim-mutu.index', $data);
+    }
+
+    /**
+     * Determine the best period for a unit based on its type.
+     */
+    private function getBestPeriodeForUnit($unit, $siklus)
+    {
+        $pAkademik    = $siklus['akademik'] ?? null;
+        $pNonAkademik = $siklus['non_akademik'] ?? null;
+
+        // Common academic unit types
+        $academicTypes = ['prodi', 'jurusan', 'laboratorium', 'fakultas'];
+
+        if (in_array(strtolower($unit->type ?? ''), $academicTypes)) {
+            return $pAkademik ?: $pNonAkademik;
+        }
+
+        return $pNonAkademik ?: $pAkademik;
     }
 
     /**

@@ -52,6 +52,7 @@ if (! function_exists('pemutuChildLabel')) {
         return match (strtolower(trim($jenis))) {
             'visi', 'misi', 'standar' => 'Poin',
             'rjp', 'renstra', 'renop', 'kebijakan' => 'Indikator',
+            'formulir' => 'Mapping',
             default => 'Turunan'
         };
     }
@@ -64,7 +65,7 @@ if (! function_exists('pemutuIsDokSubBased')) {
     function pemutuIsDokSubBased($jenis)
     {
         return in_array(strtolower(trim($jenis)), [
-            'standar', 'formulir', 'manual_prosedur',
+            'standar', 'manual_prosedur',
             'visi', 'misi', 'rjp', 'renstra', 'kebijakan'
         ]);
     }
@@ -122,16 +123,16 @@ if (! function_exists('pemutuMappableJenis')) {
      * Returns which document type's points a given type can map to.
      * E.g. misi points can map to visi points, rpjp to misi, etc.
      */
-    function pemutuMappableJenis($jenis): array
+    function pemutuMappableJenis($jenis)
     {
         return match (strtolower(trim($jenis))) {
             'misi'     => ['visi'],
             'rjp'      => ['misi'],
             'renstra'  => ['rjp'],
             'renop'    => ['renstra'],
-            'standar'  => ['kebijakan'],
+            'kebijakan' => ['standar'],
             'formulir' => ['standar', 'manual_prosedur'],
-            default    => [], // visi: top level, no mapping target
+            default    => null,
         };
     }
 }

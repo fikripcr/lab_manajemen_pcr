@@ -17,7 +17,7 @@
             <div class="d-flex align-items-center mb-1">
                 <div class="row align-items-center w-100 gx-2">
                     <div class="col-auto">
-                        <span class="avatar avatar-xs rounded">
+                        <span class="avatar avatar-sm rounded bg-primary text-white">
                             {{ substr($dok->judul, 0, 1) }}
                         </span>
                     </div>

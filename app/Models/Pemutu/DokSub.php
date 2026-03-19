@@ -55,8 +55,14 @@ class DokSub extends Model implements HasMedia
 
     public function indikators()
     {
-        return $this->belongsToMany(Indikator::class, 'pemutu_indikator_doksub', 'doksub_id', 'indikator_id')
+        return $this->morphedByMany(Indikator::class, 'source', 'pemutu_indikator_doksub', 'doksub_id', 'source_id')
             ->withPivot('is_hasilkan_indikator')
+            ->withTimestamps();
+    }
+
+    public function sourceDokumens()
+    {
+        return $this->morphedByMany(Dokumen::class, 'source', 'pemutu_indikator_doksub', 'doksub_id', 'source_id')
             ->withTimestamps();
     }
 

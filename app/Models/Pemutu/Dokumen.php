@@ -58,6 +58,18 @@ class Dokumen extends Model implements HasMedia
         return $this->hasMany(DokSub::class, 'dok_id', 'dok_id')->orderBy('seq');
     }
 
+    public function mappedDokSubs()
+    {
+        return $this->morphToMany(DokSub::class, 'source', 'pemutu_indikator_doksub', 'source_id', 'doksub_id')
+            ->withTimestamps();
+    }
+
+    public function mappedDokTargets()
+    {
+        return $this->belongsToMany(Dokumen::class, 'pemutu_dokumen_mapping', 'source_dok_id', 'target_dok_id')
+            ->withTimestamps();
+    }
+
     // Hierarchy Relationships
     public function parent()
     {
