@@ -125,7 +125,7 @@ class IndikatorController extends Controller
                     'deleteUrl' => route('pemutu.indikator.destroy', $row->encrypted_indikator_id),
                 ])->render();
             })
-            ->rawColumns(['indikator', 'labels', 'action', 'renstra_poin', 'dokumen_judul', 'kelompok_indikator', 'jenis_data'])
+            ->rawColumns(['no', 'indikator', 'labels', 'action', 'renstra_poin', 'dokumen_judul', 'kelompok_indikator', 'jenis_data'])
             ->make(true);
     }
 
