@@ -72,16 +72,22 @@ if (typeof initDatatableFilter !== 'function') {
         if (resetBtn) {
             resetBtn.addEventListener('click', function() {
                 filterForm.reset();
-                
+
                 // Clear state from localStorage
                 const stateName = 'DataTables_' + dataTableId + '_' + window.location.pathname;
                 localStorage.removeItem(stateName);
 
-                // Reset select2
+                // Reset all selects to "all" (our new convention)
                 $(filterForm).find('select').each(function() {
-                    $(this).val('').trigger('change');
+                    const $select = $(this);
+                    // Check if "all" option exists
+                    if ($select.find('option[value="all"]').length > 0) {
+                        $select.val('all').trigger('change');
+                    } else {
+                        $select.val('').trigger('change');
+                    }
                 });
-                
+
                 // Trigger global change for core-datatable.js to pick up
                 filterForm.dispatchEvent(new Event('change', { bubbles: true }));
             });
