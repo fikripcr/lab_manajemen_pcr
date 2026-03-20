@@ -74,8 +74,12 @@ class PengendalianController extends Controller
      */
     public function data(PeriodeSpmi $periode, Request $request)
     {
-        $unitId  = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
-        
+        $unitId  = null;
+        if ($request->input('unit_id')) {
+            // decryptIdIfEncrypted returns int|null, cast to ensure type safety
+            $unitId = (int) decryptIdIfEncrypted($request->input('unit_id'));
+        }
+
         // SIMPLE LOGIC: If not 'all', add to filters
         $filters = [];
         foreach ($request->only(['pengend_status', 'pengend_important_matrix', 'pengend_urgent_matrix', 'dok_id']) as $key => $value) {
@@ -83,7 +87,7 @@ class PengendalianController extends Controller
                 $filters[$key] = $value;
             }
         }
-        
+
         $query   = $this->IndikatorService->getUnifiedSpmiQuery($periode, $unitId, $filters);
 
         return datatables()->of($query)

@@ -362,6 +362,6 @@ class PemutuDokumenConfig
      */
     public function toArray(): array
     {
-        return $this->config;
+        return $this->configData;
     }
 }
