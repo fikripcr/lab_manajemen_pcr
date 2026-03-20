@@ -59,7 +59,7 @@ class LabelController extends Controller
 
         logActivity('pemutu', "Menambah label baru: " . ($request->name ?? ''));
 
-        return jsonSuccess('Label created successfully.');
+        return jsonSuccess('Label created successfully.', route('pemutu.label.index'));
     }
 
     public function edit(\App\Models\Pemutu\Label $label)
@@ -75,7 +75,7 @@ class LabelController extends Controller
 
         logActivity('pemutu', "Memperbarui label: {$label->name}");
 
-        return jsonSuccess('Label updated successfully.');
+        return jsonSuccess('Label updated successfully.', route('pemutu.label.index'));
     }
 
     public function destroy(\App\Models\Pemutu\Label $label)
@@ -85,6 +85,6 @@ class LabelController extends Controller
 
         logActivity('pemutu', "Menghapus label: {$labelName}");
 
-        return jsonSuccess('Label deleted successfully.');
+        return jsonSuccess('Label deleted successfully.', route('pemutu.label.index'));
     }
 }

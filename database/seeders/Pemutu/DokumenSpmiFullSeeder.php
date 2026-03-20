@@ -7,12 +7,13 @@ use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\Label;
 use App\Models\Pemutu\PeriodeSpmi;
+use App\Services\Pemutu\IndikatorService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 /**
  * Seeder Lengkap untuk Dokumen SPMI - Siklus 2024-2026
- * 
+ *
  * Includes:
  * - 3 Periode (2024, 2025, 2026)
  * - Kebijakan (Visi, Misi, RJP, Renstra, Renop) dengan poin
@@ -23,10 +24,14 @@ class DokumenSpmiFullSeeder extends Seeder
 {
     private array $standarIndicators = [];
     private array $prevIndikators = [];
-    
+    private IndikatorService $indikatorService;
+
     public function run(): void
     {
         $this->command->info('📊 Starting Dokumen SPMI Full Seeder...');
+        
+        // Initialize IndikatorService for helper methods
+        $this->indikatorService = app(IndikatorService::class);
         
         // Create Label first
         $renopLabel = Label::firstOrCreate(
@@ -300,8 +305,8 @@ class DokumenSpmiFullSeeder extends Seeder
     {
         $renop = Dokumen::where('jenis', 'renop')->where('periode', $year)->first();
         if (!$renop) return;
-        
-        // RENOP TIDAK PUNYA POIN - langsung indikator
+
+        // RENOP TIDAK PUNYA POIN - langsung indikator dengan label 'renop'
         $renopIndicators = [
             ['name' => 'Persentase Prodi Terakreditasi Unggul', 'target' => '25', 'unit' => '%'],
             ['name' => 'IPK Lulusan Rata-rata', 'target' => '3.50', 'unit' => 'IPK'],
@@ -310,11 +315,15 @@ class DokumenSpmiFullSeeder extends Seeder
             ['name' => 'Jumlah Kerjasama Internasional Baru', 'target' => '3', 'unit' => 'MoU'],
             ['name' => 'Persentase Lulusan dengan Sertifikasi Internasional', 'target' => '30', 'unit' => '%'],
         ];
-        
+
         foreach ($renopIndicators as $iIdx => $indData) {
+            // Use helper to generate proper nomor indikator (YYXXXX format)
+            $noIndikator = $this->indikatorService->generateNoIndikator($year);
+            
             $ind = Indikator::create([
-                'type' => 'renop',
-                'no_indikator' => 'RENOP-' . $year . '-' . str_pad($iIdx + 1, 3, '0', STR_PAD_LEFT),
+                'type' => 'standar', // Renop indicators are standar type with 'renop' label
+                'kelompok_indikator' => 'Akademik',
+                'no_indikator' => $noIndikator,
                 'indikator' => $indData['name'],
                 'target' => $indData['target'],
                 'unit_ukuran' => $indData['unit'],
@@ -323,13 +332,16 @@ class DokumenSpmiFullSeeder extends Seeder
                 'created_by' => 1,
             ]);
             
-            // Attach label renop
-            DB::table('pemutu_indikator_label')->insert([
-                'indikator_id' => $ind->indikator_id,
-                'label_id' => $renopLabelId,
-            ]);
+            // Attach to Renop dokumen via dokSubs pivot
+            $renopDokSub = DokSub::where('dok_id', $renop->dok_id)->first();
+            if ($renopDokSub) {
+                $ind->dokSubs()->attach($renopDokSub->doksub_id, ['is_hasilkan_indikator' => true]);
+            }
+            
+            // Attach 'renop' label (lowercase)
+            $ind->labels()->attach($renopLabelId);
         }
-        
+
         $this->command->info("   ✓ Created " . count($renopIndicators) . " Renop indicators for {$year}");
     }
 }

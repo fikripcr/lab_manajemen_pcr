@@ -165,22 +165,16 @@ class IndikatorController extends Controller
                     $parentDok = $ds ? $ds->dokumen : null;
                 }
             } elseif ($parentDok) {
-                if (strtolower(trim($parentDok->jenis)) !== 'renop') {
-                    $selectedDokSubs = $parentDok->dokSubs;
-                }
+                $selectedDokSubs = $parentDok->dokSubs;
             }
 
             if ($parentDok || ! empty($selectedDokSubs)) {
-                $suggestedType = ($parentDok && strtolower(trim($parentDok->jenis)) === 'standar') ? 'standar' : 'renop';
+                $suggestedType = 'standar'; // All indicators are standar type
 
                 $request->merge([
                     'type'       => $request->get('type', $suggestedType),
                     'doksub_ids' => $request->get('doksub_ids', $selectedDokSubs->pluck('encrypted_doksub_id')->toArray()),
                 ]);
-
-                if ($parentDok && strtolower(trim($parentDok->jenis)) === 'renop') {
-                    $isRenopContext = true;
-                }
             }
         }
 
@@ -209,7 +203,7 @@ class IndikatorController extends Controller
         $indikator = new Indikator(); // Empty for create
         return view('pages.pemutu.indikator.create-edit', compact(
             'labelParents', 'orgUnits', 'parents', 'pegawais',
-            'parentDok', 'selectedDokSubs', 'indikator', 'isRenopContext', 'renstraOptions', 'standardOptions'
+            'parentDok', 'selectedDokSubs', 'indikator', 'renstraOptions', 'standardOptions'
         ));
     }
 
@@ -270,9 +264,6 @@ class IndikatorController extends Controller
         logActivity('pemutu', "Menambah indikator baru: {$indikator->no_indikator}");
 
         $redirectUrl = $request->get('redirect_to', route('pemutu.indikator.index'));
-        if (! $request->has('redirect_to') && $request->has('parent_dok_id')) {
-            $redirectUrl = route('pemutu.dokumen.show-renop-with-indicators', $request->parent_dok_id);
-        }
 
         return jsonSuccess('Indikator created successfully.', $redirectUrl);
     }

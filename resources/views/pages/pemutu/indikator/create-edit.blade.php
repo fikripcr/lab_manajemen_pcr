@@ -27,9 +27,9 @@
 
         @php
             $type = old('type', $indikator->type ?? request('type', 'standar'));
-            $isRenop = $type === 'renop';
-            $isStandar = $type === 'standar';
+            $isStandar = true; // All indicators are "standar" type
             $isPerforma = $type === 'performa';
+            // Note: "Renop" indicators are just Standar indicators with 'renop' label
         @endphp
 
         <div class="row row-cards">
@@ -43,13 +43,11 @@
                                     <i class="ti ti-info-circle me-2"></i>Informasi Umum
                                 </a>
                             </li>
-                            @if(!$isRenop)
                             <li class="nav-item tab-link-skala-container" id="tab-link-skala-container">
                                 <a href="#tab-penilaian-skala" class="nav-link" data-bs-toggle="tab" id="tab-link-skala">
                                     <i class="ti ti-list-numbers me-2"></i>Penilaian Skala
                                 </a>
                             </li>
-                            @endif
                         </ul>
                     </x-tabler.card-header>
                     
@@ -63,10 +61,9 @@
                                     <div class="col-md-3">
                                         <label class="form-label text-muted small">Tipe Indikator</label>
                                         <div class="form-control-plaintext fw-bold text-primary">
-                                            <i class="ti ti-tag me-1"></i> 
-                                            @if($isRenop) Indikator Renop 
-                                            @elseif($isStandar) Indikator Standar 
-                                            @elseif($isPerforma) Indikator Performa 
+                                            <i class="ti ti-tag me-1"></i>
+                                            @if($isPerforma) Indikator Performa
+                                            @else Indikator Standar
                                             @endif
                                         </div>
                                     </div>

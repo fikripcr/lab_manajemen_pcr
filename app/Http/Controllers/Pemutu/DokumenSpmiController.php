@@ -424,14 +424,17 @@ class DokumenSpmiController extends Controller
                 ->rawColumns(['indikator', 'no_indikator', 'unit_target', 'action'])
                 ->make(true);
         } elseif ($type === 'renop_indikator') {
+            // Renop indicators are standar type with 'renop' label
+            // Renop doesn't have dokSubs, so we filter by label and year
+            $renopDoc = Dokumen::find($decryptedId);
+            $year = $renopDoc ? $renopDoc->periode : date('Y');
+            
             $query = Indikator::with('orgUnits')
-                ->whereIn('type', ['standar', 'renop'])
+                ->where('type', 'standar')
                 ->whereHas('labels', function($q) {
-                    $q->where('name', 'RENOP');
+                    $q->where('name', 'renop');
                 })
-                ->whereHas('dokSubs', function($q) use ($decryptedId) {
-                    $q->where('dok_id', $decryptedId);
-                });
+                ->whereYear('created_at', '=', $year); // Filter by year context
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('no_indikator', function ($row) {
