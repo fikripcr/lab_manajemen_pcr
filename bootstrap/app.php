@@ -51,6 +51,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 return redirect()->route('dashboard')->with('error', 'Anda sudah mengisi survei ini.');
             }
 
+            // Tangani DataNotFoundException khusus untuk mencegah 500 error pada mode GET
+            if ($e instanceof \App\Exceptions\DataNotFoundException) {
+                if ($request->expectsJson()) {
+                    return jsonError($e->getMessage(), 404);
+                }
+                return back()->with('error', $e->getMessage());
+            }
+
             // 1. Tangani request AJAX/JSON
             if ($request->expectsJson()) {
                 if ($e instanceof ValidationException) {

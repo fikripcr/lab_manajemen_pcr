@@ -493,6 +493,68 @@ class IndikatorService
     }
 
     /**
+     * Get a unified query for IndikatorOrgUnit.
+     * Digunakan khusus untuk export atau keperluan yang berbasis pada Unit (bukan Indikator).
+     */
+    public function getIndikatorOrgUnitSpmiQuery(PeriodeSpmi $periode, ?int $unitId = null, array $additionalFilters = []): Builder
+    {
+        $query = IndikatorOrgUnit::with([
+            'indikator' => function ($q) {
+                $q->with(['parent', 'labels', 'dokSubs.dokumen']);
+            },
+            'orgUnit',
+        ])
+        ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
+        ->where('pemutu_indikator.kelompok_indikator', $periode->jenis_periode)
+        ->whereHas('indikator.dokSubs.dokumen', function ($q) use ($periode, $additionalFilters) {
+            $q->where('periode', $periode->periode);
+
+            // Filter specific document (Standar/Root) if provided
+            if (! empty($additionalFilters['dok_id'])) {
+                $dokId = decryptIdIfEncrypted($additionalFilters['dok_id']);
+                $q->where(function ($sq) use ($dokId) {
+                    $sq->where('dok_id', $dokId)
+                        ->orWhere('parent_id', $dokId);
+                });
+            }
+        })
+        ->where('pemutu_indikator.deleted_at', null);
+
+        // Filter Unit
+        if ($unitId) {
+            $query->where('pemutu_indikator_orgunit.org_unit_id', $unitId);
+        }
+
+        // Status ED: 'filled' or 'empty'
+        if (! empty($additionalFilters['ed_status'])) {
+            if ($additionalFilters['ed_status'] === 'filled') {
+                $query->whereNotNull('pemutu_indikator_orgunit.ed_capaian')->where('pemutu_indikator_orgunit.ed_capaian', '!=', '');
+            } elseif ($additionalFilters['ed_status'] === 'empty') {
+                $query->where(function ($q) {
+                    $q->whereNull('pemutu_indikator_orgunit.ed_capaian')->orWhere('pemutu_indikator_orgunit.ed_capaian', '');
+                });
+            }
+        }
+
+        // Filter by AMI Hasil Akhir (exact or array)
+        if (isset($additionalFilters['ami_hasil_akhir']) && $additionalFilters['ami_hasil_akhir'] !== '') {
+            $val = $additionalFilters['ami_hasil_akhir'];
+            if ($val === 'empty') {
+                $query->where(function ($q) {
+                    $q->whereNull('pemutu_indikator_orgunit.ami_hasil_akhir')->orWhere('pemutu_indikator_orgunit.ami_hasil_akhir', '');
+                });
+            } else {
+                is_array($val) ? $query->whereIn('pemutu_indikator_orgunit.ami_hasil_akhir', $val) : $query->where('pemutu_indikator_orgunit.ami_hasil_akhir', $val);
+            }
+        }
+
+        // Select only from main table to avoid column collisions
+        $query->select('pemutu_indikator_orgunit.*');
+
+        return $query;
+    }
+
+    /**
      * Get data for Peningkatan (Review Duplication).
      */
     public function getPeningkatanReviewQuery(PeriodeSpmi $periode, array $filters = []): Builder

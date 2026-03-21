@@ -622,6 +622,8 @@ if (! function_exists('pemutuDtColStatusAmi')) {
         $amiHasil  = $pivot->ami_hasil_akhir ?? $row->ami_hasil_akhir ?? null;
         $label     = $row->ami_hasil_label ?? $row->ami_hasil_akhir_label ?? null;
         $amiTemuan = $pivot->ami_hasil_temuan ?? $row->ami_hasil_temuan ?? null;
+        $amiSebab  = $pivot->ami_hasil_temuan_sebab ?? $row->ami_hasil_temuan_sebab ?? null;
+        $amiAkibat = $pivot->ami_hasil_temuan_akibat ?? $row->ami_hasil_temuan_akibat ?? null;
         $amiRekom  = $pivot->ami_hasil_temuan_rekom ?? $row->ami_hasil_temuan_rekom ?? null;
 
         if ($amiHasil !== null) {
@@ -640,14 +642,36 @@ if (! function_exists('pemutuDtColStatusAmi')) {
             $html = '<div class="d-flex flex-column gap-1">';
             $html .= '<div><span class="badge bg-' . $color . '-lt text-' . $color . ' fs-6 px-2">' . e($label) . '</span></div>';
 
-            if ($amiHasil == 0 && $amiRekom && $amiRekom !== '-') {
-                $html .= '<div style="max-height: 100px; overflow-y: auto; scrollbar-width: thin;" class="text-muted pe-1">';
-                $html .= '<span class="fw-bold d-block text-uppercase text-danger" style="font-size: 9px; opacity: 0.8;">Rekomendasi Auditor:</span>';
-                $html .= '<div class="small lh-sm">' . e($amiRekom) . '</div>';
+            // Jika KTS, tampilkan semua detail jika ada
+            if ($amiHasil == 0) {
+                $html .= '<div style="max-height: 150px; overflow-y: auto; scrollbar-width: thin;" class="text-muted pe-1 mt-1">';
+                
+                if ($amiTemuan && $amiTemuan !== '-') {
+                    $html .= '<span class="fw-bold d-block text-uppercase text-danger mb-0" style="font-size: 9px; opacity: 0.8;">Temuan Umum:</span>';
+                    $html .= '<div class="small lh-sm mb-2">' . e(\Str::limit(strip_tags($amiTemuan), 100)) . '</div>';
+                }
+                
+                if ($amiSebab && $amiSebab !== '-') {
+                    $html .= '<span class="fw-bold d-block text-uppercase text-danger mb-0" style="font-size: 9px; opacity: 0.8;">Sebab:</span>';
+                    $html .= '<div class="small lh-sm mb-2">' . e(\Str::limit(strip_tags($amiSebab), 100)) . '</div>';
+                }
+                
+                if ($amiAkibat && $amiAkibat !== '-') {
+                    $html .= '<span class="fw-bold d-block text-uppercase text-danger mb-0" style="font-size: 9px; opacity: 0.8;">Akibat:</span>';
+                    $html .= '<div class="small lh-sm mb-2">' . e(\Str::limit(strip_tags($amiAkibat), 100)) . '</div>';
+                }
+                
+                if ($amiRekom && $amiRekom !== '-') {
+                    $html .= '<span class="fw-bold d-block text-uppercase text-danger mb-0" style="font-size: 9px; opacity: 0.8;">Rekomendasi Auditor:</span>';
+                    $html .= '<div class="small lh-sm mb-1">' . e(\Str::limit(strip_tags($amiRekom), 100)) . '</div>';
+                }
+                
                 $html .= '</div>';
             } elseif ($amiTemuan && $amiTemuan !== '-') {
-                $excerpt  = \Str::limit($amiTemuan, 100);
-                $html    .= '<div class="text-muted small italic" title="' . e($amiTemuan) . '">' . e($excerpt) . '</div>';
+                // Untuk Terpenuhi/Terlampaui yang punya temuan umum
+                $plainText = strip_tags($amiTemuan);
+                $excerpt  = \Str::limit($plainText, 100);
+                $html    .= '<div class="text-muted small italic mt-1" title="' . e($plainText) . '">' . e($excerpt) . '</div>';
             }
 
             $html .= '</div>';

@@ -11,14 +11,8 @@ class PengendalianRequest extends BaseRequest
         return [
             'pengend_status'           => ['required', 'string', 'in:tetap,penyesuaian,ditingkatkan,nonaktif'],
             'pengend_analisis'         => ['required', 'string'],
-            'pengend_important_matrix' => ['nullable', 'string', 'in:important,not_important'],
-            'pengend_urgent_matrix'    => ['nullable', 'string', 'in:urgent,not_urgent'],
-            
-            // Superior review columns (optional, processed in service)
-            'pengend_status_atsn'           => ['nullable', 'string', 'in:tetap,penyesuaian,ditingkatkan,nonaktif'],
-            'pengend_analisis_atsn'         => ['nullable', 'string'],
-            'pengend_important_matrix_atsn' => ['nullable', 'string', 'in:important,not_important'],
-            'pengend_urgent_matrix_atsn'    => ['nullable', 'string', 'in:urgent,not_urgent'],
+            'pengend_important_matrix' => ['required', 'string', 'in:important,not_important'],
+            'pengend_urgent_matrix'    => ['required', 'string', 'in:urgent,not_urgent'],
         ];
     }
 

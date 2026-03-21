@@ -78,7 +78,7 @@
                                     <div class="row g-3">
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="unit_id" id="unit_id_{{ $typeId }}" label="Unit / Area" placeholder="">
-                                                <option value="all">Semua Unit</option>
+                                                <option value="">Semua Unit</option>
                                                 @foreach($units as $unit)
                                                     <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
                                                 @endforeach
@@ -86,7 +86,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="dok_id" id="dok_id_{{ $typeId }}" label="Standar / Dokumen" placeholder="">
-                                                <option value="all">Semua Standar</option>
+                                                <option value="">Semua Standar</option>
                                                 @foreach($rootDoks as $dok)
                                                     <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->judul }}</option>
                                                 @endforeach
@@ -94,7 +94,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="pengend_status" id="pengend_status_{{ $typeId }}" label="Status Thn Lalu" placeholder="">
-                                                <option value="all">Semua</option>
+                                                <option value="">Semua</option>
                                                 <option value="tetap">Tetap</option>
                                                 <option value="penyesuaian">Penyesuaian</option>
                                                 <option value="nonaktif">Nonaktif</option>

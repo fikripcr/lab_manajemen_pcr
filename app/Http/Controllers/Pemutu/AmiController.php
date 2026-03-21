@@ -10,15 +10,18 @@ use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Services\Hr\StrukturOrganisasiService;
 use App\Services\Pemutu\AmiService;
+use App\Services\Pemutu\AmiExportService;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class AmiController extends Controller
 {
     public function __construct(
         protected AmiService $AmiService,
+        protected AmiExportService $AmiExportService,
         protected PeriodeSpmiService $PeriodeSpmiService,
         protected IndikatorService $IndikatorService,
         protected StrukturOrganisasiService $StrukturOrganisasiService,
@@ -60,7 +63,7 @@ class AmiController extends Controller
         // SIMPLE LOGIC: If not 'all', add to filters
         $filters = [];
         foreach ($request->only(['ami_hasil_akhir', 'ed_status', 'dok_id', 'rtp_status']) as $key => $value) {
-            if ($value !== 'all') {
+            if ($value !== null && $value !== '') {
                 $filters[$key] = $value;
             }
         }
@@ -241,5 +244,47 @@ class AmiController extends Controller
         $this->AmiService->updateTe($indOrg, $request->validated());
 
         return jsonSuccess('Tinjauan Efektivitas (TE) berhasil disimpan.');
+    }
+
+    /**
+     * Export PTK (Penemuan Temuan dan Ketidaksesuaian) - DOCX
+     */
+    public function exportPtk(Request $request, PeriodeSpmi $periode)
+    {
+        $unitId = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
+        $dokId = $request->input('dok_id') ? decryptIdIfEncrypted($request->input('dok_id')) : null;
+        $edStatus = $request->input('ed_status');
+
+        return $this->AmiExportService->exportPtk($periode, $unitId, $dokId, $edStatus);
+    }
+
+    /**
+     * Export Temuan Audit - Excel (KTS only)
+     */
+    public function exportTemuanAudit(Request $request, PeriodeSpmi $periode)
+    {
+        $unitId = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
+        $dokId = $request->input('dok_id') ? decryptIdIfEncrypted($request->input('dok_id')) : null;
+        $edStatus = $request->input('ed_status');
+
+        $export = $this->AmiExportService->exportTemuanAudit($periode, $unitId, $dokId, $edStatus);
+        $fileName = 'Temuan_Audit_KTS_' . date('Ymd_His') . '.xlsx';
+
+        return Excel::download($export, $fileName);
+    }
+
+    /**
+     * Export Temuan Positif - Excel (Terpenuhi & Terlampaui)
+     */
+    public function exportTemuanPositif(Request $request, PeriodeSpmi $periode)
+    {
+        $unitId = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
+        $dokId = $request->input('dok_id') ? decryptIdIfEncrypted($request->input('dok_id')) : null;
+        $edStatus = $request->input('ed_status');
+
+        $export = $this->AmiExportService->exportTemuanPositif($periode, $unitId, $dokId, $edStatus);
+        $fileName = 'Temuan_Positif_' . date('Ymd_His') . '.xlsx';
+
+        return Excel::download($export, $fileName);
     }
 }

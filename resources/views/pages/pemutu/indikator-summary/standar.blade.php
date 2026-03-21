@@ -20,21 +20,21 @@
                     <div class="row g-2">
                         <div class="col-md-3">
                             <x-tabler.form-select name="kelompok_indikator" label="Kelompok" class="mb-2" placeholder="">
-                                <option value="all">Semua Kelompok</option>
+                                <option value="">Semua Kelompok</option>
                                 <option value="Akademik">Akademik</option>
                                 <option value="Non Akademik">Non Akademik</option>
                             </x-tabler.form-select>
                         </div>
                         <div class="col-md-3">
                             <x-tabler.form-select name="ed_status" label="Status ED" class="mb-2" placeholder="">
-                                <option value="all">Semua Status</option>
+                                <option value="">Semua Status</option>
                                 <option value="filled">Sudah Isi</option>
                                 <option value="empty">Belum Isi</option>
                             </x-tabler.form-select>
                         </div>
                         <div class="col-md-3">
                             <x-tabler.form-select name="ami_hasil" label="Hasil AMI" class="mb-2" placeholder="">
-                                <option value="all">Semua Hasil</option>
+                                <option value="">Semua Hasil</option>
                                 <option value="empty">Belum Dinilai</option>
                                 <option value="0">KTS</option>
                                 <option value="1">Terpenuhi</option>
@@ -43,7 +43,7 @@
                         </div>
                         <div class="col-md-3">
                             <x-tabler.form-select name="pengend_status" label="Status Pengendalian" class="mb-0" placeholder="">
-                                <option value="all">Semua Status</option>
+                                <option value="">Semua Status</option>
                                 <option value="filled">Sudah Isi</option>
                                 <option value="empty">Belum Isi</option>
                             </x-tabler.form-select>

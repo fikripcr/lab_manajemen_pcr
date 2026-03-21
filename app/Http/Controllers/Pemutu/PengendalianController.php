@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\PengendalianRequest;
+use App\Http\Requests\Pemutu\ValidasiPengendalianRequest;
 use App\Http\Requests\Pemutu\RtmRequest;
 use App\Http\Requests\Pemutu\UpdateMatrixRequest;
 use App\Models\Hr\StrukturOrganisasi;
@@ -83,7 +84,7 @@ class PengendalianController extends Controller
         // SIMPLE LOGIC: If not 'all', add to filters
         $filters = [];
         foreach ($request->only(['pengend_status', 'pengend_important_matrix', 'pengend_urgent_matrix', 'dok_id']) as $key => $value) {
-            if ($value !== 'all') {
+            if ($value !== null && $value !== '') {
                 $filters[$key] = $value;
             }
         }
@@ -125,14 +126,19 @@ class PengendalianController extends Controller
             ->addColumn('action', function ($row) {
                 $pivot        = $row->orgUnits->first()?->pivot;
                 $indikorgunit = $pivot?->indikorgunit_id;
-                $url          = route('pemutu.pengendalian.edit-modal', encryptId($indikorgunit));
 
-                return $indikorgunit
-                    ? '<button class="btn btn-sm btn-primary ajax-modal-btn"
-                         data-modal-size="modal-lg"
-                         data-url="' . $url . '">
-                         Isi</button>'
-                    : '<span class="text-muted small">-</span>';
+                if (!$indikorgunit) {
+                    return '<span class="text-muted small">-</span>';
+                }
+
+                $encId       = encryptId($indikorgunit);
+                $urlIsi      = route('pemutu.pengendalian.edit-modal', $encId);
+                $urlValidasi = route('pemutu.pengendalian.validasi-modal', $encId);
+
+                return '<div class="d-flex flex-column gap-1">'
+                    . '<button class="btn btn-sm btn-primary ajax-modal-btn" data-modal-size="modal-lg" data-url="' . $urlIsi . '"><i class="ti ti-pencil me-1"></i>Isi</button>'
+                    . '<button class="btn btn-sm btn-outline-purple ajax-modal-btn" data-modal-size="modal-lg" data-url="' . $urlValidasi . '"><i class="ti ti-crown me-1"></i>Validasi</button>'
+                    . '</div>';
             })
             ->filterColumn('indikator_info', function ($query, $keyword) {
                 $query->where(function ($q) use ($keyword) {
@@ -145,22 +151,49 @@ class PengendalianController extends Controller
     }
 
     /**
-     * Kembalikan view modal edit pengendalian (AJAX Modal).
+     * Modal isi pengendalian (Auditee/Unit).
      */
     public function editModal(IndikatorOrgUnit $indOrg)
     {
         $indOrg->load(['indikator.labels', 'orgUnit']);
+        $hasilMap = IndikatorOrgUnit::$hasilAkhirLabels;
 
-        return view('pages.pemutu.pengendalian.edit-modal', compact('indOrg'));
+        return view('pages.pemutu.pengendalian.isi-modal', compact('indOrg', 'hasilMap'));
     }
 
     /**
-     * Simpan status + analisis pengendalian.
+     * Simpan data pengendalian dari unit/auditee.
      */
     public function update(PengendalianRequest $request, IndikatorOrgUnit $indOrg)
     {
         $this->PengendalianService->submitPengendalian($indOrg, $request->validated());
         return jsonSuccess('Data pengendalian berhasil disimpan.');
+    }
+
+    /**
+     * Modal validasi pengendalian (Atasan/Pemutu).
+     */
+    public function validasiModal(IndikatorOrgUnit $indOrg)
+    {
+        $indOrg->load(['indikator.labels', 'orgUnit']);
+        $hasilMap = IndikatorOrgUnit::$hasilAkhirLabels;
+        $statusMap = [
+            'tetap'        => ['label' => 'Dipertahankan', 'color' => 'success'],
+            'penyesuaian'  => ['label' => 'Disesuaikan', 'color' => 'warning'],
+            'ditingkatkan' => ['label' => 'Ditingkatkan', 'color' => 'blue'],
+            'nonaktif'     => ['label' => 'Di-nonaktifkan', 'color' => 'danger'],
+        ];
+
+        return view('pages.pemutu.pengendalian.validasi-modal', compact('indOrg', 'hasilMap', 'statusMap'));
+    }
+
+    /**
+     * Simpan validasi atasan.
+     */
+    public function validasi(ValidasiPengendalianRequest $request, IndikatorOrgUnit $indOrg)
+    {
+        $this->PengendalianService->submitValidasi($indOrg, $request->validated());
+        return jsonSuccess('Validasi pengendalian berhasil disimpan.');
     }
 
     /**

@@ -57,12 +57,12 @@ class EvaluasiDiriController extends Controller
         $filters = [];
         
         $edStatus = $request->input('ed_status');
-        if ($edStatus !== 'all') {
+        if ($edStatus !== null && $edStatus !== '') {
             $filters['ed_status'] = $edStatus;
         }
         
         $dokId = $request->input('dok_id');
-        if ($dokId !== 'all') {
+        if ($dokId !== null && $dokId !== '') {
             $filters['dok_id'] = $dokId;
         }
 
@@ -215,7 +215,12 @@ class EvaluasiDiriController extends Controller
         }
         $data['ed_links'] = ! empty($linksArray) ? json_encode($linksArray) : null;
 
-        if ($request->hasFile('ed_attachment')) {
+        if ($request->input('delete_ed_attachment') == '1') {
+            if ($pivot && $pivot->ed_attachment && Storage::exists($pivot->ed_attachment)) {
+                Storage::delete($pivot->ed_attachment);
+            }
+            $data['ed_attachment'] = null;
+        } elseif ($request->hasFile('ed_attachment')) {
             if ($pivot && $pivot->ed_attachment && Storage::exists($pivot->ed_attachment)) {
                 Storage::delete($pivot->ed_attachment);
             }

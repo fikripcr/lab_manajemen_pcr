@@ -158,6 +158,11 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::post('ami/rtp/{indOrg}', [App\Http\Controllers\Pemutu\AmiController::class, 'updateRtp'])->name('ami.rtp-update');
     Route::get('ami/te/{indOrg}', [App\Http\Controllers\Pemutu\AmiController::class, 'editTe'])->name('ami.te-edit');
     Route::post('ami/te/{indOrg}', [App\Http\Controllers\Pemutu\AmiController::class, 'updateTe'])->name('ami.te-update');
+    
+    // AMI Export
+    Route::get('ami/{periode}/export-ptk', [App\Http\Controllers\Pemutu\AmiController::class, 'exportPtk'])->name('ami.export-ptk');
+    Route::get('ami/{periode}/export-temuan-audit', [App\Http\Controllers\Pemutu\AmiController::class, 'exportTemuanAudit'])->name('ami.export-temuan-audit');
+    Route::get('ami/{periode}/export-temuan-positif', [App\Http\Controllers\Pemutu\AmiController::class, 'exportTemuanPositif'])->name('ami.export-temuan-positif');
 
     // Diskusi
     Route::post('diskusi/ami/{indOrg}', [App\Http\Controllers\Pemutu\DiskusiController::class, 'storeAmi'])->name('diskusi.store-ami');
@@ -167,7 +172,9 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::get('pengendalian', [App\Http\Controllers\Pemutu\PengendalianController::class, 'index'])->name('pengendalian.index');
     Route::get('pengendalian/{periode}/data', [App\Http\Controllers\Pemutu\PengendalianController::class, 'data'])->name('pengendalian.data');
     Route::get('pengendalian/modal/{indOrg}', [App\Http\Controllers\Pemutu\PengendalianController::class, 'editModal'])->name('pengendalian.edit-modal');
+    Route::get('pengendalian/validasi-modal/{indOrg}', [App\Http\Controllers\Pemutu\PengendalianController::class, 'validasiModal'])->name('pengendalian.validasi-modal');
     Route::post('pengendalian/update/{indOrg}', [App\Http\Controllers\Pemutu\PengendalianController::class, 'update'])->name('pengendalian.update');
+    Route::post('pengendalian/validasi/{indOrg}', [App\Http\Controllers\Pemutu\PengendalianController::class, 'validasi'])->name('pengendalian.validasi');
     Route::post('pengendalian/matrix/{indOrg}', [App\Http\Controllers\Pemutu\PengendalianController::class, 'updateMatrix'])->name('pengendalian.update-matrix');
 
     // Pengendalian RTM (Rapat Tinjauan Manajemen)

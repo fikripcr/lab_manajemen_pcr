@@ -9,7 +9,7 @@
             <x-tabler.datatable-filter dataTableId="indisipliner-table" :useCollapse="true">
                 <div class="col-12">
                     <x-tabler.form-select name="f_tahun" label="Filter Tahun" class="mb-0">
-                        <option value="all">Semua Tahun</option>
+                        <option value="">Semua Tahun</option>
                         @for ($i = date('Y'); $i >= 2019; $i--)
                             <option value="{{ $i }}">{{ $i }}</option>
                         @endfor

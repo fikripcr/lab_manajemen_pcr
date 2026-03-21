@@ -84,6 +84,25 @@ class PengendalianService
     }
 
     /**
+     * Simpan validasi atasan: hanya kolom _atsn.
+     */
+    public function submitValidasi(IndikatorOrgUnit $indOrg, array $data): IndikatorOrgUnit
+    {
+        $payload = [
+            'pengend_status_atsn'           => $data['pengend_status_atsn'],
+            'pengend_analisis_atsn'         => $data['pengend_analisis_atsn'] ?? null,
+            'pengend_important_matrix_atsn' => $data['pengend_important_matrix_atsn'] ?? null,
+            'pengend_urgent_matrix_atsn'    => $data['pengend_urgent_matrix_atsn'] ?? null,
+        ];
+
+        $indOrg->update($payload);
+
+        logActivity('pemutu', 'Validasi pengendalian atasan: indikator #' . $indOrg->indikator_id . ' unit #' . $indOrg->org_unit_id, $indOrg);
+
+        return $indOrg;
+    }
+
+    /**
      * Buat RTM baru untuk satu Periode SPMI.
      * Otomatis membuat Rapat + menghubungkan via RapatEntitas + insert agenda default.
      */

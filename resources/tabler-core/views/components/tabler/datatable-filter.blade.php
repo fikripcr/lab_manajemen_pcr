@@ -65,9 +65,6 @@ if (typeof initDatatableFilter !== 'function') {
         if (filterForm.dataset.filterInit === 'true') return;
         filterForm.dataset.filterInit = 'true';
         
-        // Removed individual input/select2 listeners as they are now handled 
-        // centrally by core-datatable.js via form 'change' events.
-
         // Reset filter
         if (resetBtn) {
             resetBtn.addEventListener('click', function() {
@@ -77,18 +74,26 @@ if (typeof initDatatableFilter !== 'function') {
                 const stateName = 'DataTables_' + dataTableId + '_' + window.location.pathname;
                 localStorage.removeItem(stateName);
 
-                // Reset all selects to "all" (our new convention)
+                // Guard: prevent per-select change events from triggering DataTable reload
+                filterForm.dataset.isResetting = 'true';
+
+                // Reset all selects silently (no individual change events)
                 $(filterForm).find('select').each(function() {
                     const $select = $(this);
-                    // Check if "all" option exists
                     if ($select.find('option[value="all"]').length > 0) {
-                        $select.val('all').trigger('change');
+                        $select.val('all');
                     } else {
-                        $select.val('').trigger('change');
+                        $select.val('');
+                    }
+                    // Update Select2 UI without triggering change
+                    if ($select.data('select2')) {
+                        $select.trigger('change.select2');
                     }
                 });
 
-                // Trigger global change for core-datatable.js to pick up
+                delete filterForm.dataset.isResetting;
+
+                // Fire a SINGLE change event for core-datatable.js to pick up
                 filterForm.dispatchEvent(new Event('change', { bubbles: true }));
             });
         }
@@ -105,7 +110,7 @@ if (typeof initDatatableFilter !== 'function') {
                     if (selectedOptions.length > 0) count++;
                 } else {
                     let value = input.value ? input.value.trim() : '';
-                    if (value !== '') count++;
+                    if (value !== 'all' && value !== '') count++;
                 }
             });
             

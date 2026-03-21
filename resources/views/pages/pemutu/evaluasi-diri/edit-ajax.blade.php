@@ -1,7 +1,7 @@
 <x-tabler.form-modal
     :title="'Isi Evaluasi Diri'"
     :route="route('pemutu.evaluasi-diri.update', $indikator->encrypted_indikator_id)"
-    size="modal-lg"
+    size="modal-xl"
     method="POST"
     data-redirect="false"
 >
@@ -126,59 +126,72 @@
             <hr class="my-4">
             <h3 class="mb-3">Bukti & Dokumen Pendukung</h3>
 
-            <div class="mb-4">
-                <x-tabler.form-input
-                    name="ed_attachment"
-                    label="Unggah File (Opsional)"
-                    type="file"
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.png"
-                    helper="Maksimal 5MB. Format: PDF, Excel, Word, Gambar."
-                />
-                @if(isset($pivot) && $pivot->ed_attachment)
-                    <div class="mt-2 p-2 border rounded bg-light d-flex justify-content-between align-items-center">
-                        <div>
-                            <span class="text-muted small d-block">File Pendukung saat ini:</span>
-                            <span class="fw-bold fs-5"><i class="ti ti-file-check text-success me-1"></i> File Tersedia</span>
-                          <a href="{{ route('pemutu.evaluasi-diri.download', encryptId($pivot->indikorgunit_id)) }}" target="_blank" class="btn btn-primary btn-sm">
-                            <i class="ti ti-download fs-3 me-2"></i> Unduh File Saat Ini
-                        </a>
+            <div class="row">
+                <div class="col-md-5 border-end pe-4">
+                    <div class="mb-4">
+                        @if(isset($pivot) && $pivot->ed_attachment)
+                            <div id="existing-attachment-container" class="mb-3 p-2 border border-primary rounded bg-primary-lt d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="text-primary small d-block mb-1">File Pendukung saat ini:</span>
+                                    <span class="fw-bold fs-5 text-primary"><i class="ti ti-file-check me-1"></i> File Tersedia</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <a href="{{ route('pemutu.evaluasi-diri.download', encryptId($pivot->indikorgunit_id)) }}" target="_blank" class="btn btn-primary btn-sm" title="Unduh File Saat Ini">
+                                        <i class="ti ti-download fs-3"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-danger btn-sm" id="btn-delete-attachment" title="Hapus File Saat Ini">
+                                        <i class="ti ti-trash fs-3"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        @endif
+                        <input type="hidden" name="delete_ed_attachment" id="delete_ed_attachment" value="0">
+                        <x-tabler.form-input
+                            name="ed_attachment"
+                            label="Unggah File Baru (Opsional)"
+                            type="file"
+                            accept="image/png, image/jpeg, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, .pdf, .doc, .docx, .xls, .xlsx, .jpg, .jpeg, .png"
+                            helper="Maksimal 5MB. Format: PDF, Excel, Word, Gambar."
+                        />
                     </div>
-                @endif
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Link Pendukung Eksternal (URL)</label>
-                <div class="text-muted mb-2"><small>Tambahkan tautan ke Google Drive, Sharepoint, Website, dll.</small></div>
-
-                <div id="ed-links-container">
-                    @forelse($edLinks as $link)
-                        <div class="ed-link-item row gap-2 mb-2 g-0 align-items-center">
-                            <div class="col-5">
-                                <x-tabler.form-input type="text" name="ed_links_name[]" placeholder="Nama Dokumen (Contoh: Laporan PKM)" value="{{ $link['name'] }}" />
-                            </div>
-                            <div class="col">
-                                <x-tabler.form-input type="url" name="ed_links_url[]" placeholder="https://..." value="{{ $link['url'] }}" />
-                            </div>
-                            <div class="col-auto">
-                                <x-tabler.button type="delete" class="btn-outline-danger remove-link-btn" title="Hapus baris ini" tabindex="-1" iconOnly="true" />
-                            </div>
-                        </div>
-                    @empty
-                        <div class="ed-link-item row gap-2 mb-2 g-0 align-items-center">
-                            <div class="col-5">
-                                <x-tabler.form-input type="text" name="ed_links_name[]" placeholder="Nama Dokumen (Contoh: Laporan PKM)" />
-                            </div>
-                            <div class="col">
-                                <x-tabler.form-input type="url" name="ed_links_url[]" placeholder="https://..." />
-                            </div>
-                            <div class="col-auto">
-                                <x-tabler.button type="delete" class="btn-outline-danger remove-link-btn" title="Hapus baris ini" tabindex="-1" iconOnly="true" />
-                            </div>
-                        </div>
-                    @endforelse
                 </div>
 
-                <x-tabler.button type="create" id="add-link-btn" class="btn-outline-primary btn-sm mt-2" text="Tambah Link" />
+                <div class="col-md-7 ps-4">
+                    <div class="mb-3">
+                        <label class="form-label">Link Pendukung Eksternal (URL)</label>
+                        <div class="text-muted mb-2"><small>Tambahkan tautan ke Google Drive, Sharepoint, Website, dll.</small></div>
+
+                        <div id="ed-links-container">
+                            @forelse($edLinks as $link)
+                                <div class="ed-link-item row gap-2 mb-2 g-0 align-items-center">
+                                    <div class="col-5">
+                                        <x-tabler.form-input type="text" name="ed_links_name[]" placeholder="Nama Dokumen (Contoh: Laporan PKM)" value="{{ $link['name'] }}" />
+                                    </div>
+                                    <div class="col">
+                                        <x-tabler.form-input type="url" name="ed_links_url[]" placeholder="https://..." value="{{ $link['url'] }}" />
+                                    </div>
+                                    <div class="col-auto">
+                                        <x-tabler.button type="delete" class="btn-outline-danger remove-link-btn" title="Hapus baris ini" tabindex="-1" iconOnly="true" />
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="ed-link-item row gap-2 mb-2 g-0 align-items-center">
+                                    <div class="col-5">
+                                        <x-tabler.form-input type="text" name="ed_links_name[]" placeholder="Nama Dokumen (Contoh: Laporan PKM)" />
+                                    </div>
+                                    <div class="col">
+                                        <x-tabler.form-input type="url" name="ed_links_url[]" placeholder="https://..." />
+                                    </div>
+                                    <div class="col-auto">
+                                        <x-tabler.button type="delete" class="btn-outline-danger remove-link-btn" title="Hapus baris ini" tabindex="-1" iconOnly="true" />
+                                    </div>
+                                </div>
+                            @endforelse
+                        </div>
+
+                        <x-tabler.button type="create" id="add-link-btn" class="btn-outline-primary btn-sm mt-2" text="Tambah Link" />
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -256,6 +269,17 @@
                         editor.save();
                     });
                 }
+            });
+        }
+
+        const deleteBtn = document.getElementById('btn-delete-attachment');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', () => {
+                const container = document.getElementById('existing-attachment-container');
+                if (container) {
+                    container.remove();
+                }
+                document.getElementById('delete_ed_attachment').value = '1';
             });
         }
     }, 100);

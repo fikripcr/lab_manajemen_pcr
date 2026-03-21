@@ -101,7 +101,7 @@
                     name="attachment" 
                     label="Unggah File (Opsional)" 
                     type="file" 
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.png"
+                    accept="image/png, image/jpeg, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, .pdf, .doc, .docx, .xls, .xlsx, .jpg, .jpeg, .png"
                     helper="Maksimal 5MB. Format: PDF, Excel, Word, Gambar."
                 />
                 @if($indikatorPegawai->attachment)

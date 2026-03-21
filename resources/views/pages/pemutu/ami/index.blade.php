@@ -66,6 +66,28 @@
                                         </div>
                                     </div>
                                     <div class="col-auto d-flex gap-2">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="ti ti-file-export me-1"></i> Export
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li>
+                                                    <a href="#" class="dropdown-item export-btn" data-export-type="ptk" data-periode="{{ $periode->encrypted_periodespmi_id }}" data-type="{{ $type }}">
+                                                        <i class="ti ti-file-text me-2"></i>PTK (DOCX)
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="dropdown-item export-btn" data-export-type="temuan-audit" data-periode="{{ $periode->encrypted_periodespmi_id }}" data-type="{{ $type }}">
+                                                        <i class="ti ti-file-x me-2"></i>Temuan Audit - KTS (XLSX)
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="dropdown-item export-btn" data-export-type="temuan-positif" data-periode="{{ $periode->encrypted_periodespmi_id }}" data-type="{{ $type }}">
+                                                        <i class="ti ti-file-check me-2"></i>Temuan Positif (XLSX)
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
                                         <x-tabler.datatable-page-length :dataTableId="'table-ami-' . $typeId" />
                                         <x-tabler.datatable-filter :dataTableId="'table-ami-' . $typeId" type="button" :target="'#table-ami-' . $typeId . '-filter-area'" />
                                         <x-tabler.datatable-search :dataTableId="'table-ami-' . $typeId" />
@@ -85,7 +107,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <x-tabler.form-select name="dok_id" id="dok_id_{{ $typeId }}" label="Standar / Dokumen" placeholder="">
-                                                <option value="all">Semua Standar</option>
+                                                <option value="">Semua Standar</option>
                                                 @foreach($rootDoks as $dok)
                                                     <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->judul }}</option>
                                                 @endforeach
@@ -93,7 +115,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <x-tabler.form-select name="ami_hasil_akhir" id="ami_hasil_akhir_{{ $typeId }}" label="Hasil AMI" placeholder="">
-                                                <option value="all">Semua Hasil</option>
+                                                <option value="">Semua Hasil</option>
                                                 <option value="empty">Belum Dinilai</option>
                                                 <option value="0">KTS</option>
                                                 <option value="1">Terpenuhi</option>
@@ -102,7 +124,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <x-tabler.form-select name="ed_status" id="ed_status_{{ $typeId }}" label="Status ED" placeholder="">
-                                                <option value="all">Semua Status</option>
+                                                <option value="">Semua Status</option>
                                                 <option value="filled">Sudah Isi</option>
                                                 <option value="empty">Belum Isi</option>
                                             </x-tabler.form-select>
@@ -264,4 +286,80 @@
     @endforeach
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle export buttons with filter parameters
+    document.querySelectorAll('.export-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const exportType = this.dataset.exportType;
+            const periodeId = this.dataset.periode;
+            const type = this.dataset.type;
+            const typeId = type.replace('_', '-');
+            
+            // Get current filter values from the active tab
+            const filterPrefix = `#table-ami-${typeId}`;
+            const unitIdEl = document.querySelector(`${filterPrefix}-filter-area [name="unit_id"]`);
+            const dokIdEl = document.querySelector(`${filterPrefix}-filter-area [name="dok_id"]`);
+            const amiHasilEl = document.querySelector(`${filterPrefix}-filter-area [name="ami_hasil_akhir"]`);
+            const edStatusEl = document.querySelector(`${filterPrefix}-filter-area [name="ed_status"]`);
+            
+            // Build URL with query parameters
+            let url = '';
+            if (exportType === 'ptk') {
+                url = `/pemutu/ami/${periodeId}/export-ptk`;
+            } else if (exportType === 'temuan-audit') {
+                url = `/pemutu/ami/${periodeId}/export-temuan-audit`;
+            } else if (exportType === 'temuan-positif') {
+                url = `/pemutu/ami/${periodeId}/export-temuan-positif`;
+            }
+            
+            // Add filter parameters - get current values from filter form
+            const params = new URLSearchParams();
+            
+            // Unit filter
+            if (unitIdEl && unitIdEl.value) {
+                params.append('unit_id', unitIdEl.value);
+            }
+            
+            // Dokumen filter
+            if (dokIdEl && dokIdEl.value && dokIdEl.value !== 'all') {
+                params.append('dok_id', dokIdEl.value);
+            }
+            
+            // AMI Hasil filter - for PTK always KTS, for others respect filter
+            if (exportType === 'ptk') {
+                // PTK always exports KTS (0)
+                params.append('ami_hasil_akhir', '0');
+            } else if (amiHasilEl && amiHasilEl.value && amiHasilEl.value !== 'all') {
+                // For other exports, use selected filter
+                params.append('ami_hasil_akhir', amiHasilEl.value);
+            }
+            
+            // ED Status filter (optional)
+            if (edStatusEl && edStatusEl.value && edStatusEl.value !== 'all') {
+                params.append('ed_status', edStatusEl.value);
+            }
+            
+            // Show loading indicator
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="ti ti-loader ti-spin me-1"></i>Preparing...';
+            this.classList.add('disabled');
+            
+            // Navigate to export URL
+            window.location.href = url + (params.toString() ? '?' + params.toString() : '');
+            
+            // Re-enable button after 2 seconds
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.classList.remove('disabled');
+            }, 2000);
+        });
+    });
+});
+</script>
+@endpush
 

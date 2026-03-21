@@ -198,8 +198,13 @@ export default class CustomDataTables {
     }
 
     bindEvents(SELECTOR) {
+        const filterForm = document.querySelector(SELECTOR.filterForm);
+
         const refreshTable = () => {
             if (this.isRestoring) return;
+
+            // Skip if the filter form is mid-reset (bulk clearing selects)
+            if (filterForm && filterForm.dataset.isResetting) return;
             
             // Debounce the refresh to batch multiple changes (e.g. from Select2 or multi-input updates)
             clearTimeout(this.refreshTimeout);
@@ -218,7 +223,7 @@ export default class CustomDataTables {
 
                 this.updateActiveFilters();
                 this.table.ajax.reload();
-            }, 100); // 100ms debounce
+            }, 300); // 300ms debounce to batch rapid filter changes
         };
 
         // Refresh Button
@@ -255,7 +260,6 @@ export default class CustomDataTables {
         }
 
         // Combined Filter Form & Page Length Listener
-        const filterForm = document.querySelector(SELECTOR.filterForm);
         if (filterForm) {
             filterForm.addEventListener('change', refreshTable);
             this.updateActiveFilters();
