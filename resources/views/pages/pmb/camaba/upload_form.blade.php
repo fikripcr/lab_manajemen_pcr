@@ -8,6 +8,6 @@
 >
     
     <div class="mb-3 text-center">
-        <x-tabler.form-input type="file" name="file" label="Pilih Berkas" required help="Format yang diijinkan: {{ $jenis->tipe_file ?? 'Semua' }}. Maks: {{ formatBytes($jenis->max_size_kb * 1024) }}" />
+        <x-tabler.form-input type="file" name="file" class="filepond-input" label="Pilih Berkas" required help="Format yang diijinkan: {{ $jenis->tipe_file ?? 'Semua' }}. Maks: {{ formatBytes($jenis->max_size_kb * 1024) }}" />
     </div>
 </x-tabler.form-modal>

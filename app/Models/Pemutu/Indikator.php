@@ -72,7 +72,7 @@ class Indikator extends Model
     {
         return $this->belongsToMany(StrukturOrganisasi::class, 'pemutu_indikator_orgunit', 'indikator_id', 'org_unit_id')
             ->withPivot(
-                'indikorgunit_id', 'target', 'ed_capaian', 'ed_analisis', 'ed_attachment', 'ed_links', 'ed_skala',
+                'indikorgunit_id', 'target', 'ed_capaian', 'ed_analisis', 'ed_links', 'ed_skala',
                 'ami_hasil_akhir', 'ami_hasil_temuan', 'ami_hasil_temuan_sebab', 'ami_hasil_temuan_akibat', 'ami_hasil_temuan_rekom',
                 'ami_rtp_isi', 'ami_rtp_tgl_pelaksanaan', 'ami_te_isi',
                 'pengend_status', 'pengend_status_atsn', 'pengend_analisis', 'pengend_analisis_atsn', 

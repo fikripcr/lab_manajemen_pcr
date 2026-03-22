@@ -33,11 +33,13 @@ class DiskusiService
             'is_done'          => false,
         ];
 
+        $diskusi = $indOrg->diskusi()->create($payload);
+
         if ($attachmentFile) {
-            $payload['attachment_file'] = $attachmentFile->store('public/pemutu/ami_diskusi');
+            $diskusi->addMedia($attachmentFile)->toMediaCollection('diskusi_attachments');
         }
 
-        return $indOrg->diskusi()->create($payload);
+        return $diskusi;
     }
 
     /**

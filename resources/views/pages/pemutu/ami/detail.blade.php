@@ -109,10 +109,12 @@
                     <div class="col-6">
                         <div class="text-uppercase text-muted small fw-bold mb-1">Bukti & Dokumen</div>
                         <div class="d-flex flex-wrap align-items-center">
-                            @if($indOrg->ed_attachment)
-                                <a href="{{ route('pemutu.evaluasi-diri.download', $indOrg->encrypted_indorgunit_id) }}" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1" title="Unduh File Pendukung" data-bs-toggle="tooltip">
+                            @if($indOrg->hasMedia('ed_attachments'))
+                                @foreach($indOrg->getMedia('ed_attachments') as $media)
+                                <a href="{{ $media->getUrl() }}" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1" title="Unduh: {{ $media->file_name }}" data-bs-toggle="tooltip">
                                     <i class="ti ti-file-download fs-3"></i>
                                 </a>
+                                @endforeach
                             @endif
                             @if(!empty($indOrg->ed_links))
                                 @foreach($indOrg->ed_links as $link)
@@ -121,7 +123,7 @@
                                     </a>
                                 @endforeach
                             @endif
-                            @if(!$indOrg->ed_attachment && empty($indOrg->ed_links))
+                            @if(!$indOrg->hasMedia('ed_attachments') && empty($indOrg->ed_links))
                                 <span class="text-muted small fst-italic">Tidak ada bukti terlampir</span>
                             @endif
                         </div>
@@ -275,10 +277,11 @@
                                             <x-tabler.card class="mb-0 {{ $isSelf ? 'bg-primary-lt' : 'bg-secondary-lt' }} border-0" style="border-radius: 12px;">
                                                 <x-tabler.card-body class="py-2 px-3">
                                                     <div class="small">{!! nl2br(e($msg->isi)) !!}</div>
-                                                    @if($msg->attachment_file)
+                                                    @if($msg->hasMedia('diskusi_attachments'))
+                                                    @php $media = $msg->getFirstMedia('diskusi_attachments'); @endphp
                                                     <div class="mt-2 border-top pt-1 text-{{ $isSelf ? 'end' : 'start' }}">
-                                                        <a href="{{ route('pemutu.diskusi.download', encryptId($msg->diskusi_id)) }}" target="_blank" class="badge bg-white text-dark border py-1">
-                                                            <i class="ti ti-paperclip me-1"></i> Lampiran File
+                                                        <a href="{{ $media->getUrl() }}" target="_blank" class="badge bg-white text-dark border py-1" title="Unduh {{ $media->file_name }}">
+                                                            <i class="ti ti-paperclip me-1"></i> {{ $media->file_name }} ({{ $media->human_readable_size }})
                                                         </a>
                                                     </div>
                                                     @endif
@@ -307,7 +310,7 @@
 
                                         <div class="mb-3">
                                             <label class="form-label">Lampiran (Opsional)</label>
-                                            <input type="file" name="attachment_file" class="filepond" />
+                                            <input type="file" name="attachment_file" class="filepond-input" />
                                         </div>
 
                                         <div class="row g-2 align-items-center">

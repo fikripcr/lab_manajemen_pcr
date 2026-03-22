@@ -9,6 +9,7 @@
             name="slideshow_image" 
             label="Upload Gambar" 
             type="file" 
+            class="filepond-input"
             :required="!$slideshow->exists && empty($slideshow->image_url)"
             accept="image/*"
             help="Ukuran yang disarankan 1200x600 px."

@@ -51,6 +51,7 @@
             type="file"
             label="Gambar Utama (Cover)"
             accept="image/*"
+            class="filepond-input"
             help="Maksimal 5MB. Format: JPG, PNG, WEBP."
         />
         @if($pengumuman->cover_url)
@@ -67,6 +68,7 @@
             type="file"
             label="File Pendukung (Lampiran)"
             multiple
+            class="filepond-input"
             help="Maksimal 10MB per file. Bisa upload banyak file sekaligus."
         />
     </div>

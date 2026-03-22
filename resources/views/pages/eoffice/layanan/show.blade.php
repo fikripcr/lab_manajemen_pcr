@@ -259,7 +259,7 @@
 
                                 <x-tabler.form-textarea name="keterangan" label="Keterangan / Pesan ke Pemohon" rows="3" placeholder="Wajib jika Tolak / Revisi" />
 
-                                <x-tabler.form-input type="file" name="file_lampiran" label="File Output / Lampiran" />
+                                <x-tabler.form-input type="file" name="file_lampiran" class="filepond-input" label="File Output / Lampiran" />
 
                                 <div class="text-end">
                                     <x-tabler.button type="submit" class="w-100" text="Kirim Perubahan Status" />

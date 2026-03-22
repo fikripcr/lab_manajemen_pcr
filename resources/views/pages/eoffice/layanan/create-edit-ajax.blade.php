@@ -66,7 +66,7 @@
                                     <x-tabler.form-input type="number" name="{{ $fieldName }}" label="{{ $field->nama_isian }}" value="{{ $oldValue }}" required="{{ $item->is_required }}" help="{{ $field->keterangan_isian }}" />
                                 
                                 @elseif($field->type === 'file')
-                                    <x-tabler.form-input type="file" name="{{ $fieldName }}" label="{{ $field->nama_isian }}" required="{{ !$isEdit && $item->is_required }}">
+                                    <x-tabler.form-input type="file" name="{{ $fieldName }}" class="filepond-input" label="{{ $field->nama_isian }}" required="{{ !$isEdit && $item->is_required }}">
                                         @if($isEdit && $oldValue)
                                             <div class="mb-2">
                                                 <span class="badge bg-blue-lt">File Saat Ini:</span> 

@@ -44,6 +44,7 @@
             <x-tabler.form-input 
                 type="file" 
                 name="bukti_foto" 
+                class="filepond-input"
                 label="Bukti Foto" 
                 accept="image/*" 
             />

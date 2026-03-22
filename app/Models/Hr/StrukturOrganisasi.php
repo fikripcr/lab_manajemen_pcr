@@ -117,7 +117,7 @@ class StrukturOrganisasi extends Model
     public function indikators()
     {
         return $this->belongsToMany(Indikator::class, 'pemutu_indikator_orgunit', 'org_unit_id', 'indikator_id')
-            ->withPivot('target', 'ed_capaian', 'ed_analisis', 'ed_attachment', 'created_at');
+            ->withPivot('target', 'ed_capaian', 'ed_analisis', 'created_at');
     }
 
     public function auditee()

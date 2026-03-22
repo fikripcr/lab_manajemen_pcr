@@ -428,7 +428,6 @@ class IndikatorSummaryController extends Controller
                 'pemutu_indikator_orgunit.ed_capaian',
                 'pemutu_indikator_orgunit.ed_analisis',
                 'pemutu_indikator_orgunit.ed_skala',
-                'pemutu_indikator_orgunit.ed_attachment',
                 'pemutu_indikator_orgunit.ed_links',
                 'pemutu_indikator_orgunit.updated_at'
             )

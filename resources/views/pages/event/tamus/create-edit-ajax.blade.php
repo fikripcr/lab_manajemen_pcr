@@ -42,7 +42,7 @@
         <!-- FilePond Uploads -->
         <div class="col-md-6">
             <div class="form-label">Foto Tamu</div>
-            <input type="file" name="foto" class="filepond" data-allow-reorder="true" data-max-file-size="3MB" data-max-files="1">
+            <input type="file" name="foto" class="filepond-input" data-allow-reorder="true" data-max-file-size="3MB" data-max-files="1">
             @if($tamu->photo_url)
                 <div class="mt-2 small text-muted">Foto saat ini: <a href="{{ $tamu->photo_url }}" target="_blank">Lihat</a></div>
             @endif
@@ -50,7 +50,7 @@
 
         <div class="col-md-6">
             <div class="form-label">Tanda Tangan</div>
-            <input type="file" name="ttd" class="filepond" data-allow-reorder="true" data-max-file-size="3MB" data-max-files="1">
+            <input type="file" name="ttd" class="filepond-input" data-allow-reorder="true" data-max-file-size="3MB" data-max-files="1">
             @if($tamu->signature_url)
                 <div class="mt-2 small text-muted">TTD saat ini: <a href="{{ $tamu->signature_url }}" target="_blank">Lihat</a></div>
             @endif
@@ -62,9 +62,3 @@
     </div>
 </x-tabler.form-modal>
 
-<script>
-    // Re-initialize FilePond for items inside modal
-    if (typeof initializeFilePond === 'function') {
-        initializeFilePond('.filepond');
-    }
-</script>

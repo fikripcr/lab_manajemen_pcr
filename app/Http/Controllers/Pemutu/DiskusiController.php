@@ -29,15 +29,4 @@ class DiskusiController extends Controller
         return jsonSuccess('Pesan diskusi berhasil dikirim.', route('pemutu.ami.detail', $indOrg->encrypted_indorgunit_id));
     }
 
-    /**
-     * Unduh lampiran diskusi.
-     */
-    public function download($id)
-    {
-        $realId = decryptIdIfEncrypted($id);
-        
-        $diskusi = Diskusi::findOrFail($realId);
-
-        return downloadStorageFile($diskusi->attachment_file, logActivity: true);
-    }
 }

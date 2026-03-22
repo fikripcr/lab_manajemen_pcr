@@ -404,7 +404,9 @@ if (! function_exists('pemutuDtColAnalisisEd')) {
         // Evidence items
         $evidenceHtml = '';
         if ($pivot) {
-            $hasFile = ! empty($pivot->ed_attachment);
+            $itemId = $pivot->indikorgunit_id ?? null;
+            $indModel = $itemId ? \App\Models\Pemutu\IndikatorOrgUnit::with('media')->find($itemId) : null;
+            $hasFile = $indModel ? $indModel->hasMedia('ed_attachments') : false;
 
             $hasLinks   = false;
             $linksArray = [];
@@ -427,11 +429,9 @@ if (! function_exists('pemutuDtColAnalisisEd')) {
             }
 
             // 2. Show File Attachment
-            if ($hasFile) {
-                $itemId = $pivot->indikorgunit_id ?? null;
-                if ($itemId) {
-                    $url           = route('pemutu.evaluasi-diri.download', encryptId($itemId));
-                    $evidenceHtml .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1" title="Unduh File Pendukung" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
+            if ($hasFile && isset($indModel)) {
+                foreach ($indModel->getMedia('ed_attachments') as $media) {
+                    $evidenceHtml .= '<a href="' . $media->getUrl() . '" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1" title="Unduh: ' . e($media->file_name) . '" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
                 }
             }
 

@@ -134,7 +134,8 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::get('evaluasi-diri', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'index'])->name('evaluasi-diri.index');
     Route::get('evaluasi-diri/{periode}/data', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'data'])->name('evaluasi-diri.data');
     Route::get('evaluasi-diri/{periode}/ptp-data', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'ptpData'])->name('evaluasi-diri.ptp-data');
-    Route::get('evaluasi-diri/download/{id}', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'downloadAttachment'])->name('evaluasi-diri.download');
+    Route::post('evaluasi-diri/upload/{id}', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'uploadFile'])->name('evaluasi-diri.upload-file');
+    Route::delete('evaluasi-diri/delete/{id}/{mediaId}', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'deleteFile'])->name('evaluasi-diri.delete-file');
     Route::get('evaluasi-diri/{indikator}/edit', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'edit'])->name('evaluasi-diri.edit');
     Route::post('evaluasi-diri/{indikator}', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'update'])->name('evaluasi-diri.update');
     Route::get('evaluasi-diri/ptp/{indOrg}/edit', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'editPtp'])->name('evaluasi-diri.ptp-edit');
@@ -142,7 +143,8 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
 
     // Evaluasi KPI
     Route::get('evaluasi-kpi', [App\Http\Controllers\Pemutu\EvaluasiKpiController::class, 'index'])->name('evaluasi-kpi.index');
-    Route::get('evaluasi-kpi/download/{indikatorPegawai}', [App\Http\Controllers\Pemutu\EvaluasiKpiController::class, 'downloadAttachment'])->name('evaluasi-kpi.download');
+    Route::post('evaluasi-kpi/upload/{indikatorPegawai}', [App\Http\Controllers\Pemutu\EvaluasiKpiController::class, 'uploadFile'])->name('evaluasi-kpi.upload-file');
+    Route::delete('evaluasi-kpi/delete/{indikatorPegawai}/{mediaId}', [App\Http\Controllers\Pemutu\EvaluasiKpiController::class, 'deleteFile'])->name('evaluasi-kpi.delete-file');
     Route::get('evaluasi-kpi/{periode}', [App\Http\Controllers\Pemutu\EvaluasiKpiController::class, 'show'])->name('evaluasi-kpi.show');
     Route::get('evaluasi-kpi/{periode}/data', [App\Http\Controllers\Pemutu\EvaluasiKpiController::class, 'data'])->name('evaluasi-kpi.data');
     Route::get('evaluasi-kpi/{indikatorPegawai}/edit', [App\Http\Controllers\Pemutu\EvaluasiKpiController::class, 'edit'])->name('evaluasi-kpi.edit');
@@ -166,7 +168,6 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
 
     // Diskusi
     Route::post('diskusi/ami/{indOrg}', [App\Http\Controllers\Pemutu\DiskusiController::class, 'storeAmi'])->name('diskusi.store-ami');
-    Route::get('diskusi/download/{diskusi}', [App\Http\Controllers\Pemutu\DiskusiController::class, 'download'])->name('diskusi.download');
 
     // Pengendalian
     Route::get('pengendalian', [App\Http\Controllers\Pemutu\PengendalianController::class, 'index'])->name('pengendalian.index');

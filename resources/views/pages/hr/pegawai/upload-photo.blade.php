@@ -13,7 +13,7 @@
             <x-tabler.card-body>
                 <form id="uploadPhotoForm" enctype="multipart/form-data">
                     @csrf
-                    <x-tabler.form-input type="file" id="photo" name="photo" label="Foto Pegawai" accept="image/*" required="true" help="Upload foto yang jelas wajahnya untuk face recognition yang akurat." />
+                    <x-tabler.form-input type="file" id="photo" name="photo" class="filepond-input" label="Foto Pegawai" accept="image/*" required="true" help="Upload foto yang jelas wajahnya untuk face recognition yang akurat." />
                     
                     <div class="mb-3">
                         <x-tabler.form-checkbox 

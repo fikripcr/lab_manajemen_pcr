@@ -41,7 +41,7 @@
         </div>
     </div>
 
-    <x-tabler.form-input type="file" name="file_template" label="Template Word (.docx)" accept=".docx">
+    <x-tabler.form-input type="file" name="file_template" class="filepond-input" label="Template Word (.docx)" accept=".docx">
         @if($modelExists && $layanan->file_template)
             <small class="text-success d-block mt-1">Template saat ini: {{ basename($layanan->file_template) }}</small>
         @endif

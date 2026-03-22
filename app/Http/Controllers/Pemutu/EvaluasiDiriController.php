@@ -122,8 +122,7 @@ class EvaluasiDiriController extends Controller
             }
         }
 
-        $pivot = DB::table('pemutu_indikator_orgunit')
-            ->where('indikator_id', $indikator->indikator_id)
+        $pivot = IndikatorOrgUnit::where('indikator_id', $indikator->indikator_id)
             ->where('org_unit_id', $targetUnitId)
             ->first();
 
@@ -215,29 +214,26 @@ class EvaluasiDiriController extends Controller
         }
         $data['ed_links'] = ! empty($linksArray) ? json_encode($linksArray) : null;
 
-        if ($request->input('delete_ed_attachment') == '1') {
-            if ($pivot && $pivot->ed_attachment && Storage::exists($pivot->ed_attachment)) {
-                Storage::delete($pivot->ed_attachment);
-            }
-            $data['ed_attachment'] = null;
-        } elseif ($request->hasFile('ed_attachment')) {
-            if ($pivot && $pivot->ed_attachment && Storage::exists($pivot->ed_attachment)) {
-                Storage::delete($pivot->ed_attachment);
-            }
-            $path                  = $request->file('ed_attachment')->store('public/pemutu/ed-attachments');
-            $data['ed_attachment'] = $path;
-        }
-
         if ($pivot) {
             DB::table('pemutu_indikator_orgunit')
                 ->where('indikorgunit_id', $pivot->indikorgunit_id)
                 ->update($data);
+            $indikatorOrgUnitId = $pivot->indikorgunit_id;
         } else {
             $data['indikator_id'] = $indikator->indikator_id;
             $data['org_unit_id']  = $targetUnitId;
             $data['target']       = '-';
             $data['created_at']   = now();
-            DB::table('pemutu_indikator_orgunit')->insert($data);
+            $indikatorOrgUnitId = DB::table('pemutu_indikator_orgunit')->insertGetId($data);
+        }
+
+        if ($request->hasFile('filepond')) {
+            $model = IndikatorOrgUnit::find($indikatorOrgUnitId);
+            if ($model) {
+                foreach ($request->file('filepond') as $file) {
+                    $model->addMedia($file)->toMediaCollection('ed_attachments');
+                }
+            }
         }
 
         logActivity('pemutu', "Mengisi Evaluasi Diri untuk indikator ID: {$indikator->indikator_id}");
@@ -245,15 +241,36 @@ class EvaluasiDiriController extends Controller
         return jsonSuccess('Evaluasi Diri berhasil disimpan.');
     }
 
-    public function downloadAttachment($id)
+    public function uploadFile(Request $request, $id)
     {
-        $realId = decryptIdIfEncrypted($id);
+        $request->validate([
+            'files'   => 'required|array',
+            'files.*' => 'file|max:20480',
+        ]);
 
-        $pivot = DB::table('pemutu_indikator_orgunit')
-            ->where('indikorgunit_id', $realId)
-            ->first();
+        $model = IndikatorOrgUnit::findOrFail(decryptIdIfEncrypted($id));
 
-        return downloadStorageFile($pivot->ed_attachment ?? null, logActivity: true);
+        foreach ($request->file('files') as $file) {
+            $model->addMedia($file)->toMediaCollection('ed_attachments');
+        }
+
+        logActivity('pemutu', "Mengunggah " . count($request->file('files')) . " file ke Evaluasi Diri ID: {$model->indikorgunit_id}");
+        return jsonSuccess('File berhasil diunggah.');
+    }
+
+    public function deleteFile(Request $request, $id, $mediaId)
+    {
+        $model = IndikatorOrgUnit::findOrFail(decryptIdIfEncrypted($id));
+        $media = $model->getMedia('ed_attachments')->firstWhere('id', $mediaId);
+
+        if (! $media) {
+            return jsonError('File tidak ditemukan.');
+        }
+
+        $media->delete();
+        logActivity('pemutu', "Menghapus file dari Evaluasi Diri ID: {$model->indikorgunit_id}");
+
+        return jsonSuccess('File berhasil dihapus.');
     }
 
     /**

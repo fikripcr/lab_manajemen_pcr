@@ -97,23 +97,37 @@
             <h3 class="mb-3">Bukti & Dokumen Pendukung</h3>
 
             <div class="mb-4">
-                <x-tabler.form-input 
-                    name="attachment" 
-                    label="Unggah File (Opsional)" 
-                    type="file" 
-                    accept="image/png, image/jpeg, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, .pdf, .doc, .docx, .xls, .xlsx, .jpg, .jpeg, .png"
-                    helper="Maksimal 5MB. Format: PDF, Excel, Word, Gambar."
-                />
-                @if($indikatorPegawai->attachment)
-                    <div class="mt-2 p-2 border rounded bg-light d-flex justify-content-between align-items-center">
-                        <div>
-                            <span class="text-muted small d-block">File Pendukung saat ini:</span>
-                            <span class="fw-bold fs-5"><i class="ti ti-file-check text-success me-1"></i> File Tersedia</span>
+                <h4 class="m-0 text-muted fw-medium mb-3">File Pendukung</h4>
+                
+                @if(isset($indikatorPegawai) && $indikatorPegawai->exists && $indikatorPegawai->getMedia('kpi_attachments')->count() > 0)
+                    <div class="list-group list-group-flush border mb-3 rounded">
+                        @foreach($indikatorPegawai->getMedia('kpi_attachments') as $media)
+                        <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3">
+                            <div class="text-truncate me-2" title="{{ $media->file_name }}">
+                                <a href="{{ $media->getUrl() }}" target="_blank" class="text-reset d-flex align-items-center text-truncate">
+                                    <i class="ti ti-file icon me-2 fs-3 text-muted"></i>
+                                    <span class="text-truncate">{{ $media->file_name }}</span>
+                                </a>
+                                <div class="text-muted small mt-1 ms-4">{{ $media->human_readable_size }}</div>
+                            </div>
+                            <div class="text-nowrap ms-auto">
+                                <x-tabler.button type="delete" class="btn-sm btn-outline-danger btn-delete-file-kpi py-1 px-2" iconOnly="true" 
+                                    data-url="{{ route('pemutu.evaluasi-kpi.delete-file', ['indikatorPegawai' => $indikatorPegawai->encrypted_indikator_pegawai_id, 'mediaId' => $media->id]) }}" />
+                            </div>
                         </div>
-                        <a href="{{ route('pemutu.evaluasi-kpi.download', $indikatorPegawai->encrypted_indikator_pegawai_id) }}" target="_blank" class="btn btn-primary btn-sm">
-                            <i class="ti ti-download fs-3 me-2"></i> Unduh File Saat Ini
-                        </a>
+                        @endforeach
                     </div>
+                @endif
+
+                @if(isset($indikatorPegawai) && $indikatorPegawai->exists)
+                <div class="mt-2">
+                    <input type="file" id="file-upload-input-kpi" class="filepond-input" name="filepond[]" multiple>
+                </div>
+                @else
+                <div class="text-center text-muted p-3 border border-dashed rounded mt-2">
+                    <i class="ti ti-device-floppy mb-2 fs-2 d-block"></i>
+                    Simpan data awal terlebih dahulu untuk mengunggah file.
+                </div>
                 @endif
             </div>
 
@@ -154,6 +168,8 @@
         </div>
     </div>
 </x-tabler.form-modal>
+
+
 
 <script>
     setTimeout(() => {
@@ -199,5 +215,48 @@
                 }
             });
         }
+
+        // FilePond initialization & actions
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+        
+        if (typeof window.initFilePond === 'function') {
+            window.initFilePond();
+        }
+
+        document.querySelectorAll('.btn-delete-file-kpi').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const self = this;
+                if(typeof showDeleteConfirmation === 'function') {
+                    showDeleteConfirmation('Hapus file ini?', 'File ini akan dihapus permanen dari sistem.')
+                    .then((result) => {
+                        if (result.isConfirmed) {
+                            showLoadingMessage('Menghapus...', 'Mohon tunggu');
+                            executeDeleteFile(self.dataset.url, self);
+                        }
+                    });
+                } else {
+                    if (!confirm('Hapus file ini?')) return;
+                    executeDeleteFile(self.dataset.url, self);
+                }
+                
+                function executeDeleteFile(url, btnElement) {
+                    axios.delete(url, { headers: { 'X-CSRF-TOKEN': csrfToken } })
+                    .then(response => {
+                        if (response.data.success !== false) {
+                            if(typeof showSuccessMessage === 'function') showSuccessMessage(response.data.message || 'File berhasil dihapus.');
+                            btnElement.closest('.list-group-item').remove();
+                        } else {
+                            if(typeof showErrorMessage === 'function') showErrorMessage('Gagal', response.data.message || 'Gagal menghapus file.');
+                            else alert('Gagal menghapus file.');
+                        }
+                    })
+                    .catch(err => {
+                        if(typeof showErrorMessage === 'function') showErrorMessage('Kesalahan', err.response?.data?.message || 'Terjadi kesalahan saat menghapus.');
+                        else alert('Terjadi kesalahan saat menghapus.');
+                    });
+                }
+            });
+        });
+
     }, 100);
 </script>

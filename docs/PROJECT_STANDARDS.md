@@ -547,16 +547,39 @@ Untuk memastikan seluruh pesan validasi menggunakan Bahasa Indonesia yang konsis
 3. Hanya override method `messages()` jika membutuhkan **pesan kesalahan yang sangat spesifik / unik** untuk field tertentu. Jika melakukannya, wajib menggunakan `array_merge()` dengan `parent::messages()`.
 
 ```php
-public function messages(): array
-{
-    // Cukup tambahkan khusus untuk rule spesifik ini:
-    return array_merge(parent::messages(), [
-        'email.unique' => 'Alamat email ini dipastikan sudah terdaftar di sistem kami.',
-    ]);
-}
-```
-
----
+ public function messages(): array
+ {
+     // Cukup tambahkan khusus untuk rule spesifik ini:
+     return array_merge(parent::messages(), [
+         'email.unique' => 'Alamat email ini dipastikan sudah terdaftar di sistem kami.',
+     ]);
+ }
+ ```
+ 
+ ### G. Standardisasi Manajemen File (Spatie Media Library)
+ 
+ Seluruh manajemen file (upload, attach, delete, download) **WAJIB** menggunakan `Spatie\MediaLibrary`. DILARANG menggunakan penyimpanan manual (`Storage::put()`) dan membuat kolom spesifik di database (seperti `lampiran`, `file_name`, `foto`) hanya untuk menyimpan path file tunggal.
+ 
+ **Aturan Implementasi:**
+ 1. **Model**: Gunakan trait `HasMedia` dan interface `InteractsWithMedia` pada Model terkait.
+ 2. **Frontend UI**: DILARANG menggunakan skrip upload mandiri jika input file adalah bagian dari form entitas utama. Gunakan komponen input tipe file dengan class `filepond-input` agar otomatis di-render menjadi antarmuka FilePond bertenaga `storeAsFile: true`. File akan terkumpul menjadi satu pengiriman Payload `FormData` saat disubmit.
+ 3. **Controller/Service**: Gunakan konvensi `$model->addMedia($file)` atau `$model->addMediaFromRequest()` untuk menyimpan file dari `$request`.
+ 
+ **Contoh Frontend (Melekat dengan Form):**
+ ```blade
+ <x-tabler.form-input type="file" name="dokumen[]" label="Lampiran Dokumen" class="filepond-input" multiple />
+ ```
+ 
+ **Contoh Backend (Controller/Service):**
+ ```php
+ if ($request->hasFile('dokumen')) {
+     foreach ($request->file('dokumen') as $file) {
+          $model->addMedia($file)->toMediaCollection('lampiran');
+     }
+ }
+ ```
+ 
+ ---
 
 ## 2. Frontend & UI Standardization
 

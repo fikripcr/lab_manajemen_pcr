@@ -53,9 +53,11 @@ class EvaluasiKpiController extends Controller
 
                 // Evidence items
                 $evidenceHtml = '';
-                if ($row->attachment) {
-                    $url           = route('pemutu.evaluasi-kpi.download', $row->encrypted_indikator_pegawai_id);
-                    $evidenceHtml .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1" title="Unduh File Pendukung" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
+                if ($row->getMedia('kpi_attachments')->count() > 0) {
+                    foreach ($row->getMedia('kpi_attachments') as $media) {
+                        $url           = $media->getUrl();
+                        $evidenceHtml .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1" title="Disisipkan: ' . e($media->file_name) . '" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
+                    }
                 }
 
                 if (! empty($row->kpi_links)) {
@@ -94,18 +96,44 @@ class EvaluasiKpiController extends Controller
     {
         $this->EvaluasiKpiService->update(
             $indikatorPegawai,
-            $request->validated(),
-            $request->hasFile('attachment') ? $request->file('attachment') : null
+            $request->validated()
         );
+
+        if ($request->hasFile('filepond')) {
+            foreach ($request->file('filepond') as $file) {
+                $indikatorPegawai->addMedia($file)->toMediaCollection('kpi_attachments');
+            }
+        }
 
         return jsonSuccess('Evaluasi KPI berhasil disimpan.');
     }
 
-    public function downloadAttachment(IndikatorPegawai $indikatorPegawai)
+    public function uploadFile(Request $request, IndikatorPegawai $indikatorPegawai)
     {
-        $ext      = pathinfo($indikatorPegawai->attachment ?? '', PATHINFO_EXTENSION);
-        $filename = 'KPI_' . str_replace('/', '_', $indikatorPegawai->indikator->no_indikator ?? 'file') . '_' . date('Ymd') . ($ext ? '.' . $ext : '');
+        $request->validate([
+            'files'   => 'required|array',
+            'files.*' => 'file|max:20480',
+        ]);
 
-        return downloadStorageFile($indikatorPegawai->attachment, $filename, logActivity: true);
+        foreach ($request->file('files') as $file) {
+            $indikatorPegawai->addMedia($file)->toMediaCollection('kpi_attachments');
+        }
+
+        logActivity('pemutu', "Mengunggah " . count($request->file('files')) . " file ke Evaluasi KPI ID: {$indikatorPegawai->indikator_pegawai_id}");
+        return jsonSuccess('File berhasil diunggah.');
+    }
+
+    public function deleteFile(Request $request, IndikatorPegawai $indikatorPegawai, $mediaId)
+    {
+        $media = $indikatorPegawai->getMedia('kpi_attachments')->firstWhere('id', $mediaId);
+
+        if (! $media) {
+            return jsonError('File tidak ditemukan.');
+        }
+
+        $media->delete();
+        logActivity('pemutu', "Menghapus file dari Evaluasi KPI ID: {$indikatorPegawai->indikator_pegawai_id}");
+
+        return jsonSuccess('File berhasil dihapus.');
     }
 }

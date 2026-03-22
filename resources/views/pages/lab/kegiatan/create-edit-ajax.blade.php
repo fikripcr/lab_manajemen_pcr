@@ -66,6 +66,7 @@
     <x-tabler.form-input 
         type="file" 
         name="dokumentasi_path" 
+        class="filepond-input"
         label="Dokumen Pendukung (Surat Permohonan)" 
         accept=".pdf,.jpg,.jpeg,.png" 
         help="Max 2MB. Disarankan format PDF." 

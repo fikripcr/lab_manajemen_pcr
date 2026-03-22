@@ -7,10 +7,12 @@ use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class IndikatorPegawai extends Model
+class IndikatorPegawai extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding, InteractsWithMedia;
 
     protected $table      = 'pemutu_indikator_pegawai';
     protected $primaryKey = 'indikator_pegawai_id';
@@ -37,7 +39,6 @@ class IndikatorPegawai extends Model
         'kpi_analisis',
         'kpi_links',
         'score',
-        'attachment',
         'status',
         'notes',
         'unit_ukuran',

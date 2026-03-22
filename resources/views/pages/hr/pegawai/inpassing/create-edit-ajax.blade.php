@@ -36,7 +36,7 @@
             <x-tabler.form-input name="angka_kredit" type="number" step="0.01" label="Angka Kredit" value="{{ $inpassing->angka_kredit }}" placeholder="0.00" />
         </div>
         <div class="col-md-12 mb-3">
-            <x-tabler.form-input type="file" name="file_sk" label="File SK (PDF/Gambar max 2MB)" />
+            <x-tabler.form-input type="file" name="file_sk" class="filepond-input" label="File SK (PDF/Gambar max 2MB)" />
             @if($inpassing->file_sk)
                 <small class="text-muted">File saat ini: <a href="{{ Storage::url($inpassing->file_sk) }}" target="_blank">Lihat File</a></small>
             @endif

@@ -77,6 +77,7 @@
                 name="avatar" 
                 label="Foto Profil (Opsional)" 
                 accept="image/*"
+                class="filepond-input"
                 help="Maksimal 2MB." 
             />
             @if($user->avatar_url)

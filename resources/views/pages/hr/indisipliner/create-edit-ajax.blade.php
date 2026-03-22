@@ -48,7 +48,7 @@
             <small class="text-muted">Dapat memilih lebih dari satu pegawai.</small>
         </div>
         <div class="col-md-12 mb-3">
-            <x-tabler.form-input type="file" name="bukti" label="Bukti Pemberian (Optional)" help="File format: jpg, png, pdf. Max 2MB." />
+            <x-tabler.form-input type="file" name="bukti" class="filepond-input" label="Bukti Pemberian (Optional)" help="File format: jpg, png, pdf. Max 2MB." />
             @if($isEdit && $indisipliner->bukti)
                 <div class="mt-1">
                     <a href="{{ asset('storage/' . $indisipliner->bukti) }}" target="_blank" class="btn btn-sm btn-info">

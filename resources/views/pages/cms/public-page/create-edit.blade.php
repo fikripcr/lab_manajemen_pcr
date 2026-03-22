@@ -67,6 +67,7 @@
                                     type="file"
                                     label="Gambar Utama"
                                     accept="image/*"
+                                    class="filepond-input"
                                     help="Maksimal 5MB. Format: JPG, PNG, WEBP."
                                 />
                             </div>
@@ -77,6 +78,7 @@
                                     type="file"
                                     label="File Pendukung"
                                     multiple
+                                    class="filepond-input"
                                     help="Maksimal 10MB per file. Bisa upload banyak file sekaligus."
                                 />
                             </div>

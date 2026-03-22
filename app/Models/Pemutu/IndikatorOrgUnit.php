@@ -4,10 +4,12 @@ namespace App\Models\Pemutu;
 use App\Models\Hr\StrukturOrganisasi;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class IndikatorOrgUnit extends Model
+class IndikatorOrgUnit extends Model implements HasMedia
 {
-    use HashidBinding;
+    use HashidBinding, InteractsWithMedia;
 
     protected $table      = 'pemutu_indikator_orgunit';
     protected $primaryKey = 'indikorgunit_id';
@@ -20,7 +22,6 @@ class IndikatorOrgUnit extends Model
         'target',
         'ed_capaian',
         'ed_analisis',
-        'ed_attachment',
         'ed_links',
         'ed_skala',
         'ami_hasil_akhir',

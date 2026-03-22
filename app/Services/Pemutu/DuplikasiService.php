@@ -286,7 +286,7 @@ class DuplikasiService
                     'prev_indikorgunit_id'     => $oldOrgUnit->indikorgunit_id,
                     'target'                   => $oldOrgUnit->target, // Pure 1:1 Copy
                     'ed_capaian'               => null, 'ed_analisis'             => null,
-                    'ed_attachment'            => null, 'ed_links'                => null, 'ed_skala' => null,
+                    'ed_links'                => null, 'ed_skala' => null,
                     'ami_hasil_akhir'          => null, 'ami_hasil_temuan'        => null,
                     'ami_hasil_temuan_sebab'   => null, 'ami_hasil_temuan_akibat' => null,
                     'ami_hasil_temuan_rekom'   => null,

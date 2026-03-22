@@ -13,7 +13,7 @@ class EvaluasiKpiService
      */
     public function getDataTableQuery(PeriodeKpi $periode): Builder
     {
-        return IndikatorPegawai::with(['indikator', 'hr_pegawai'])
+        return IndikatorPegawai::with(['indikator', 'hr_pegawai', 'media'])
             ->where('periode_kpi_id', $periode->periode_kpi_id)
             ->whereHas('indikator')
             ->whereHas('hr_pegawai');
@@ -94,7 +94,7 @@ class EvaluasiKpiService
     /**
      * Perbarui data evaluasi KPI: capaian, analisis, lampiran, dan links.
      */
-    public function update(IndikatorPegawai $indikatorPegawai, array $data, $attachmentFile = null): IndikatorPegawai
+    public function update(IndikatorPegawai $indikatorPegawai, array $data): IndikatorPegawai
     {
         // Bangun array links dari input nama+url
         $linksArray = [];
@@ -113,13 +113,6 @@ class EvaluasiKpiService
             'kpi_links'    => ! empty($linksArray) ? json_encode($linksArray) : null,
             'status'       => 'submitted',
         ];
-
-        if ($attachmentFile) {
-            if ($indikatorPegawai->attachment && Storage::exists($indikatorPegawai->attachment)) {
-                Storage::delete($indikatorPegawai->attachment);
-            }
-            $updatePayload['attachment'] = $attachmentFile->store('public/pemutu/kpi_evidence');
-        }
 
         $indikatorPegawai->update($updatePayload);
 
