@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Lab;
 
 use App\Http\Requests\BaseRequest;
 
 class PcAssignmentRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -16,7 +14,7 @@ class PcAssignmentRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'user_id'     => 'required|exists:users,id',
+            'user_id' => 'required|exists:users,id',
             'nomor_loker' => 'nullable|integer',
         ];
     }
@@ -24,8 +22,8 @@ class PcAssignmentRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'user_id'     => 'User',
-            'nomor_pc'    => 'Nomor PC',
+            'user_id' => 'User',
+            'nomor_pc' => 'Nomor PC',
             'nomor_loker' => 'Nomor Loker',
         ];
     }

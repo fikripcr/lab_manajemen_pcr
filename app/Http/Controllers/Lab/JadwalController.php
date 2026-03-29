@@ -1,13 +1,14 @@
 <?php
+
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\JadwalImportRequest;
 use App\Http\Requests\Lab\JadwalRequest;
-use App\Models\Lab\JadwalKuliah;
-use App\Models\Lab\Lab;
 use App\Models\Akademik\MataKuliah;
 use App\Models\Akademik\Semester;
+use App\Models\Lab\JadwalKuliah;
+use App\Models\Lab\Lab;
 use App\Models\User;
 use App\Services\Lab\JadwalService;
 use Illuminate\Http\Request;
@@ -15,8 +16,7 @@ use Yajra\DataTables\DataTables;
 
 class JadwalController extends Controller
 {
-    public function __construct(protected JadwalService $jadwalService)
-    {}
+    public function __construct(protected JadwalService $jadwalService) {}
 
     /**
      * Display a listing of the resource.
@@ -41,12 +41,12 @@ class JadwalController extends Controller
                 if ($request->has('search') && $request->search['value'] != '') {
                     $searchValue = $request->search['value'];
                     $query->where(function ($q) use ($searchValue) {
-                        $q->where('jadwal_kuliah.hari', 'like', '%' . $searchValue . '%')
-                            ->orWhere('mata_kuliahs.kode_mk', 'like', '%' . $searchValue . '%')
-                            ->orWhere('mata_kuliahs.nama_mk', 'like', '%' . $searchValue . '%')
-                            ->orWhere('users.name', 'like', '%' . $searchValue . '%') // Dosen
-                            ->orWhere('labs.name', 'like', '%' . $searchValue . '%')
-                            ->orWhere('semesters.tahun_ajaran', 'like', '%' . $searchValue . '%');
+                        $q->where('jadwal_kuliah.hari', 'like', '%'.$searchValue.'%')
+                            ->orWhere('mata_kuliahs.kode_mk', 'like', '%'.$searchValue.'%')
+                            ->orWhere('mata_kuliahs.nama_mk', 'like', '%'.$searchValue.'%')
+                            ->orWhere('users.name', 'like', '%'.$searchValue.'%') // Dosen
+                            ->orWhere('labs.name', 'like', '%'.$searchValue.'%')
+                            ->orWhere('semesters.tahun_ajaran', 'like', '%'.$searchValue.'%');
                     });
                 }
             })
@@ -61,8 +61,9 @@ class JadwalController extends Controller
             })
             ->addColumn('mata_kuliah_nama', function ($jadwal) {
                 if ($jadwal->mata_kuliah_id && $jadwal->mataKuliah) {
-                    return '<span class="fw-medium">' . $jadwal->mataKuliah->kode_mk . '</span> - ' . $jadwal->mataKuliah->nama_mk;
+                    return '<span class="fw-medium">'.$jadwal->mataKuliah->kode_mk.'</span> - '.$jadwal->mataKuliah->nama_mk;
                 }
+
                 return '-';
             })
             ->addColumn('dosen_nama', function ($jadwal) { // Use relationship if join aliases not available or if eager loaded
@@ -76,23 +77,25 @@ class JadwalController extends Controller
                     // Use model accessor or relationship data
                     $smtr = $jadwal->semester;
                     if ($smtr) {
-                        return $smtr->tahun_ajaran . ' - ' . ($smtr->semester == 1 ? 'Ganjil' : 'Genap');
+                        return $smtr->tahun_ajaran.' - '.($smtr->semester == 1 ? 'Ganjil' : 'Genap');
                     }
                 }
+
                 return '-';
             })
             ->addColumn('action', function ($jadwal) {
                 // Ensure ID is encrypted
                 $encryptedId = encryptId($jadwal->jadwal_kuliah_id);
+
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'     => route('lab.jadwal.edit', $encryptedId),
-                    'editModal'   => true,
-                    'viewUrl'     => route('lab.jadwal.show', $encryptedId),
-                    'deleteUrl'   => route('lab.jadwal.destroy', $encryptedId),
+                    'editUrl' => route('lab.jadwal.edit', $encryptedId),
+                    'editModal' => true,
+                    'viewUrl' => route('lab.jadwal.show', $encryptedId),
+                    'deleteUrl' => route('lab.jadwal.destroy', $encryptedId),
                     'customLinks' => [
                         [
-                            'url'   => route('lab.jadwal.assignments.index', $encryptedId),
-                            'icon'  => 'bx bx-desktop',
+                            'url' => route('lab.jadwal.assignments.index', $encryptedId),
+                            'icon' => 'bx bx-desktop',
                             'title' => 'Atur PC',
                             'class' => 'btn-outline-info',
                         ],
@@ -108,14 +111,15 @@ class JadwalController extends Controller
      */
     public function create()
     {
-        $semesters   = Semester::all();
+        $semesters = Semester::all();
         $mataKuliahs = MataKuliah::all();
-        $dosens      = User::whereHas('roles', function ($query) {
+        $dosens = User::whereHas('roles', function ($query) {
             $query->where('name', 'dosen');
         })->get();
         $labs = Lab::all();
 
-        $jadwal = new JadwalKuliah();
+        $jadwal = new JadwalKuliah;
+
         return view('pages.lab.jadwal.create-edit-ajax', compact('semesters', 'mataKuliahs', 'dosens', 'labs', 'jadwal'));
     }
 
@@ -135,6 +139,7 @@ class JadwalController extends Controller
     public function show(JadwalKuliah $jadwal)
     {
         $jadwal->load(['semester', 'mataKuliah', 'dosen', 'lab']);
+
         return view('pages.lab.jadwal.show', compact('jadwal'));
     }
 
@@ -144,9 +149,9 @@ class JadwalController extends Controller
     public function edit(JadwalKuliah $jadwal)
     {
         $jadwal->load(['semester', 'mataKuliah', 'dosen', 'lab']);
-        $semesters   = Semester::all();
+        $semesters = Semester::all();
         $mataKuliahs = MataKuliah::all();
-        $dosens      = User::whereHas('roles', function ($query) {
+        $dosens = User::whereHas('roles', function ($query) {
             $query->where('name', 'dosen');
         })->get();
         $labs = Lab::all();
@@ -160,6 +165,7 @@ class JadwalController extends Controller
     public function update(JadwalRequest $request, JadwalKuliah $jadwal)
     {
         $this->jadwalService->updateJadwal($jadwal, $request->validated());
+
         return jsonSuccess('Jadwal berhasil diperbarui.', route('lab.jadwal.index'));
     }
 
@@ -169,6 +175,7 @@ class JadwalController extends Controller
     public function destroy(JadwalKuliah $jadwal)
     {
         $this->jadwalService->deleteJadwal($jadwal);
+
         return jsonSuccess('Jadwal berhasil dihapus.', route('lab.jadwal.index'));
     }
 
@@ -186,6 +193,7 @@ class JadwalController extends Controller
     public function import(JadwalImportRequest $request)
     {
         $this->jadwalService->importJadwal($request->file('file'));
+
         return jsonSuccess('Jadwal berhasil diimpor.', route('lab.jadwal.index'));
     }
 }

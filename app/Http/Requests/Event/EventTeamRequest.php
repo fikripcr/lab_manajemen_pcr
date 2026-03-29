@@ -7,9 +7,6 @@ use App\Http\Requests\BaseRequest;
 class EventTeamRequest extends BaseRequest
 {
     /**
-     */
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -27,10 +24,10 @@ class EventTeamRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'pegawai_id'        => 'Pegawai',
-            'role'              => 'Peran Dalam Tim',
+            'pegawai_id' => 'Pegawai',
+            'role' => 'Peran Dalam Tim',
             'jabatan_dalam_tim' => 'Jabatan Dalam Kegiatan',
-            'is_pic'            => 'Status PIC',
+            'is_pic' => 'Status PIC',
         ];
     }
 }

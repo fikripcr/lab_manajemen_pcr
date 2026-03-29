@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
@@ -9,8 +10,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AttDeviceController extends Controller
 {
-    public function __construct(protected AttDeviceService $attDeviceService)
-    {}
+    public function __construct(protected AttDeviceService $attDeviceService) {}
 
     public function index()
     {
@@ -19,7 +19,7 @@ class AttDeviceController extends Controller
 
     public function data()
     {
-        $query = AttDevice::query()->latest();
+        $query = $this->attDeviceService->getDataQuery();
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -28,7 +28,7 @@ class AttDeviceController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('hr.att-device.edit', ['att_device' => $row->hashid]),
+                    'editUrl' => route('hr.att-device.edit', ['att_device' => $row->hashid]),
                     'editModal' => true,
                     'deleteUrl' => route('hr.att-device.destroy', ['att_device' => $row->hashid]),
                 ])->render();
@@ -39,13 +39,15 @@ class AttDeviceController extends Controller
 
     public function create()
     {
-        $attDevice = new AttDevice();
+        $attDevice = new AttDevice;
+
         return view('pages.hr.att-device.create-edit-ajax', compact('attDevice'));
     }
 
     public function store(AttDeviceRequest $request)
     {
         $this->attDeviceService->create($request->validated());
+
         return jsonSuccess('Mesin Presensi created successfully.');
     }
 
@@ -57,12 +59,14 @@ class AttDeviceController extends Controller
     public function update(AttDeviceRequest $request, AttDevice $attDevice)
     {
         $this->attDeviceService->update($attDevice, $request->validated());
+
         return jsonSuccess('Mesin Presensi updated successfully.');
     }
 
     public function destroy(AttDevice $attDevice)
     {
         $this->attDeviceService->delete($attDevice->att_device_id);
+
         return jsonSuccess('Mesin Presensi deleted successfully.');
     }
 }

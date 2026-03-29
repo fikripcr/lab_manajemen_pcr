@@ -1,8 +1,8 @@
 <?php
-namespace App\Models\Lab;
- 
-use App\Models\Akademik\MataKuliah;
 
+namespace App\Models\Lab;
+
+use App\Models\Akademik\MataKuliah;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,9 +15,10 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Lab extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, InteractsWithMedia, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, InteractsWithMedia, SoftDeletes;
 
-    protected $table      = 'lab_labs';
+    protected $table = 'lab_labs';
+
     protected $primaryKey = 'lab_id';
 
     protected $appends = ['encrypted_lab_id'];
@@ -39,7 +40,7 @@ class Lab extends Model implements HasMedia
 
     protected $casts = [
         'capacity' => 'integer',
-        'lab_id'   => 'string',
+        'lab_id' => 'string',
     ];
 
     /**
@@ -139,7 +140,7 @@ class Lab extends Model implements HasMedia
             ->useFallbackPath(public_path('/assets-admin/img/default-attachment.jpg'));
     }
 
-    public function registerMediaConversions(Media $media = null): void
+    public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('small')
             ->fit(Fit::Crop, 150, 150)

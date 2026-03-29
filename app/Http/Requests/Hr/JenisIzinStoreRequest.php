@@ -7,9 +7,6 @@ use App\Http\Requests\BaseRequest;
 class JenisIzinStoreRequest extends BaseRequest
 {
     /**
-     */
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -28,10 +25,10 @@ class JenisIzinStoreRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'nama'       => 'Nama Jenis Izin',
-            'kategori'   => 'Kategori',
-            'max_hari'   => 'Maksimal Hari',
-            'is_active'  => 'Status Aktif',
+            'nama' => 'Nama Jenis Izin',
+            'kategori' => 'Kategori',
+            'max_hari' => 'Maksimal Hari',
+            'is_active' => 'Status Aktif',
             'keterangan' => 'Keterangan',
         ];
     }

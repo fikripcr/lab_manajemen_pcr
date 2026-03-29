@@ -1,5 +1,46 @@
 This repository serves as a comprehensive Laravel base template that implements essential features for efficient web application development. It provides a solid foundation with authentication, authorization, CRUD operations, and various utility features that can be reused across multiple projects. Bismillah
 
+---
+
+## 📚 Documentation
+
+Dokumentasi lengkap tersedia di folder `docs/`:
+
+| Dokumentasi | Deskripsi |
+|-------------|-----------|
+| **[SETUP_GUIDE.md](./docs/SETUP_GUIDE.md)** | Panduan setup untuk developer baru (Docker & Manual) |
+| **[DEVELOPMENT_GUIDE.md](./docs/DEVELOPMENT_GUIDE.md)** | Panduan development dengan best practices & contoh kode |
+| **[API_DOCUMENTATION.md](./docs/API_DOCUMENTATION.md)** | Dokumentasi API endpoints lengkap |
+| **[TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)** | Panduan troubleshooting common issues |
+| **[PROJECT_ARCHITECTURE.md](./docs/PROJECT_ARCHITECTURE.md)** | Arsitektur global & standar pemrograman |
+
+### 🚀 Quick Start
+
+```bash
+# Clone repository
+git clone <repository-url>
+cd www-laravel-boilerplate
+
+# Copy environment file
+cp .env.example .env
+
+# Install dependencies
+composer install && npm install
+
+# Setup application
+php artisan key:generate
+php artisan migrate --seed
+npm run build
+
+# Run development server
+php artisan serve
+```
+
+Akses: `http://localhost:8000`  
+**Default Login:** `admin@example.com` / `password`
+
+---
+
 ## 📋 Features Overview
 
 This template includes preconfigured implementations for:

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Cms;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FAQ extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table   = 'cms_faqs';
+    protected $table = 'cms_faqs';
+
     protected $appends = ['encrypted_faq_id'];
 
     public function getEncryptedFaqIdAttribute()

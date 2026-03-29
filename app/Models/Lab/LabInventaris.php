@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Lab;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LabInventaris extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'lab_inventaris_penempatan';
+    protected $table = 'lab_inventaris_penempatan';
+
     protected $primaryKey = 'inventaris_penempatan_id';
 
     protected $appends = ['encrypted_inventaris_penempatan_id'];
@@ -39,9 +41,9 @@ class LabInventaris extends Model
     ];
 
     protected $casts = [
-        'tanggal_penempatan'  => 'datetime',
+        'tanggal_penempatan' => 'datetime',
         'tanggal_penghapusan' => 'datetime',
-        'status'              => 'string',
+        'status' => 'string',
     ];
 
     /**

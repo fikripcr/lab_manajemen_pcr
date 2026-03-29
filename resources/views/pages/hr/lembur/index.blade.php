@@ -18,7 +18,7 @@
             <x-tabler.card-header class="border-bottom">
                 <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
                     <h3 class="card-title mb-0">Data Lembur</h3>
-                    <div class="ms-auto d-flex gap-2">
+                    <div class="d-flex gap-2">
                         <x-tabler.datatable-page-length dataTableId="table-lembur" />
                         <x-tabler.datatable-search dataTableId="table-lembur" />
                         <x-tabler.datatable-filter dataTableId="table-lembur">

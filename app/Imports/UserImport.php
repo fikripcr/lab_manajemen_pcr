@@ -4,15 +4,17 @@ namespace App\Imports;
 
 use App\Models\User;
 use Illuminate\Support\Collection;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Spatie\Permission\Models\Role;
 
 class UserImport implements ToCollection, WithHeadingRow
 {
     protected $roles;
+
     protected $defaultRole;
+
     protected $overwriteExisting;
 
     public function __construct($defaultRole = null, $overwriteExisting = false)
@@ -22,9 +24,6 @@ class UserImport implements ToCollection, WithHeadingRow
         $this->overwriteExisting = $overwriteExisting;
     }
 
-    /**
-     * @param Collection $rows
-     */
     public function collection(Collection $rows)
     {
         // Prepare all data to be inserted
@@ -34,22 +33,22 @@ class UserImport implements ToCollection, WithHeadingRow
         foreach ($rows as $index => $row) {
             // Ensure all required keys exist
             if (
-                !isset($row['name']) ||
-                !isset($row['email'])
+                ! isset($row['name']) ||
+                ! isset($row['email'])
             ) {
-                throw new \Exception("Kolom Excel tidak sesuai template. Kolom yang diperlukan: name, email. Kolom tambahan: role, password.");
+                throw new \Exception('Kolom Excel tidak sesuai template. Kolom yang diperlukan: name, email. Kolom tambahan: role, password.');
             }
 
             // Validate email format
-            if (!filter_var($row['email'], FILTER_VALIDATE_EMAIL)) {
-                throw new \Exception("Email pada baris " . ($index + 1) . " tidak valid: {$row['email']}");
+            if (! filter_var($row['email'], FILTER_VALIDATE_EMAIL)) {
+                throw new \Exception('Email pada baris '.($index + 1)." tidak valid: {$row['email']}");
             }
 
             // Add data to collection
             $users[] = [
                 'name' => $row['name'],
                 'email' => $row['email'],
-                'password' => !empty($row['password']) ? Hash::make($row['password']) : $defaultPassword,
+                'password' => ! empty($row['password']) ? Hash::make($row['password']) : $defaultPassword,
                 'email_verified_at' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -79,14 +78,14 @@ class UserImport implements ToCollection, WithHeadingRow
                     ];
 
                     // Update password if provided in row
-                    if (!empty($originalRow['password'])) {
+                    if (! empty($originalRow['password'])) {
                         $updateData['password'] = $user['password'];
                     }
 
                     $existingUser->update($updateData);
 
                     // Assign role if specified in the file or use default
-                    $roleName = !empty($originalRow['role']) ? $originalRow['role'] : $this->defaultRole;
+                    $roleName = ! empty($originalRow['role']) ? $originalRow['role'] : $this->defaultRole;
                     if ($roleName) {
                         $role = $this->roles->firstWhere('name', $roleName);
                         if ($role) {
@@ -107,7 +106,7 @@ class UserImport implements ToCollection, WithHeadingRow
                     ]);
 
                     // Assign role if specified in the file or use default
-                    $roleName = !empty($originalRow['role']) ? $originalRow['role'] : $this->defaultRole;
+                    $roleName = ! empty($originalRow['role']) ? $originalRow['role'] : $this->defaultRole;
                     if ($roleName) {
                         $role = $this->roles->firstWhere('name', $roleName);
                         if ($role) {
@@ -128,14 +127,14 @@ class UserImport implements ToCollection, WithHeadingRow
             $originalRowsForNewUsers = [];
 
             foreach ($users as $index => $user) {
-                if (!in_array($user['email'], $existingEmails)) {
+                if (! in_array($user['email'], $existingEmails)) {
                     $filteredUsers[] = $user;
                     $originalRowsForNewUsers[] = $rows->get($index);
                 }
             }
 
             // Perform bulk insert for new users only
-            if (!empty($filteredUsers)) {
+            if (! empty($filteredUsers)) {
                 User::insert(array_values($filteredUsers));
             }
 
@@ -147,7 +146,7 @@ class UserImport implements ToCollection, WithHeadingRow
                 if (in_array($row['email'], $newEmails)) { // Only for new users
                     $createdUser = $createdUsers->firstWhere('email', $row['email']);
                     if ($createdUser) {
-                        $roleName = !empty($row['role']) ? $row['role'] : $this->defaultRole;
+                        $roleName = ! empty($row['role']) ? $row['role'] : $this->defaultRole;
                         if ($roleName) {
                             $role = $this->roles->firstWhere('name', $roleName);
                             if ($role) {

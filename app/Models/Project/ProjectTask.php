@@ -2,7 +2,6 @@
 
 namespace App\Models\Project;
 
-use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProjectTask extends Model
 {
-    use HasFactory, SoftDeletes, HashidBinding, Blameable;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
     /**
      * Table name
@@ -62,13 +61,13 @@ class ProjectTask extends Model
      * Cast attributes
      */
     protected $casts = [
-        'weight'       => 'integer',
+        'weight' => 'integer',
         'hours_worked' => 'integer',
-        'seq'          => 'integer',
-        'due_date'     => 'date',
-        'created_at'   => 'datetime',
-        'updated_at'   => 'datetime',
-        'deleted_at'   => 'datetime',
+        'seq' => 'integer',
+        'due_date' => 'date',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     /**
@@ -141,11 +140,11 @@ class ProjectTask extends Model
     public function getStatusBadgeClassAttribute(): string
     {
         return match ($this->status) {
-            'todo'        => 'bg-blue-lt',
+            'todo' => 'bg-blue-lt',
             'in_progress' => 'bg-yellow-lt',
-            'review'      => 'bg-orange-lt',
-            'done'        => 'bg-green-lt',
-            default       => 'bg-gray-lt',
+            'review' => 'bg-orange-lt',
+            'done' => 'bg-green-lt',
+            default => 'bg-gray-lt',
         };
     }
 
@@ -155,11 +154,11 @@ class ProjectTask extends Model
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
-            'todo'        => 'To Do',
+            'todo' => 'To Do',
             'in_progress' => 'In Progress',
-            'review'      => 'Review',
-            'done'        => 'Done',
-            default       => ucfirst($this->status),
+            'review' => 'Review',
+            'done' => 'Done',
+            default => ucfirst($this->status),
         };
     }
 
@@ -169,11 +168,11 @@ class ProjectTask extends Model
     public function getPriorityBadgeClassAttribute(): string
     {
         return match ($this->priority) {
-            'low'      => 'bg-secondary-lt',
-            'medium'   => 'bg-blue-lt',
-            'high'     => 'bg-orange-lt',
-            'urgent'   => 'bg-red-lt',
-            default    => 'bg-gray-lt',
+            'low' => 'bg-secondary-lt',
+            'medium' => 'bg-blue-lt',
+            'high' => 'bg-orange-lt',
+            'urgent' => 'bg-red-lt',
+            default => 'bg-gray-lt',
         };
     }
 

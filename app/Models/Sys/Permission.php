@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Sys;
 
 use App\Traits\Blameable;
@@ -10,7 +11,8 @@ use Spatie\Searchable\SearchResult;
 
 class Permission extends SpatiePermission implements Searchable
 {
-    use SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HashidBinding, SoftDeletes;
+
     protected $table = 'sys_permissions';
 
     protected $fillable = [
@@ -38,7 +40,7 @@ class Permission extends SpatiePermission implements Searchable
 
     public function getSearchResult(): SearchResult
     {
-        $url = route('sys.permissions.index') . '?search=' . urlencode($this->name);
+        $url = route('sys.permissions.index').'?search='.urlencode($this->name);
 
         return new SearchResult(
             $this,

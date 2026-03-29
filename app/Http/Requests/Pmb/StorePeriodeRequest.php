@@ -1,19 +1,18 @@
 <?php
+
 namespace App\Http\Requests\Pmb;
 
 use App\Http\Requests\BaseRequest;
 
 class StorePeriodeRequest extends BaseRequest
 {
-    
-
     public function rules()
     {
         return [
-            'nama_periode'    => 'required|string|max:255',
-            'tanggal_mulai'   => 'required|date',
+            'nama_periode' => 'required|string|max:255',
+            'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after:tanggal_mulai',
-            'is_aktif'        => 'nullable|boolean',
+            'is_aktif' => 'nullable|boolean',
         ];
     }
 
@@ -27,10 +26,10 @@ class StorePeriodeRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'nama_periode'    => 'Nama Periode',
-            'tanggal_mulai'   => 'Tanggal Mulai',
+            'nama_periode' => 'Nama Periode',
+            'tanggal_mulai' => 'Tanggal Mulai',
             'tanggal_selesai' => 'Tanggal Selesai',
-            'is_aktif'        => 'Status Aktif',
+            'is_aktif' => 'Status Aktif',
         ];
     }
 }

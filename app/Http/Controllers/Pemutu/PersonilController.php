@@ -1,18 +1,18 @@
 <?php
+
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\PersonilImportRequest;
 use App\Http\Requests\Pemutu\PersonilRequest;
-use App\Models\Hr\StrukturOrganisasi;
-use App\Models\Hr\Personil; // Import Service
+use App\Models\Hr\Personil;
+use App\Models\Hr\StrukturOrganisasi; // Import Service
 use App\Services\Pemutu\PersonilService;
 use Yajra\DataTables\Facades\DataTables;
 
 class PersonilController extends Controller
 {
-    public function __construct(protected PersonilService $personilService)
-    {}
+    public function __construct(protected PersonilService $personilService) {}
 
     public function index()
     {
@@ -33,7 +33,7 @@ class PersonilController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('pemutu.personils.edit', $row->encrypted_personil_id),
+                    'editUrl' => route('pemutu.personils.edit', $row->encrypted_personil_id),
                     'editModal' => true,
                     'deleteUrl' => route('pemutu.personils.destroy', $row->encrypted_personil_id),
                 ])->render();
@@ -45,6 +45,7 @@ class PersonilController extends Controller
     public function create()
     {
         $units = StrukturOrganisasi::orderBy('name')->get();
+
         return view('pages.pemutu.personils.create', compact('units'));
     }
 
@@ -52,14 +53,15 @@ class PersonilController extends Controller
     {
         $this->personilService->createPersonil($request->validated());
 
-        logActivity('pemutu', "Menambah personil baru: " . ($request->nama ?? ''));
+        logActivity('pemutu', 'Menambah personil baru: '.($request->nama ?? ''));
 
-        return jsonSuccess('Personil created successfully.');
+        return jsonSuccess('Personil created successfully.', url()->previous());
     }
 
     public function edit(Personil $personil)
     {
         $units = StrukturOrganisasi::orderBy('name')->get();
+
         return view('pages.pemutu.personils.edit', compact('hr_personil', 'units'));
     }
 
@@ -69,7 +71,7 @@ class PersonilController extends Controller
 
         logActivity('pemutu', "Memperbarui data personil: {$personil->nama}");
 
-        return jsonSuccess('Personil updated successfully.');
+        return jsonSuccess('Personil updated successfully.', url()->previous());
     }
 
     public function destroy(Personil $personil)
@@ -79,7 +81,7 @@ class PersonilController extends Controller
 
         logActivity('pemutu', "Menghapus personil: {$personilName}");
 
-        return jsonSuccess('Personil deleted successfully.');
+        return jsonSuccess('Personil deleted successfully.', url()->previous());
     }
 
     public function import(PersonilImportRequest $request)
@@ -90,7 +92,7 @@ class PersonilController extends Controller
 
         $this->personilService->importPersonils($request->file('file'));
 
-        logActivity('pemutu', "Mengimport data personil via Excel");
+        logActivity('pemutu', 'Mengimport data personil via Excel');
 
         return jsonSuccess('Personils imported successfully.', route('pemutu.personils.index'));
     }

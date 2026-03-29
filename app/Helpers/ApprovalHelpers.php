@@ -7,23 +7,23 @@ if (! function_exists('getApprovalStatus')) {
     function getApprovalStatus($status, $text = null)
     {
         $colors = [
-            'Pending'    => 'warning',
+            'Pending' => 'warning',
             'Tangguhkan' => 'info',
-            'Approved'   => 'success',
-            'Rejected'   => 'danger',
-            'Draft'      => 'secondary',
-            'pending'    => 'warning',
+            'Approved' => 'success',
+            'Rejected' => 'danger',
+            'Draft' => 'secondary',
+            'pending' => 'warning',
             'tangguhkan' => 'info',
-            'approved'   => 'success',
-            'rejected'   => 'danger',
+            'approved' => 'success',
+            'rejected' => 'danger',
         ];
 
-        $color       = $colors[$status] ?? 'secondary';
+        $color = $colors[$status] ?? 'secondary';
         $displayText = getApprovalStatusText($status) ?: ($text ?? $status);
 
-        return '<span class="status status-' . $color . '">
+        return '<span class="status status-'.$color.'">
                     <span class="status-dot status-dot-animated"></span>
-                    ' . $displayText . '
+                    '.$displayText.'
                 </span>';
     }
 }
@@ -35,18 +35,18 @@ if (! function_exists('getApprovalBadge')) {
     function getApprovalBadge($status, $text = null)
     {
         $badges = [
-            'Pending'    => '<span class="badge bg-warning text-white">Menunggu Approval</span>',
+            'Pending' => '<span class="badge bg-warning text-white">Menunggu Approval</span>',
             'Tangguhkan' => '<span class="badge bg-info text-white">Ditangguhkan</span>',
-            'Approved'   => '<span class="badge bg-success text-white">Disetujui</span>',
-            'Rejected'   => '<span class="badge bg-danger text-white">Ditolak</span>',
-            'Draft'      => '<span class="badge bg-secondary text-white">Draft</span>',
-            'pending'    => '<span class="badge bg-warning text-white">Menunggu Approval</span>',
+            'Approved' => '<span class="badge bg-success text-white">Disetujui</span>',
+            'Rejected' => '<span class="badge bg-danger text-white">Ditolak</span>',
+            'Draft' => '<span class="badge bg-secondary text-white">Draft</span>',
+            'pending' => '<span class="badge bg-warning text-white">Menunggu Approval</span>',
             'tangguhkan' => '<span class="badge bg-info text-white">Ditangguhkan</span>',
-            'approved'   => '<span class="badge bg-success text-white">Disetujui</span>',
-            'rejected'   => '<span class="badge bg-danger text-white">Ditolak</span>',
+            'approved' => '<span class="badge bg-success text-white">Disetujui</span>',
+            'rejected' => '<span class="badge bg-danger text-white">Ditolak</span>',
         ];
 
-        return $badges[$status] ?? '<span class="badge bg-secondary text-white">' . ($text ?? $status) . '</span>';
+        return $badges[$status] ?? '<span class="badge bg-secondary text-white">'.($text ?? $status).'</span>';
     }
 }
 
@@ -57,15 +57,15 @@ if (! function_exists('getApprovalStatusText')) {
     function getApprovalStatusText($status)
     {
         $texts = [
-            'Pending'    => 'Menunggu Approval',
+            'Pending' => 'Menunggu Approval',
             'Tangguhkan' => 'Ditangguhkan',
-            'Approved'   => 'Disetujui',
-            'Rejected'   => 'Ditolak',
-            'Draft'      => 'Draft',
-            'pending'    => 'Menunggu Approval',
+            'Approved' => 'Disetujui',
+            'Rejected' => 'Ditolak',
+            'Draft' => 'Draft',
+            'pending' => 'Menunggu Approval',
             'tangguhkan' => 'Ditangguhkan',
-            'approved'   => 'Disetujui',
-            'rejected'   => 'Ditolak',
+            'approved' => 'Disetujui',
+            'rejected' => 'Ditolak',
         ];
 
         return $texts[$status] ?? $status;
@@ -79,15 +79,15 @@ if (! function_exists('getApprovalIcon')) {
     function getApprovalIcon($status)
     {
         $icons = [
-            'Pending'    => 'ti ti-clock',
+            'Pending' => 'ti ti-clock',
             'Tangguhkan' => 'ti ti-clock-pause',
-            'Approved'   => 'ti ti-check',
-            'Rejected'   => 'ti ti-x',
-            'Draft'      => 'ti ti-file-description',
-            'pending'    => 'ti ti-clock',
+            'Approved' => 'ti ti-check',
+            'Rejected' => 'ti ti-x',
+            'Draft' => 'ti ti-file-description',
+            'pending' => 'ti ti-clock',
             'tangguhkan' => 'ti ti-clock-pause',
-            'approved'   => 'ti ti-check',
-            'rejected'   => 'ti ti-x',
+            'approved' => 'ti ti-check',
+            'rejected' => 'ti ti-x',
         ];
 
         return $icons[$status] ?? 'ti ti-help';
@@ -115,14 +115,14 @@ if (! function_exists('getApprovalActionButtons')) {
     function getApprovalActionButtons($approval, $size = 'sm')
     {
         $approveUrl = route('hr.approval.approve', $approval->riwayatapproval_id);
-        $rejectUrl  = route('hr.approval.reject', $approval->riwayatapproval_id);
+        $rejectUrl = route('hr.approval.reject', $approval->riwayatapproval_id);
 
         return '
             <div class="btn-group" role="group">
-                <button class="btn btn-success btn-' . $size . ' btn-approve" data-url="' . $approveUrl . '" title="Setujui">
+                <button class="btn btn-success btn-'.$size.' btn-approve" data-url="'.$approveUrl.'" title="Setujui">
                     <i class="ti ti-check"></i>
                 </button>
-                <button class="btn btn-danger btn-' . $size . ' btn-reject" data-url="' . $rejectUrl . '" title="Tolak">
+                <button class="btn btn-danger btn-'.$size.' btn-reject" data-url="'.$rejectUrl.'" title="Tolak">
                     <i class="ti ti-x"></i>
                 </button>
             </div>

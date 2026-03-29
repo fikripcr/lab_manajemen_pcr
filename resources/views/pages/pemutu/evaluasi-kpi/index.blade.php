@@ -27,13 +27,16 @@
                                         <i class="ti ti-circle-check me-1"></i> Aktif
                                     </span>
                                 @endif
+                                @php $periodeInfo = pemutuPeriodeStatus($periode->tanggal_mulai, $periode->tanggal_selesai); @endphp
+                                <span class="badge bg-{{ $periodeInfo['color'] }}-lt me-1">
+                                    <i class="ti ti-calendar-event me-1"></i> {{ $periodeInfo['status_text'] }}
+                                </span>
                                 @if($periode->tanggal_mulai && $periode->tanggal_selesai)
-                                    <span class="badge bg-azure-lt">
+                                    <span class="badge bg-azure-lt me-1">
                                         <i class="ti ti-calendar me-1"></i>
-                                        {{ $periode->tanggal_mulai->format('d M') }} - {{ $periode->tanggal_selesai->format('d M Y') }}
+                                        {{ $periode->tanggal_mulai->format('d M') }} s.d. {{ $periode->tanggal_selesai->format('d M Y') }}
                                     </span>
-                                @else
-                                    <span class="badge bg-secondary-lt">Jadwal Belum Diatur</span>
+                                    <span class="text-{{ $periodeInfo['color'] }} small fw-bold mt-1 d-inline-block">({{ $periodeInfo['time_info'] }})</span>
                                 @endif
                                 @php
                                     $total  = $totalCounts[$periode->periode_kpi_id] ?? 0;

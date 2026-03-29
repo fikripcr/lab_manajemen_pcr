@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StatusPegawai extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_status_pegawai';
+    protected $table = 'hr_status_pegawai';
+
     protected $primaryKey = 'statuspegawai_id';
 
     protected $appends = ['encrypted_statuspegawai_id'];
@@ -39,5 +41,4 @@ class StatusPegawai extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
-
 }

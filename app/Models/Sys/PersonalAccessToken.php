@@ -2,14 +2,15 @@
 
 namespace App\Models\Sys;
 
-use Laravel\Sanctum\PersonalAccessToken as SanctumPersonalAccessToken;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Sanctum\PersonalAccessToken as SanctumPersonalAccessToken;
 
 class PersonalAccessToken extends SanctumPersonalAccessToken
 {
-    use SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HashidBinding, SoftDeletes;
+
     /**
      * The table associated with the model.
      *

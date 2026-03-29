@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Pemutu;
 
 use App\Models\Pemutu\DokSub;
@@ -9,8 +10,6 @@ class DokumenService
     /**
      * Search for document sub-items (DokSub) based on query string.
      *
-     * @param string|null $query
-     * @param int $perPage
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     public function searchDokSub(?string $query, int $perPage = 30)
@@ -34,7 +33,7 @@ class DokumenService
     /**
      * Format DokSub items for Select2 AJAX response with grouping.
      *
-     * @param \Illuminate\Support\Collection $items
+     * @param  \Illuminate\Support\Collection  $items
      * @return array
      */
     public function formatForSelect2($items)
@@ -42,18 +41,18 @@ class DokumenService
         $grouped = [];
 
         foreach ($items as $item) {
-            $groupName = '[' . strtoupper($item->dokumen->jenis ?? 'DOC') . '] ' . \Str::limit($item->dokumen->judul ?? '-', 60);
+            $groupName = '['.strtoupper($item->dokumen->jenis ?? 'DOC').'] '.\Str::limit($item->dokumen->judul ?? '-', 60);
 
             if (! isset($grouped[$groupName])) {
                 $grouped[$groupName] = [
-                    'text'     => $groupName,
+                    'text' => $groupName,
                     'children' => [],
                 ];
             }
 
             $grouped[$groupName]['children'][] = [
-                'id'   => $item->encrypted_doksub_id,
-                'text' => $item->judul . ($item->kode ? " ({$item->kode})" : ''),
+                'id' => $item->encrypted_doksub_id,
+                'text' => $item->judul.($item->kode ? " ({$item->kode})" : ''),
             ];
         }
 
@@ -127,9 +126,6 @@ class DokumenService
 
     /**
      * Get unique standard documents for a given year.
-     *
-     * @param string $year
-     * @return array
      */
     public function getStandardDocumentsByYear(string $year): array
     {

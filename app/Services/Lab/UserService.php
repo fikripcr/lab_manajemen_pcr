@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Lab;
 
 use App\Models\User;
@@ -8,13 +9,13 @@ use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
-
     protected function getUserById(int $id): User
     {
         $user = User::find($id);
         if (! $user) {
-            throw new Exception("Users not found!");
+            throw new Exception('Users not found!');
         }
+
         return $user;
     }
 
@@ -26,9 +27,9 @@ class UserService
         return DB::transaction(function () use ($data) {
             dd($data);
             $user = User::create([
-                'name'              => $data['name'],
-                'email'             => $data['email'],
-                'password'          => Hash::make($data['password']),
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
                 'email_verified_at' => now(),
             ]);
 
@@ -55,6 +56,7 @@ class UserService
             }
 
             logActivity('user_management', "Create new user: {$user->name}");
+
             return $user;
         });
     }
@@ -69,7 +71,7 @@ class UserService
 
             $oldName = $user->name;
             $user->update([
-                'name'  => $data['name'],
+                'name' => $data['name'],
                 'email' => $data['email'],
             ]);
 
@@ -98,13 +100,13 @@ class UserService
     public function deleteUser(int $id)
     {
         return DB::transaction(function () use ($id) {
-            $user     = $this->getUserById($id);
+            $user = $this->getUserById($id);
             $userName = $user->name;
             $user->delete();
 
             logActivity('user_management', "Delete user: {$userName}");
+
             return true;
         });
     }
-
 }

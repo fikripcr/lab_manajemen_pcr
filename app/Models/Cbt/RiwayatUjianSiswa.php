@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Models\Cbt;
 
-use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,11 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RiwayatUjianSiswa extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'cbt_riwayat_ujian_siswa';
+    protected $table = 'cbt_riwayat_ujian_siswa';
+
     protected $primaryKey = 'riwayat_ujian_id';
-    protected $appends    = ['encrypted_riwayat_ujian_id'];
+
+    protected $appends = ['encrypted_riwayat_ujian_id'];
 
     protected $fillable = [
         'jadwal_id',
@@ -29,7 +31,7 @@ class RiwayatUjianSiswa extends Model
     ];
 
     protected $casts = [
-        'waktu_mulai'   => 'datetime',
+        'waktu_mulai' => 'datetime',
         'waktu_selesai' => 'datetime',
     ];
 

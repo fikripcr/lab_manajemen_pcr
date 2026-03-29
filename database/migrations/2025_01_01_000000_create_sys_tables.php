@@ -284,7 +284,9 @@ return new class extends Migration
         // The foreign key constraints can be tricky if Users table isn't ready, but it's created first.
 
         // Dashboard View
-        \Illuminate\Support\Facades\DB::statement("CREATE OR REPLACE VIEW vw_sys_dashboard AS
+        // Buat View vw_sys_dashboard
+        \Illuminate\Support\Facades\DB::statement('DROP VIEW IF EXISTS vw_sys_dashboard');
+        \Illuminate\Support\Facades\DB::statement('CREATE VIEW vw_sys_dashboard AS
             SELECT
                 -- User Statistics
                 (SELECT COUNT(*) FROM users WHERE deleted_at IS NULL) AS total_users,
@@ -303,7 +305,7 @@ return new class extends Migration
                 -- System Statistics
                 (SELECT COUNT(*) FROM sys_activity_log) AS total_activities
 
-            FROM DUAL");
+            FROM DUAL');
     }
 
     /**
@@ -311,7 +313,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        \Illuminate\Support\Facades\DB::statement("DROP VIEW IF EXISTS vw_sys_dashboard");
+        \Illuminate\Support\Facades\DB::statement('DROP VIEW IF EXISTS vw_sys_dashboard');
         Schema::dropIfExists('sys_personal_access_tokens');
         Schema::dropIfExists('sys_checks');
         Schema::dropIfExists('sys_hosts');

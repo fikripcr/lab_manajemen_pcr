@@ -3,7 +3,6 @@
 namespace App\Services\Project;
 
 use App\Models\Project\Project;
-use App\Models\Project\ProjectCost;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -54,17 +53,17 @@ class ProjectService
             $project = Project::create([
                 'project_name' => $data['project_name'],
                 'project_desc' => $data['project_desc'] ?? null,
-                'is_agile'     => $data['is_agile'] ?? false,
-                'start_date'   => $data['start_date'],
-                'end_date'     => $data['end_date'],
-                'status'       => $data['status'] ?? 'planning',
+                'is_agile' => $data['is_agile'] ?? false,
+                'start_date' => $data['start_date'],
+                'end_date' => $data['end_date'],
+                'status' => $data['status'] ?? 'planning',
             ]);
 
             // Add creator as project leader
             if (Auth::check()) {
                 $project->members()->create([
-                    'user_id'        => Auth::id(),
-                    'role'           => 'leader',
+                    'user_id' => Auth::id(),
+                    'role' => 'leader',
                     'alias_position' => 'Project Manager',
                 ]);
             }
@@ -90,10 +89,10 @@ class ProjectService
             $project->update([
                 'project_name' => $data['project_name'],
                 'project_desc' => $data['project_desc'] ?? null,
-                'is_agile'     => $data['is_agile'] ?? false,
-                'start_date'   => $data['start_date'],
-                'end_date'     => $data['end_date'],
-                'status'       => $data['status'] ?? $project->status,
+                'is_agile' => $data['is_agile'] ?? false,
+                'start_date' => $data['start_date'],
+                'end_date' => $data['end_date'],
+                'status' => $data['status'] ?? $project->status,
             ]);
 
             logActivity(
@@ -140,15 +139,15 @@ class ProjectService
     public function getProjectStatistics(Project $project): array
     {
         return [
-            'total_tasks'        => $project->tasks()->count(),
-            'completed_tasks'    => $project->tasks()->where('status', 'done')->count(),
-            'in_progress_tasks'  => $project->tasks()->where('status', 'in_progress')->count(),
-            'todo_tasks'         => $project->tasks()->where('status', 'todo')->count(),
-            'review_tasks'       => $project->tasks()->where('status', 'review')->count(),
-            'total_cost'         => $this->calculateTotalCost($project),
-            'total_members'      => $project->members()->count(),
-            'total_phases'       => $project->phases()->count(),
-            'total_sprints'      => $project->sprints()->count(),
+            'total_tasks' => $project->tasks()->count(),
+            'completed_tasks' => $project->tasks()->where('status', 'done')->count(),
+            'in_progress_tasks' => $project->tasks()->where('status', 'in_progress')->count(),
+            'todo_tasks' => $project->tasks()->where('status', 'todo')->count(),
+            'review_tasks' => $project->tasks()->where('status', 'review')->count(),
+            'total_cost' => $this->calculateTotalCost($project),
+            'total_members' => $project->members()->count(),
+            'total_phases' => $project->phases()->count(),
+            'total_sprints' => $project->sprints()->count(),
             'progress_percentage' => $project->progress_percentage,
         ];
     }
@@ -160,10 +159,10 @@ class ProjectService
     {
         return DB::transaction(function () use ($project, $data) {
             $member = $project->members()->create([
-                'user_id'        => $data['user_id'],
-                'role'           => $data['role'] ?? 'member',
+                'user_id' => $data['user_id'],
+                'role' => $data['role'] ?? 'member',
                 'alias_position' => $data['alias_position'] ?? null,
-                'rate_per_hour'  => $data['rate_per_hour'] ?? null,
+                'rate_per_hour' => $data['rate_per_hour'] ?? null,
             ]);
 
             logActivity(
@@ -202,7 +201,7 @@ class ProjectService
     protected function findOrFail(string $id): Project
     {
         $project = Project::find($id);
-        if (!$project) {
+        if (! $project) {
             throw new Exception('Project not found');
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
@@ -10,12 +11,12 @@ use Yajra\DataTables\Facades\DataTables;
 
 class StatusPegawaiController extends Controller
 {
-    public function __construct(protected StatusPegawaiService $statusPegawaiService)
-    {}
+    public function __construct(protected StatusPegawaiService $statusPegawaiService) {}
 
     public function index(Request $request)
     {
         $activeTab = $request->input('tab', 'status-pegawai');
+
         return view('pages.hr.master-data.index', compact('activeTab'));
     }
 
@@ -36,7 +37,7 @@ class StatusPegawaiController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('hr.status-pegawai.edit', ['status_pegawai' => $row->hashid]),
+                    'editUrl' => route('hr.status-pegawai.edit', ['status_pegawai' => $row->hashid]),
                     'editModal' => true,
                     'deleteUrl' => route('hr.status-pegawai.destroy', ['status_pegawai' => $row->hashid]),
                 ])->render();
@@ -53,6 +54,7 @@ class StatusPegawaiController extends Controller
     public function store(StatusPegawaiRequest $request)
     {
         $this->statusPegawaiService->create($request->validated());
+
         return jsonSuccess('Status Pegawai created successfully.');
     }
 
@@ -64,12 +66,14 @@ class StatusPegawaiController extends Controller
     public function update(StatusPegawaiRequest $request, StatusPegawai $statusPegawai)
     {
         $this->statusPegawaiService->update($statusPegawai, $request->validated());
+
         return jsonSuccess('Status Pegawai updated successfully.');
     }
 
     public function destroy(StatusPegawai $statusPegawai)
     {
         $statusPegawai->delete();
+
         return jsonSuccess('Status Pegawai deleted successfully.');
     }
 }

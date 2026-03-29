@@ -6,23 +6,22 @@ use App\Http\Requests\BaseRequest;
 
 class PerizinanApproveRequest extends BaseRequest
 {
-
     public function rules(): array
     {
         return [
-            'status'        => 'required|in:Approved,Rejected,Pending',
-            'pejabat'       => 'required|string|max:255',
-            'keterangan'    => 'nullable|string',
+            'status' => 'required|in:Approved,Rejected,Pending',
+            'pejabat' => 'required|string|max:255',
+            'keterangan' => 'nullable|string',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'status'        => 'Status',
-            'pejabat'       => 'Pejabat',
+            'status' => 'Status',
+            'pejabat' => 'Pejabat',
             'jenis_jabatan' => 'Jenis Jabatan',
-            'keterangan'    => 'Keterangan',
+            'keterangan' => 'Keterangan',
         ];
     }
 }

@@ -68,19 +68,19 @@
                                 <div class="row g-0">
                                     <div class="col-4">
                                         <a href="{{ route('lab.dashboard') }}" class="d-flex flex-column align-items-center justify-content-center text-center text-primary py-2 px-2 link-hoverable">
-                                            <x-tabler.icon-svg name="chart-line" class="icon mb-2" />
+                                            <x-tabler.icon-svg name="flask" class="icon mb-2" />
                                             <h5>Lab</h5>
                                         </a>
                                     </div>
                                     <div class="col-4">
                                         <a href="{{ route('hr.dashboard') }}" class="d-flex flex-column align-items-center justify-content-center text-center text-primary py-2 px-2 link-hoverable">
-                                            <x-tabler.icon-svg name="users" class="icon mb-2" />
+                                            <x-tabler.icon-svg name="briefcase" class="icon mb-2" />
                                             <h5>HR</h5>
                                         </a>
                                     </div>
                                     <div class="col-4">
                                         <a href="{{ route('eoffice.dashboard') }}" class="d-flex flex-column align-items-center justify-content-center text-center text-primary py-2 px-2 link-hoverable">
-                                            <x-tabler.icon-svg name="e-office" class="icon mb-2" />
+                                            <x-tabler.icon-svg name="mail-opened" class="icon mb-2" />
                                             <h5>E-Office</h5>
                                         </a>
                                     </div>
@@ -92,31 +92,31 @@
                                     </div>
                                     <div class="col-4">
                                         <a href="{{ route('Kegiatan.Kegiatans.index') }}" class="d-flex flex-column align-items-center justify-content-center text-center text-primary py-2 px-2 link-hoverable">
-                                            <x-tabler.icon-svg name="calendar-event" class="icon mb-2" />
+                                            <x-tabler.icon-svg name="calendar-star" class="icon mb-2" />
                                             <h5>Kegiatan</h5>
                                         </a>
                                     </div>
                                     <div class="col-4">
                                         <a href="{{ route('pemutu.dashboard') }}" class="d-flex flex-column align-items-center justify-content-center text-center text-primary py-2 px-2 link-hoverable">
-                                            <x-tabler.icon-svg name="certificate" class="icon mb-2" />
+                                            <x-tabler.icon-svg name="checkbox" class="icon mb-2" />
                                             <h5>Pemutu</h5>
                                         </a>
                                     </div>
                                     <div class="col-4">
                                         <a href="{{ route('pmb.dashboard') }}" class="d-flex flex-column align-items-center justify-content-center text-center text-primary py-2 px-2 link-hoverable">
-                                            <x-tabler.icon-svg name="user-plus" class="icon mb-2" />
+                                            <x-tabler.icon-svg name="school" class="icon mb-2" />
                                             <h5>PMB</h5>
                                         </a>
                                     </div>
                                     <div class="col-4">
                                         <a href="{{ route('survei.index') }}" class="d-flex flex-column align-items-center justify-content-center text-center text-primary py-2 px-2 link-hoverable">
-                                            <x-tabler.icon-svg name="file-text" class="icon mb-2" />
+                                            <x-tabler.icon-svg name="forms" class="icon mb-2" />
                                             <h5>Umpan Balik</h5>
                                         </a>
                                     </div>
                                     <div class="col-4">
                                         <a href="{{ route('sys.dashboard') }}" class="d-flex flex-column align-items-center justify-content-center text-center text-primary py-2 px-2 link-hoverable">
-                                            <x-tabler.icon-svg name="settings" class="icon mb-2" />
+                                            <x-tabler.icon-svg name="settings-automation" class="icon mb-2" />
                                             <h5>System</h5>
                                         </a>
                                     </div>

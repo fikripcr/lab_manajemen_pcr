@@ -1,16 +1,16 @@
 <?php
+
 namespace App\Http\Requests\Cms;
 
 use App\Http\Requests\BaseRequest;
 
 class FAQRequest extends BaseRequest
 {
-
     public function rules(): array
     {
         return [
             'question' => 'required|string|max:191',
-            'seq'      => 'nullable|integer',
+            'seq' => 'nullable|integer',
         ];
     }
 
@@ -18,9 +18,9 @@ class FAQRequest extends BaseRequest
     {
         return [
             'question' => 'Pertanyaan',
-            'answer'   => 'Jawaban',
+            'answer' => 'Jawaban',
             'category' => 'Kategori',
-            'seq'      => 'Urutan',
+            'seq' => 'Urutan',
         ];
     }
 }

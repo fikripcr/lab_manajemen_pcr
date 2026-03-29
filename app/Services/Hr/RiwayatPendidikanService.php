@@ -1,20 +1,20 @@
 <?php
+
 namespace App\Services\Hr;
 
-use App\Models\Hr\RiwayatPendidikan;
 use App\Models\Hr\Pegawai;
+use App\Models\Hr\RiwayatPendidikan;
 use Illuminate\Support\Facades\DB;
 
 class RiwayatPendidikanService
 {
-    public function __construct(protected ApprovalService $approvalService)
-    {}
+    public function __construct(protected ApprovalService $approvalService) {}
 
     public function requestAddition(Pegawai $pegawai, array $data)
     {
         return DB::transaction(function () use ($pegawai, $data) {
             $data['pegawai_id'] = $pegawai->pegawai_id;
-            $model              = RiwayatPendidikan::create($data);
+            $model = RiwayatPendidikan::create($data);
 
             $approval = $this->approvalService->createRequest(
                 RiwayatPendidikan::class,
@@ -23,6 +23,7 @@ class RiwayatPendidikanService
             );
 
             $model->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
+
             return $model;
         });
     }
@@ -38,7 +39,7 @@ class RiwayatPendidikanService
             }
 
             $data['pegawai_id'] = $pegawai->pegawai_id;
-            $model              = RiwayatPendidikan::create($data);
+            $model = RiwayatPendidikan::create($data);
 
             $approval = $this->approvalService->createRequest(
                 RiwayatPendidikan::class,
@@ -47,6 +48,7 @@ class RiwayatPendidikanService
             );
 
             $model->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
+
             return $model;
         });
     }
@@ -56,7 +58,7 @@ class RiwayatPendidikanService
         return DB::transaction(function () use ($approvalId, $status, $reason) {
             $approval = $this->approvalService->processApproval($approvalId, $status, $reason);
 
-            $model   = RiwayatPendidikan::findOrFail($approval->model_id);
+            $model = RiwayatPendidikan::findOrFail($approval->model_id);
             $pegawai = Pegawai::findOrFail($model->pegawai_id);
             $pegawai->update(['latest_riwayatpendidikan_id' => $model->riwayatpendidikan_id]);
             logActivity('hr', "Memproses ({$status}) Riwayat Pendidikan: {$pegawai->nama}", $pegawai);

@@ -1,18 +1,17 @@
 <?php
+
 namespace App\Http\Requests\Pmb;
 
 use App\Http\Requests\BaseRequest;
 
 class StoreJalurRequest extends BaseRequest
 {
-    
-
     public function rules()
     {
         return [
-            'nama_jalur'        => 'required|string|max:255',
+            'nama_jalur' => 'required|string|max:255',
             'biaya_pendaftaran' => 'required|numeric|min:0',
-            'is_aktif'          => 'nullable|boolean',
+            'is_aktif' => 'nullable|boolean',
         ];
     }
 
@@ -26,9 +25,9 @@ class StoreJalurRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'nama_jalur'        => 'Nama Jalur',
+            'nama_jalur' => 'Nama Jalur',
             'biaya_pendaftaran' => 'Biaya Pendaftaran',
-            'is_aktif'          => 'Status Aktif',
+            'is_aktif' => 'Status Aktif',
         ];
     }
 }

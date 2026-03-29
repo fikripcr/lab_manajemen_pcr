@@ -1,12 +1,13 @@
 <?php
+
 namespace Database\Seeders;
 
+use App\Models\Hr\StrukturOrganisasi as OrgUnit;
 use App\Models\Pmb\Camaba;
 use App\Models\Pmb\Jalur;
 use App\Models\Pmb\JenisDokumen;
 use App\Models\Pmb\Periode;
 use App\Models\Pmb\SyaratDokumenJalur;
-use App\Models\Hr\StrukturOrganisasi as OrgUnit;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -18,9 +19,9 @@ class MainPmbSeeder extends Seeder
         $periode = Periode::updateOrCreate(
             ['nama_periode' => 'Seleksi Mahasiswa Baru 2024/2025'],
             [
-                'tanggal_mulai'   => now(),
+                'tanggal_mulai' => now(),
                 'tanggal_selesai' => now()->addMonths(6),
-                'is_aktif'        => true,
+                'is_aktif' => true,
             ]
         );
 
@@ -29,7 +30,7 @@ class MainPmbSeeder extends Seeder
             ['nama_jalur' => 'Reguler'],
             [
                 'biaya_pendaftaran' => 350000,
-                'is_aktif'          => true,
+                'is_aktif' => true,
             ]
         );
 
@@ -37,7 +38,7 @@ class MainPmbSeeder extends Seeder
             ['nama_jalur' => 'Prestasi'],
             [
                 'biaya_pendaftaran' => 0,
-                'is_aktif'          => true,
+                'is_aktif' => true,
             ]
         );
 
@@ -57,13 +58,13 @@ class MainPmbSeeder extends Seeder
 
         foreach ($prodisData as $data) {
             // Create Faculty/Jurusan first (simplified mapping for seeder)
-            $jurusanCode = 'JUR-' . strtoupper(substr($data['fakultas'], 0, 3));
-            $jurusan     = OrgUnit::firstOrCreate(
+            $jurusanCode = 'JUR-'.strtoupper(substr($data['fakultas'], 0, 3));
+            $jurusan = OrgUnit::firstOrCreate(
                 ['code' => $jurusanCode],
                 [
-                    'name'      => 'Jurusan ' . $data['fakultas'],
-                    'type'      => 'Jurusan',
-                    'level'     => 2,
+                    'name' => 'Jurusan '.$data['fakultas'],
+                    'type' => 'Jurusan',
+                    'level' => 2,
                     'parent_id' => $pcr->orgunit_id,
                 ]
             );
@@ -72,9 +73,9 @@ class MainPmbSeeder extends Seeder
             $prodi = OrgUnit::firstOrCreate(
                 ['code' => $data['kode_prodi']],
                 [
-                    'name'      => $data['nama_prodi'],
-                    'type'      => 'Prodi',
-                    'level'     => 3,
+                    'name' => $data['nama_prodi'],
+                    'type' => 'Prodi',
+                    'level' => 3,
                     'parent_id' => $jurusan->orgunit_id,
                 ]
             );
@@ -82,9 +83,9 @@ class MainPmbSeeder extends Seeder
         }
 
         // 4. Jenis Dokumen
-        $dokIjazah   = JenisDokumen::firstOrCreate(['nama_dokumen' => 'Ijazah SMA/SMK']);
-        $dokKK       = JenisDokumen::firstOrCreate(['nama_dokumen' => 'Kartu Keluarga']);
-        $dokFoto     = JenisDokumen::firstOrCreate(['nama_dokumen' => 'Pas Foto 4x6']);
+        $dokIjazah = JenisDokumen::firstOrCreate(['nama_dokumen' => 'Ijazah SMA/SMK']);
+        $dokKK = JenisDokumen::firstOrCreate(['nama_dokumen' => 'Kartu Keluarga']);
+        $dokFoto = JenisDokumen::firstOrCreate(['nama_dokumen' => 'Pas Foto 4x6']);
         $dokPrestasi = JenisDokumen::firstOrCreate(['nama_dokumen' => 'Sertifikat Prestasi']);
 
         // 5. Syarat Dokumen Jalur
@@ -101,20 +102,20 @@ class MainPmbSeeder extends Seeder
         $sesi1 = \App\Models\Pmb\SesiUjian::updateOrCreate(
             ['nama_sesi' => 'Gelombang 1 - Sesi Pagi', 'periode_id' => $periode->periode_id],
             [
-                'waktu_mulai'   => now()->addDays(7)->setTime(8, 0),
+                'waktu_mulai' => now()->addDays(7)->setTime(8, 0),
                 'waktu_selesai' => now()->addDays(7)->setTime(10, 0),
-                'lokasi'        => 'Lab Komputer 1',
-                'kuota'         => 100,
+                'lokasi' => 'Lab Komputer 1',
+                'kuota' => 100,
             ]
         );
 
         $sesi2 = \App\Models\Pmb\SesiUjian::updateOrCreate(
             ['nama_sesi' => 'Gelombang 1 - Sesi Siang', 'periode_id' => $periode->periode_id],
             [
-                'waktu_mulai'   => now()->addDays(7)->setTime(13, 0),
+                'waktu_mulai' => now()->addDays(7)->setTime(13, 0),
                 'waktu_selesai' => now()->addDays(7)->setTime(15, 0),
-                'lokasi'        => 'Lab Komputer 2',
-                'kuota'         => 100,
+                'lokasi' => 'Lab Komputer 2',
+                'kuota' => 100,
             ]
         );
 
@@ -131,13 +132,13 @@ class MainPmbSeeder extends Seeder
 
         for ($i = 0; $i < 300; $i++) {
             // Create User
-            $email = 'camaba' . ($i + 1) . '@pmb.test';
-            $name  = $faker->name . '-' . ($i + 1);
-            $user  = \App\Models\User::firstOrCreate(
+            $email = 'camaba'.($i + 1).'@pmb.test';
+            $name = $faker->name.'-'.($i + 1);
+            $user = \App\Models\User::firstOrCreate(
                 ['email' => $email],
                 [
-                    'name'              => $name,
-                    'password'          => Hash::make('password'),
+                    'name' => $name,
+                    'password' => Hash::make('password'),
                     'email_verified_at' => now(),
                 ]
             );
@@ -150,18 +151,18 @@ class MainPmbSeeder extends Seeder
             Camaba::updateOrCreate(
                 ['user_id' => $user->id],
                 [
-                    'nik'              => $existingCamaba?->nik ?? $faker->unique()->numerify('14##############'),
-                    'nama'             => $name,
-                    'email'            => $email,
-                    'no_hp'            => $faker->phoneNumber,
-                    'tempat_lahir'     => $faker->city,
-                    'tanggal_lahir'    => $faker->date('Y-m-d', '2006-01-01'),
-                    'jenis_kelamin'    => $faker->randomElement(['L', 'P']),
-                    'alamat_lengkap'   => $faker->address,
-                    'asal_sekolah'     => 'SMA ' . $faker->company,
-                    'nisn'             => $faker->numerify('00########'),
+                    'nik' => $existingCamaba?->nik ?? $faker->unique()->numerify('14##############'),
+                    'nama' => $name,
+                    'email' => $email,
+                    'no_hp' => $faker->phoneNumber,
+                    'tempat_lahir' => $faker->city,
+                    'tanggal_lahir' => $faker->date('Y-m-d', '2006-01-01'),
+                    'jenis_kelamin' => $faker->randomElement(['L', 'P']),
+                    'alamat_lengkap' => $faker->address,
+                    'asal_sekolah' => 'SMA '.$faker->company,
+                    'nisn' => $faker->numerify('00########'),
                     'nama_ibu_kandung' => $faker->name('female'),
-                    'created_by'       => 'system',
+                    'created_by' => 'system',
                 ]
             );
 
@@ -184,14 +185,14 @@ class MainPmbSeeder extends Seeder
             $pendaftaran = \App\Models\Pmb\Pendaftaran::updateOrCreate(
                 ['user_id' => $user->id, 'periode_id' => $periode->periode_id],
                 [
-                    'no_pendaftaran' => 'REG-2024-' . str_pad($i + 1, 4, '0', STR_PAD_LEFT),
-                    'jalur_id'       => $jalur->jalur_id,
+                    'no_pendaftaran' => 'REG-2024-'.str_pad($i + 1, 4, '0', STR_PAD_LEFT),
+                    'jalur_id' => $jalur->jalur_id,
                     'status_terkini' => $status,
-                    'waktu_daftar'   => $faker->dateTimeBetween('-1 month', 'now'),
+                    'waktu_daftar' => $faker->dateTimeBetween('-1 month', 'now'),
                 ]
             );
 
-                                              // Pilihan Prodi
+            // Pilihan Prodi
             $prodi1 = $prodiOrgUnits[$i % 4]; // Distribute evenly
             $prodi2 = $prodiOrgUnits[($i + 1) % 4];
 
@@ -212,11 +213,11 @@ class MainPmbSeeder extends Seeder
                 \App\Models\Pmb\Pembayaran::updateOrCreate(
                     ['pendaftaran_id' => $pendaftaran->pendaftaran_id, 'jenis_bayar' => 'Formulir'],
                     [
-                        'jumlah_bayar'      => $jalur->biaya_pendaftaran,
-                        'bukti_bayar_path'  => 'dummy/bukti_bayar.jpg',
+                        'jumlah_bayar' => $jalur->biaya_pendaftaran,
+                        'bukti_bayar_path' => 'dummy/bukti_bayar.jpg',
                         'status_verifikasi' => ($status == 'Menunggu_Verifikasi_Bayar') ? 'Pending' : 'Lunas',
-                        'verifikator_id'    => ($status != 'Menunggu_Verifikasi_Bayar') ? 1 : null, // Admin ID 1
-                        'waktu_bayar'       => now()->subDays(rand(1, 20)),
+                        'verifikator_id' => ($status != 'Menunggu_Verifikasi_Bayar') ? 1 : null, // Admin ID 1
+                        'waktu_bayar' => now()->subDays(rand(1, 20)),
                     ]
                 );
             }
@@ -228,9 +229,9 @@ class MainPmbSeeder extends Seeder
                     \App\Models\Pmb\DokumenUpload::updateOrCreate(
                         ['pendaftaran_id' => $pendaftaran->pendaftaran_id, 'jenis_dokumen_id' => $doc->jenis_dokumen_id],
                         [
-                            'path_file'         => 'dummy/doc_' . $doc->jenis_dokumen_id . '.pdf',
+                            'path_file' => 'dummy/doc_'.$doc->jenis_dokumen_id.'.pdf',
                             'status_verifikasi' => ($status == 'Menunggu_Verifikasi_Berkas') ? 'Pending' : 'Valid',
-                            'waktu_upload'      => now()->subDays(rand(1, 15)),
+                            'waktu_upload' => now()->subDays(rand(1, 15)),
                         ]
                     );
                 }
@@ -238,16 +239,16 @@ class MainPmbSeeder extends Seeder
 
             // 3. Exam
             if (! in_array($status, ['Draft', 'Menunggu_Verifikasi_Bayar', 'Menunggu_Verifikasi_Berkas', 'Revisi_Berkas'])) {
-                $sesi  = $sesiList[$i % 2];
+                $sesi = $sesiList[$i % 2];
                 $nilai = $faker->randomFloat(2, 40, 100);
 
                 \App\Models\Pmb\PesertaUjian::updateOrCreate(
                     ['pendaftaran_id' => $pendaftaran->pendaftaran_id],
                     [
-                        'sesi_id'          => $sesi->sesiujian_id,
-                        'username_cbt'     => 'usercbt' . ($user->id), // Use user ID for uniqueness
-                        'password_cbt'     => 'passcbt',
-                        'nilai_akhir'      => ($status == 'Siap_Ujian') ? null : $nilai,
+                        'sesi_id' => $sesi->sesiujian_id,
+                        'username_cbt' => 'usercbt'.($user->id), // Use user ID for uniqueness
+                        'password_cbt' => 'passcbt',
+                        'nilai_akhir' => ($status == 'Siap_Ujian') ? null : $nilai,
                         'status_kehadiran' => ($status != 'Siap_Ujian'),
                     ]
                 );
@@ -265,16 +266,16 @@ class MainPmbSeeder extends Seeder
                 $pendaftaran->orgunit_diterima_id = $prodi1->orgunit_id;
 
                 if ($status == 'Daftar_Ulang') {
-                    $pendaftaran->nim_final = '2024' . $prodi1->code . str_pad($i, 3, '0', STR_PAD_LEFT);
+                    $pendaftaran->nim_final = '2024'.$prodi1->code.str_pad($i, 3, '0', STR_PAD_LEFT);
 
                     // Daftar Ulang Payment
                     \App\Models\Pmb\Pembayaran::updateOrCreate(
                         ['pendaftaran_id' => $pendaftaran->pendaftaran_id, 'jenis_bayar' => 'Daftar_Ulang'],
                         [
-                            'jumlah_bayar'      => 5000000,
-                            'bukti_bayar_path'  => 'dummy/daftar_ulang.jpg',
+                            'jumlah_bayar' => 5000000,
+                            'bukti_bayar_path' => 'dummy/daftar_ulang.jpg',
                             'status_verifikasi' => 'Lunas',
-                            'waktu_bayar'       => now(),
+                            'waktu_bayar' => now(),
                         ]
                     );
                 }

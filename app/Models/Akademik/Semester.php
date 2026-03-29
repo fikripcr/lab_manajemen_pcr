@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Akademik;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Semester extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'akademik_semesters';
+    protected $table = 'akademik_semesters';
+
     protected $primaryKey = 'semester_id';
 
     protected $appends = ['encrypted_semester_id'];
@@ -31,7 +33,7 @@ class Semester extends Model
     ];
 
     protected $casts = [
-        'is_active'   => 'boolean',
+        'is_active' => 'boolean',
         'semester_id' => 'string',
     ];
 

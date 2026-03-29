@@ -13,7 +13,7 @@
     <x-tabler.card-header class="border-bottom">
         <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
             <h3 class="card-title mb-0">Daftar Indikator</h3>
-                <div class="ms-auto d-flex flex-wrap gap-2">
+                <div class="d-flex flex-wrap gap-2">
                     <x-tabler.datatable-page-length dataTableId="table-standar" />
                     <x-tabler.datatable-filter dataTableId="table-standar" type="button" target="#table-standar-filter-area" />
                     <x-tabler.datatable-search dataTableId="table-standar" />
@@ -26,7 +26,7 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <x-tabler.form-select name="unit_id" label="Unit / Area" placeholder="Semua Unit">
-                                <option value="">Semua Unit</option>
+                                <option value="all">Semua Unit</option>
                                 @foreach($units as $unit)
                                     <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
                                 @endforeach

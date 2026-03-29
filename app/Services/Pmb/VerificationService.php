@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Pmb;
 
 use App\Models\Pmb\Pembayaran;
@@ -8,8 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class VerificationService
 {
-    public function __construct(protected PendaftaranService $pendaftaranService)
-    {}
+    public function __construct(protected PendaftaranService $pendaftaranService) {}
 
     /**
      * Get pending payments query
@@ -32,29 +32,29 @@ class VerificationService
     public function verifyPayment(Pembayaran $pembayaran, array $data): Pembayaran
     {
         return DB::transaction(function () use ($pembayaran, $data) {
-            $status     = $data['status'];
+            $status = $data['status'];
             $keterangan = $data['keterangan'] ?? null;
 
             $pembayaran->update([
                 'status_verifikasi' => ($status == 'Verified' ? 'Lunas' : 'Ditolak'),
-                'verifikator_id'    => auth()->id(),
-                'waktu_bayar'       => now(),
+                'verifikator_id' => auth()->id(),
+                'waktu_bayar' => now(),
             ]);
 
             $stdStatus = ($status == 'Verified' ? 'Approved' : 'Rejected');
 
             RiwayatApproval::create([
-                'model'    => Pendaftaran::class,
+                'model' => Pendaftaran::class,
                 'model_id' => $pembayaran->pendaftaran_id,
-                'status'   => $stdStatus,
-                'pejabat'  => auth()->user()->name,
-                'catatan'  => 'Verifikasi Pembayaran: ' . $keterangan,
+                'status' => $stdStatus,
+                'pejabat' => auth()->user()->name,
+                'catatan' => 'Verifikasi Pembayaran: '.$keterangan,
             ]);
 
             if ($status == 'Verified') {
                 $this->pendaftaranService->updateStatus($pembayaran->pendaftaran, 'Menunggu_Verifikasi_Berkas', 'Pembayaran terverifikasi.');
             } else {
-                $this->pendaftaranService->updateStatus($pembayaran->pendaftaran, 'Draft', 'Pembayaran ditolak: ' . $keterangan);
+                $this->pendaftaranService->updateStatus($pembayaran->pendaftaran, 'Draft', 'Pembayaran ditolak: '.$keterangan);
             }
 
             logActivity('pmb_verifikasi', "Verifikasi pembayaran untuk pendaftaran {$pembayaran->pendaftaran->no_pendaftaran}: {$status}", $pembayaran);
@@ -66,17 +66,17 @@ class VerificationService
     public function verifyDocument(Pendaftaran $pendaftaran, array $data): Pendaftaran
     {
         return DB::transaction(function () use ($pendaftaran, $data) {
-            $status     = $data['status'];
+            $status = $data['status'];
             $keterangan = $data['keterangan'] ?? null;
 
             $stdStatus = ($status == 'Verified' ? 'Approved' : 'Rejected');
 
             RiwayatApproval::create([
-                'model'    => Pendaftaran::class,
+                'model' => Pendaftaran::class,
                 'model_id' => $pendaftaran->pendaftaran_id,
-                'status'   => $stdStatus,
-                'pejabat'  => auth()->user()->name,
-                'catatan'  => 'Verifikasi Berkas: ' . $keterangan,
+                'status' => $stdStatus,
+                'pejabat' => auth()->user()->name,
+                'catatan' => 'Verifikasi Berkas: '.$keterangan,
             ]);
 
             if ($status == 'Verified') {
@@ -89,7 +89,7 @@ class VerificationService
 
                 $this->pendaftaranService->updateStatus($pendaftaran, $nextStatus, 'Berkas terverifikasi.');
             } else {
-                $this->pendaftaranService->updateStatus($pendaftaran, 'Draft', 'Berkas ditolak: ' . $keterangan);
+                $this->pendaftaranService->updateStatus($pendaftaran, 'Draft', 'Berkas ditolak: '.$keterangan);
             }
 
             logActivity('pmb_verifikasi', "Verifikasi berkas untuk pendaftaran {$pendaftaran->no_pendaftaran}: {$status}", $pendaftaran);
@@ -109,11 +109,11 @@ class VerificationService
             }
 
             RiwayatApproval::create([
-                'model'    => Pendaftaran::class,
+                'model' => Pendaftaran::class,
                 'model_id' => $pendaftaran->pendaftaran_id,
-                'status'   => $stdStatus,
-                'pejabat'  => auth()->user()?->name ?? 'System',
-                'catatan'  => "Update Status Ke {$status}: " . $keterangan,
+                'status' => $stdStatus,
+                'pejabat' => auth()->user()?->name ?? 'System',
+                'catatan' => "Update Status Ke {$status}: ".$keterangan,
             ]);
 
             return $pendaftaran;

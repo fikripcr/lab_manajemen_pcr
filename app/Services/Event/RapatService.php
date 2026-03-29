@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Event;
 
 use App\Models\Event\Rapat;
@@ -15,11 +16,12 @@ class RapatService
     public function store(array $data): Rapat
     {
         return DB::transaction(function () use ($data) {
-            $date                  = $data['tgl_rapat'];
-            $data['waktu_mulai']   = \Carbon\Carbon::parse("$date " . $data['waktu_mulai']);
-            $data['waktu_selesai'] = \Carbon\Carbon::parse("$date " . $data['waktu_selesai']);
-            $rapat                 = Rapat::create($data);
+            $date = $data['tgl_rapat'];
+            $data['waktu_mulai'] = \Carbon\Carbon::parse("$date ".$data['waktu_mulai']);
+            $data['waktu_selesai'] = \Carbon\Carbon::parse("$date ".$data['waktu_selesai']);
+            $rapat = Rapat::create($data);
             logActivity('event', "Menambah rapat baru: {$rapat->judul_kegiatan}");
+
             return $rapat;
         });
     }
@@ -27,11 +29,12 @@ class RapatService
     public function update(Rapat $rapat, array $data): Rapat
     {
         return DB::transaction(function () use ($rapat, $data) {
-            $date                  = $data['tgl_rapat'];
-            $data['waktu_mulai']   = \Carbon\Carbon::parse("$date " . $data['waktu_mulai']);
-            $data['waktu_selesai'] = \Carbon\Carbon::parse("$date " . $data['waktu_selesai']);
+            $date = $data['tgl_rapat'];
+            $data['waktu_mulai'] = \Carbon\Carbon::parse("$date ".$data['waktu_mulai']);
+            $data['waktu_selesai'] = \Carbon\Carbon::parse("$date ".$data['waktu_selesai']);
             $rapat->update($data);
             logActivity('event', "Memperbarui rapat: {$rapat->judul_kegiatan}");
+
             return $rapat;
         });
     }
@@ -49,13 +52,15 @@ class RapatService
     {
         $agenda = $rapat->agendas()->create($data);
         logActivity('event', "Menambah agenda rapat '{$agenda->judul_agenda}' pada rapat: {$rapat->judul_kegiatan}");
+
         return $agenda;
     }
 
     public function addPeserta(Rapat $rapat, array $data): RapatPeserta
     {
         $peserta = $rapat->pesertas()->create($data);
-        logActivity('event', "Menambah peserta '" . ($peserta->user->name ?? 'User') . "' ke rapat: {$rapat->judul_kegiatan}");
+        logActivity('event', "Menambah peserta '".($peserta->user->name ?? 'User')."' ke rapat: {$rapat->judul_kegiatan}");
+
         return $peserta;
     }
 
@@ -87,10 +92,10 @@ class RapatService
                 }
 
                 $this->addPeserta($rapat, [
-                    'user_id'    => null,
-                    'nama_luar'  => $nama,
+                    'user_id' => null,
+                    'nama_luar' => $nama,
                     'email_luar' => $luar['email'] ?? null,
-                    'jabatan'    => $luar['jabatan'] ?? 'Peserta Luar',
+                    'jabatan' => $luar['jabatan'] ?? 'Peserta Luar',
                 ]);
             }
         });
@@ -100,6 +105,7 @@ class RapatService
     {
         $entitas = $rapat->entitas()->create($data);
         logActivity('event', "Menambah entitas ke rapat: {$rapat->judul_kegiatan}");
+
         return $entitas;
     }
 
@@ -113,9 +119,9 @@ class RapatService
 
                     if ($data['status'] == 'hadir') {
                         if (! empty($data['waktu_hadir'])) {
-                            $time                      = $data['waktu_hadir'];
-                            $date                      = $rapat->tgl_rapat->format('Y-m-d');
-                            $dateTime                  = \Carbon\Carbon::parse("$date $time");
+                            $time = $data['waktu_hadir'];
+                            $date = $rapat->tgl_rapat->format('Y-m-d');
+                            $dateTime = \Carbon\Carbon::parse("$date $time");
                             $updateData['waktu_hadir'] = $dateTime;
                         }
                     } else {
@@ -136,11 +142,12 @@ class RapatService
     {
         $isHadir = $peserta->status === 'hadir';
         $peserta->update([
-            'status'      => $isHadir ? null : 'hadir',
+            'status' => $isHadir ? null : 'hadir',
             'waktu_hadir' => $isHadir ? null : now(),
-            'updated_by'  => auth()->id(),
+            'updated_by' => auth()->id(),
         ]);
-        logActivity('event', ($isHadir ? 'Menandai tidak hadir' : 'Menandai hadir') . ': ' . ($peserta->user->name ?? '-'));
+        logActivity('event', ($isHadir ? 'Menandai tidak hadir' : 'Menandai hadir').': '.($peserta->user->name ?? '-'));
+
         return $peserta->fresh();
     }
 
@@ -168,9 +175,9 @@ class RapatService
     public function inviteParticipants(Rapat $rapat, array $userIds, string $jabatan = 'Peserta'): array
     {
         $result = [
-            'invited'        => [],
+            'invited' => [],
             'already_exists' => [],
-            'failed'         => [],
+            'failed' => [],
         ];
 
         DB::transaction(function () use ($rapat, $userIds, $jabatan, &$result) {
@@ -181,14 +188,15 @@ class RapatService
 
                     if ($existingPeserta) {
                         $result['already_exists'][] = $userId;
+
                         continue;
                     }
 
                     // Create new participant with invite status
                     $peserta = $this->addPeserta($rapat, [
-                        'user_id'    => $userId,
-                        'jabatan'    => $jabatan,
-                        'status'     => null, // Belum absen
+                        'user_id' => $userId,
+                        'jabatan' => $jabatan,
+                        'status' => null, // Belum absen
                         'is_invited' => true,
                     ]);
 
@@ -196,12 +204,12 @@ class RapatService
                 } catch (\Exception $e) {
                     $result['failed'][] = [
                         'user_id' => $userId,
-                        'error'   => $e->getMessage(),
+                        'error' => $e->getMessage(),
                     ];
                     Log::error('Failed to invite participant to rapat', [
                         'rapat_id' => $rapat->rapat_id,
-                        'user_id'  => $userId,
-                        'error'    => $e->getMessage(),
+                        'user_id' => $userId,
+                        'error' => $e->getMessage(),
                     ]);
                 }
             }
@@ -223,8 +231,8 @@ class RapatService
             } catch (\Exception $e) {
                 Log::error('Failed to send invitation email', [
                     'rapat_id' => $rapat->rapat_id,
-                    'user_id'  => $peserta->user_id,
-                    'error'    => $e->getMessage(),
+                    'user_id' => $peserta->user_id,
+                    'error' => $e->getMessage(),
                 ]);
             }
         }
@@ -256,8 +264,9 @@ class RapatService
         } catch (\Exception $e) {
             Log::error('Failed to resend invitation email', [
                 'peserta_id' => $peserta->rapatpeserta_id,
-                'error'      => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
+
             return false;
         }
     }

@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Hr;
 
 use App\Http\Requests\BaseRequest;
 
 class JenisIndisiplinerRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -19,12 +17,12 @@ class JenisIndisiplinerRequest extends BaseRequest
 
         // On update, exclude current record from unique check
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $jenisIndisipliner  = $this->route('jenis_indisipliner');
-            $uniqueRule        .= ',' . $jenisIndisipliner->jenisindisipliner_id . ',jenisindisipliner_id';
+            $jenisIndisipliner = $this->route('jenis_indisipliner');
+            $uniqueRule .= ','.$jenisIndisipliner->jenisindisipliner_id.',jenisindisipliner_id';
         }
 
         return [
-            'jenis_indisipliner' => 'required|string|max:100|' . $uniqueRule,
+            'jenis_indisipliner' => 'required|string|max:100|'.$uniqueRule,
         ];
     }
 

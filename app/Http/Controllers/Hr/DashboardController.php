@@ -1,21 +1,22 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Lembur;
+use App\Models\Hr\Pegawai;
 use App\Models\Hr\Perizinan;
 use App\Models\Hr\Presensi;
 use App\Models\Hr\RiwayatApproval;
-use App\Models\Hr\Pegawai;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $period    = $request->get('period', 'month');
+        $period = $request->get('period', 'month');
         $startDate = $this->getStartDate($period);
-        $endDate   = now();
+        $endDate = now();
 
         // Main Statistics
         $stats = $this->getMainStats($startDate, $endDate);
@@ -63,7 +64,7 @@ class DashboardController extends Controller
 
         // Previous period for comparison
         $previousPeriod = $this->getPreviousPeriod($startDate, $endDate);
-        $previousTotal  = Pegawai::whereHas('latestStatusPegawai.statusPegawai', function ($query) {
+        $previousTotal = Pegawai::whereHas('latestStatusPegawai.statusPegawai', function ($query) {
             $query->where('is_active', true);
         })->whereBetween('created_at', [$previousPeriod['start'], $previousPeriod['end']])->count();
 
@@ -71,22 +72,22 @@ class DashboardController extends Controller
 
         // Additional stats
         $lemburBulanIni = $this->getLemburHoursThisMonth();
-        $izinSakit      = $this->getIzinCount('sakit');
-        $izinPribadi    = $this->getIzinCount('pribadi');
-        $dinasLuar      = $this->getDinasLuarCount();
+        $izinSakit = $this->getIzinCount('sakit');
+        $izinPribadi = $this->getIzinCount('pribadi');
+        $dinasLuar = $this->getDinasLuarCount();
 
         return [
-            'total_pegawai'    => $totalPegawai,
-            'hadir_hari_ini'   => $hadirHariIni,
-            'cuti_aktif'       => $cutiAktif,
+            'total_pegawai' => $totalPegawai,
+            'hadir_hari_ini' => $hadirHariIni,
+            'cuti_aktif' => $cutiAktif,
             'pending_approval' => $pendingApproval,
             'hadir_percentage' => $totalPegawai > 0 ? round(($hadirHariIni / $totalPegawai) * 100, 1) : 0,
-            'cuti_percentage'  => $totalPegawai > 0 ? round(($cutiAktif / $totalPegawai) * 100, 1) : 0,
-            'pegawai_change'   => round($changePercentage, 1) > 0 ? '+' . round($changePercentage, 1) : round($changePercentage, 1),
+            'cuti_percentage' => $totalPegawai > 0 ? round(($cutiAktif / $totalPegawai) * 100, 1) : 0,
+            'pegawai_change' => round($changePercentage, 1) > 0 ? '+'.round($changePercentage, 1) : round($changePercentage, 1),
             'lembur_bulan_ini' => $lemburBulanIni,
-            'izin_sakit'       => $izinSakit,
-            'izin_pribadi'     => $izinPribadi,
-            'dinas_luar'       => $dinasLuar,
+            'izin_sakit' => $izinSakit,
+            'izin_pribadi' => $izinPribadi,
+            'dinas_luar' => $dinasLuar,
         ];
     }
 
@@ -147,6 +148,7 @@ class DashboardController extends Controller
             ->map(function ($activity) {
                 $activity->action = $activity->description;
                 $activity->type_color = $this->getActivityTypeColor($activity->description);
+
                 return $activity;
             });
     }
@@ -154,13 +156,13 @@ class DashboardController extends Controller
     private function getActivityTypeColor($action)
     {
         $colors = [
-            'created'  => 'success',
-            'updated'  => 'primary',
-            'deleted'  => 'danger',
+            'created' => 'success',
+            'updated' => 'primary',
+            'deleted' => 'danger',
             'approved' => 'success',
             'rejected' => 'danger',
-            'login'    => 'blue',
-            'logout'   => 'yellow',
+            'login' => 'blue',
+            'logout' => 'yellow',
         ];
 
         foreach ($colors as $key => $color) {
@@ -185,7 +187,7 @@ class DashboardController extends Controller
     {
         // Attendance trend for last 30 days
         $attendanceTrend = [];
-        $labels          = [];
+        $labels = [];
 
         // Check if we have any employees
         $totalPegawai = Pegawai::whereHas('latestStatusPegawai.statusPegawai', function ($query) {
@@ -193,23 +195,24 @@ class DashboardController extends Controller
         })->count();
 
         for ($i = 29; $i >= 0; $i--) {
-            $date     = now()->subDays($i);
+            $date = now()->subDays($i);
             $labels[] = $date->format('d');
 
             if ($totalPegawai === 0) {
                 $attendanceTrend[] = ['hadir' => 0, 'cuti' => 0, 'izin' => 0];
+
                 continue;
             }
 
             // Simulate attendance data
             $hadir = round($totalPegawai * (rand(80, 95) / 100));
-            $cuti  = round($totalPegawai * (rand(2, 8) / 100));
-            $izin  = round($totalPegawai * (rand(1, 5) / 100));
+            $cuti = round($totalPegawai * (rand(2, 8) / 100));
+            $izin = round($totalPegawai * (rand(1, 5) / 100));
 
             $attendanceTrend[] = [
                 'hadir' => $hadir,
-                'cuti'  => $cuti,
-                'izin'  => $izin,
+                'cuti' => $cuti,
+                'izin' => $izin,
             ];
         }
 
@@ -220,12 +223,12 @@ class DashboardController extends Controller
         $performanceMetrics = $this->getPerformanceMetrics();
 
         return [
-            'attendance_trend'        => [
+            'attendance_trend' => [
                 'labels' => $labels,
-                'data'   => $attendanceTrend,
+                'data' => $attendanceTrend,
             ],
             'department_distribution' => $departmentDistribution,
-            'performance_metrics'     => $performanceMetrics,
+            'performance_metrics' => $performanceMetrics,
         ];
     }
 
@@ -239,8 +242,9 @@ class DashboardController extends Controller
             ->groupBy('latestJabatanStruktural.org_unit_id')
             ->map(function ($group, $orgUnitId) {
                 $unit = \App\Models\Hr\StrukturOrganisasi::find($orgUnitId);
+
                 return (object) [
-                    'name'  => $unit->name ?? 'Unknown',
+                    'name' => $unit->name ?? 'Unknown',
                     'count' => $group->count(),
                 ];
             })
@@ -254,8 +258,8 @@ class DashboardController extends Controller
         // Mock performance data
         return [
             'productivity' => [75, 82, 78, 85, 88, 92, 87, 90, 86, 89],
-            'quality'      => [80, 85, 82, 88, 90, 85, 88, 92, 87, 91],
-            'efficiency'   => [70, 75, 80, 82, 85, 88, 86, 89, 90, 92],
+            'quality' => [80, 85, 82, 88, 90, 85, 88, 92, 87, 91],
+            'efficiency' => [70, 75, 80, 82, 85, 88, 86, 89, 90, 92],
         ];
     }
 
@@ -281,21 +285,21 @@ class DashboardController extends Controller
 
         return [
             'start' => $startDate->copy()->subDays($duration),
-            'end'   => $startDate->copy()->subDay(),
+            'end' => $startDate->copy()->subDay(),
         ];
     }
 
     public function refresh(Request $request)
     {
-        $period    = $request->get('period', 'month');
+        $period = $request->get('period', 'month');
         $startDate = $this->getStartDate($period);
-        $endDate   = now();
+        $endDate = now();
 
-        $stats     = $this->getMainStats($startDate, $endDate);
+        $stats = $this->getMainStats($startDate, $endDate);
         $chartData = $this->getChartData($period);
 
         return response()->json([
-            'stats'     => $stats,
+            'stats' => $stats,
             'chartData' => $chartData,
         ]);
     }

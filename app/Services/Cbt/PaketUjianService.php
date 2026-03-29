@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Cbt;
 
 use App\Models\Cbt\KomposisiPaket;
@@ -16,6 +17,7 @@ class PaketUjianService
     {
         $paket = PaketUjian::create($data);
         logActivity('cbt', "Membuat paket ujian: {$paket->nama_paket}", $paket);
+
         return $paket;
     }
 
@@ -23,12 +25,14 @@ class PaketUjianService
     {
         $paket->update($data);
         logActivity('cbt', "Memperbarui paket ujian: {$paket->nama_paket}", $paket);
+
         return $paket;
     }
 
     public function delete(PaketUjian $paket)
     {
         logActivity('cbt', "Menghapus paket ujian: {$paket->nama_paket}", $paket);
+
         return $paket->delete();
     }
 
@@ -38,12 +42,13 @@ class PaketUjianService
             foreach ($soalIds as $soalId) {
                 KomposisiPaket::firstOrCreate([
                     'paket_id' => $paket->paket_ujian_id,
-                    'soal_id'  => decryptId($soalId),
+                    'soal_id' => decryptId($soalId),
                 ]);
             }
 
             $paket->update(['total_soal' => $paket->komposisi()->count()]);
-            logActivity('cbt', "Menambahkan " . count($soalIds) . " soal ke paket: {$paket->nama_paket}", $paket);
+            logActivity('cbt', 'Menambahkan '.count($soalIds)." soal ke paket: {$paket->nama_paket}", $paket);
+
             return $paket;
         });
     }
@@ -55,6 +60,7 @@ class PaketUjianService
             $komposisi->delete();
             $paket->update(['total_soal' => $paket->komposisi()->count()]);
             logActivity('cbt', "Menghapus soal dari paket: {$paket->nama_paket}", $paket);
+
             return true;
         });
     }

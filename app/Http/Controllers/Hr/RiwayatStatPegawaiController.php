@@ -1,11 +1,10 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\RiwayatStatPegawaiRequest;
 use App\Models\Hr\Pegawai;
-use App\Models\Hr\RiwayatStatPegawai;
-use App\Models\Hr\StatusPegawai;
 use App\Services\Hr\RiwayatStatPegawaiService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -13,8 +12,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class RiwayatStatPegawaiController extends Controller
 {
-    public function __construct(protected RiwayatStatPegawaiService $statPegawaiService)
-    {}
+    public function __construct(protected RiwayatStatPegawaiService $statPegawaiService) {}
 
     public function index()
     {
@@ -23,23 +21,21 @@ class RiwayatStatPegawaiController extends Controller
 
     public function create(Pegawai $pegawai)
     {
-        $statusPegawai = StatusPegawai::where('is_active', 1)->get();
-        return view('pages.hr.pegawai.status-pegawai.create-edit-ajax', compact('hr_pegawai', 'statusPegawai'));
+        $statusPegawai = $this->statPegawaiService->getStatusPegawai();
+
+        return view('pages.hr.pegawai.status-pegawai.create-edit-ajax', compact('pegawai', 'statusPegawai'));
     }
 
     public function store(RiwayatStatPegawaiRequest $request, Pegawai $pegawai)
     {
         $this->statPegawaiService->requestChange($pegawai, $request->validated());
-        return jsonSuccess('Perubahan Status Pegawai berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id) . '#section-kepegawaian');
+
+        return jsonSuccess('Perubahan Status Pegawai berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id).'#section-kepegawaian');
     }
 
     public function data(Request $request)
     {
-        $query = RiwayatStatPegawai::with(['hr_pegawai', 'statusPegawai'])->select('hr_riwayat_statpegawai.*');
-
-        if ($request->has('pegawai_id')) {
-            $query->where('pegawai_id', decryptIdIfEncrypted($request->pegawai_id));
-        }
+        $query = $this->statPegawaiService->getDataQuery($request->all());
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -56,6 +52,7 @@ class RiwayatStatPegawaiController extends Controller
                 if ($row->approval) {
                     return getApprovalStatus($row->approval->status);
                 }
+
                 return '<span class="status status-success"><span class="status-dot"></span> Aktif</span>';
             })
             ->addColumn('action', function ($row) {

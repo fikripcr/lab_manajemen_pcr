@@ -21,6 +21,7 @@
         <x-tabler.form-textarea
             name="isi"
             label="Konten"
+            type="editor"
             id="{{ $pengumuman->exists ? 'isi_edit_modal' : 'isi_modal' }}"
             rows="10"
             :value="old('isi', $pengumuman->isi)"

@@ -23,22 +23,24 @@ use Illuminate\Support\Facades\DB;
 class DokumenSpmiFullSeeder extends Seeder
 {
     private array $standarIndicators = [];
+
     private array $prevIndikators = [];
+
     private IndikatorService $indikatorService;
 
     public function run(): void
     {
         $this->command->info('📊 Starting Dokumen SPMI Full Seeder...');
-        
+
         // Initialize IndikatorService for helper methods
         $this->indikatorService = app(IndikatorService::class);
-        
+
         // Create Label first
         $renopLabel = Label::firstOrCreate(
             ['name' => 'renop'],
             ['color' => 'purple', 'parent_id' => null]
         );
-        
+
         // Seed for 3 periods
         foreach ([2024, 2025, 2026] as $year) {
             $this->command->info("📅 Seeding period {$year}...");
@@ -47,10 +49,10 @@ class DokumenSpmiFullSeeder extends Seeder
             $this->seedStandar($year);
             $this->seedRenopIndicators($year, $renopLabel->label_id);
         }
-        
+
         $this->command->info('✅ Dokumen SPMI Full Seeder completed!');
     }
-    
+
     private function seedPeriode(int $year): void
     {
         PeriodeSpmi::firstOrCreate(['periode' => $year], [
@@ -60,7 +62,7 @@ class DokumenSpmiFullSeeder extends Seeder
             'ami_awal' => now()->setYear($year)->startOfYear()->addMonths(4),
         ]);
     }
-    
+
     private function seedKebijakan(int $year): void
     {
         $items = [
@@ -69,7 +71,7 @@ class DokumenSpmiFullSeeder extends Seeder
                 'poin' => [
                     'Menjadi perguruan tinggi vokasi bereputasi internasional di bidang teknologi dan bisnis',
                     'Menghasilkan lulusan yang kompeten, inovatif, dan berkarakter',
-                ]
+                ],
             ],
             'misi' => [
                 'judul' => 'Misi Politeknik Caltex Riau',
@@ -79,7 +81,7 @@ class DokumenSpmiFullSeeder extends Seeder
                     'Membangun pusat riset terapan dan inovasi teknologi',
                     'Menerapkan sistem tata kelola yang transparan, efisien, dan modern',
                     'Menjalin kemitraan strategis dengan industri dan perguruan tinggi nasional/internasional',
-                ]
+                ],
             ],
             'rjp' => [
                 'judul' => 'Rencana Pembangunan Jangka Panjang (RPJP) 2020-2040',
@@ -88,10 +90,10 @@ class DokumenSpmiFullSeeder extends Seeder
                     'Pengembangan fasilitas pendidikan berstandar industri 4.0',
                     'Penguatan kapasitas SDM dosen dan tenaga kependidikan',
                     'Transformasi digital layanan akademik dan administrasi',
-                ]
+                ],
             ],
             'renstra' => [
-                'judul' => "Rencana Strategis (Renstra) " . ($year) . '-' . ($year + 4),
+                'judul' => 'Rencana Strategis (Renstra) '.($year).'-'.($year + 4),
                 'poin' => [
                     'Peningkatan mutu lulusan melalui kurikulum berbasis OBE',
                     'Modernisasi laboratorium dan sarana praktikum',
@@ -99,18 +101,18 @@ class DokumenSpmiFullSeeder extends Seeder
                     'Penguatan sistem penjaminan mutu internal',
                     'Pengembangan jejaring kemitraan industri dan alumni',
                     'Digitalisasi kampus dan sistem informasi terintegrasi',
-                ]
+                ],
             ],
             'renop' => [
                 'judul' => "Rencana Operasional (Renop) $year",
-                'poin' => [] // RENOP TIDAK PUNYA POIN!
+                'poin' => [], // RENOP TIDAK PUNYA POIN!
             ],
         ];
-        
+
         $kebijakanTypes = array_keys($items);
         $poinMap = [];
         $lastDokId = null;
-        
+
         foreach ($kebijakanTypes as $idx => $jenis) {
             $data = $items[$jenis];
             $dok = Dokumen::create([
@@ -122,33 +124,39 @@ class DokumenSpmiFullSeeder extends Seeder
                 'seq' => $idx + 1,
                 'created_by' => 1,
             ]);
-            
+
             $lastDokId = $dok->dok_id;
             $poinMap[$jenis] = [];
-            
+
             // Skip poin creation for renop
             if ($jenis === 'renop') {
                 continue;
             }
-            
+
             foreach ($data['poin'] as $p => $judul) {
                 $kodePrefix = strtoupper(substr($jenis, 0, 2));
-                if ($jenis === 'renstra') $kodePrefix = 'RS';
-                if ($jenis === 'renop') $kodePrefix = 'RO';
-                if ($jenis === 'rjp') $kodePrefix = 'RP';
-                
+                if ($jenis === 'renstra') {
+                    $kodePrefix = 'RS';
+                }
+                if ($jenis === 'renop') {
+                    $kodePrefix = 'RO';
+                }
+                if ($jenis === 'rjp') {
+                    $kodePrefix = 'RP';
+                }
+
                 $sub = DokSub::create([
                     'dok_id' => $dok->dok_id,
-                    'jenis' => 'poin_' . $jenis,
+                    'jenis' => 'poin_'.$jenis,
                     'judul' => $judul,
-                    'kode' => $kodePrefix . '-' . str_pad($p + 1, 2, '0', STR_PAD_LEFT),
+                    'kode' => $kodePrefix.'-'.str_pad($p + 1, 2, '0', STR_PAD_LEFT),
                     'seq' => $p + 1,
                     'is_hasilkan_indikator' => false,
                     'created_by' => 1,
                 ]);
-                
+
                 $poinMap[$jenis][$p] = $sub;
-                
+
                 // Mapping to previous level
                 if ($idx > 0 && $kebijakanTypes[$idx - 1] !== 'renop') {
                     $prevJenis = $kebijakanTypes[$idx - 1];
@@ -164,7 +172,7 @@ class DokumenSpmiFullSeeder extends Seeder
             }
         }
     }
-    
+
     private function seedStandar(int $year): void
     {
         $standarList = [
@@ -174,7 +182,7 @@ class DokumenSpmiFullSeeder extends Seeder
             'Standar Penilaian Pembelajaran',
             'Standar Dosen dan Tenaga Kependidikan',
         ];
-        
+
         $standarPoints = [
             'Visi, Misi dan Tujuan',
             'Rasional Standar',
@@ -185,7 +193,7 @@ class DokumenSpmiFullSeeder extends Seeder
             'Dokumen Terkait',
             'Referensi',
         ];
-        
+
         $indicatorData = [
             // Standar 0: Kompetensi Lulusan
             [
@@ -215,23 +223,23 @@ class DokumenSpmiFullSeeder extends Seeder
                 ['name' => 'Persentase dosen bersertifikat pendidik', 'target' => '≥ 70%', 'unit' => 'Persen'],
             ],
         ];
-        
+
         // Get org units (assuming they exist from MainSysSeeder)
         $unitIds = DB::table('hr_struktur_organisasi')
             ->where('level', 1) // Unit level 1 (Bagian/Departemen)
             ->limit(10)
             ->pluck('orgunit_id')
             ->toArray();
-        
+
         if (empty($unitIds)) {
-            $this->command->warn("   ⚠ No organizational units found. Skipping unit assignments.");
-            $this->command->warn("   Run MainSysSeeder first to create org units.");
+            $this->command->warn('   ⚠ No organizational units found. Skipping unit assignments.');
+            $this->command->warn('   Run MainSysSeeder first to create org units.');
         } else {
-            $this->command->info("   Using " . count($unitIds) . " organizational units");
+            $this->command->info('   Using '.count($unitIds).' organizational units');
         }
-        
+
         $this->standarIndicators[$year] = [];
-        
+
         foreach ($standarList as $sIdx => $judul) {
             $dok = Dokumen::create([
                 'judul' => $judul,
@@ -239,10 +247,10 @@ class DokumenSpmiFullSeeder extends Seeder
                 'jenis' => 'standar',
                 'level' => 1,
                 'seq' => $sIdx + 1,
-                'kode' => 'STD-' . str_pad($sIdx + 1, 2, '0', STR_PAD_LEFT),
+                'kode' => 'STD-'.str_pad($sIdx + 1, 2, '0', STR_PAD_LEFT),
                 'created_by' => 1,
             ]);
-            
+
             $indikatorSub = null;
             foreach ($standarPoints as $pIdx => $pJudul) {
                 $isIndikatorPoint = ($pIdx === 4);
@@ -250,26 +258,26 @@ class DokumenSpmiFullSeeder extends Seeder
                     'dok_id' => $dok->dok_id,
                     'jenis' => 'poin_standar',
                     'judul' => $pJudul,
-                    'kode' => 'S' . ($sIdx + 1) . '.' . ($pIdx + 1),
+                    'kode' => 'S'.($sIdx + 1).'.'.($pIdx + 1),
                     'seq' => $pIdx + 1,
                     'is_hasilkan_indikator' => $isIndikatorPoint,
                     'created_by' => 1,
                 ]);
-                
+
                 if ($isIndikatorPoint) {
                     $indikatorSub = $sub;
                 }
             }
-            
+
             // Create indicators for this standar
             $this->standarIndicators[$year][$sIdx] = [];
             $baseIndicators = $indicatorData[$sIdx] ?? [];
-            
+
             foreach ($baseIndicators as $iIdx => $indData) {
                 $ind = Indikator::create([
                     'type' => 'standar',
                     'kelompok_indikator' => 'Akademik',
-                    'no_indikator' => 'STD-' . $year . '-' . str_pad(($sIdx + 1) * 100 + $iIdx + 1, 3, '0', STR_PAD_LEFT),
+                    'no_indikator' => 'STD-'.$year.'-'.str_pad(($sIdx + 1) * 100 + $iIdx + 1, 3, '0', STR_PAD_LEFT),
                     'indikator' => $indData['name'],
                     'target' => $indData['target'],
                     'unit_ukuran' => $indData['unit'],
@@ -277,12 +285,12 @@ class DokumenSpmiFullSeeder extends Seeder
                     'seq' => $iIdx + 1,
                     'created_by' => 1,
                 ]);
-                
+
                 // Link to indikator sub (poin 5)
                 $ind->dokSubs()->attach($indikatorSub->doksub_id, ['is_hasilkan_indikator' => true]);
-                
+
                 // Assign to organizational units with targets (if units exist)
-                if (!empty($unitIds)) {
+                if (! empty($unitIds)) {
                     foreach ($unitIds as $unitId) {
                         DB::table('pemutu_indikator_orgunit')->insert([
                             'indikator_id' => $ind->indikator_id,
@@ -293,18 +301,20 @@ class DokumenSpmiFullSeeder extends Seeder
                         ]);
                     }
                 }
-                
+
                 $this->standarIndicators[$year][$sIdx][] = $ind;
             }
         }
-        
-        $this->command->info("   ✓ Created indicators for " . count($standarList) . " standar" . (empty($unitIds) ? "" : " with unit assignments"));
+
+        $this->command->info('   ✓ Created indicators for '.count($standarList).' standar'.(empty($unitIds) ? '' : ' with unit assignments'));
     }
-    
+
     private function seedRenopIndicators(int $year, int $renopLabelId): void
     {
         $renop = Dokumen::where('jenis', 'renop')->where('periode', $year)->first();
-        if (!$renop) return;
+        if (! $renop) {
+            return;
+        }
 
         // RENOP TIDAK PUNYA POIN - langsung indikator dengan label 'renop'
         $renopIndicators = [
@@ -319,7 +329,7 @@ class DokumenSpmiFullSeeder extends Seeder
         foreach ($renopIndicators as $iIdx => $indData) {
             // Use helper to generate proper nomor indikator (YYXXXX format)
             $noIndikator = $this->indikatorService->generateNoIndikator($year);
-            
+
             $ind = Indikator::create([
                 'type' => 'standar', // Renop indicators are standar type with 'renop' label
                 'kelompok_indikator' => 'Akademik',
@@ -331,17 +341,17 @@ class DokumenSpmiFullSeeder extends Seeder
                 'seq' => $iIdx + 1,
                 'created_by' => 1,
             ]);
-            
+
             // Attach to Renop dokumen via dokSubs pivot
             $renopDokSub = DokSub::where('dok_id', $renop->dok_id)->first();
             if ($renopDokSub) {
                 $ind->dokSubs()->attach($renopDokSub->doksub_id, ['is_hasilkan_indikator' => true]);
             }
-            
+
             // Attach 'renop' label (lowercase)
             $ind->labels()->attach($renopLabelId);
         }
 
-        $this->command->info("   ✓ Created " . count($renopIndicators) . " Renop indicators for {$year}");
+        $this->command->info('   ✓ Created '.count($renopIndicators)." Renop indicators for {$year}");
     }
 }

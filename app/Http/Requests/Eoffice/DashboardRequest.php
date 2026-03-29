@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Requests\Eoffice;
 
 use App\Http\Requests\BaseRequest;

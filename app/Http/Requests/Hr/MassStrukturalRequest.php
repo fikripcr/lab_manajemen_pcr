@@ -1,17 +1,17 @@
 <?php
+
 namespace App\Http\Requests\Hr;
 
 use App\Http\Requests\BaseRequest;
 
 class MassStrukturalRequest extends BaseRequest
 {
-
     public function rules()
     {
         return [
             'org_unit_id' => 'required|exists:struktur_organisasi,orgunit_id',
-            'pegawai_id'  => 'required|exists:hr_pegawai,pegawai_id',
-            'no_sk'       => 'nullable|string|max:100',
+            'pegawai_id' => 'required|exists:hr_pegawai,pegawai_id',
+            'no_sk' => 'nullable|string|max:100',
         ];
     }
 
@@ -19,9 +19,9 @@ class MassStrukturalRequest extends BaseRequest
     {
         return [
             'org_unit_id' => 'Unit Organisasi',
-            'pegawai_id'  => 'Pegawai',
-            'tgl_mulai'   => 'Tanggal Mulai',
-            'no_sk'       => 'Nomor SK',
+            'pegawai_id' => 'Pegawai',
+            'tgl_mulai' => 'Tanggal Mulai',
+            'no_sk' => 'Nomor SK',
         ];
     }
 }

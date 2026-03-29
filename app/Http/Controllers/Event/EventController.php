@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Event;
 
 use App\Http\Controllers\Controller;
@@ -10,32 +11,34 @@ use Yajra\DataTables\DataTables;
 
 class EventController extends Controller
 {
-    public function __construct(protected EventService $eventService)
-    {}
+    public function __construct(protected EventService $eventService) {}
 
     public function index()
     {
         $pageTitle = 'Manajemen Kegiatan';
+
         return view('pages.event.kegiatans.index', compact('pageTitle'));
     }
 
     public function data()
     {
         $query = Event::query()->with(['pic']);
+
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('tanggal_info', function ($row) {
                 $mulai = formatTanggalIndo($row->tanggal_mulai);
                 if ($row->tanggal_selesai && $row->tanggal_selesai != $row->tanggal_mulai) {
-                    return $mulai . ' - ' . formatTanggalIndo($row->tanggal_selesai);
+                    return $mulai.' - '.formatTanggalIndo($row->tanggal_selesai);
                 }
+
                 return $mulai;
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('Kegiatan.Kegiatans.edit', $row->hashid),
+                    'editUrl' => route('Kegiatan.Kegiatans.edit', $row->hashid),
                     'editModal' => false,
-                    'viewUrl'   => route('Kegiatan.Kegiatans.show', $row->hashid),
+                    'viewUrl' => route('Kegiatan.Kegiatans.show', $row->hashid),
                     'deleteUrl' => route('Kegiatan.Kegiatans.destroy', $row->hashid),
                 ])->render();
             })
@@ -46,14 +49,16 @@ class EventController extends Controller
     public function create()
     {
         $pageTitle = 'Tambah Kegiatan';
-        $users     = User::all();
-        $kegiatan  = new Event();
+        $users = User::all();
+        $kegiatan = new Event;
+
         return view('pages.event.kegiatans.create-edit', compact('pageTitle', 'users', 'kegiatan'));
     }
 
     public function store(EventRequest $request)
     {
         $this->eventService->store($request->validated());
+
         return jsonSuccess('Kegiatan berhasil disimpan', route('Kegiatan.Kegiatans.index'));
     }
 
@@ -61,25 +66,29 @@ class EventController extends Controller
     {
         $pageTitle = 'Detail Kegiatan';
         $event->load(['pic', 'tamus', 'teams.memberable']);
+
         return view('pages.event.kegiatans.show', compact('pageTitle', 'event'));
     }
 
     public function edit(Event $event)
     {
         $pageTitle = 'Edit Kegiatan';
-        $users     = User::all();
+        $users = User::all();
+
         return view('pages.event.kegiatans.create-edit', compact('pageTitle', 'users', 'event'));
     }
 
     public function update(EventRequest $request, Event $event)
     {
         $this->eventService->update($event, $request->validated());
+
         return jsonSuccess('Kegiatan berhasil diperbarui', route('Kegiatan.Kegiatans.index'));
     }
 
     public function destroy(Event $event)
     {
         $this->eventService->destroy($event);
+
         return jsonSuccess('Kegiatan berhasil dihapus');
     }
 }

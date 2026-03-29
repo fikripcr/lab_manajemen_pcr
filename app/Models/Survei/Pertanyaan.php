@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Survei;
 
 use App\Traits\HashidBinding;
@@ -10,7 +11,9 @@ class Pertanyaan extends Model
     use HasFactory, HashidBinding;
 
     protected $table = 'survei_pertanyaan';
+
     protected $primaryKey = 'pertanyaan_id';
+
     protected $appends = ['encrypted_pertanyaan_id'];
 
     public function getRouteKeyName()

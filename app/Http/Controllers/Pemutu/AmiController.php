@@ -5,12 +5,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\AmiRequest;
 use App\Http\Requests\Pemutu\RtpRequest;
 use App\Http\Requests\Pemutu\TeRequest;
-use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Services\Hr\StrukturOrganisasiService;
-use App\Services\Pemutu\AmiService;
 use App\Services\Pemutu\AmiExportService;
+use App\Services\Pemutu\AmiService;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
@@ -51,24 +50,20 @@ class AmiController extends Controller
         return view('pages.pemutu.ami.index', $data);
     }
 
-
     /**
      * DataTable AJAX: daftar Indikator untuk satu periode yang sudah isi ED.
      * Mengikuti pola ED: query dari Indikator, akses data pivot via orgUnits->first()->pivot.
      */
     public function data(PeriodeSpmi $periode, Request $request)
     {
-        $unitId  = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
-        
-        // SIMPLE LOGIC: If not 'all', add to filters
         $filters = [];
-        foreach ($request->only(['ami_hasil_akhir', 'ed_status', 'dok_id', 'rtp_status']) as $key => $value) {
-            if ($value !== null && $value !== '') {
-                $filters[$key] = $value;
+        foreach ($request->only(['orgunit_id', 'ami_hasil_akhir', 'ed_status', 'dok_id', 'rtp_status']) as $key => $value) {
+            if ($value !== null && $value !== '' && $value !== 'all') {
+                $filters[$key] = ($key === 'orgunit_id' || $key === 'dok_id') ? decryptIdIfEncrypted($value) : $value;
             }
         }
-        
-        $query   = $this->IndikatorService->getUnifiedSpmiQuery($periode, $unitId, $filters);
+
+        $query = $this->IndikatorService->getUnifiedSpmiQuery($periode, $filters);
 
         return datatables()->of($query)
             ->addColumn('no', function ($row) {
@@ -86,39 +81,58 @@ class AmiController extends Controller
             ->addColumn('status_ami', function ($row) {
                 return pemutuDtColStatusAmi($row);
             })
-            ->addColumn('action', function ($row) {
+            ->addColumn('action', function ($row) use ($periode) {
                 $pivot        = $row->orgUnits->first()?->pivot;
                 $indikorgunit = $pivot?->indikorgunit_id;
+                $periodeInfo  = pemutuPeriodeStatus($periode->ami_awal, $periode->ami_akhir);
 
-                return $indikorgunit
-                    ? '<a href="' . route('pemutu.ami.detail', encryptId($indikorgunit)) . '" class="btn btn-sm btn-primary"><i class="ti ti-zoom-scan me-1"></i>Isi</a>'
-                    : '<span class="text-muted small">-</span>';
+                if ($indikorgunit) {
+                    $url = route('pemutu.ami.detail', encryptId($indikorgunit));
+                    if ($periodeInfo['is_active']) {
+                        return '<a href="' . $url . '" class="btn btn-sm btn-primary"><i class="ti ti-edit me-1"></i>Isi</a>';
+                    } else {
+                        return '<a href="' . $url . '?readonly=1" class="btn btn-sm btn-outline-secondary"><i class="ti ti-eye me-1"></i>Detail</a>';
+                    }
+                }
+
+                return '<span class="text-muted small">-</span>';
             })
             ->addColumn('rtp_isi', function ($row) {
                 return $row->orgUnits->first()?->pivot->ami_rtp_isi ?? '<span class="text-muted small">-</span>';
             })
             ->addColumn('rtp_tgl', function ($row) {
                 $tgl = $row->orgUnits->first()?->pivot->ami_rtp_tgl_pelaksanaan;
+
                 return $tgl ? formatTanggalIndo($tgl) : '<span class="text-muted small">-</span>';
             })
             ->addColumn('auditor_recom', function ($row) {
                 return $row->orgUnits->first()?->pivot->ami_hasil_temuan_rekom ?? '<span class="text-muted small">-</span>';
             })
-            ->addColumn('action_rtp', function ($row) {
+            ->addColumn('action_rtp', function ($row) use ($periode) {
                 $pivot = $row->orgUnits->first()?->pivot;
 
                 // Hanya muncul jika hasil AMI adalah KTS (0)
                 if ($pivot?->ami_hasil_akhir === 0) {
                     $indikorgunit = $pivot->indikorgunit_id;
                     $hasRtp       = ! empty($pivot->ami_rtp_isi);
-                    $btnClass     = $hasRtp ? 'btn-outline-warning' : 'btn-warning';
-                    $icon         = $hasRtp ? 'ti-edit' : 'ti-plus';
+                    $periodeInfo  = pemutuPeriodeStatus($periode->ami_awal, $periode->ami_akhir);
 
-                    return '<button class="btn btn-sm ' . $btnClass . ' btn-rtp ajax-modal-btn"
-                        data-url="' . route('pemutu.ami.rtp-edit', encryptId($indikorgunit)) . '"
-                        data-title="Isi Rencana Tindakan Perbaikan (RTP)">
-                        <i class="ti ' . $icon . ' me-1"></i>Isi
-                    </button>';
+                    if ($periodeInfo['is_active']) {
+                        $btnClass = $hasRtp ? 'btn-outline-warning' : 'btn-warning';
+                        $icon     = $hasRtp ? 'ti-edit' : 'ti-plus';
+
+                        return '<button class="btn btn-sm ' . $btnClass . ' btn-rtp ajax-modal-btn"
+                            data-url="' . route('pemutu.ami.rtp-edit', encryptId($indikorgunit)) . '"
+                            data-title="Isi Rencana Tindakan Perbaikan (RTP)">
+                            <i class="ti ' . $icon . ' me-1"></i>Isi
+                        </button>';
+                    } else {
+                        return '<button class="btn btn-sm btn-outline-secondary btn-rtp ajax-modal-btn"
+                            data-url="' . route('pemutu.ami.rtp-edit', encryptId($indikorgunit)) . '?readonly=1"
+                            data-title="Detail RTP">
+                            <i class="ti ti-eye me-1"></i>Detail
+                        </button>';
+                    }
                 }
 
                 return '<span class="text-muted small">-</span>';
@@ -186,14 +200,14 @@ class AmiController extends Controller
             return DataTables::of(collect([]))->make(true);
         }
 
-        $unitId  = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
-        
         // Ambil indikator KTS dari periode tahun lalu
-        $query = $this->IndikatorService->getUnifiedSpmiQuery($prevPeriod, $unitId, [
-            'ami_hasil_akhir' => 0, // KTS
-            'dok_id'          => $request->input('dok_id'),
-            'te_status'       => $request->input('te_status'),
-        ]);
+        $filters = ['ami_hasil_akhir' => 0]; // KTS
+        foreach ($request->only(['unit_id', 'dok_id', 'te_status']) as $key => $value) {
+            if ($value !== null && $value !== '' && $value !== 'all') {
+                $filters[$key] = ($key === 'unit_id' || $key === 'dok_id') ? decryptIdIfEncrypted($value) : $value;
+            }
+        }
+        $query = $this->IndikatorService->getUnifiedSpmiQuery($prevPeriod, $filters);
 
         return DataTables::of($query)
             ->addColumn('no', function ($row) {
@@ -251,8 +265,8 @@ class AmiController extends Controller
      */
     public function exportPtk(Request $request, PeriodeSpmi $periode)
     {
-        $unitId = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
-        $dokId = $request->input('dok_id') ? decryptIdIfEncrypted($request->input('dok_id')) : null;
+        $unitId   = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
+        $dokId    = $request->input('dok_id') ? decryptIdIfEncrypted($request->input('dok_id')) : null;
         $edStatus = $request->input('ed_status');
 
         return $this->AmiExportService->exportPtk($periode, $unitId, $dokId, $edStatus);
@@ -263,11 +277,11 @@ class AmiController extends Controller
      */
     public function exportTemuanAudit(Request $request, PeriodeSpmi $periode)
     {
-        $unitId = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
-        $dokId = $request->input('dok_id') ? decryptIdIfEncrypted($request->input('dok_id')) : null;
+        $unitId   = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
+        $dokId    = $request->input('dok_id') ? decryptIdIfEncrypted($request->input('dok_id')) : null;
         $edStatus = $request->input('ed_status');
 
-        $export = $this->AmiExportService->exportTemuanAudit($periode, $unitId, $dokId, $edStatus);
+        $export   = $this->AmiExportService->exportTemuanAudit($periode, $unitId, $dokId, $edStatus);
         $fileName = 'Temuan_Audit_KTS_' . date('Ymd_His') . '.xlsx';
 
         return Excel::download($export, $fileName);
@@ -278,11 +292,11 @@ class AmiController extends Controller
      */
     public function exportTemuanPositif(Request $request, PeriodeSpmi $periode)
     {
-        $unitId = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
-        $dokId = $request->input('dok_id') ? decryptIdIfEncrypted($request->input('dok_id')) : null;
+        $unitId   = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
+        $dokId    = $request->input('dok_id') ? decryptIdIfEncrypted($request->input('dok_id')) : null;
         $edStatus = $request->input('ed_status');
 
-        $export = $this->AmiExportService->exportTemuanPositif($periode, $unitId, $dokId, $edStatus);
+        $export   = $this->AmiExportService->exportTemuanPositif($periode, $unitId, $dokId, $edStatus);
         $fileName = 'Temuan_Positif_' . date('Ymd_His') . '.xlsx';
 
         return Excel::download($export, $fileName);

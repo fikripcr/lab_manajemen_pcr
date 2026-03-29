@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +20,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PegawaiInfo extends Model
 {
-    protected $table      = 'v_pegawai_info';
+    protected $table = 'v_pegawai_info';
+
     protected $primaryKey = 'pegawai_id';
 
     /**
@@ -34,9 +36,9 @@ class PegawaiInfo extends Model
     {
         parent::boot();
 
-        static::creating(fn() => false);
-        static::updating(fn() => false);
-        static::deleting(fn() => false);
+        static::creating(fn () => false);
+        static::updating(fn () => false);
+        static::deleting(fn () => false);
     }
 
     /**

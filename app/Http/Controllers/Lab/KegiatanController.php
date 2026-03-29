@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
@@ -12,8 +13,7 @@ use Yajra\DataTables\DataTables;
 
 class KegiatanController extends Controller
 {
-    public function __construct(protected KegiatanService $kegiatanService)
-    {}
+    public function __construct(protected KegiatanService $kegiatanService) {}
 
     public function index()
     {
@@ -30,19 +30,20 @@ class KegiatanController extends Controller
                 return $row->lab->name ?? '-';
             })
             ->addColumn('waktu', function ($row) {
-                return $row->tanggal->format('d M Y') . '<br>' .
-                $row->jam_mulai->format('H:i') . ' - ' . $row->jam_selesai->format('H:i');
+                return $row->tanggal->format('d M Y').'<br>'.
+                $row->jam_mulai->format('H:i').' - '.$row->jam_selesai->format('H:i');
             })
             ->editColumn('status', function ($row) {
                 $badges = [
-                    'pending'   => 'warning',
+                    'pending' => 'warning',
                     'tangguhkan' => 'info',
-                    'approved'  => 'success',
-                    'rejected'  => 'danger',
+                    'approved' => 'success',
+                    'rejected' => 'danger',
                     'completed' => 'info',
                 ];
                 $color = $badges[$row->status] ?? 'secondary';
-                return "<span class='status status-{$color}'><span class='status-dot'></span> " . ucfirst($row->status) . "</span>";
+
+                return "<span class='status status-{$color}'><span class='status-dot'></span> ".ucfirst($row->status).'</span>';
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
@@ -55,8 +56,9 @@ class KegiatanController extends Controller
 
     public function create()
     {
-        $labs     = Lab::with('labTeams')->get();
-        $kegiatan = new Kegiatan();
+        $labs = Lab::with('labTeams')->get();
+        $kegiatan = new Kegiatan;
+
         return view('pages.lab.kegiatan.create-edit-ajax', compact('labs', 'kegiatan'));
     }
 
@@ -69,6 +71,7 @@ class KegiatanController extends Controller
         }
 
         $this->kegiatanService->createBooking($data);
+
         return jsonSuccess('Pemnjaman Lab berhasil diajukan');
     }
 
@@ -78,6 +81,7 @@ class KegiatanController extends Controller
             $q->orderBy('created_at', 'desc');
         }]);
         $kegiatan = $id;
+
         return view('pages.lab.kegiatan.show', compact('kegiatan'));
     }
 
@@ -87,6 +91,7 @@ class KegiatanController extends Controller
         // Admin only functionality usually
 
         $this->kegiatanService->updateStatus($kegiatan, $request->status, $request->catatan);
+
         return jsonSuccess('Status updated');
     }
 }

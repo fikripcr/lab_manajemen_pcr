@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Akademik;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MataKuliah extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'akademik_mata_kuliahs';
+    protected $table = 'akademik_mata_kuliahs';
+
     protected $primaryKey = 'mata_kuliah_id';
 
     protected $appends = ['encrypted_mata_kuliah_id'];

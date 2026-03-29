@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
@@ -20,7 +21,7 @@ class PeriodeSpmiController extends Controller
     {
         $pageTitle = 'Periode SPMI';
 
-        $years       = $this->periodeSpmiService->getAvailableYears();
+        $years = $this->periodeSpmiService->getAvailableYears();
         $defaultYear = date('Y');
 
         // Ensure we always have at least the default year in the list
@@ -34,7 +35,7 @@ class PeriodeSpmiController extends Controller
         }
 
         $selectedYear = $request->get('year', $defaultYear);
-        $periodes     = $this->periodeSpmiService->getAll($selectedYear);
+        $periodes = $this->periodeSpmiService->getAll($selectedYear);
 
         return view('pages.pemutu.periode_spmi.index', compact('pageTitle', 'periodes', 'years', 'selectedYear'));
     }
@@ -51,9 +52,9 @@ class PeriodeSpmiController extends Controller
                 }
 
                 $start = \Carbon\Carbon::parse($row->penetapan_awal)->format('d M');
-                $end   = $row->penetapan_akhir ? \Carbon\Carbon::parse($row->penetapan_akhir)->format('d M Y') : '-';
+                $end = $row->penetapan_akhir ? \Carbon\Carbon::parse($row->penetapan_akhir)->format('d M Y') : '-';
 
-                return $start . ($row->penetapan_akhir ? ' - ' . $end : ' ' . \Carbon\Carbon::parse($row->penetapan_awal)->format('Y'));
+                return $start.($row->penetapan_akhir ? ' - '.$end : ' '.\Carbon\Carbon::parse($row->penetapan_awal)->format('Y'));
             })
             ->editColumn('ami_awal', function ($row) {
                 if (! $row->ami_awal) {
@@ -61,13 +62,13 @@ class PeriodeSpmiController extends Controller
                 }
 
                 $start = \Carbon\Carbon::parse($row->ami_awal)->format('d M');
-                $end   = $row->ami_akhir ? \Carbon\Carbon::parse($row->ami_akhir)->format('d M Y') : '-';
+                $end = $row->ami_akhir ? \Carbon\Carbon::parse($row->ami_akhir)->format('d M Y') : '-';
 
-                return $start . ($row->ami_akhir ? ' - ' . $end : ' ' . \Carbon\Carbon::parse($row->ami_awal)->format('Y'));
+                return $start.($row->ami_akhir ? ' - '.$end : ' '.\Carbon\Carbon::parse($row->ami_awal)->format('Y'));
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('pemutu.periode-spmi.edit', $row->encrypted_periodespmi_id),
+                    'editUrl' => route('pemutu.periode-spmi.edit', $row->encrypted_periodespmi_id),
                     'deleteUrl' => route('pemutu.periode-spmi.destroy', $row->encrypted_periodespmi_id),
                 ])->render();
             })
@@ -76,13 +77,15 @@ class PeriodeSpmiController extends Controller
 
     public function create()
     {
-        $periodeSpmi = new PeriodeSpmi();
+        $periodeSpmi = new PeriodeSpmi;
+
         return view('pages.pemutu.periode_spmi.create-edit-ajax', compact('periodeSpmi'));
     }
 
     public function store(PeriodeSpmiRequest $request)
     {
         $this->periodeSpmiService->store($request->validated());
+
         return jsonSuccess('Periode SPMI berhasil ditambahkan', route('pemutu.periode-spmi.index'));
     }
 
@@ -94,12 +97,14 @@ class PeriodeSpmiController extends Controller
     public function update(PeriodeSpmiRequest $request, PeriodeSpmi $periodeSpmi)
     {
         $this->periodeSpmiService->update($periodeSpmi, $request->validated());
+
         return jsonSuccess('Periode SPMI berhasil diperbarui', route('pemutu.periode-spmi.index'));
     }
 
     public function destroy(PeriodeSpmi $periodeSpmi)
     {
         $this->periodeSpmiService->delete($periodeSpmi);
+
         return jsonSuccess('Periode SPMI berhasil dihapus.', route('pemutu.periode-spmi.index'));
     }
 }

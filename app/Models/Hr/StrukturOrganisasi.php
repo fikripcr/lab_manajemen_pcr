@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Models\Hr;
 
-use App\Models\Hr\RiwayatJabStruktural;
 use App\Models\Pemutu\Indikator;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
@@ -11,9 +11,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StrukturOrganisasi extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_struktur_organisasi';
+    protected $table = 'hr_struktur_organisasi';
+
     protected $primaryKey = 'orgunit_id';
 
     protected $appends = ['encrypted_org_unit_id'];
@@ -53,7 +54,8 @@ class StrukturOrganisasi extends Model
     {
         $padding = max(0, ($this->level - 1)) * 3;
         $indent = str_repeat('&nbsp;', $padding);
-        return $indent . $this->name;
+
+        return $indent.$this->name;
     }
 
     // Scopes
@@ -73,7 +75,9 @@ class StrukturOrganisasi extends Model
 
     public function children()
     {
-        return $this->hasMany(StrukturOrganisasi::class, 'parent_id', 'orgunit_id');
+        return $this->hasMany(StrukturOrganisasi::class, 'parent_id', 'orgunit_id')
+            ->orderBy('sort_order')
+            ->orderBy('seq');
     }
 
     public function descendants()
@@ -83,7 +87,10 @@ class StrukturOrganisasi extends Model
 
     public function activeChildren()
     {
-        return $this->hasMany(StrukturOrganisasi::class, 'parent_id', 'orgunit_id')->where('is_active', true);
+        return $this->hasMany(StrukturOrganisasi::class, 'parent_id', 'orgunit_id')
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('seq');
     }
 
     public function personils()

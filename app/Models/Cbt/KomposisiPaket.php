@@ -1,17 +1,19 @@
 <?php
+
 namespace App\Models\Cbt;
 
-use App\Models\Cbt\PaketUjian;
-use App\Models\Cbt\Soal;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Model;
 
 class KomposisiPaket extends Model
 {
     use HashidBinding;
-    protected $table      = 'cbt_komposisi_paket';
+
+    protected $table = 'cbt_komposisi_paket';
+
     protected $primaryKey = 'komposisi_paket_id';
-    protected $appends    = ['encrypted_komposisi_paket_id'];
+
+    protected $appends = ['encrypted_komposisi_paket_id'];
 
     protected $fillable = [
         'paket_id',

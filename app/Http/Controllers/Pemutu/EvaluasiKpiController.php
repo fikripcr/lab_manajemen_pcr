@@ -6,6 +6,7 @@ use App\Http\Requests\Pemutu\EvaluasiKpiRequest;
 use App\Models\Pemutu\IndikatorPegawai;
 use App\Models\Pemutu\PeriodeKpi;
 use App\Services\Pemutu\EvaluasiKpiService;
+use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class EvaluasiKpiController extends Controller
@@ -24,6 +25,7 @@ class EvaluasiKpiController extends Controller
     public function show(PeriodeKpi $periode)
     {
         $user = auth()->user();
+
         return view('pages.pemutu.evaluasi-kpi.show', compact('periode', 'user'));
     }
 
@@ -39,6 +41,7 @@ class EvaluasiKpiController extends Controller
             ->addColumn('indikator_full', function ($row) {
                 $no   = $row->indikator?->no_indikator ?? '-';
                 $nama = $row->indikator?->indikator ?? '-';
+
                 return '<strong>' . $no . '</strong><br>' . $nama;
             })
             ->addColumn('target', function ($row) {
@@ -80,7 +83,7 @@ class EvaluasiKpiController extends Controller
                     data-url="' . route('pemutu.evaluasi-kpi.edit', $row->encrypted_indikator_pegawai_id) . '"
                     data-modal-title="Isi Evaluasi KPI"
                     data-modal-size="modal-xl">
-                    Isi KPI
+                    Isi
                     </button>';
             })
             ->rawColumns(['hr_pegawai', 'indikator_full', 'target', 'capaian', 'file', 'action', 'analisis'])
@@ -119,7 +122,8 @@ class EvaluasiKpiController extends Controller
             $indikatorPegawai->addMedia($file)->toMediaCollection('kpi_attachments');
         }
 
-        logActivity('pemutu', "Mengunggah " . count($request->file('files')) . " file ke Evaluasi KPI ID: {$indikatorPegawai->indikator_pegawai_id}");
+        logActivity('pemutu', 'Mengunggah ' . count($request->file('files')) . " file ke Evaluasi KPI ID: {$indikatorPegawai->indikator_pegawai_id}");
+
         return jsonSuccess('File berhasil diunggah.');
     }
 

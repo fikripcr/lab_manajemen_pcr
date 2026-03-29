@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
@@ -10,12 +11,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class FilePegawaiController extends Controller
 {
-    public function __construct(protected FilePegawaiService $filePegawaiService)
-    {}
+    public function __construct(protected FilePegawaiService $filePegawaiService) {}
 
     public function create(Pegawai $pegawai)
     {
-        return view('pages.hr.pegawai.ajax.upload-file', compact('hr_pegawai'));
+        return view('pages.hr.pegawai.ajax.upload-file', compact('pegawai'));
     }
 
     /**
@@ -24,7 +24,7 @@ class FilePegawaiController extends Controller
     public function index($pegawai_id)
     {
         $pegawaiId = decryptIdIfEncrypted($pegawai_id);
-        $query     = $this->filePegawaiService->getQuery($pegawaiId);
+        $query = $this->filePegawaiService->getQuery($pegawaiId);
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -33,20 +33,22 @@ class FilePegawaiController extends Controller
             })
             ->addColumn('filename', function ($row) {
                 $media = $row->getFirstMedia('file_pegawai');
+
                 return $media ? $media->file_name : '-';
             })
             ->addColumn('size', function ($row) {
                 $media = $row->getFirstMedia('file_pegawai');
+
                 return $media ? formatBytes($media->size) : '-';
             })
             ->addColumn('action', function ($row) {
-                $media       = $row->getFirstMedia('file_pegawai');
-                $downloadBtn = $media ? '<a href="' . $media->getUrl() . '" target="_blank" class="btn btn-sm btn-icon btn-ghost-primary" title="Download"><i class="ti ti-download"></i></a>' : '';
+                $media = $row->getFirstMedia('file_pegawai');
+                $downloadBtn = $media ? '<a href="'.$media->getUrl().'" target="_blank" class="btn btn-sm btn-icon btn-ghost-primary" title="Download"><i class="ti ti-download"></i></a>' : '';
 
                 return '<div class="btn-list justify-content-end">
-                            ' . $downloadBtn . '
+                            '.$downloadBtn.'
                             <button type="button" class="btn btn-sm btn-icon btn-ghost-danger ajax-delete"
-                                data-url="' . route('hr.pegawai.files.destroy', [$row->pegawai->encrypted_pegawai_id, $row->encrypted_filepegawai_id]) . '"
+                                data-url="'.route('hr.pegawai.files.destroy', [$row->pegawai->encrypted_pegawai_id, $row->encrypted_filepegawai_id]).'"
                                 title="Hapus">
                                 <i class="ti ti-trash"></i>
                             </button>
@@ -64,7 +66,7 @@ class FilePegawaiController extends Controller
         $pegawaiId = decryptIdIfEncrypted($request->pegawai_id);
         $this->filePegawaiService->storeFile($pegawaiId, $request->only(['jenisfile_id', 'keterangan']), $request->file('file'));
 
-        return jsonSuccess('File berhasil diunggah', route('hr.pegawai.show', $request->pegawai_id) . '#section-files');
+        return jsonSuccess('File berhasil diunggah', route('hr.pegawai.show', $request->pegawai_id).'#section-files');
     }
 
     /**
@@ -74,6 +76,6 @@ class FilePegawaiController extends Controller
     {
         $this->filePegawaiService->deleteFile($file->filepegawai_id);
 
-        return jsonSuccess('File berhasil dihapus', route('hr.pegawai.show', $file->pegawai->encrypted_pegawai_id) . '#section-files');
+        return jsonSuccess('File berhasil dihapus', route('hr.pegawai.show', $file->pegawai->encrypted_pegawai_id).'#section-files');
     }
 }

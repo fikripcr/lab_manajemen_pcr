@@ -4,14 +4,14 @@
 @section('header')
 <x-tabler.page-header title="Peningkatan Indikator SPMI {{ $siklus['tahun'] }}" pretitle="Peningkatan">
     <x-slot:actions>
-        <div class="nav nav-pills" id="top-tabs" role="tablist">
+        <nav class="nav nav-segmented" id="top-tabs" role="tablist">
             <a href="#tab-akademik" class="nav-link active" data-bs-toggle="tab" role="tab">
-                <i class="ti ti-school me-2"></i>Akademik
+                <i class="ti ti-school"></i>Akademik
             </a>
             <a href="#tab-non-akademik" class="nav-link" data-bs-toggle="tab" role="tab" tabindex="-1">
-                <i class="ti ti-building-community me-2"></i>Non Akademik
+                <i class="ti ti-building-community"></i>Non Akademik
             </a>
-        </div>
+        </nav>
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -58,12 +58,14 @@
                                 <div class="row align-items-center">
                                     <div class="col">
                                         <h3 class="mb-1">Periode {{ $periode->jenis_periode }} {{ $periode->periode }}</h3>
-                                        <div class="text-muted small">
-                                            @if($jadwalTersedia)
-                                                <i class="ti ti-calendar me-1"></i> Jadwal: {{ $periode->peningkatan_awal->format('d M') }} - {{ $periode->peningkatan_akhir->format('d M Y') }}
-                                            @else
-                                                <span class="text-warning"><i class="ti ti-alert-triangle me-1"></i> Jadwal Belum Diatur</span>
+                                        <div class="text-muted small mt-1">
+                                            @php $periodeInfo = pemutuPeriodeStatus($periode->peningkatan_awal, $periode->peningkatan_akhir); @endphp
+                                            @if($periode->peningkatan_awal && $periode->peningkatan_akhir)
+                                                <i class="ti ti-calendar me-1"></i> 
+                                                Jadwal: {{ $periode->peningkatan_awal->format('d M Y') }} s.d. {{ $periode->peningkatan_akhir->format('d M Y') }}
                                             @endif
+                                            <span class="badge bg-{{ $periodeInfo['color'] }}-lt ms-2">{{ $periodeInfo['status_text'] }}</span>
+                                            <span class="text-{{ $periodeInfo['color'] }} ms-1 fw-bold" style="font-size: 0.85em;">({{ $periodeInfo['time_info'] }})</span>
                                         </div>
                                     </div>
                                     <div class="col-auto d-flex gap-2">
@@ -78,7 +80,7 @@
                                     <div class="row g-3">
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="unit_id" id="unit_id_{{ $typeId }}" label="Unit / Area" placeholder="">
-                                                <option value="">Semua Unit</option>
+                                                <option value="all">Semua Unit</option>
                                                 @foreach($units as $unit)
                                                     <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
                                                 @endforeach
@@ -86,7 +88,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="dok_id" id="dok_id_{{ $typeId }}" label="Standar / Dokumen" placeholder="">
-                                                <option value="">Semua Standar</option>
+                                                <option value="all">Semua Standar</option>
                                                 @foreach($rootDoks as $dok)
                                                     <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->judul }}</option>
                                                 @endforeach
@@ -94,7 +96,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="pengend_status" id="pengend_status_{{ $typeId }}" label="Status Thn Lalu" placeholder="">
-                                                <option value="">Semua</option>
+                                                <option value="all">Semua</option>
                                                 <option value="tetap">Tetap</option>
                                                 <option value="penyesuaian">Penyesuaian</option>
                                                 <option value="nonaktif">Nonaktif</option>
@@ -152,9 +154,19 @@
                                     </div>
                                     <h3>Belum Ada RTM Peningkatan</h3>
                                     <p class="text-muted">Buat Rapat Tinjauan Manajemen untuk memulai proses peningkatan periode ini.</p>
+                                    @php 
+                                        $rtmAgendas = 'Rangkuman,Penggunaan Budget';
+                                        $rtmUrl = route('Kegiatan.rapat.create', [
+                                            'jenis_rapat' => 'RTM Peningkatan',
+                                            'entitas_type' => 'PeriodeSpmi',
+                                            'entitas_id' => $periode->encrypted_periodespmi_id,
+                                            'pre_agendas' => $rtmAgendas
+                                        ]);
+                                    @endphp
                                     <x-tabler.button type="create" class="ajax-modal-btn"
-                                        data-url="{{ route('pemutu.peningkatan.rtm.create', $periode->encrypted_periodespmi_id) }}"
+                                        data-url="{{ $rtmUrl }}"
                                         data-modal-title="Buat RTM Peningkatan"
+                                        data-modal-size="modal-xl"
                                         text="Buat RTM" />
                                 </x-tabler.card-body>
                             @else

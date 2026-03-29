@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StatusAktifitas extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_status_aktifitas';
+    protected $table = 'hr_status_aktifitas';
+
     protected $primaryKey = 'statusaktifitas_id';
 
     protected $appends = ['encrypted_statusaktifitas_id'];
@@ -38,5 +40,4 @@ class StatusAktifitas extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
@@ -11,8 +12,7 @@ use Yajra\DataTables\DataTables;
 
 class LogPenggunaanPcController extends Controller
 {
-    public function __construct(protected LogPenggunaanPcService $logPenggunaanPcService)
-    {}
+    public function __construct(protected LogPenggunaanPcService $logPenggunaanPcService) {}
 
     /**
      * Display listing (Monitoring)
@@ -29,11 +29,12 @@ class LogPenggunaanPcController extends Controller
         return DataTables::of($logs)
             ->addIndexColumn()
             ->addColumn('akademik_mahasiswa', function ($log) {
-                return $log->user->name . '<br><small class="text-muted">' . $log->user->username . '</small>';
+                return $log->user->name.'<br><small class="text-muted">'.$log->user->username.'</small>';
             })
             ->addColumn('pc_info', function ($log) {
                 $nomor = $log->pcAssignment ? $log->pcAssignment->nomor_pc : '?';
-                $lab   = $log->lab ? $log->lab->name : '?';
+                $lab = $log->lab ? $log->lab->name : '?';
+
                 return "PC {$nomor} <br><small>{$lab}</small>";
             })
             ->addColumn('waktu', function ($log) {
@@ -41,6 +42,7 @@ class LogPenggunaanPcController extends Controller
             })
             ->addColumn('kondisi', function ($log) {
                 $color = $log->status_pc == 'Baik' ? 'success' : 'danger';
+
                 return "<span class='badge bg-{$color}'>{$log->status_pc}</span><br><small>{$log->catatan_umum}</small>";
             })
             ->rawColumns(['akademik_mahasiswa', 'pc_info', 'kondisi'])
@@ -60,7 +62,8 @@ class LogPenggunaanPcController extends Controller
             $assignment = $this->logPenggunaanPcService->getAssignmentForUser(Auth::id(), $activeJadwal->jadwal_kuliah_id);
         }
 
-        $log = new LogPenggunaanPc();
+        $log = new LogPenggunaanPc;
+
         return view('pages.lab.log-pc.create-edit-ajax', compact('activeJadwal', 'assignment', 'log'));
     }
 
@@ -69,7 +72,7 @@ class LogPenggunaanPcController extends Controller
      */
     public function store(LogPenggunaanPcRequest $request)
     {
-        $data            = $request->all();
+        $data = $request->all();
         $data['user_id'] = Auth::id();
 
         $this->logPenggunaanPcService->storeLog($data);

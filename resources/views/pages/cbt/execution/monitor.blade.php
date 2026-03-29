@@ -73,7 +73,7 @@
                                     </div>
                                     <div class="col">
                                         <div class="font-weight-medium">Total Pelanggaran</div>
-                                        <div class="text-muted">{{ \App\Models\Cbt\LogPelanggaran::whereIn('riwayat_id', $jadwal->riwayatSiswa->pluck('id'))->count() }} Kejadian</div>
+                                        <div class="text-muted">{{ $totalPelanggaran }} Kejadian</div>
                                     </div>
                                 </div>
                             </x-tabler.card-body>

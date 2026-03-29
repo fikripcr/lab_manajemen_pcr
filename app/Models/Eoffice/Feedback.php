@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Eoffice;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Feedback extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'eoffice_feedback';
+    protected $table = 'eoffice_feedback';
+
     protected $primaryKey = 'feedback_id';
 
     protected $appends = ['encrypted_feedback_id'];

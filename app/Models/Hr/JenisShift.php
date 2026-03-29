@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JenisShift extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_jenis_shift';
+    protected $table = 'hr_jenis_shift';
+
     protected $primaryKey = 'jenis_shift_id';
 
     protected $appends = ['encrypted_jenis_shift_id'];
@@ -39,5 +41,4 @@ class JenisShift extends Model
         'updated_by', 'deleted_by',
 
     ];
-
 }

@@ -1,14 +1,70 @@
 <?php
+
 namespace App\Services\Hr;
 
-use App\Models\Hr\RiwayatJabStruktural;
 use App\Models\Hr\Pegawai;
+use App\Models\Hr\RiwayatJabStruktural;
+use App\Models\Hr\StrukturOrganisasi;
 use Illuminate\Support\Facades\DB;
 
 class RiwayatStrukturalService
 {
-    public function __construct(protected ApprovalService $approvalService)
-    {}
+    public function __construct(protected ApprovalService $approvalService) {}
+
+    /**
+     * Data unit untuk dropdown struktural
+     */
+    public function getStrukturalUnits(array|string $types = ['jabatan_struktural', 'departemen', 'prodi'])
+    {
+        $types = (array) $types;
+
+        return StrukturOrganisasi::whereIn('type', $types)
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get();
+    }
+
+    /**
+     * Data unit parent untuk dropdown mass index
+     */
+    public function getMassStrukturalUnits()
+    {
+        return StrukturOrganisasi::with('children')
+            ->whereNull('parent_id')
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get();
+    }
+
+    /**
+     * Data unit dan riwayat pegawainya
+     */
+    public function getMassAssignments($unitId)
+    {
+        $unit = StrukturOrganisasi::findOrFail($unitId);
+        $assignments = RiwayatJabStruktural::with('hr_pegawai')
+            ->where('org_unit_id', $unitId)
+            ->orderByDesc('tgl_awal')
+            ->get();
+
+        return compact('unit', 'assignments');
+    }
+
+    /**
+     * Base query for DataTables
+     */
+    public function getDataQuery($filters = [])
+    {
+        $query = RiwayatJabStruktural::with(['hr_pegawai', 'orgUnit'])->select('hr_riwayat_jabstruktural.*');
+
+        if (! empty($filters['pegawai_id'])) {
+            $query->where('pegawai_id', decryptIdIfEncrypted($filters['pegawai_id']));
+        }
+
+        return $query;
+    }
 
     /**
      * Request a NEW Struktural assignment (Status: Pending).
@@ -48,7 +104,7 @@ class RiwayatStrukturalService
                 unset($newData['created_at'], $newData['updated_at'], $newData['deleted_at'], $newData['latest_riwayatapproval_id']);
 
                 $newData['before_id'] = $existingModel->riwayatjabstruktural_id;
-                $data                 = $newData;
+                $data = $newData;
             }
 
             $data['pegawai_id'] = $pegawai->pegawai_id;
@@ -80,7 +136,7 @@ class RiwayatStrukturalService
             $approval = $this->approvalService->processApproval($approvalId, $status, $reason);
 
             // 2. Resolve history and pegawai
-            $model   = RiwayatJabStruktural::findOrFail($approval->model_id);
+            $model = RiwayatJabStruktural::findOrFail($approval->model_id);
             $pegawai = Pegawai::findOrFail($model->pegawai_id);
 
             // 3. Always update the latest pointer on pegawai house regardless of status (as requested)
@@ -100,6 +156,7 @@ class RiwayatStrukturalService
         return DB::transaction(function () use ($struktural, $tglAkhir) {
             $updated = $struktural->update(['tgl_akhir' => $tglAkhir]);
             logActivity('hr', "Mengakhiri struktural untuk pegawai: {$struktural->pegawai->nama}", $struktural->pegawai);
+
             return $updated;
         });
     }
@@ -123,6 +180,25 @@ class RiwayatStrukturalService
             logActivity('hr', "Menghapus data struktural untuk pegawai: {$pegawai->nama}", $pegawai);
 
             return true;
+        });
+    }
+
+    /**
+     * Tambah Struktural Massal (Direct - Tanpa Approval)
+     */
+    public function addStruktural(Pegawai $pegawai, array $data)
+    {
+        return DB::transaction(function () use ($pegawai, $data) {
+            $data['pegawai_id'] = $pegawai->pegawai_id;
+
+            $riwayat = RiwayatJabStruktural::create($data);
+
+            // Re-point pegawai latest struktural
+            $pegawai->update(['latest_riwayatjabstruktural_id' => $riwayat->riwayatjabstruktural_id]);
+
+            logActivity('hr', "Penambahan massal jabatan struktural untuk: {$pegawai->nama}", $pegawai);
+
+            return $riwayat;
         });
     }
 }

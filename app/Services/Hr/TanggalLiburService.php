@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Hr;
 
 use App\Models\Hr\TanggalLibur;
@@ -9,7 +10,6 @@ class TanggalLiburService
     /**
      * Store multiple Tanggal Libur records from batch input.
      *
-     * @param array $data
      * @return int Count of created records
      */
     public function createBatch(array $data): int
@@ -24,8 +24,8 @@ class TanggalLiburService
 
                 foreach ($dates as $dateStr) {
                     TanggalLibur::create([
-                        'tgl_libur'  => trim($dateStr),
-                        'tahun'      => $tahun,
+                        'tgl_libur' => trim($dateStr),
+                        'tahun' => $tahun,
                         'keterangan' => $entry['keterangan'],
                     ]);
                     $count++;

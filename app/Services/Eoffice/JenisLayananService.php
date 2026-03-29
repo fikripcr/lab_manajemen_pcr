@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Eoffice;
 
 use App\Models\Eoffice\JenisLayanan;
@@ -34,6 +35,7 @@ class JenisLayananService
 
         $jl = JenisLayanan::create($data);
         logActivity('eoffice_master', "Menambahkan jenis layanan baru: {$jl->nama_layanan}");
+
         return $jl;
     }
 
@@ -58,6 +60,7 @@ class JenisLayananService
 
         $jl->update($data);
         logActivity('eoffice_master', "Memperbarui jenis layanan: {$jl->nama_layanan}");
+
         return $jl;
     }
 
@@ -76,8 +79,9 @@ class JenisLayananService
     {
         return DB::transaction(function () use ($id, $data) {
             $data['jenislayanan_id'] = $id;
-            $pic                     = JenisLayananPic::create($data);
-            logActivity('eoffice_master', "Menambahkan PIC untuk layanan: " . ($pic->jenisLayanan->nama_layanan ?? $id));
+            $pic = JenisLayananPic::create($data);
+            logActivity('eoffice_master', 'Menambahkan PIC untuk layanan: '.($pic->jenisLayanan->nama_layanan ?? $id));
+
             return $pic;
         });
     }
@@ -87,11 +91,12 @@ class JenisLayananService
      */
     public function deletePic($picId)
     {
-        $pic  = JenisLayananPic::findOrFail($picId);
+        $pic = JenisLayananPic::findOrFail($picId);
         $nama = $pic->user->name ?? $picId;
-        $jl   = $pic->jenisLayanan->nama_layanan ?? 'Unknown';
+        $jl = $pic->jenisLayanan->nama_layanan ?? 'Unknown';
         $pic->delete();
         logActivity('eoffice_master', "Menghapus PIC '{$nama}' dari layanan: {$jl}");
+
         return true;
     }
 
@@ -102,8 +107,9 @@ class JenisLayananService
     {
         return DB::transaction(function () use ($id, $data) {
             $data['jenislayanan_id'] = $id;
-            $isian                   = JenisLayananIsian::create($data);
-            logActivity('eoffice_master', "Menambahkan field isian '{$isian->kategoriIsian->nama_isian}' untuk layanan: " . ($isian->jenisLayanan->nama_layanan ?? $id));
+            $isian = JenisLayananIsian::create($data);
+            logActivity('eoffice_master', "Menambahkan field isian '{$isian->kategoriIsian->nama_isian}' untuk layanan: ".($isian->jenisLayanan->nama_layanan ?? $id));
+
             return $isian;
         });
     }
@@ -114,10 +120,11 @@ class JenisLayananService
     public function deleteIsian($isianId)
     {
         $isian = JenisLayananIsian::findOrFail($isianId);
-        $nama  = $isian->kategoriIsian->nama_isian ?? $isianId;
-        $jl    = $isian->jenisLayanan->nama_layanan ?? 'Unknown';
+        $nama = $isian->kategoriIsian->nama_isian ?? $isianId;
+        $jl = $isian->jenisLayanan->nama_layanan ?? 'Unknown';
         $isian->delete();
         logActivity('eoffice_master', "Menghapus field isian '{$nama}' dari layanan: {$jl}");
+
         return true;
     }
 
@@ -129,6 +136,7 @@ class JenisLayananService
         $isian = JenisLayananIsian::findOrFail($isianId);
         $isian->update($data);
         logActivity('eoffice_master', "Memperbarui konfigurasi field '{$isian->kategoriIsian->nama_isian}' untuk layanan: {$isian->jenisLayanan->nama_layanan}");
+
         return $isian;
     }
 
@@ -141,7 +149,8 @@ class JenisLayananService
             foreach ($sequences as $item) {
                 JenisLayananIsian::where('jenislayananisian_id', $item['id'])->update(['seq' => $item['seq']]);
             }
-            logActivity('eoffice_master', "Memperbarui urutan field isian layanan.");
+            logActivity('eoffice_master', 'Memperbarui urutan field isian layanan.');
+
             return true;
         });
     }

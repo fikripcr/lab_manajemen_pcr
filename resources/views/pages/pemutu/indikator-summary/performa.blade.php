@@ -6,7 +6,7 @@
         <x-tabler.card-header>
             <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
                 <h3 class="card-title mb-0">List Indikator Performa (KPI)</h3>
-                <div class="ms-auto d-flex flex-wrap gap-2">
+                <div class="d-flex flex-wrap gap-2">
                     <x-tabler.datatable-page-length dataTableId="table-performa" />
                     <x-tabler.datatable-search dataTableId="table-performa" />
                     
@@ -21,14 +21,14 @@
                     <div class="row g-3">
                         <div class="col-md-3">
                             <x-tabler.form-select name="kelompok_indikator" label="Kelompok" placeholder="">
-                                <option value="">Semua Kelompok</option>
+                                <option value="all">Semua Kelompok</option>
                                 <option value="Akademik">Akademik</option>
                                 <option value="Non Akademik">Non Akademik</option>
                             </x-tabler.form-select>
                         </div>
                         <div class="col-md-3">
                             <x-tabler.form-select name="pegawai_id" id="performa-filter-pegawai" label="Pegawai" placeholder="">
-                                <option value="">Semua Pegawai</option>
+                                <option value="all">Semua Pegawai</option>
                                 @foreach($pegawais as $pegawai)
                                     <option value="{{ $pegawai->pegawai_id }}">{{ $pegawai->nama }}</option>
                                 @endforeach
@@ -36,7 +36,7 @@
                         </div>
                         <div class="col-md-3">
                             <x-tabler.form-select name="unit_id" id="performa-filter-unit" label="Unit" placeholder="">
-                                <option value="">Semua Unit</option>
+                                <option value="all">Semua Unit</option>
                                 @foreach($units as $unit)
                                     <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
                                 @endforeach

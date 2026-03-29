@@ -1,18 +1,20 @@
 <?php
+
 namespace App\Models\Lab;
 
+use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\User;
 
 class LaporanKerusakan extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'lab_laporan_kerusakan';
+    protected $table = 'lab_laporan_kerusakan';
+
     protected $primaryKey = 'laporan_kerusakan_id';
 
     protected $appends = ['encrypted_laporan_kerusakan_id'];

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Pemutu;
 
 use App\Traits\Blameable;
@@ -9,16 +10,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PeriodeKpi extends Model
 {
-    use HasFactory, Blameable, HashidBinding, SoftDeletes;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'pemutu_periode_kpi';
+    protected $table = 'pemutu_periode_kpi';
+
     protected $primaryKey = 'periode_kpi_id';
-    protected $appends    = ['encrypted_periode_kpi_id'];
+
+    protected $appends = ['encrypted_periode_kpi_id'];
 
     public function getRouteKeyName()
     {
         return 'periode_kpi_id';
     }
+
     protected $fillable = [
         'nama',
         'tahun',
@@ -31,9 +35,9 @@ class PeriodeKpi extends Model
     ];
 
     protected $casts = [
-        'tanggal_mulai'   => 'date',
+        'tanggal_mulai' => 'date',
         'tanggal_selesai' => 'date',
-        'is_active'       => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     public function getEncryptedPeriodeKpiIdAttribute()

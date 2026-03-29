@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Cms;
 
 use App\Models\Cms\Slideshow;
@@ -72,7 +73,7 @@ class SlideshowService
                 }
             }
 
-            logActivity('slideshow_management', "Memperbarui urutan slideshow");
+            logActivity('slideshow_management', 'Memperbarui urutan slideshow');
 
             return true;
         });

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
@@ -12,8 +13,7 @@ use Yajra\DataTables\DataTables;
 
 class InventarisController extends Controller
 {
-    public function __construct(protected InventarisService $inventarisService)
-    {}
+    public function __construct(protected InventarisService $inventarisService) {}
 
     /**
      * Display a listing of the resource.
@@ -34,10 +34,10 @@ class InventarisController extends Controller
         return DataTables::of($inventaris)
             ->addIndexColumn()
             ->editColumn('nama_alat', function ($item) {
-                return '<span class="fw-medium">' . $item->nama_alat . '</span>';
+                return '<span class="fw-medium">'.$item->nama_alat.'</span>';
             })
             ->editColumn('jenis_alat', function ($item) {
-                return '<span class="badge bg-label-info me-1">' . $item->jenis_alat . '</span>';
+                return '<span class="badge bg-label-info me-1">'.$item->jenis_alat.'</span>';
             })
             ->editColumn('kondisi_terakhir', function ($item) {
                 return labConditionBadge($item->kondisi_terakhir);
@@ -47,9 +47,10 @@ class InventarisController extends Controller
             })
             ->addColumn('action', function ($item) {
                 $encryptedId = encryptId($item->inventaris_id);
+
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('lab.inventaris.edit', $encryptedId),
-                    'viewUrl'   => route('lab.inventaris.show', $encryptedId),
+                    'editUrl' => route('lab.inventaris.edit', $encryptedId),
+                    'viewUrl' => route('lab.inventaris.show', $encryptedId),
                     'deleteUrl' => route('lab.inventaris.destroy', $encryptedId),
                 ])->render();
             })
@@ -62,8 +63,9 @@ class InventarisController extends Controller
      */
     public function create()
     {
-        $labs       = Lab::with('labTeams')->get();
-        $inventaris = new Inventaris();
+        $labs = Lab::with('labTeams')->get();
+        $inventaris = new Inventaris;
+
         return view('pages.lab.inventaris.create-edit-ajax', compact('labs', 'inventaris'));
     }
 
@@ -73,6 +75,7 @@ class InventarisController extends Controller
     public function store(InventarisRequest $request)
     {
         $this->inventarisService->createInventaris($request->validated());
+
         return jsonSuccess('Inventaris berhasil dibuat.', route('lab.inventaris.index'));
     }
 
@@ -90,6 +93,7 @@ class InventarisController extends Controller
     public function edit(Inventaris $inventaris)
     {
         $labs = Lab::with('labTeams')->get();
+
         return view('pages.lab.inventaris.create-edit-ajax', compact('inventaris', 'labs'));
     }
 
@@ -99,6 +103,7 @@ class InventarisController extends Controller
     public function update(InventarisRequest $request, Inventaris $inventaris)
     {
         $this->inventarisService->updateInventaris($inventaris, $request->validated());
+
         return jsonSuccess('Inventaris berhasil diperbarui.', route('lab.inventaris.index'));
     }
 
@@ -108,6 +113,7 @@ class InventarisController extends Controller
     public function destroy(Inventaris $inventaris)
     {
         $this->inventarisService->deleteInventaris($inventaris);
+
         return jsonSuccess('Inventaris berhasil dihapus.', route('lab.inventaris.index'));
     }
 
@@ -118,14 +124,14 @@ class InventarisController extends Controller
     {
         // Extract filters from request (matching the DataTables filters)
         $filters = [
-            'search'    => $request->get('search'),
+            'search' => $request->get('search'),
             'condition' => $request->get('condition'),
-            'lab_id'    => $request->get('lab_id'),
+            'lab_id' => $request->get('lab_id'),
         ];
         $columns = $request->get('columns', ['id', 'nama_alat', 'jenis_alat', 'kondisi_terakhir', 'tanggal_pengecekan', 'lab_name']);
 
         $export = $this->inventarisService->exportInventaris($filters, $columns);
 
-        return Excel::download($export, 'inventory_' . date('Y-m-d_H-i-s') . '.xlsx');
+        return Excel::download($export, 'inventory_'.date('Y-m-d_H-i-s').'.xlsx');
     }
 }

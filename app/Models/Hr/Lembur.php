@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -11,9 +12,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Lembur extends Model
 {
-    use SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_lembur';
+    protected $table = 'hr_lembur';
+
     protected $primaryKey = 'lembur_id';
 
     protected $fillable = [
@@ -30,9 +32,9 @@ class Lembur extends Model
 
     protected $casts = [
         'tgl_pelaksanaan' => 'date',
-        'jam_mulai'       => 'datetime:H:i',
-        'jam_selesai'     => 'datetime:H:i',
-        'durasi_menit'    => 'integer',
+        'jam_mulai' => 'datetime:H:i',
+        'jam_selesai' => 'datetime:H:i',
+        'durasi_menit' => 'integer',
     ];
 
     protected $appends = ['encrypted_lembur_id'];
@@ -56,8 +58,8 @@ class Lembur extends Model
 
         static::saving(function ($lembur) {
             if ($lembur->jam_mulai && $lembur->jam_selesai) {
-                $mulai                = Carbon::parse($lembur->jam_mulai);
-                $selesai              = Carbon::parse($lembur->jam_selesai);
+                $mulai = Carbon::parse($lembur->jam_mulai);
+                $selesai = Carbon::parse($lembur->jam_selesai);
                 $lembur->durasi_menit = $selesai->diffInMinutes($mulai);
             }
         });
@@ -127,10 +129,9 @@ class Lembur extends Model
         if (! $this->latestApproval) {
             return 'pending';
         }
+
         return $this->latestApproval->status ?? 'pending';
     }
-
-
 
     /**
      * Scope untuk filter by status approval

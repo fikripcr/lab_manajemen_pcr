@@ -12,9 +12,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProjectPhase extends Model
 {
-    use HasFactory, SoftDeletes, HashidBinding, Blameable;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
     protected $table = 'pr_project_phases';
+
     protected $primaryKey = 'project_phase_id';
 
     protected $fillable = [
@@ -30,7 +31,7 @@ class ProjectPhase extends Model
 
     protected $casts = [
         'start_date' => 'date',
-        'end_date'   => 'date',
+        'end_date' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',

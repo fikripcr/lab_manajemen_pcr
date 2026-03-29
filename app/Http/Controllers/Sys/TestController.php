@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Sys;
 
 use App\Exports\Sys\ActivityLogExport;
@@ -41,9 +42,9 @@ class TestController extends Controller
             }
         );
 
-        logActivity('test_dashboard', 'Test email sent successfully to ' . $user->email, $user);
+        logActivity('test_dashboard', 'Test email sent successfully to '.$user->email, $user);
 
-        return jsonSuccess('Test email sent successfully to ' . $user->email);
+        return jsonSuccess('Test email sent successfully to '.$user->email);
     }
 
     public function testNotification(Request $request)
@@ -51,11 +52,11 @@ class TestController extends Controller
         $user = auth()->user();
 
         // Send the test notification to the user using the existing TestNotification class
-        $user->notify(new SysTestNotification());
+        $user->notify(new SysTestNotification);
 
-        logActivity('test_dashboard', 'Test notification sent successfully to ' . $user->name, $user);
+        logActivity('test_dashboard', 'Test notification sent successfully to '.$user->name, $user);
 
-        return jsonSuccess('Test notification sent successfully to ' . $user->name);
+        return jsonSuccess('Test notification sent successfully to '.$user->name);
     }
 
     public function testPdfExport(Request $request)
@@ -76,25 +77,25 @@ class TestController extends Controller
 
         // Generate QR code as PNG using BaconQrCode
         $renderer = new GDLibRenderer(400);
-        $writer   = new Writer($renderer);
-        $pngData  = $writer->writeString('test'); // ini string biner
-                                                  // Encode ke base64 untuk embed di HTML
+        $writer = new Writer($renderer);
+        $pngData = $writer->writeString('test'); // ini string biner
+        // Encode ke base64 untuk embed di HTML
         $base64Image = base64_encode($pngData);
 
         $data = [
-            'user'           => $user,
-            'errorLogs'      => $errorLogs,
-            'activityLogs'   => $activityLogs,
+            'user' => $user,
+            'errorLogs' => $errorLogs,
+            'activityLogs' => $activityLogs,
             'monitoringLogs' => $monitoringLogs,
-            'qrcode'         => $base64Image,
-            'reportDate'     => now()->format('d M Y H:i'),
+            'qrcode' => $base64Image,
+            'reportDate' => now()->format('d M Y H:i'),
         ];
 
         $pdf = Pdf::loadView('pages.sys.test.test-pdf-with-qrcode', $data);
 
-        logActivity('test_dashboard', 'Test PDF export generated successfully by ' . $user->name, $user);
+        logActivity('test_dashboard', 'Test PDF export generated successfully by '.$user->name, $user);
 
-        return $pdf->download('test-report-' . now()->format('Y-m-d-H-i') . '.pdf');
+        return $pdf->download('test-report-'.now()->format('Y-m-d-H-i').'.pdf');
     }
 
     public function testExcelExport(Request $request)
@@ -102,10 +103,10 @@ class TestController extends Controller
         $user = auth()->user();
 
         // Just export the Activity Logs as a simple Excel file
-        $fileName = 'activity-logs-' . now()->format('Y-m-d-H-i') . '.xlsx';
+        $fileName = 'activity-logs-'.now()->format('Y-m-d-H-i').'.xlsx';
 
         return Excel::download(
-            new ActivityLogExport(),
+            new ActivityLogExport,
             $fileName
         );
     }
@@ -127,15 +128,15 @@ class TestController extends Controller
         $monitoringLogs = ServerMonitorCheck::orderBy('created_at', 'desc')->limit(10)->get();
 
         $data = [
-            'user'           => $user,
-            'errorLogs'      => $errorLogs,
-            'activityLogs'   => $activityLogs,
+            'user' => $user,
+            'errorLogs' => $errorLogs,
+            'activityLogs' => $activityLogs,
             'monitoringLogs' => $monitoringLogs,
-            'reportDate'     => now()->format('d M Y H:i'),
+            'reportDate' => now()->format('d M Y H:i'),
         ];
 
         // Create a new Word document
-        $phpWord = new PhpWord();
+        $phpWord = new PhpWord;
         $section = $phpWord->addSection();
 
         // Add header
@@ -144,7 +145,7 @@ class TestController extends Controller
             'size' => 16,
         ]);
         $section->addTextBreak(1);
-        $section->addText('Tanggal: ' . $data['reportDate']);
+        $section->addText('Tanggal: '.$data['reportDate']);
 
         // Add error logs
         $section->addTextBreak(1);
@@ -232,19 +233,19 @@ class TestController extends Controller
             mkdir($tempDir, 0755, true);
         }
 
-        $qrCodePath = $tempDir . '/qrcode_' . uniqid() . '.png';
+        $qrCodePath = $tempDir.'/qrcode_'.uniqid().'.png';
 
         // Generate QR code as PNG using BaconQrCode (consistent with other methods)
         $renderer = new GDLibRenderer(200);
-        $writer   = new Writer($renderer);
+        $writer = new Writer($renderer);
         $writer->writeFile($qrCodeText, $qrCodePath);
 
         // Verify if QR code file was generated before adding to document
         if (file_exists($qrCodePath)) {
             // Add QR code image to document
             $section->addImage($qrCodePath, [
-                'width'     => 150,
-                'height'    => 150,
+                'width' => 150,
+                'height' => 150,
                 'alignment' => Jc::CENTER,
             ]);
         } else {
@@ -252,16 +253,16 @@ class TestController extends Controller
             $section->addText('QR Code could not be generated.', ['italic' => true]);
         }
 
-        $section->addText('Kode QR ini berisi URL ke halaman Test Features: ' . $qrCodeText);
+        $section->addText('Kode QR ini berisi URL ke halaman Test Features: '.$qrCodeText);
 
         // Add footer
         $section->addTextBreak(2);
-        $section->addText('Dokumen ini dibuat secara otomatis oleh sistem pada ' . now()->format('d M Y H:i:s'));
-        $section->addText('Generated by ' . $user->name . ' (' . $user->email . ')');
+        $section->addText('Dokumen ini dibuat secara otomatis oleh sistem pada '.now()->format('d M Y H:i:s'));
+        $section->addText('Generated by '.$user->name.' ('.$user->email.')');
 
         // Save the document temporarily
-        $fileName = 'test-report-' . now()->format('Y-m-d-H-i') . '.docx';
-        $filePath = storage_path('app/' . $fileName);
+        $fileName = 'test-report-'.now()->format('Y-m-d-H-i').'.docx';
+        $filePath = storage_path('app/'.$fileName);
 
         $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
         $objWriter->save($filePath);
@@ -271,7 +272,7 @@ class TestController extends Controller
             unlink($qrCodePath);
         }
 
-        logActivity('test_dashboard', 'Test Word export generated successfully by ' . $user->name, $user);
+        logActivity('test_dashboard', 'Test Word export generated successfully by '.$user->name, $user);
 
         return response()->download($filePath)->deleteFileAfterSend(true);
     }
@@ -289,7 +290,7 @@ class TestController extends Controller
         // Generate QR code as SVG text
         $renderer = new ImageRenderer(
             new RendererStyle($size),
-            new SvgImageBackEnd()
+            new SvgImageBackEnd
         );
         $qrCodeSvgValue = $renderer->render($text);
 
@@ -312,8 +313,8 @@ class TestController extends Controller
         $size = $request->input('size', 200);
 
         // Generate QR code as SVG using BaconQrCode
-        $renderer  = new GDLibRenderer($size);
-        $writer    = new Writer($renderer);
+        $renderer = new GDLibRenderer($size);
+        $writer = new Writer($renderer);
         $qrCodeSvg = $writer->writeString($text);
 
         return view('pages.sys.test.qrcode-display', compact('qrCodeSvg', 'text', 'size'));
@@ -348,23 +349,23 @@ class TestController extends Controller
 
         // Define replacement variables directly in the controller
         $variables = [
-            'nama'              => 'John Doe',
-            'email'             => 'john@example.com',
-            'tanggal_lahir'     => '1990-01-01',
-            'alamat'            => 'Jl. Contoh No. 123',
-            'telepon'           => '+62 123 4567',
-            'pekerjaan'         => 'Software Engineer',
-            'perusahaan'        => 'ABC Company',
+            'nama' => 'John Doe',
+            'email' => 'john@example.com',
+            'tanggal_lahir' => '1990-01-01',
+            'alamat' => 'Jl. Contoh No. 123',
+            'telepon' => '+62 123 4567',
+            'pekerjaan' => 'Software Engineer',
+            'perusahaan' => 'ABC Company',
             'tanggal_pembuatan' => now()->format('Y-m-d'),
-            'waktu_pembuatan'   => now()->format('H:i:s'),
-            'keterangan'        => 'Contoh keterangan',
-            'judul'             => 'Contoh Judul Dokumen',
-            'deskripsi'         => 'Contoh deskripsi dokumen',
+            'waktu_pembuatan' => now()->format('H:i:s'),
+            'keterangan' => 'Contoh keterangan',
+            'judul' => 'Contoh Judul Dokumen',
+            'deskripsi' => 'Contoh deskripsi dokumen',
         ];
 
         // Create a temporary file for processing
-        $tempPath = storage_path('app/temp/' . uniqid() . '.docx');
-        $tempDir  = dirname($tempPath);
+        $tempPath = storage_path('app/temp/'.uniqid().'.docx');
+        $tempDir = dirname($tempPath);
         if (! file_exists($tempDir)) {
             mkdir($tempDir, 0755, true);
         }
@@ -386,9 +387,9 @@ class TestController extends Controller
         $templateProcessor->saveAs($tempPath);
 
         // Generate the processed DOCX file
-        $fileName   = 'processed-' . time() . '.docx';
-        $publicPath = storage_path('app/public/uploads/docx/' . $fileName);
-        $publicDir  = dirname($publicPath);
+        $fileName = 'processed-'.time().'.docx';
+        $publicPath = storage_path('app/public/uploads/docx/'.$fileName);
+        $publicDir = dirname($publicPath);
 
         if (! file_exists($publicDir)) {
             mkdir($publicDir, 0755, true);
@@ -405,12 +406,12 @@ class TestController extends Controller
         }
 
         // Generate the public URL for download
-        logActivity('test_dashboard', 'Test DOCX template processed and saved successfully by ' . $user->name, $user);
+        logActivity('test_dashboard', 'Test DOCX template processed and saved successfully by '.$user->name, $user);
 
         // Return a JSON response with the download URL
         return jsonSuccess('DOCX template processed successfully', null, [
-            'download_url' => asset('templates/processed/' . basename($publicPath)),
-            'filename'     => basename($publicPath),
+            'download_url' => asset('templates/processed/'.basename($publicPath)),
+            'filename' => basename($publicPath),
         ]);
     }
 
@@ -422,16 +423,15 @@ class TestController extends Controller
             'template' => 'required|file|mimes:doc,docx|max:10240', // Max 10MB
         ]);
 
-        $file     = $request->file('template');
+        $file = $request->file('template');
         $fileName = $file->getClientOriginalName();
         $filePath = $file->storeAs('docx-templates', $fileName, 'local');
 
-        logActivity('test_dashboard', 'DOCX template uploaded successfully by ' . $user->name, $user);
+        logActivity('test_dashboard', 'DOCX template uploaded successfully by '.$user->name, $user);
 
         return jsonSuccess('Template uploaded successfully', null, [
             'file_path' => $filePath,
             'file_name' => $fileName,
         ]);
     }
-
 }

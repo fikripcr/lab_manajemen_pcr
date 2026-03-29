@@ -6,11 +6,10 @@ use App\Http\Requests\BaseRequest;
 
 class SoftwareApprovalRequest extends BaseRequest
 {
-
     public function rules(): array
     {
         return [
-            'status'     => 'required|in:approved,rejected,tangguhkan',
+            'status' => 'required|in:approved,rejected,tangguhkan',
             'keterangan' => 'nullable|string',
         ];
     }
@@ -18,8 +17,8 @@ class SoftwareApprovalRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'status'     => 'Status',
-            'pejabat'    => 'Pejabat',
+            'status' => 'Status',
+            'pejabat' => 'Pejabat',
             'keterangan' => 'Keterangan',
         ];
     }

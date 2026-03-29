@@ -10,7 +10,7 @@
             <div class="row g-2">
                 <div class="col-12">
                     <x-tabler.form-select id="filter-month" name="month" label="Bulan" class="mb-0">
-                        <option value="">Semua Bulan</option>
+                        <option value="all">Semua Bulan</option>
                         @foreach(range(1, 12) as $m)
                             <option value="{{ sprintf('%02d', $m) }}">{{ DateTime::createFromFormat('!m', $m)->format('F') }}</option>
                         @endforeach
@@ -18,7 +18,7 @@
                 </div>
                 <div class="col-12">
                     <x-tabler.form-select id="filter-year" name="year" label="Tahun" class="mb-0">
-                        <option value="">Semua Tahun</option>
+                        <option value="all">Semua Tahun</option>
                         @foreach(range(date('Y'), date('Y') - 5) as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
                         @endforeach
@@ -26,7 +26,7 @@
                 </div>
                 <div class="col-12">
                     <x-tabler.form-select id="filter-status" name="status" label="Status" class="mb-0">
-                        <option value="">Semua Status</option>
+                        <option value="all">Semua Status</option>
                         <option value="on_time">Tepat Waktu</option>
                         <option value="late">Terlambat</option>
                         <option value="absent">Tidak Hadir</option>

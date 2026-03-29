@@ -58,7 +58,7 @@
                                 <x-tabler.form-input name="tempat_lahir" label="Tempat Lahir" placeholder="Kota Kelahiran" value="{{ old('tempat_lahir', $pegawai->latestDataDiri->tempat_lahir ?? '') }}" />
                             </div>
                             <div class="col-md-6">
-                                <x-tabler.form-input name="tgl_lahir" label="Tanggal Lahir" type="date" value="{{ old('tgl_lahir', isset($pegawai) && $pegawai->latestDataDiri->tgl_lahir ? $pegawai->latestDataDiri->tgl_lahir->format('Y-m-d') : '') }}" />
+                                <x-tabler.form-input name="tgl_lahir" label="Tanggal Lahir" type="date" value="{{ old('tgl_lahir', isset($pegawai) && $pegawai->latestDataDiri->tgl_lahir ? optional($pegawai->latestDataDiri->tgl_lahir)->format('Y-m-d') : '') }}" />
                             </div>
                         </div>
 
@@ -109,7 +109,7 @@
                                 <x-tabler.form-select name="statpegawai_id" label="Status Pegawai" required="true">
                                     <option value="">Pilih Status Pegawai</option>
                                     @foreach($statusPegawai as $sp)
-                                        <option value="{{ $sp->statpegawai_id }}">{{ $sp->statpegawai }}</option>
+                                        <option value="{{ $sp->statpegawai_id }}">{{ $sp->nama_status }} ({{$sp->organisasi}})</option>
                                     @endforeach
                                 </x-tabler.form-select>
                             </div>
@@ -117,12 +117,12 @@
                                 <x-tabler.form-select name="stataktifitas_id" label="Status Aktifitas" required="true">
                                     <option value="">Pilih Status Aktifitas</option>
                                     @foreach($statusAktifitas as $sa)
-                                        <option value="{{ $sa->stataktifitas_id }}">{{ $sa->stataktifitas }}</option>
+                                        <option value="{{ $sa->stataktifitas_id }}">{{ $sa->nama_status }}</option>
                                     @endforeach
                                 </x-tabler.form-select>
                             </div>
                         </div>
-                        <div class="alert alert-info py-2">
+                        <div class="alert alert-info py-2 mt-3">
                             <i class="ti ti-info-circle me-1"></i>
                             Struktural pegawai dapat dilakukan setelah pegawai tersimpan melalui menu <strong>Struktural</strong>.
                         </div>

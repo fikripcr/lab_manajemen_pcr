@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -11,9 +12,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class FilePegawai extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding, InteractsWithMedia;
+    use Blameable, HasFactory, HashidBinding, InteractsWithMedia, SoftDeletes;
 
-    protected $table      = 'hr_file_pegawai';
+    protected $table = 'hr_file_pegawai';
+
     protected $primaryKey = 'filepegawai_id';
 
     protected $appends = ['encrypted_filepegawai_id'];

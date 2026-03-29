@@ -1,19 +1,19 @@
 <?php
+
 namespace App\Http\Requests\Cms;
 
 use App\Http\Requests\BaseRequest;
 
 class PublicMenuRequest extends BaseRequest
 {
-
     public function rules(): array
     {
         return [
             'parent_id' => 'nullable|exists:public_menus,menu_id',
-            'title'     => 'required|string|max:255',
-            'url'       => 'nullable|string|max:255',
-            'type'      => 'required|in:url,page,route',
-            'page_id'   => 'nullable|exists:public_pages,page_id',
+            'title' => 'required|string|max:255',
+            'url' => 'nullable|string|max:255',
+            'type' => 'required|in:url,page,route',
+            'page_id' => 'nullable|exists:public_pages,page_id',
             'is_active' => 'boolean',
         ];
     }
@@ -22,12 +22,12 @@ class PublicMenuRequest extends BaseRequest
     {
         return [
             'parent_id' => 'Induk Menu',
-            'title'     => 'Judul Menu',
-            'url'       => 'URL',
-            'type'      => 'Tipe',
-            'page_id'   => 'Halaman Publik',
-            'position'  => 'Posisi',
-            'target'    => 'Target',
+            'title' => 'Judul Menu',
+            'url' => 'URL',
+            'type' => 'Tipe',
+            'page_id' => 'Halaman Publik',
+            'position' => 'Posisi',
+            'target' => 'Target',
             'is_active' => 'Status Aktif',
         ];
     }

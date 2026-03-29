@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Survei;
 
 use App\Models\Survei\Jawaban;
@@ -15,8 +16,8 @@ class FormPlayerService
     public function getSurveyForPlayer(Survei $survei): Survei
     {
         return $survei->load([
-            'halaman'            => fn($q)            => $q->orderBy('urutan'),
-            'halaman.pertanyaan' => fn($q) => $q->orderBy('urutan'),
+            'halaman' => fn ($q) => $q->orderBy('urutan'),
+            'halaman.pertanyaan' => fn ($q) => $q->orderBy('urutan'),
             'halaman.pertanyaan.opsi',
         ]);
     }
@@ -29,18 +30,18 @@ class FormPlayerService
         return DB::transaction(function () use ($survei, $jawaban, $ipAddress) {
             // 1. Create Pengisian Record
             $pengisian = Pengisian::create([
-                'survei_id'     => $survei->id,
-                'user_id'       => auth()->id(),
-                'status'        => 'Selesai',
-                'waktu_mulai'   => now(),
+                'survei_id' => $survei->id,
+                'user_id' => auth()->id(),
+                'status' => 'Selesai',
+                'waktu_mulai' => now(),
                 'waktu_selesai' => now(),
-                'ip_address'    => $ipAddress,
+                'ip_address' => $ipAddress,
             ]);
 
             // 2. Prepare Answers
             $validPertanyaan = $survei->pertanyaan()->pluck('tipe', 'pertanyaan_id');
-            $answerRows      = [];
-            $now             = now();
+            $answerRows = [];
+            $now = now();
 
             foreach ($jawaban as $pertanyaanId => $nilai) {
                 if (! $validPertanyaan->has($pertanyaanId)) {
@@ -48,16 +49,16 @@ class FormPlayerService
                 }
 
                 $tipe = $validPertanyaan[$pertanyaanId];
-                $row  = [
-                    'pengisian_id'  => $pengisian->id,
+                $row = [
+                    'pengisian_id' => $pengisian->id,
                     'pertanyaan_id' => $pertanyaanId,
-                    'opsi_id'       => null,
-                    'nilai_teks'    => null,
-                    'nilai_angka'   => null,
-                    'nilai_json'    => null,
+                    'opsi_id' => null,
+                    'nilai_teks' => null,
+                    'nilai_angka' => null,
+                    'nilai_json' => null,
                     'nilai_tanggal' => null,
-                    'created_at'    => $now,
-                    'updated_at'    => $now,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
 
                 // Map value to correct column based on type

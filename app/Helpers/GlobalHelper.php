@@ -6,7 +6,7 @@ if (! function_exists('formatTanggalIndo')) {
     /**
      * Format tanggal ke bahasa Indonesia
      *
-     * @param mixed $tanggal
+     * @param  mixed  $tanggal
      * @return string
      */
     function formatTanggalIndo($tanggal)
@@ -23,7 +23,7 @@ if (! function_exists('formatTanggalIndo')) {
         // Parse date using Carbon
         $date = Carbon::parse($tanggal);
 
-                               // Jika hanya waktu (tanpa tanggal valid 0000-00-00), tampilkan sebagai waktu saja
+        // Jika hanya waktu (tanpa tanggal valid 0000-00-00), tampilkan sebagai waktu saja
         if ($date->year < 1) { // This condition checks if the year is effectively zero or invalid, indicating a time-only value
             return $date->format('H:i');
         }
@@ -42,7 +42,7 @@ if (! function_exists('formatTanggalWaktuIndo')) {
     /**
      * Alias for formatTanggalIndo to support unified components
      *
-     * @param mixed $tanggal
+     * @param  mixed  $tanggal
      * @return string
      */
     function formatTanggalWaktuIndo($tanggal)
@@ -55,7 +55,7 @@ if (! function_exists('formatWaktuSaja')) {
     /**
      * Format hanya waktu ke format HH:ii (tanpa tanggal)
      *
-     * @param mixed $waktu
+     * @param  mixed  $waktu
      * @return string
      */
     function formatWaktuSaja($waktu)
@@ -67,7 +67,8 @@ if (! function_exists('formatWaktuSaja')) {
         // Cek jika ini adalah format waktu murni (HH:ii tanpa tanggal)
         if (is_string($waktu) && preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $waktu)) {
             $parts = explode(':', $waktu);
-            return $parts[0] . ':' . $parts[1]; // Return HH:ii
+
+            return $parts[0].':'.$parts[1]; // Return HH:ii
         }
 
         // Parse date using Carbon
@@ -82,13 +83,13 @@ if (! function_exists('generateKodeInventaris')) {
     /**
      * Generate unique kode inventaris
      *
-     * @param int $labId
-     * @param int $inventarisId
+     * @param  int  $labId
+     * @param  int  $inventarisId
      * @return string
      */
     function generateKodeInventaris($labId, $inventarisId)
     {
-        $lab        = \App\Models\Lab\Lab::find($labId);
+        $lab = \App\Models\Lab\Lab::find($labId);
         $inventaris = \App\Models\Lab\Inventaris::find($inventarisId);
 
         if (! $lab || ! $inventaris) {
@@ -97,11 +98,11 @@ if (! function_exists('generateKodeInventaris')) {
 
         $labCode = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $lab->name ?? ''), 0, 3));
         $invCode = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $inventaris->nama_alat ?? ''), 0, 3));
-        $prefix  = sprintf('%s-%s', $labCode, $invCode);
+        $prefix = sprintf('%s-%s', $labCode, $invCode);
 
         // Ambil jumlah inventaris yang sudah ada di lab ini dengan prefix yang sama untuk urutan
         $count = \App\Models\Lab\LabInventaris::where('lab_id', $labId)
-            ->where('kode_inventaris', 'like', $prefix . '-%')
+            ->where('kode_inventaris', 'like', $prefix.'-%')
             ->count() + 1;
 
         return sprintf('%s-%04d', $prefix, $count);
@@ -112,11 +113,11 @@ if (! function_exists('jsonResponse')) {
     /**
      * Create standardized JSON response
      *
-     * @param bool $success
-     * @param string $message
-     * @param array $data
-     * @param int $code
-     * @param string|null $redirect
+     * @param  bool  $success
+     * @param  string  $message
+     * @param  array  $data
+     * @param  int  $code
+     * @param  string|null  $redirect
      * @return \Illuminate\Http\JsonResponse
      */
     function jsonResponse($success = true, $message = '', $data = [], $code = 200, $redirect = null)
@@ -146,17 +147,17 @@ if (! function_exists('jsonSuccess')) {
      * 1. Smart Array: jsonSuccess(['data' => ..., 'redirect' => ...])
      * 2. Legacy: jsonSuccess('Message', '/url', ['data'])
      *
-     * @param mixed $arg1
-     * @param mixed $arg2
-     * @param mixed $arg3
-     * @param int $arg4
+     * @param  mixed  $arg1
+     * @param  mixed  $arg2
+     * @param  mixed  $arg3
+     * @param  int  $arg4
      * @return \Illuminate\Http\JsonResponse
      */
     function jsonSuccess($arg1 = 'Success', $arg2 = null, $arg3 = [], $arg4 = 200)
     {
         // MODE 1: Smart Array Input
         if (is_array($arg1)) {
-            $params   = $arg1;
+            $params = $arg1;
             $reserved = ['message', 'data', 'redirect', 'code'];
 
             // Check if array contains any reserved control keys
@@ -186,10 +187,10 @@ if (! function_exists('jsonError')) {
     /**
      * Create standardized error JSON response
      *
-     * @param string $message
-     * @param int $code
-     * @param array $data
-     * @param string|null $redirect
+     * @param  string  $message
+     * @param  int  $code
+     * @param  array  $data
+     * @param  string|null  $redirect
      * @return \Illuminate\Http\JsonResponse
      */
     function jsonError($message = 'Error', $code = 500, $data = [], $redirect = null)

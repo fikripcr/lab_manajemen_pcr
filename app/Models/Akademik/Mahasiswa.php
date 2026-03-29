@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Akademik;
 
 use App\Models\Hr\StrukturOrganisasi;
@@ -12,9 +13,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Mahasiswa extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'akademik_mahasiswa';
+    protected $table = 'akademik_mahasiswa';
+
     protected $primaryKey = 'mahasiswa_id';
 
     protected $appends = ['encrypted_mahasiswa_id'];

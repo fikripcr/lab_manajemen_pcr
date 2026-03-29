@@ -1,16 +1,15 @@
 <?php
+
 namespace App\Http\Requests\Pmb;
 
 use App\Http\Requests\BaseRequest;
 
 class VerifyDocumentRequest extends BaseRequest
 {
-    
-
     public function rules()
     {
         return [
-            'status'     => 'required|in:Verified,Rejected',
+            'status' => 'required|in:Verified,Rejected',
             'keterangan' => 'nullable|string|max:500',
         ];
     }
@@ -18,7 +17,7 @@ class VerifyDocumentRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'status'     => 'Status Verifikasi',
+            'status' => 'Status Verifikasi',
             'keterangan' => 'Keterangan',
         ];
     }

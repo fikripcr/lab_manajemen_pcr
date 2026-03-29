@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Models\Pemutu\DokSub;
@@ -13,12 +14,15 @@ use Illuminate\Support\Facades\DB;
 class MainPemutuSeeder extends Seeder
 {
     private IndikatorService $indikatorService;
+
     private array $standarIndicators = []; // Keyed by period → standar index → indicator models
 
     // For Peningkatan cross-period tracking
     private array $prevIndikators = [];
-    private array $prevOrgUnits   = [];
-    private array $poinMap        = [];
+
+    private array $prevOrgUnits = [];
+
+    private array $poinMap = [];
 
     public function run()
     {
@@ -55,18 +59,18 @@ class MainPemutuSeeder extends Seeder
     {
         $start = now()->setYear($year)->startOfYear();
         PeriodeSpmi::create([
-            'periode'            => $year,
-            'jenis_periode'      => 'Akademik',
-            'penetapan_awal'     => $start->copy(),
-            'penetapan_akhir'    => $start->copy()->addMonths(2),
-            'ed_awal'            => $start->copy()->addMonths(2),
-            'ed_akhir'           => $start->copy()->addMonths(4),
-            'ami_awal'           => $start->copy()->addMonths(4),
-            'ami_akhir'          => $start->copy()->addMonths(6),
-            'pengendalian_awal'  => $start->copy()->addMonths(6),
+            'periode' => $year,
+            'jenis_periode' => 'Akademik',
+            'penetapan_awal' => $start->copy(),
+            'penetapan_akhir' => $start->copy()->addMonths(2),
+            'ed_awal' => $start->copy()->addMonths(2),
+            'ed_akhir' => $start->copy()->addMonths(4),
+            'ami_awal' => $start->copy()->addMonths(4),
+            'ami_akhir' => $start->copy()->addMonths(6),
+            'pengendalian_awal' => $start->copy()->addMonths(6),
             'pengendalian_akhir' => $start->copy()->addMonths(8),
-            'peningkatan_awal'   => $start->copy()->addMonths(8),
-            'peningkatan_akhir'  => $start->copy()->addMonths(10),
+            'peningkatan_awal' => $start->copy()->addMonths(8),
+            'peningkatan_akhir' => $start->copy()->addMonths(10),
         ]);
     }
 
@@ -91,35 +95,35 @@ class MainPemutuSeeder extends Seeder
     private function seedKebijakan(int $year): array
     {
         $items = [
-            'visi'    => ['judul' => 'Visi Politeknik Caltex Riau', 'poin' => [
+            'visi' => ['judul' => 'Visi Politeknik Caltex Riau', 'poin' => [
                 'Menjadi perguruan tinggi vokasi bereputasi internasional di bidang teknologi dan bisnis',
                 'Menghasilkan lulusan yang kompeten, inovatif, dan berkarakter',
                 'Pusat pengembangan teknologi terapan unggulan nasional',
                 'Mewujudkan tata kelola institusi yang akuntabel dan berkelanjutan',
                 'Berkontribusi pada pembangunan daerah melalui pendidikan vokasi berkualitas',
             ]],
-            'misi'    => ['judul' => 'Misi Politeknik Caltex Riau', 'poin' => [
+            'misi' => ['judul' => 'Misi Politeknik Caltex Riau', 'poin' => [
                 'Menyelenggarakan pendidikan vokasi yang relevan dengan kebutuhan industri global',
                 'Mengembangkan kurikulum berbasis kompetensi dan sertifikasi profesi',
                 'Membangun pusat riset terapan dan inovasi teknologi',
                 'Menerapkan sistem tata kelola yang transparan, efisien, dan modern',
                 'Menjalin kemitraan strategis dengan industri dan perguruan tinggi nasional/internasional',
             ]],
-            'rjp'     => ['judul' => 'Rencana Pembangunan Jangka Panjang (RPJP) 2020-2040', 'poin' => [
+            'rjp' => ['judul' => 'Rencana Pembangunan Jangka Panjang (RPJP) 2020-2040', 'poin' => [
                 'Pencapaian akreditasi unggul seluruh program studi',
                 'Pengembangan fasilitas pendidikan berstandar industri 4.0',
                 'Penguatan kapasitas SDM dosen dan tenaga kependidikan',
                 'Transformasi digital layanan akademik dan administrasi',
                 'Ekspansi kerjasama internasional dan pengakuan global',
             ]],
-            'renstra' => ['judul' => "Rencana Strategis (Renstra) $year-" . ($year + 4), 'poin' => [
+            'renstra' => ['judul' => "Rencana Strategis (Renstra) $year-".($year + 4), 'poin' => [
                 'Peningkatan mutu lulusan melalui kurikulum berbasis OBE',
                 'Modernisasi laboratorium dan sarana praktikum',
                 'Akselerasi penelitian terapan dan karya inovatif',
                 'Penguatan sistem penjaminan mutu internal',
                 'Pengembangan jejaring kemitraan industri dan alumni',
             ]],
-            'renop'   => ['judul' => "Rencana Operasional (Renop) $year", 'poin' => [
+            'renop' => ['judul' => "Rencana Operasional (Renop) $year", 'poin' => [
                 'Target lulusan tepat waktu dan bersertifikasi profesi',
                 'Pelaksanaan sertifikasi kompetensi TIK bagi mahasiswa',
                 'Optimalisasi laboratorium Teaching Factory',
@@ -129,18 +133,18 @@ class MainPemutuSeeder extends Seeder
         ];
 
         $kebijakanTypes = array_keys($items);
-        $this->poinMap  = [];
-        $lastDokId      = null;
+        $this->poinMap = [];
+        $lastDokId = null;
 
         foreach ($kebijakanTypes as $idx => $jenis) {
             $data = $items[$jenis];
-            $dok  = Dokumen::create([
-                'judul'      => $data['judul'],
-                'periode'    => $year,
-                'jenis'      => $jenis,
-                'parent_id'  => $lastDokId,
-                'level'      => $idx + 1,
-                'seq'        => $idx + 1,
+            $dok = Dokumen::create([
+                'judul' => $data['judul'],
+                'periode' => $year,
+                'jenis' => $jenis,
+                'parent_id' => $lastDokId,
+                'level' => $idx + 1,
+                'seq' => $idx + 1,
                 'created_by' => 1,
             ]);
 
@@ -165,24 +169,24 @@ class MainPemutuSeeder extends Seeder
                 $isHasilkan = false;
 
                 $sub = DokSub::create([
-                    'dok_id'                => $dok->dok_id,
-                    'judul'                 => $judul,
-                    'kode'                  => $kodePrefix . '-' . str_pad($p + 1, 2, '0', STR_PAD_LEFT),
-                    'seq'                   => $p + 1,
+                    'dok_id' => $dok->dok_id,
+                    'judul' => $judul,
+                    'kode' => $kodePrefix.'-'.str_pad($p + 1, 2, '0', STR_PAD_LEFT),
+                    'seq' => $p + 1,
                     'is_hasilkan_indikator' => $isHasilkan,
-                    'created_by'            => 1,
+                    'created_by' => 1,
                 ]);
                 $this->poinMap[$jenis][$p] = $sub;
 
                 // Link to previous level
                 if ($idx > 0) {
-                    $prevJenis  = $kebijakanTypes[$idx - 1];
+                    $prevJenis = $kebijakanTypes[$idx - 1];
                     $mappedPoin = $this->poinMap[$prevJenis][$p] ?? $this->poinMap[$prevJenis][0] ?? null;
                     if ($mappedPoin) {
                         DB::table('pemutu_doksub_mapping')->insert([
-                            'doksub_id'        => $sub->doksub_id,
+                            'doksub_id' => $sub->doksub_id,
                             'mapped_doksub_id' => $mappedPoin->doksub_id,
-                            'created_at'       => now(), 'updated_at' => now(),
+                            'created_at' => now(), 'updated_at' => now(),
                         ]);
                     }
                 }
@@ -253,32 +257,32 @@ class MainPemutuSeeder extends Seeder
             ],
         ];
 
-                                                     // Org units to assign indicators to
+        // Org units to assign indicators to
         $unitIds = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; // Senat, SPM, Wadir, Bagian, SDM
 
         $this->standarIndicators[$year] = [];
 
         foreach ($standarList as $sIdx => $judul) {
             $dok = Dokumen::create([
-                'judul'      => $judul,
-                'periode'    => $year,
-                'jenis'      => 'standar',
-                'level'      => 1,
-                'seq'        => $sIdx + 1,
-                'kode'       => 'STD-' . str_pad($sIdx + 1, 2, '0', STR_PAD_LEFT),
+                'judul' => $judul,
+                'periode' => $year,
+                'jenis' => 'standar',
+                'level' => 1,
+                'seq' => $sIdx + 1,
+                'kode' => 'STD-'.str_pad($sIdx + 1, 2, '0', STR_PAD_LEFT),
                 'created_by' => 1,
             ]);
 
             $indikatorSub = null;
             foreach ($standarPoints as $pIdx => $pJudul) {
                 $isIndikatorPoint = ($pIdx === 4);
-                $sub              = DokSub::create([
-                    'dok_id'                => $dok->dok_id,
-                    'judul'                 => $pJudul,
-                    'kode'                  => 'S' . ($sIdx + 1) . '.' . ($pIdx + 1),
-                    'seq'                   => $pIdx + 1,
+                $sub = DokSub::create([
+                    'dok_id' => $dok->dok_id,
+                    'judul' => $pJudul,
+                    'kode' => 'S'.($sIdx + 1).'.'.($pIdx + 1),
+                    'seq' => $pIdx + 1,
                     'is_hasilkan_indikator' => $isIndikatorPoint,
-                    'created_by'            => 1,
+                    'created_by' => 1,
                 ]);
 
                 if ($isIndikatorPoint) {
@@ -288,8 +292,8 @@ class MainPemutuSeeder extends Seeder
 
             // Create indicators for this standar
             $this->standarIndicators[$year][$sIdx] = [];
-            $baseIndicators                        = $indicatorData[$sIdx] ?? [];
-            $indicators                            = [];
+            $baseIndicators = $indicatorData[$sIdx] ?? [];
+            $indicators = [];
 
             // Generate 20 indicators based on base items
             if (count($baseIndicators) > 0) {
@@ -297,13 +301,13 @@ class MainPemutuSeeder extends Seeder
                     if (isset($baseIndicators[$i])) {
                         $indicators[] = $baseIndicators[$i];
                     } else {
-                        $baseItem      = $baseIndicators[$i % count($baseIndicators)];
+                        $baseItem = $baseIndicators[$i % count($baseIndicators)];
                         $variantNumber = floor($i / count($baseIndicators)) + 1;
-                        $indicators[]  = [
-                            'name'   => $baseItem['name'] . ' (Aspek ' . $variantNumber . ')',
+                        $indicators[] = [
+                            'name' => $baseItem['name'].' (Aspek '.$variantNumber.')',
                             'target' => $baseItem['target'],
-                            'unit'   => $baseItem['unit'],
-                            'skala'  => $baseItem['skala'],
+                            'unit' => $baseItem['unit'],
+                            'skala' => $baseItem['skala'],
                         ];
                     }
                 }
@@ -311,26 +315,26 @@ class MainPemutuSeeder extends Seeder
 
             foreach ($indicators as $iIdx => $indData) {
                 // Determine previous period links
-                $prevIndId  = null;
+                $prevIndId = null;
                 $originFrom = null;
                 if ($year > 2024 && isset($this->prevIndikators[$year - 1]['standar'][$sIdx][$iIdx])) {
-                    $prevIndId  = $this->prevIndikators[$year - 1]['standar'][$sIdx][$iIdx];
-                    $originFrom = 'peningkatan_' . ($year - 1);
+                    $prevIndId = $this->prevIndikators[$year - 1]['standar'][$sIdx][$iIdx];
+                    $originFrom = 'peningkatan_'.($year - 1);
                 }
 
                 $noIndikator = $this->indikatorService->generateNoIndikator($year);
-                $ind         = Indikator::create([
-                    'type'               => 'standar',
+                $ind = Indikator::create([
+                    'type' => 'standar',
                     'kelompok_indikator' => 'Akademik',
-                    'prev_indikator_id'  => $prevIndId,
-                    'origin_from'        => $originFrom,
-                    'no_indikator'       => $noIndikator,
-                    'indikator'          => $indData['name'],
-                    'target'             => $indData['target'],
-                    'unit_ukuran'        => $indData['unit'],
-                    'skala'              => $indData['skala'],
-                    'seq'                => $iIdx + 1,
-                    'created_by'         => 1,
+                    'prev_indikator_id' => $prevIndId,
+                    'origin_from' => $originFrom,
+                    'no_indikator' => $noIndikator,
+                    'indikator' => $indData['name'],
+                    'target' => $indData['target'],
+                    'unit_ukuran' => $indData['unit'],
+                    'skala' => $indData['skala'],
+                    'seq' => $iIdx + 1,
+                    'created_by' => 1,
                 ]);
                 $this->prevIndikators[$year]['standar'][$sIdx][$iIdx] = $ind->indikator_id;
 
@@ -347,16 +351,16 @@ class MainPemutuSeeder extends Seeder
                     }
 
                     $insertData = [
-                        'indikator_id'         => $ind->indikator_id,
-                        'org_unit_id'          => $unitId,
+                        'indikator_id' => $ind->indikator_id,
+                        'org_unit_id' => $unitId,
                         'prev_indikorgunit_id' => $prevOuId,
-                        'target'               => $indData['target'],
-                        'ed_capaian'           => $this->generateEdCapaian($indData, $uIdx),
-                        'ed_skala'             => $edSkalaIndex,
-                        'created_at'           => now(), 'updated_at' => now(),
+                        'target' => $indData['target'],
+                        'ed_capaian' => $this->generateEdCapaian($indData, $uIdx),
+                        'ed_skala' => $edSkalaIndex,
+                        'created_at' => now(), 'updated_at' => now(),
                     ];
                     $amiData = $this->generateAmiPengendalianData($edSkalaIndex, count($edScales) - 1);
-                    $ouId    = DB::table('pemutu_indikator_orgunit')->insertGetId(array_merge($insertData, $amiData));
+                    $ouId = DB::table('pemutu_indikator_orgunit')->insertGetId(array_merge($insertData, $amiData));
 
                     $this->prevOrgUnits[$year]['standar'][$sIdx][$iIdx][$unitId] = $ouId;
                 }
@@ -381,15 +385,15 @@ class MainPemutuSeeder extends Seeder
             // Generate 10-20 indicators per Renop point (Total 50-100 indicators for Renop)
             $count = rand(10, 20);
             for ($i = 0; $i < $count; $i++) {
-                $stdIdx      = $poinIdx % 5;
+                $stdIdx = $poinIdx % 5;
                 $parentIdxNo = rand(0, 19);
-                $parentInd   = $this->standarIndicators[$year][$stdIdx][$parentIdxNo] ?? null;
+                $parentInd = $this->standarIndicators[$year][$stdIdx][$parentIdxNo] ?? null;
 
-                $prevIndId  = null;
+                $prevIndId = null;
                 $originFrom = null;
                 if ($year > 2024 && isset($this->prevIndikators[$year - 1]['renop'][$poinIdx][$i])) {
-                    $prevIndId  = $this->prevIndikators[$year - 1]['renop'][$poinIdx][$i];
-                    $originFrom = 'peningkatan_' . ($year - 1);
+                    $prevIndId = $this->prevIndikators[$year - 1]['renop'][$poinIdx][$i];
+                    $originFrom = 'peningkatan_'.($year - 1);
                 }
 
                 $indicatorNames = [
@@ -406,26 +410,26 @@ class MainPemutuSeeder extends Seeder
                 ];
 
                 $nameBase = $indicatorNames[$i % count($indicatorNames)];
-                $name     = $nameBase . ' (Target ' . ($poinIdx + 1) . '.' . ($i + 1) . ')';
+                $name = $nameBase.' (Target '.($poinIdx + 1).'.'.($i + 1).')';
 
                 $renstraPoin = $this->poinMap['renstra'][$i % count($this->poinMap['renstra'])] ?? null;
 
                 $noIndikator = $this->indikatorService->generateNoIndikator($year);
-                $ind         = Indikator::create([
-                    'type'               => 'renop',
+                $ind = Indikator::create([
+                    'type' => 'renop',
                     'kelompok_indikator' => ($i % 2 == 0) ? 'Akademik' : 'Non Akademik',
-                    'parent_id'          => $parentInd?->indikator_id,
-                    'renstra_id'         => $renstraPoin?->dok_id,
-                    'renstra_poin_id'    => $renstraPoin?->doksub_id,
-                    'prev_indikator_id'  => $prevIndId,
-                    'origin_from'        => $originFrom,
-                    'no_indikator'       => $noIndikator,
-                    'indikator'          => $name,
-                    'target'             => '≥ ' . rand(70, 95) . '%',
-                    'unit_ukuran'        => 'Persen',
-                    'skala'              => ['Tidak Tercapai', 'Kurang', 'Cukup', 'Baik', 'Sangat Baik'],
-                    'seq'                => $i + 1,
-                    'created_by'         => 1,
+                    'parent_id' => $parentInd?->indikator_id,
+                    'renstra_id' => $renstraPoin?->dok_id,
+                    'renstra_poin_id' => $renstraPoin?->doksub_id,
+                    'prev_indikator_id' => $prevIndId,
+                    'origin_from' => $originFrom,
+                    'no_indikator' => $noIndikator,
+                    'indikator' => $name,
+                    'target' => '≥ '.rand(70, 95).'%',
+                    'unit_ukuran' => 'Persen',
+                    'skala' => ['Tidak Tercapai', 'Kurang', 'Cukup', 'Baik', 'Sangat Baik'],
+                    'seq' => $i + 1,
+                    'created_by' => 1,
                 ]);
 
                 $this->prevIndikators[$year]['renop'][$poinIdx][$i] = $ind->indikator_id;
@@ -444,16 +448,16 @@ class MainPemutuSeeder extends Seeder
                     }
 
                     $insertData = [
-                        'indikator_id'         => $ind->indikator_id,
-                        'org_unit_id'          => $unitId,
+                        'indikator_id' => $ind->indikator_id,
+                        'org_unit_id' => $unitId,
                         'prev_indikorgunit_id' => $prevOuId,
-                        'target'               => $ind->target,
-                        'ed_capaian'           => rand(70, 98) . '%',
-                        'ed_skala'             => $edSkalaIndex,
-                        'created_at'           => now(), 'updated_at' => now(),
+                        'target' => $ind->target,
+                        'ed_capaian' => rand(70, 98).'%',
+                        'ed_skala' => $edSkalaIndex,
+                        'created_at' => now(), 'updated_at' => now(),
                     ];
                     $amiData = $this->generateAmiPengendalianData($edSkalaIndex, 4);
-                    $ouId    = DB::table('pemutu_indikator_orgunit')->insertGetId(array_merge($insertData, $amiData));
+                    $ouId = DB::table('pemutu_indikator_orgunit')->insertGetId(array_merge($insertData, $amiData));
 
                     $this->prevOrgUnits[$year]['renop'][$poinIdx][$i][$unitId] = $ouId;
                 }
@@ -473,12 +477,12 @@ class MainPemutuSeeder extends Seeder
         ];
         foreach ($formulir as $idx => $judul) {
             Dokumen::create([
-                'judul'      => $judul,
-                'periode'    => $year,
-                'jenis'      => 'formulir',
-                'level'      => 1,
-                'seq'        => $idx + 1,
-                'kode'       => 'FRM-' . str_pad($idx + 1, 2, '0', STR_PAD_LEFT),
+                'judul' => $judul,
+                'periode' => $year,
+                'jenis' => 'formulir',
+                'level' => 1,
+                'seq' => $idx + 1,
+                'kode' => 'FRM-'.str_pad($idx + 1, 2, '0', STR_PAD_LEFT),
                 'created_by' => 1,
             ]);
         }
@@ -490,12 +494,12 @@ class MainPemutuSeeder extends Seeder
         ];
         foreach ($manuals as $idx => $judul) {
             Dokumen::create([
-                'judul'      => $judul,
-                'periode'    => $year,
-                'jenis'      => 'manual_prosedur',
-                'level'      => 1,
-                'seq'        => $idx + 1,
-                'kode'       => 'MP-' . str_pad($idx + 1, 2, '0', STR_PAD_LEFT),
+                'judul' => $judul,
+                'periode' => $year,
+                'jenis' => 'manual_prosedur',
+                'level' => 1,
+                'seq' => $idx + 1,
+                'kode' => 'MP-'.str_pad($idx + 1, 2, '0', STR_PAD_LEFT),
                 'created_by' => 1,
             ]);
         }
@@ -510,29 +514,30 @@ class MainPemutuSeeder extends Seeder
         $target = $indData['target'] ?? '';
 
         if (str_contains($target, '%')) {
-            $base   = (int) filter_var($target, FILTER_SANITIZE_NUMBER_INT);
+            $base = (int) filter_var($target, FILTER_SANITIZE_NUMBER_INT);
             $offset = ($unitIndex * 5) - 5;
-            $val    = max(40, min(100, $base + $offset + rand(-10, 10)));
-            return $val . '%';
+            $val = max(40, min(100, $base + $offset + rand(-10, 10)));
+
+            return $val.'%';
         }
 
         if (str_contains($target, 'bulan')) {
-            return rand(1, 5) . ' bulan';
+            return rand(1, 5).' bulan';
         }
 
         if (str_contains($target, 'jam')) {
-            return rand(120, 250) . ' jam';
+            return rand(120, 250).' jam';
         }
 
         if (str_contains($target, 'kali')) {
-            return rand(1, 4) . ' kali';
+            return rand(1, 4).' kali';
         }
 
         if (str_contains($target, '1:')) {
-            return '1:' . rand(18, 35);
+            return '1:'.rand(18, 35);
         }
 
-        return rand(60, 95) . '%';
+        return rand(60, 95).'%';
     }
 
     private function generateAmiPengendalianData(int $edSkala, int $maxSkala): array
@@ -554,47 +559,47 @@ class MainPemutuSeeder extends Seeder
 
         // Default matrix values
         $important = rand(0, 1) ? 'important' : 'not_important';
-        $urgent    = rand(0, 1) ? 'urgent' : 'not_urgent';
+        $urgent = rand(0, 1) ? 'urgent' : 'not_urgent';
 
         // Generate findings and RTP if it's KTS
         if ($data['ami_hasil_akhir'] === 0) {
-            $data['ami_hasil_temuan']        = 'Capaian indikator belum mencapai target yang ditetapkan secara signifikan.';
-            $data['ami_hasil_temuan_sebab']  = 'Kurangnya sumber daya dan koordinasi pelaksanaan yang kurang optimal.';
+            $data['ami_hasil_temuan'] = 'Capaian indikator belum mencapai target yang ditetapkan secara signifikan.';
+            $data['ami_hasil_temuan_sebab'] = 'Kurangnya sumber daya dan koordinasi pelaksanaan yang kurang optimal.';
             $data['ami_hasil_temuan_akibat'] = 'Target IKU institusi berpotensi tidak tercapai pada akhir tahun.';
-            $data['ami_hasil_temuan_rekom']  = 'Perlu dilakukan evaluasi metode pelaksanaan dan penambahan alokasi sumber daya.';
+            $data['ami_hasil_temuan_rekom'] = 'Perlu dilakukan evaluasi metode pelaksanaan dan penambahan alokasi sumber daya.';
 
-            $data['ami_rtp_isi']             = 'Melakukan koordinasi intensif setiap bulan dan workshop peningkatan kapasitas SDM.';
+            $data['ami_rtp_isi'] = 'Melakukan koordinasi intensif setiap bulan dan workshop peningkatan kapasitas SDM.';
             $data['ami_rtp_tgl_pelaksanaan'] = now()->addDays(rand(7, 30))->format('Y-m-d');
 
             // Pengendalian
-            $data['pengend_status']           = 'penyesuaian';
-            $data['pengend_analisis']         = 'Berdasarkan pemantauan, RTP telah berjalan namun hasil belum maksimal.';
+            $data['pengend_status'] = 'penyesuaian';
+            $data['pengend_analisis'] = 'Berdasarkan pemantauan, RTP telah berjalan namun hasil belum maksimal.';
             $data['pengend_important_matrix'] = 'important';
-            $data['pengend_urgent_matrix']    = 'urgent';
+            $data['pengend_urgent_matrix'] = 'urgent';
 
             $data['ami_te_isi'] = 'Tindakan perbaikan terbukti efektif menyelesaikan masalah akar penyebab.';
 
         } elseif ($data['ami_hasil_akhir'] === 2) {
             // Peningkatan if Terlampaui
-            $data['pengend_status']           = 'ditingkatkan';
-            $data['pengend_analisis']         = 'Strategi yang diterapkan sangat efektif melampaui target.';
+            $data['pengend_status'] = 'ditingkatkan';
+            $data['pengend_analisis'] = 'Strategi yang diterapkan sangat efektif melampaui target.';
             $data['pengend_important_matrix'] = 'important';
-            $data['pengend_urgent_matrix']    = 'not_urgent';
+            $data['pengend_urgent_matrix'] = 'not_urgent';
 
             $data['ami_te_isi'] = 'Strategi pencapaian sangat memuaskan, efektivitas pencapaian terbukti.';
         } else {
             // Terpenuhi
-            $data['pengend_status']           = 'tetap';
-            $data['pengend_analisis']         = 'Target tercapai dengan baik sesuai rencana.';
+            $data['pengend_status'] = 'tetap';
+            $data['pengend_analisis'] = 'Target tercapai dengan baik sesuai rencana.';
             $data['pengend_important_matrix'] = $important;
-            $data['pengend_urgent_matrix']    = $urgent;
+            $data['pengend_urgent_matrix'] = $urgent;
         }
 
         // Superior Sync (Draft Keputusan Atasan)
-        $data['pengend_status_atsn']           = $data['pengend_status'];
-        $data['pengend_analisis_atsn']         = $data['pengend_analisis'] ?? null;
+        $data['pengend_status_atsn'] = $data['pengend_status'];
+        $data['pengend_analisis_atsn'] = $data['pengend_analisis'] ?? null;
         $data['pengend_important_matrix_atsn'] = $data['pengend_important_matrix'] ?? null;
-        $data['pengend_urgent_matrix_atsn']    = $data['pengend_urgent_matrix'] ?? null;
+        $data['pengend_urgent_matrix_atsn'] = $data['pengend_urgent_matrix'] ?? null;
 
         return $data;
     }

@@ -565,7 +565,7 @@ return new class extends Migration
         // 6. Database Views
         // =====================================================================
         \Illuminate\Support\Facades\DB::statement('DROP VIEW IF EXISTS v_pegawai_info');
-        \Illuminate\Support\Facades\DB::statement("
+        \Illuminate\Support\Facades\DB::statement('
             CREATE VIEW v_pegawai_info AS
             SELECT p.pegawai_id, p.user_id, p.photo, p.latest_riwayatdatadiri_id, 
                    posisi.name AS posisi_nama, departemen.name AS departemen_nama, 
@@ -587,7 +587,7 @@ return new class extends Migration
             LEFT JOIN hr_riwayat_stataktifitas sa ON sa.riwayatstataktifitas_id = p.latest_riwayatstataktifitas_id AND sa.deleted_at IS NULL
             LEFT JOIN hr_riwayat_jabstruktural pen ON pen.riwayatjabstruktural_id = p.latest_riwayatjabstruktural_id AND pen.deleted_at IS NULL
             WHERE p.deleted_at IS NULL
-        ");
+        ');
     }
 
     /**

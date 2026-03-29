@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
@@ -10,8 +11,7 @@ use Yajra\DataTables\DataTables;
 
 class SuratBebasLabController extends Controller
 {
-    public function __construct(protected SuratBebasLabService $suratBebasLabService)
-    {}
+    public function __construct(protected SuratBebasLabService $suratBebasLabService) {}
 
     public function index()
     {
@@ -25,17 +25,18 @@ class SuratBebasLabController extends Controller
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('akademik_mahasiswa', function ($row) {
-                return $row->student->name . '<br><small>' . ($row->student->username ?? '-') . '</small>';
+                return $row->student->name.'<br><small>'.($row->student->username ?? '-').'</small>';
             })
             ->addColumn('status', function ($row) {
                 $badges = [
-                    'pending'  => 'warning',
+                    'pending' => 'warning',
                     'tangguhkan' => 'info',
                     'approved' => 'success',
                     'rejected' => 'danger',
                 ];
                 $color = $badges[$row->status] ?? 'secondary';
-                return "<span class='status status-{$color}'><span class='status-dot'></span> " . ucfirst($row->status) . "</span>";
+
+                return "<span class='status status-{$color}'><span class='status-dot'></span> ".ucfirst($row->status).'</span>';
             })
             ->addColumn('tanggal', function ($row) {
                 return $row->created_at->format('d M Y');
@@ -61,13 +62,15 @@ class SuratBebasLabController extends Controller
                 ->with('warning', 'Anda sudah memiliki pengajuan yang sedang diproses.');
         }
 
-        $surat = new SuratBebasLab();
+        $surat = new SuratBebasLab;
+
         return \view('pages.lab.surat-bebas.create-edit-ajax', compact('surat'));
     }
 
     public function store(SuratBebasLabRequest $request)
     {
         $this->suratBebasLabService->createRequest($request->validated() ?: $request->all());
+
         return jsonSuccess('Pengajuan berhasil dikirim.');
     }
 
@@ -76,6 +79,7 @@ class SuratBebasLabController extends Controller
         $surat = $id->load(['student', 'approvals' => function ($q) {
             $q->orderBy('created_at', 'desc');
         }]);
+
         return \view('pages.lab.surat-bebas.show', compact('surat'));
     }
 
@@ -83,6 +87,7 @@ class SuratBebasLabController extends Controller
     {
         $suratBeba = $id;
         $this->suratBebasLabService->updateStatus($suratBeba, $request->validated());
+
         return jsonSuccess('Status berhasil diperbarui.');
     }
 }

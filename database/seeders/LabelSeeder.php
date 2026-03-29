@@ -13,7 +13,7 @@ class LabelSeeder extends Seeder
      */
     public function run(): void
     {
-        // Check if there are existing records, if so we might skip or clear them if needed. 
+        // Check if there are existing records, if so we might skip or clear them if needed.
         // For safe seeding, we will clear or use firstOrCreate
         Label::query()->delete();
 
@@ -21,28 +21,28 @@ class LabelSeeder extends Seeder
             [
                 'name' => 'LAM Teknik',
                 'color' => 'blue',
-                'children' => ['C1', 'C2', 'C3']
+                'children' => ['C1', 'C2', 'C3'],
             ],
             [
                 'name' => 'LAM Emba',
                 'color' => 'indigo',
-                'children' => ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']
+                'children' => ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9'],
             ],
             [
                 'name' => 'BAN PT',
                 'color' => 'purple',
-                'children' => ['C1', 'C2', 'C3', 'C4']
+                'children' => ['C1', 'C2', 'C3', 'C4'],
             ],
             [
                 'name' => 'SN DIKTI',
                 'color' => 'pink',
-                'children' => ['Standar Pendidikan', 'Standar Penelitian', 'Standar PkM']
+                'children' => ['Standar Pendidikan', 'Standar Penelitian', 'Standar PkM'],
             ],
             [
                 'name' => 'RENOP',
                 'color' => 'orange',
-                'children' => []
-            ]
+                'children' => [],
+            ],
         ];
 
         foreach ($labels as $parentData) {
@@ -50,17 +50,17 @@ class LabelSeeder extends Seeder
                 'name' => $parentData['name'],
                 'slug' => Str::slug($parentData['name']),
                 'color' => $parentData['color'],
-                'created_by' => 'System'
+                'created_by' => 'System',
             ]);
 
-            if (!empty($parentData['children'])) {
+            if (! empty($parentData['children'])) {
                 foreach ($parentData['children'] as $childName) {
                     Label::create([
                         'parent_id' => $parent->label_id,
                         'name' => $childName,
-                        'slug' => Str::slug($parentData['name'] . ' ' . $childName),
+                        'slug' => Str::slug($parentData['name'].' '.$childName),
                         'color' => $parentData['color'],
-                        'created_by' => 'System'
+                        'created_by' => 'System',
                     ]);
                 }
             }

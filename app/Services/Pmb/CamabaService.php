@@ -1,18 +1,18 @@
 <?php
+
 namespace App\Services\Pmb;
 
 use App\Models\Cbt\JadwalUjian;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Pmb\DokumenUpload;
 use App\Models\Pmb\Jalur;
 use App\Models\Pmb\Pembayaran;
 use App\Models\Pmb\Pendaftaran;
 use App\Models\Pmb\SyaratDokumenJalur;
-use App\Models\Hr\StrukturOrganisasi;
 use Illuminate\Support\Facades\DB;
 
 class CamabaService
 {
-
     public function getDashboardData($user)
     {
         $pendaftaran = Pendaftaran::with(['periode', 'jalur', 'pilihanProdi.orgUnit', 'orgUnitDiterima'])
@@ -50,8 +50,8 @@ class CamabaService
             return ['info' => 'Anda sudah memiliki pendaftaran di periode ini.'];
         }
 
-        $jalur  = Jalur::where('is_aktif', true)->get();
-        $prodi  = StrukturOrganisasi::where('type', 'Prodi')->orderBy('name')->get();
+        $jalur = Jalur::where('is_aktif', true)->get();
+        $prodi = StrukturOrganisasi::where('type', 'Prodi')->orderBy('name')->get();
         $profil = $user->profilPmb;
 
         return compact('periodeAktif', 'jalur', 'prodi', 'profil');
@@ -73,13 +73,13 @@ class CamabaService
             $path = $file->store('pmb/pembayaran', 'public');
 
             $pembayaran = Pembayaran::create([
-                'pendaftaran_id'    => $pendaftaran->pendaftaran_id,
-                'jenis_bayar'       => 'Formulir',
-                'jumlah_bayar'      => $pendaftaran->jalur->biaya_pendaftaran,
-                'bukti_bayar_path'  => $path,
-                'bank_asal'         => $data['bank_asal'],
+                'pendaftaran_id' => $pendaftaran->pendaftaran_id,
+                'jenis_bayar' => 'Formulir',
+                'jumlah_bayar' => $pendaftaran->jalur->biaya_pendaftaran,
+                'bukti_bayar_path' => $path,
+                'bank_asal' => $data['bank_asal'],
                 'status_verifikasi' => 'Pending',
-                'waktu_bayar'       => now(),
+                'waktu_bayar' => now(),
             ]);
             $this->pendaftaranService->updateStatus($pendaftaran, 'Menunggu_Verifikasi_Bayar', 'Camaba telah mengunggah bukti pembayaran.');
 
@@ -97,9 +97,9 @@ class CamabaService
             $upload = DokumenUpload::updateOrCreate(
                 ['pendaftaran_id' => $pendaftaran->pendaftaran_id, 'jenis_dokumen_id' => $jenisId],
                 [
-                    'path_file'         => $path,
+                    'path_file' => $path,
                     'status_verifikasi' => 'Pending',
-                    'waktu_upload'      => now(),
+                    'waktu_upload' => now(),
                 ]
             );
 

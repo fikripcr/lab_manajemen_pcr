@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Hr;
 
 use App\Http\Requests\BaseRequest;
 
 class PresensiUploadPhotoRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -23,7 +21,7 @@ class PresensiUploadPhotoRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'photo'         => 'Foto Presensi',
+            'photo' => 'Foto Presensi',
             'face_encoding' => 'Face Encoding',
         ];
     }

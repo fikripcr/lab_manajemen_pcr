@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -41,7 +42,7 @@ class GoogleAuthController extends Controller
             return redirect()->route('login')->with('error', 'Authentication failed.');
         } catch (\Exception $e) {
             // Handle any errors during authentication
-            return redirect()->route('login')->withErrors(['error' => 'Google authentication failed: ' . $e->getMessage()]);
+            return redirect()->route('login')->withErrors(['error' => 'Google authentication failed: '.$e->getMessage()]);
         }
     }
 }

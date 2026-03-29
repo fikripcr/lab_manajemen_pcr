@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Lab;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Inventaris extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'lab_inventaris';
+    protected $table = 'lab_inventaris';
+
     protected $primaryKey = 'inventaris_id';
 
     protected $appends = ['encrypted_inventaris_id'];
@@ -51,8 +53,8 @@ class Inventaris extends Model
     {
         // Many-to-many relationship where we only want the active one
         return $this->belongsToMany(Lab::class, 'lab_inventaris_penempatan', 'inventaris_id', 'lab_id')
-                    ->wherePivot('status', 'active')
-                    ->withPivot(['kode_inventaris']);
+            ->wherePivot('status', 'active')
+            ->withPivot(['kode_inventaris']);
     }
 
     /**

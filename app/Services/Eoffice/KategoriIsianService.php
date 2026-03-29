@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Eoffice;
 
 use App\Models\Eoffice\KategoriIsian;
@@ -30,6 +31,7 @@ class KategoriIsianService
     {
         $kategori = KategoriIsian::create($data);
         logActivity('eoffice', "Menambah kategori isian: {$kategori->nama_isian}");
+
         return $kategori;
     }
 
@@ -41,6 +43,7 @@ class KategoriIsianService
         $kategori = KategoriIsian::findOrFail($id);
         $kategori->update($data);
         logActivity('eoffice', "Memperbarui kategori isian: {$kategori->nama_isian}");
+
         return $kategori;
     }
 
@@ -59,6 +62,7 @@ class KategoriIsianService
         $nama = $kategori->nama_isian;
         $kategori->delete();
         logActivity('eoffice', "Menghapus kategori isian: {$nama}");
+
         return true;
     }
 

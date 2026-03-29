@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api\Sys;
 
 use App\Http\Controllers\Controller;
@@ -8,14 +9,10 @@ use Illuminate\Http\Request;
 
 class PermissionController extends Controller
 {
-    public function __construct(protected PermissionService $permissionService)
-    {}
+    public function __construct(protected PermissionService $permissionService) {}
 
     /**
      * Search permissions for autocomplete/select
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function search(Request $request): JsonResponse
     {
@@ -32,10 +29,10 @@ class PermissionController extends Controller
         $results = $permissions->map(function ($permission) {
             return [
                 'value' => $permission->id,
-                'label' => $permission->name .
+                'label' => $permission->name.
                 ($permission->category ? " ({$permission->category})" : ''),
                 'customProperties' => [
-                    'category'     => $permission->category,
+                    'category' => $permission->category,
                     'sub_category' => $permission->sub_category,
                 ],
             ];
@@ -46,8 +43,6 @@ class PermissionController extends Controller
 
     /**
      * Get all permissions (for initial load)
-     *
-     * @return JsonResponse
      */
     public function index(): JsonResponse
     {
@@ -59,7 +54,7 @@ class PermissionController extends Controller
         $results = $permissions->map(function ($permission) {
             return [
                 'value' => $permission->id,
-                'label' => $permission->name .
+                'label' => $permission->name.
                 ($permission->category ? " ({$permission->category})" : ''),
             ];
         });

@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Lab;
 
 use App\Http\Requests\BaseRequest;
 
 class LogPenggunaanLabRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -17,10 +15,10 @@ class LogPenggunaanLabRequest extends BaseRequest
     {
         return [
             'nama_peserta' => 'required|string',
-            'lab_id'       => 'required_without:kegiatan_id',
-            'kegiatan_id'  => 'nullable',
-            'nomor_pc'     => 'nullable|integer',
-            'kondisi'      => 'required|string',
+            'lab_id' => 'required_without:kegiatan_id',
+            'kegiatan_id' => 'nullable',
+            'nomor_pc' => 'nullable|integer',
+            'kondisi' => 'required|string',
         ];
     }
 
@@ -30,7 +28,7 @@ class LogPenggunaanLabRequest extends BaseRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'lab_id'      => decryptIdIfEncrypted($this->lab_id),
+            'lab_id' => decryptIdIfEncrypted($this->lab_id),
             'kegiatan_id' => decryptIdIfEncrypted($this->kegiatan_id),
         ]);
     }
@@ -39,10 +37,10 @@ class LogPenggunaanLabRequest extends BaseRequest
     {
         return [
             'nama_peserta' => 'Nama Peserta',
-            'lab_id'       => 'Lab',
-            'kegiatan_id'  => 'Kegiatan',
-            'nomor_pc'     => 'Nomor PC',
-            'kondisi'      => 'Kondisi',
+            'lab_id' => 'Lab',
+            'kegiatan_id' => 'Kegiatan',
+            'nomor_pc' => 'Nomor PC',
+            'kondisi' => 'Kondisi',
         ];
     }
 }

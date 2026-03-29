@@ -1,8 +1,10 @@
+@php $isReadonly = request('readonly') == 1; @endphp
 <x-tabler.form-modal 
-    :title="'Pengendalian — ' . ($indOrg->indikator->no_indikator ?? '')" 
+    :title="($isReadonly ? 'Detail Pengendalian — ' : 'Pengendalian — ') . ($indOrg->indikator->no_indikator ?? '')" 
     :route="route('pemutu.pengendalian.update', $indOrg->encrypted_indorgunit_id)" 
-    method="POST" 
+    :method="$isReadonly ? 'none' : 'POST'" 
     data-redirect="false">
+    <fieldset {{ $isReadonly ? 'disabled' : '' }}>
         {{-- Info Singkat Indikator --}}
         <div class="alert alert-info p-2 mb-3">
             <div class="fw-bold">{{ $indOrg->indikator->no_indikator }}</div>
@@ -102,4 +104,5 @@
                 </div>
             </div>
         </div>
+    </fieldset>
 </x-tabler.form-modal>

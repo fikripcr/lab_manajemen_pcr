@@ -58,13 +58,25 @@ if (typeof initDatatableFilter !== 'function') {
         const resetBtn = document.getElementById(`${dataTableId}-reset-filter`);
         const filterForm = document.getElementById(`${dataTableId}-filter`);
         const filterCount = document.getElementById(`${dataTableId}-filter-count`);
-        
+
         if (!filterForm) return;
-        
+
         // Prevent double init
         if (filterForm.dataset.filterInit === 'true') return;
         filterForm.dataset.filterInit = 'true';
-        
+
+        // Set default "all" for selects that have it, BEFORE DataTable reads the form
+        $(filterForm).find('select').each(function() {
+            const $select = $(this);
+            if ($select.find('option[value="all"]').length > 0) {
+                $select.val('all');
+            }
+            // Update Select2 UI
+            if ($select.data('select2')) {
+                $select.trigger('change.select2');
+            }
+        });
+
         // Reset filter
         if (resetBtn) {
             resetBtn.addEventListener('click', function() {
@@ -95,15 +107,18 @@ if (typeof initDatatableFilter !== 'function') {
 
                 // Fire a SINGLE change event for core-datatable.js to pick up
                 filterForm.dispatchEvent(new Event('change', { bubbles: true }));
+
+                // Update filter count AFTER reset is complete
+                window.updateFilterCount(filterForm, filterCount);
             });
         }
-        
+
         // Update filter count badge - exposed globally so core-datatable can call it
         window.updateFilterCount = function(form, badge) {
             if (!badge) return;
             const inputs = form.querySelectorAll('input, select, textarea');
             let count = 0;
-            
+
             inputs.forEach(input => {
                 if (input.multiple) {
                     const selectedOptions = Array.from(input.selectedOptions).map(opt => opt.value).filter(v => v !== '');
@@ -113,16 +128,18 @@ if (typeof initDatatableFilter !== 'function') {
                     if (value !== 'all' && value !== '') count++;
                 }
             });
-            
+
             badge.textContent = count;
             badge.style.display = count > 0 ? 'inline-block' : 'none';
         }
 
         // Setup listener for count update only (logic-free)
         filterForm.addEventListener('change', () => window.updateFilterCount(filterForm, filterCount));
-        
-        // Initial count
-        window.updateFilterCount(filterForm, filterCount);
+
+        // Initial count - DELAYED to ensure Select2 and DataTable state restoration is complete
+        setTimeout(() => {
+            window.updateFilterCount(filterForm, filterCount);
+        }, 400);
     }
 }
 </script>

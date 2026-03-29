@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Providers;
 
 use App\Models\Notification;
@@ -34,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Register the custom Notification model
         $this->app->bind('Illuminate\Notifications\DatabaseNotification', function () {
-            return new Notification();
+            return new Notification;
         });
 
         Sanctum::usePersonalAccessTokenModel(\App\Models\Sys\PersonalAccessToken::class);
@@ -50,16 +51,16 @@ class AppServiceProvider extends ServiceProvider
         // Custom Route Model Binding: {struktural} → removed
 
         Relation::morphMap([
-            'Perizinan'                => \App\Models\Hr\Perizinan::class,
-            'Lembur'                   => \App\Models\Hr\Lembur::class,
-            'Pegawai'                  => \App\Models\Hr\Pegawai::class,
-            'RiwayatDatadiri'          => \App\Models\Hr\RiwayatDatadiri::class,
-            'RiwayatPendidikan'        => \App\Models\Hr\RiwayatPendidikan::class,
+            'Perizinan' => \App\Models\Hr\Perizinan::class,
+            'Lembur' => \App\Models\Hr\Lembur::class,
+            'Pegawai' => \App\Models\Hr\Pegawai::class,
+            'RiwayatDatadiri' => \App\Models\Hr\RiwayatDatadiri::class,
+            'RiwayatPendidikan' => \App\Models\Hr\RiwayatPendidikan::class,
             'RiwayatJabatanFungsional' => \App\Models\Hr\RiwayatJabfungsional::class,
             'RiwayatJabatanStruktural' => \App\Models\Hr\RiwayatJabstruktural::class,
-            'RiwayatPangkat'           => \App\Models\Hr\RiwayatInpassing::class,
-            'RiwayatStruktural'        => \App\Models\Hr\RiwayatJabStruktural::class,
-            'PengembanganDiri'         => \App\Models\Hr\PengembanganDiri::class,
+            'RiwayatPangkat' => \App\Models\Hr\RiwayatInpassing::class,
+            'RiwayatStruktural' => \App\Models\Hr\RiwayatJabStruktural::class,
+            'PengembanganDiri' => \App\Models\Hr\PengembanganDiri::class,
         ]);
 
         // Global Notification Composer

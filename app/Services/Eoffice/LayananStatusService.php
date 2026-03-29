@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Eoffice;
 
 use App\Models\Eoffice\Layanan;
@@ -14,26 +15,26 @@ class LayananStatusService
     /**
      * Update the status of a layanan (disposition workflow).
      *
-     * @param int    $layananId  The layanan ID (decrypted)
-     * @param string $status     Short status action: 'proses', 'batal', or null for form-based
-     * @param array  $data       Request data containing status_layanan, keterangan, etc.
+     * @param  int  $layananId  The layanan ID (decrypted)
+     * @param  string  $status  Short status action: 'proses', 'batal', or null for form-based
+     * @param  array  $data  Request data containing status_layanan, keterangan, etc.
      * @return LayananStatus
      */
     public function update($layananId, $status, array $data = [])
     {
         return DB::transaction(function () use ($layananId, $status, $data) {
             $layanan = Layanan::with(['jenisLayanan', 'latestStatus'])->findOrFail($layananId);
-            $user    = Auth::user();
+            $user = Auth::user();
 
             $currentStatus = $layanan->latestStatus;
 
             // ── Mark previous status as done ──
             if ($currentStatus) {
-                $currentStatus->done_at       = now();
+                $currentStatus->done_at = now();
                 $currentStatus->done_by_email = $user->email;
 
                 if ($layanan->jenisLayanan && $layanan->jenisLayanan->batas_pengerjaan > 0) {
-                    $created                      = $currentStatus->created_at;
+                    $created = $currentStatus->created_at;
                     $currentStatus->done_duration = $created->diffForHumans(now(), true);
                 }
                 $currentStatus->save();
@@ -49,35 +50,35 @@ class LayananStatusService
             }
 
             // ── Build keterangan ──
-            $keterangan = $data['keterangan'] ?? ('Layanan ' . $newStatus . ' oleh ' . $user->name);
+            $keterangan = $data['keterangan'] ?? ('Layanan '.$newStatus.' oleh '.$user->name);
 
             $disposisiInfo = null;
 
             // ── Handle Disposisi Chain ──
             if ($newStatus === 'Disposisi') {
                 $currentDisposisiInfo = $layanan->disposisi_info;
-                $currentSeq           = $currentDisposisiInfo['seq'] ?? null;
+                $currentSeq = $currentDisposisiInfo['seq'] ?? null;
 
                 // Validate required isian fields for current disposisi step
                 $this->validateIsianForDisposisi($layananId, $currentSeq);
 
                 // Create "Diterima" status for current step
                 LayananStatus::create([
-                    'layanan_id'     => $layananId,
+                    'layanan_id' => $layananId,
                     'status_layanan' => 'Diterima',
-                    'keterangan'     => 'Layanan Disetujui oleh ' . $user->name,
+                    'keterangan' => 'Layanan Disetujui oleh '.$user->name,
                     'disposisi_info' => $currentDisposisiInfo,
                 ]);
 
                 // Find next disposisi
-                $nextSeq       = $data['disposisi_seq'] ?? (($currentSeq ?? 0) + 1);
+                $nextSeq = $data['disposisi_seq'] ?? (($currentSeq ?? 0) + 1);
                 $disposisiList = $layanan->disposisi_list ?? [];
 
                 foreach ($disposisiList as $dl) {
                     $dlObj = is_array($dl) ? (object) $dl : $dl;
                     if (($dlObj->seq ?? null) == $nextSeq) {
                         $disposisiInfo = (array) $dlObj;
-                        $keterangan    = 'Layanan Diteruskan ke ' . ($dlObj->value ?? 'Selanjutnya');
+                        $keterangan = 'Layanan Diteruskan ke '.($dlObj->value ?? 'Selanjutnya');
                         break;
                     }
                 }
@@ -90,10 +91,10 @@ class LayananStatusService
 
             // ── Create new LayananStatus ──
             $layananStatus = LayananStatus::create([
-                'layanan_id'     => $layananId,
+                'layanan_id' => $layananId,
                 'status_layanan' => $newStatus,
-                'keterangan'     => $keterangan,
-                'file_lampiran'  => $data['file_lampiran'] ?? null,
+                'keterangan' => $keterangan,
+                'file_lampiran' => $data['file_lampiran'] ?? null,
                 'disposisi_info' => $disposisiInfo,
             ]);
 
@@ -110,7 +111,7 @@ class LayananStatusService
 
             $layanan->update($updateData);
 
-            logActivity('eoffice_layanan', "Memperbarui status layanan {$layanan->no_layanan} menjadi '{$newStatus}'" . ($disposisiInfo ? " (Ke {$disposisiInfo['value']})" : ""));
+            logActivity('eoffice_layanan', "Memperbarui status layanan {$layanan->no_layanan} menjadi '{$newStatus}'".($disposisiInfo ? " (Ke {$disposisiInfo['value']})" : ''));
 
             // TODO: Send email notifications when notification system is available.
 
@@ -132,8 +133,8 @@ class LayananStatusService
         foreach ($isianItems as $item) {
             // Check if this isian is assigned to the current disposisi step
             // and is not filled yet — pattern from original e-office
-            if (isset($item->fill_by) && $item->fill_by === 'Disposisi ' . $currentSeq && empty($item->isi)) {
-                throw new Exception('Anda perlu mengisi Data Isian: "' . $item->nama_isian . '"');
+            if (isset($item->fill_by) && $item->fill_by === 'Disposisi '.$currentSeq && empty($item->isi)) {
+                throw new Exception('Anda perlu mengisi Data Isian: "'.$item->nama_isian.'"');
             }
         }
     }
@@ -146,7 +147,7 @@ class LayananStatusService
     {
         $isianItems = LayananIsian::where('layanan_id', $layananId)->get();
 
-        $listTanggal    = null;
+        $listTanggal = null;
         $additionalInfo = [];
 
         foreach ($isianItems as $item) {
@@ -172,16 +173,16 @@ class LayananStatusService
 
             $dataSet = [
                 'jenis_ketidakhadiran' => $namaLayanan,
-                'tgl'                  => $tgl,
-                'model'                => 'Layanan',
-                'model_id'             => $layananId,
-                'additional_info'      => $additionalInfo,
-                'is_full_day'          => true,
+                'tgl' => $tgl,
+                'model' => 'Layanan',
+                'model_id' => $layananId,
+                'additional_info' => $additionalInfo,
+                'is_full_day' => true,
             ];
 
             if (! empty($additionalInfo['waktu_mulai']) && ! empty($additionalInfo['waktu_selesai'])) {
-                $dataSet['is_full_day']   = false;
-                $dataSet['waktu_mulai']   = $additionalInfo['waktu_mulai'];
+                $dataSet['is_full_day'] = false;
+                $dataSet['waktu_mulai'] = $additionalInfo['waktu_mulai'];
                 $dataSet['waktu_selesai'] = $additionalInfo['waktu_selesai'];
             }
 

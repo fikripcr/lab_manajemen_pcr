@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Project;
 
 use App\Http\Controllers\Controller;
@@ -17,8 +18,7 @@ class ProjectTaskController extends Controller
     public function __construct(
         protected ProjectTaskService $taskService,
         protected ProjectService $projectService
-    ) {
-    }
+    ) {}
 
     /**
      * Display a listing of tasks for a project
@@ -43,15 +43,16 @@ class ProjectTaskController extends Controller
                 ])->render();
             })
             ->editColumn('status', function ($item) {
-                return '<span class="badge ' . $item->status_badge_class . '">' . $item->status_label . '</span>';
+                return '<span class="badge '.$item->status_badge_class.'">'.$item->status_label.'</span>';
             })
             ->editColumn('priority', function ($item) {
-                return '<span class="badge ' . $item->priority_badge_class . '">' . ucfirst($item->priority) . '</span>';
+                return '<span class="badge '.$item->priority_badge_class.'">'.ucfirst($item->priority).'</span>';
             })
             ->addColumn('assignee', function ($item) {
                 if (! $item->assignee) {
                     return '<span class="text-muted">Unassigned</span>';
                 }
+
                 return view('components.project.assignee-avatar', [
                     'user' => $item->assignee,
                 ])->render();
@@ -61,7 +62,7 @@ class ProjectTaskController extends Controller
             })
             ->addColumn('action', function ($item) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('projects.tasks.edit', [$item->project, $item]),
+                    'editUrl' => route('projects.tasks.edit', [$item->project, $item]),
                     'editModal' => true,
                     'deleteUrl' => route('projects.tasks.destroy', [$item->project, $item]),
                 ])->render();
@@ -75,7 +76,7 @@ class ProjectTaskController extends Controller
      */
     public function store(ProjectTaskRequest $request, Project $project)
     {
-        $data               = $request->validated();
+        $data = $request->validated();
         $data['project_id'] = $project->project_id;
         $this->taskService->createTask($data);
 
@@ -126,13 +127,13 @@ class ProjectTaskController extends Controller
      */
     public function editModal(Request $request, Project $project, ?ProjectTask $task = null)
     {
-        $users   = User::all();
-        $phases  = $project->phases;
+        $users = User::all();
+        $phases = $project->phases;
         $sprints = $project->sprints;
 
         // Create new instance if not editing
         if (! $task) {
-            $task             = new ProjectTask();
+            $task = new ProjectTask;
             $task->project_id = $project->project_id;
 
             // Set default status from query parameter if provided
@@ -153,9 +154,9 @@ class ProjectTaskController extends Controller
 
         // Reformat tasks for jKanban
         $formattedTasks = [
-            'todo'        => collect($tasks['todo'] ?? [])->map(fn($t) => $this->formatForKanban($t))->toArray(),
-            'in_progress' => collect($tasks['in_progress'] ?? [])->map(fn($t) => $this->formatForKanban($t))->toArray(),
-            'done'        => collect($tasks['done'] ?? [])->map(fn($t) => $this->formatForKanban($t))->toArray(),
+            'todo' => collect($tasks['todo'] ?? [])->map(fn ($t) => $this->formatForKanban($t))->toArray(),
+            'in_progress' => collect($tasks['in_progress'] ?? [])->map(fn ($t) => $this->formatForKanban($t))->toArray(),
+            'done' => collect($tasks['done'] ?? [])->map(fn ($t) => $this->formatForKanban($t))->toArray(),
         ];
 
         return jsonSuccess('Data retrieved', null, $formattedTasks);
@@ -167,17 +168,17 @@ class ProjectTaskController extends Controller
     protected function formatForKanban($task)
     {
         $borderColor = match ($task->priority) {
-            'low'    => 'secondary',
+            'low' => 'secondary',
             'medium' => 'blue',
-            'high'   => 'orange',
+            'high' => 'orange',
             'urgent' => 'red',
-            default  => 'transparent'
+            default => 'transparent'
         };
 
         return [
-            'id'    => $task->encrypted_project_task_id,
+            'id' => $task->encrypted_project_task_id,
             'title' => view('components.project.kanban-task-card', ['task' => $task])->render(),
-            'class' => ['kanban-task-' . $task->encrypted_project_task_id, 'border-start', 'border-start-wide', 'border-' . $borderColor],
+            'class' => ['kanban-task-'.$task->encrypted_project_task_id, 'border-start', 'border-start-wide', 'border-'.$borderColor],
         ];
     }
 }

@@ -6,12 +6,11 @@ use App\Http\Requests\BaseRequest;
 
 class PublicSoftwareRequest extends BaseRequest
 {
-
     public function rules(): array
     {
         return [
-            'nama_software'     => 'required|string|max:255',
-            'alasan'            => 'required|string',
+            'nama_software' => 'required|string|max:255',
+            'alasan' => 'required|string',
             'mata_kuliah_ids.*' => 'exists:lab_mata_kuliahs,mata_kuliah_id',
         ];
     }
@@ -19,9 +18,9 @@ class PublicSoftwareRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'nama_software'     => 'Nama Software',
-            'alasan'            => 'Alasan',
-            'mata_kuliah_ids'   => 'Mata Kuliah',
+            'nama_software' => 'Nama Software',
+            'alasan' => 'Alasan',
+            'mata_kuliah_ids' => 'Mata Kuliah',
             'mata_kuliah_ids.*' => 'Mata Kuliah',
         ];
     }

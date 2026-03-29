@@ -1,11 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Pemutu;
 
 use App\Http\Requests\BaseRequest;
 
 class TeRequest extends BaseRequest
 {
-
     public function rules(): array
     {
         return [

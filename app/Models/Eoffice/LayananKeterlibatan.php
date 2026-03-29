@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Models\Eoffice;
 
-use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LayananKeterlibatan extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'eoffice_layanan_keterlibatan';
+    protected $table = 'eoffice_layanan_keterlibatan';
+
     protected $primaryKey = 'layananketerlibatan_id';
 
     protected $appends = ['encrypted_layananketerlibatan_id'];

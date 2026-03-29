@@ -5,8 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 
 class CheckAccountExpiration
 {
@@ -25,7 +25,7 @@ class CheckAccountExpiration
 
                 if ($request->expectsJson()) {
                     return response()->json([
-                        'message' => 'Your account has expired. Please contact the administrator.'
+                        'message' => 'Your account has expired. Please contact the administrator.',
                     ], 401);
                 }
 

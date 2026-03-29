@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Models\Pmb;
 
-use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,11 +12,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Camaba extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'pmb_camaba';
+    protected $table = 'pmb_camaba';
+
     protected $primaryKey = 'camaba_id';
-    protected $appends    = ['encrypted_camaba_id'];
+
+    protected $appends = ['encrypted_camaba_id'];
 
     public function getRouteKeyName()
     {

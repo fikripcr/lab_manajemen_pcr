@@ -1,9 +1,7 @@
 <?php
+
 namespace App\Models\Hr;
 
-use App\Models\Hr\Lembur;
-use App\Models\Hr\Perizinan;
-use App\Models\Hr\Pegawai;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RiwayatApproval extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_riwayat_approval';
+    protected $table = 'hr_riwayat_approval';
+
     protected $primaryKey = 'riwayatapproval_id';
 
     protected $appends = ['encrypted_riwayatapproval_id'];

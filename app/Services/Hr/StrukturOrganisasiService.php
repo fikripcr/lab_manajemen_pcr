@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Hr;
 
 use App\Models\Hr\StrukturOrganisasi;
@@ -94,12 +95,12 @@ class StrukturOrganisasiService
         foreach ($units as $unit) {
             // Only add to result if types matches OR if no types specified
             if (empty($types) || in_array($unit->type, $types)) {
-                $unit->name_display = $prefix . ' ' . $unit->name;
-                $result[]           = $unit;
+                $unit->name_display = $prefix.' '.$unit->name;
+                $result[] = $unit;
             }
 
             // Always recurse to find children that might match the type
-            $result = array_merge($result, $this->getHierarchicalList($unit->orgunit_id, $prefix . '--', $excludeId, $types));
+            $result = array_merge($result, $this->getHierarchicalList($unit->orgunit_id, $prefix.'--', $excludeId, $types));
         }
 
         return $result;
@@ -113,7 +114,7 @@ class StrukturOrganisasiService
         return DB::transaction(function () use ($data) {
             // 1. Calculate Level
             if (! empty($data['parent_id'])) {
-                $parent        = StrukturOrganisasi::find($data['parent_id']);
+                $parent = StrukturOrganisasi::find($data['parent_id']);
                 $data['level'] = $parent ? $parent->level + 1 : 1;
             } else {
                 $data['level'] = 1;
@@ -122,18 +123,18 @@ class StrukturOrganisasiService
             // 2. Calculate Order (Sync seq and sort_order)
             // If sort_order or seq is not provided, calculate max + 1
             if (empty($data['sort_order']) || empty($data['seq'])) {
-                $query   = StrukturOrganisasi::where('parent_id', $data['parent_id'] ?? null);
+                $query = StrukturOrganisasi::where('parent_id', $data['parent_id'] ?? null);
                 $maxSort = $query->max('sort_order') ?? 0;
-                $maxSeq  = $query->max('seq') ?? 0;
+                $maxSeq = $query->max('seq') ?? 0;
 
                 $nextOrder = max($maxSort, $maxSeq) + 1;
 
                 $data['sort_order'] = $nextOrder;
-                $data['seq']        = $nextOrder;
+                $data['seq'] = $nextOrder;
             } else {
                 // Ensure both are set if one is provided
                 $data['sort_order'] = $data['sort_order'] ?? $data['seq'];
-                $data['seq']        = $data['seq'] ?? $data['sort_order'];
+                $data['seq'] = $data['seq'] ?? $data['sort_order'];
             }
 
             $orgUnit = StrukturOrganisasi::create($data);
@@ -160,7 +161,7 @@ class StrukturOrganisasiService
             // Recalculate Level if parent changed
             if (isset($data['parent_id']) && $data['parent_id'] != $orgUnit->parent_id) {
                 if (! empty($data['parent_id'])) {
-                    $parent        = StrukturOrganisasi::find($data['parent_id']);
+                    $parent = StrukturOrganisasi::find($data['parent_id']);
                     $data['level'] = $parent ? $parent->level + 1 : 1;
                 } else {
                     $data['level'] = 1;
@@ -178,7 +179,7 @@ class StrukturOrganisasiService
 
             logActivity(
                 'org_unit_management',
-                "Memperbarui unit organisasi: {$oldName}" . ($oldName !== $orgUnit->name ? " menjadi {$orgUnit->name}" : "")
+                "Memperbarui unit organisasi: {$oldName}".($oldName !== $orgUnit->name ? " menjadi {$orgUnit->name}" : '')
             );
 
             return true;
@@ -216,7 +217,7 @@ class StrukturOrganisasiService
 
             logActivity(
                 'org_unit_management',
-                "Mengubah status unit organisasi: {$orgUnit->name} menjadi " . ($orgUnit->is_active ? 'Active' : 'Inactive')
+                "Mengubah status unit organisasi: {$orgUnit->name} menjadi ".($orgUnit->is_active ? 'Active' : 'Inactive')
             );
 
             return $orgUnit;
@@ -245,6 +246,7 @@ class StrukturOrganisasiService
     {
         return DB::transaction(function () use ($hierarchy) {
             $this->updateHierarchy($hierarchy);
+
             return true;
         });
     }
@@ -255,14 +257,14 @@ class StrukturOrganisasiService
     protected function updateHierarchy(array $items, $parentId = null, int $level = 1): void
     {
         foreach ($items as $index => $item) {
-            $id      = decryptId($item['id']);
+            $id = decryptId($item['id']);
             $orgUnit = StrukturOrganisasi::find($id);
             if ($orgUnit) {
                 $orgUnit->parent_id = $parentId;
-                $orgUnit->level     = $level;
+                $orgUnit->level = $level;
                 // Sync both columns
                 $orgUnit->sort_order = $index + 1;
-                $orgUnit->seq        = $index + 1;
+                $orgUnit->seq = $index + 1;
                 $orgUnit->save();
 
                 if (isset($item['children']) && is_array($item['children'])) {
@@ -281,6 +283,7 @@ class StrukturOrganisasiService
         if (! $model) {
             throw new Exception("Unit Organisasi dengan ID {$id} tidak ditemukan.");
         }
+
         return $model;
     }
 
@@ -302,19 +305,19 @@ class StrukturOrganisasiService
     {
         return [
             'badan_penyelenggara' => 'Badan Penyelenggara',
-            'institusi'           => 'Institusi',
-            'direktorat'          => 'Direktorat',
-            'fakultas'            => 'Fakultas',
-            'bagian'              => 'Bagian',
-            'jurusan'             => 'Jurusan',
-            'prodi'               => 'Prodi',
-            'laboratorium'        => 'Laboratorium',
-            'unit'                => 'Unit',
-            'senat'               => 'Senat',
-            'sekretariat'         => 'Sekretariat',
-            'pimpinan'            => 'Pimpinan',
-            'jabatan_struktural'  => 'Jabatan Struktural',
-            'posisi'              => 'Posisi',
+            'institusi' => 'Institusi',
+            'direktorat' => 'Direktorat',
+            'fakultas' => 'Fakultas',
+            'bagian' => 'Bagian',
+            'jurusan' => 'Jurusan',
+            'prodi' => 'Prodi',
+            'laboratorium' => 'Laboratorium',
+            'unit' => 'Unit',
+            'senat' => 'Senat',
+            'sekretariat' => 'Sekretariat',
+            'pimpinan' => 'Pimpinan',
+            'jabatan_struktural' => 'Jabatan Struktural',
+            'posisi' => 'Posisi',
         ];
     }
 }

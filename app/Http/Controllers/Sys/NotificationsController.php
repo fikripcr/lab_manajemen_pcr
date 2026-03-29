@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
@@ -13,8 +14,8 @@ use Yajra\DataTables\DataTables;
 
 class NotificationsController extends Controller
 {
-    public function __construct(protected NotificationService $notificationService)
-    {}
+    public function __construct(protected NotificationService $notificationService) {}
+
     /**
      * Display a listing of the notifications.
      */
@@ -30,9 +31,9 @@ class NotificationsController extends Controller
     {
         $filters = [
             'read_status' => $request->get('read_status'),
-            'type'        => $request->get('type'),
-            'date_from'   => $request->get('date_from'),
-            'date_to'     => $request->get('date_to'),
+            'type' => $request->get('type'),
+            'date_from' => $request->get('date_from'),
+            'date_to' => $request->get('date_to'),
         ];
 
         $query = $this->notificationService->getFilteredQueryForUser($filters);
@@ -41,8 +42,8 @@ class NotificationsController extends Controller
             ->addIndexColumn()
             ->addColumn('checkbox', function ($notification) {
                 return '<div class="form-check">
-                            <input class="form-check-input notification-checkbox" type="checkbox" value="' . $notification->id . '" id="checkbox_' . $notification->id . '">
-                            <label class="form-check-label" for="checkbox_' . $notification->id . '"></label>
+                            <input class="form-check-input notification-checkbox" type="checkbox" value="'.$notification->id.'" id="checkbox_'.$notification->id.'">
+                            <label class="form-check-label" for="checkbox_'.$notification->id.'"></label>
                         </div>';
             })
             ->addColumn('status', function ($notification) {
@@ -67,8 +68,8 @@ class NotificationsController extends Controller
                         'customActions' => [
                             [
                                 'label' => 'Mark as Read',
-                                'url'   => route('sys.notifications.mark-as-read', $notification->id),
-                                'icon'  => 'check',
+                                'url' => route('sys.notifications.mark-as-read', $notification->id),
+                                'icon' => 'check',
                                 'class' => '',
                             ],
                         ],
@@ -102,13 +103,13 @@ class NotificationsController extends Controller
      */
     public function markAllAsRead()
     {
-        $userId       = auth()->id();
-        $count        = Auth::user()->unreadNotifications->count();
+        $userId = auth()->id();
+        $count = Auth::user()->unreadNotifications->count();
         $updatedCount = $this->notificationService->markAllAsReadForUser($userId);
 
-        logActivity('notification', $updatedCount . 'notifications marked as read by user: ' . auth()->user()->name . '(ID: ' . auth()->id() . ')');
+        logActivity('notification', $updatedCount.'notifications marked as read by user: '.auth()->user()->name.'(ID: '.auth()->id().')');
 
-        return jsonSuccess('Semua notifikasi (' . $updatedCount . ') telah ditandai sebagai telah dibaca!');
+        return jsonSuccess('Semua notifikasi ('.$updatedCount.') telah ditandai sebagai telah dibaca!');
     }
 
     /**
@@ -122,14 +123,14 @@ class NotificationsController extends Controller
             return jsonError('Tidak ada notifikasi yang dipilih.', 400);
         }
 
-        $userId       = auth()->id();
+        $userId = auth()->id();
         $updatedCount = $this->notificationService->markSelectedAsRead($selectedIds, $userId);
 
-        logActivity('notification', $updatedCount . 'selected notifications marked as read by user: ' . auth()->user()->name . '(ID: ' . auth()->id() . ')');
+        logActivity('notification', $updatedCount.'selected notifications marked as read by user: '.auth()->user()->name.'(ID: '.auth()->id().')');
 
         return jsonSuccess([
-            'message' => $updatedCount . ' notifikasi telah ditandai sebagai telah dibaca.',
-            'data'    => ['updated_count' => $updatedCount],
+            'message' => $updatedCount.' notifikasi telah ditandai sebagai telah dibaca.',
+            'data' => ['updated_count' => $updatedCount],
         ]);
     }
 
@@ -139,7 +140,7 @@ class NotificationsController extends Controller
     public function getUnreadCount()
     {
         $userId = auth()->id();
-        $count  = $this->notificationService->getUnreadCount($userId);
+        $count = $this->notificationService->getUnreadCount($userId);
 
         return jsonSuccess(['data' => ['count' => $count]]);
     }
@@ -149,7 +150,7 @@ class NotificationsController extends Controller
      */
     public function getDropdownData(Request $request)
     {
-        $limit  = $request->get('limit', 5);
+        $limit = $request->get('limit', 5);
         $userId = auth()->id();
 
         $notifications = $this->notificationService->getDropdownData($userId, $limit);
@@ -183,8 +184,8 @@ class NotificationsController extends Controller
     {
         $validated = $request->validated();
 
-        $type              = $validated['type'];
-        $userId            = $validated['user_id'];
+        $type = $validated['type'];
+        $userId = $validated['user_id'];
         $notificationClass = $validated['notification_class'];
 
         // Determine recipient - if no user_id provided, use authenticated user
@@ -194,7 +195,7 @@ class NotificationsController extends Controller
                 $recipient = $userId;
             } else {
                 $decryptedId = decryptIdIfEncrypted($userId);
-                $recipient   = User::findOrFail($decryptedId);
+                $recipient = User::findOrFail($decryptedId);
             }
         } else {
             // Use authenticated user if no user_id provided
@@ -203,11 +204,11 @@ class NotificationsController extends Controller
 
         // Get the notification class - for now using TestNotification
         if ($notificationClass === 'SysTestNotification') {
-            $channel      = $type === 'email' ? 'mail' : 'database';
+            $channel = $type === 'email' ? 'mail' : 'database';
             $notification = new SysTestNotification($channel);
         } else {
             // Handle other notification classes as needed
-            $notification = new $notificationClass();
+            $notification = new $notificationClass;
         }
 
         if ($type === 'email') {
@@ -217,14 +218,14 @@ class NotificationsController extends Controller
             }
 
             $recipient->notify($notification);
-            $message = 'Email notification sent successfully to ' . $recipient->email;
+            $message = 'Email notification sent successfully to '.$recipient->email;
         } else {
             $recipient->notify($notification);
-            $message = 'Database notification sent successfully to ' . $recipient->name;
+            $message = 'Database notification sent successfully to '.$recipient->name;
         }
 
         // Log the notification sending
-        logActivity('notification', "Notification ({$type}) sent to user: " . $recipient->name . ' (ID: ' . $recipient->id . ') by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')');
+        logActivity('notification', "Notification ({$type}) sent to user: ".$recipient->name.' (ID: '.$recipient->id.') by user: '.auth()->user()->name.' (ID: '.auth()->id().')');
 
         return jsonSuccess($message);
     }

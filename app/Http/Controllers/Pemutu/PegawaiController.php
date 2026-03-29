@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\PegawaiImportRequest;
 use App\Http\Requests\Pemutu\PegawaiRequest;
 use App\Models\Hr\StrukturOrganisasi;
-use App\Services\Pemutu\PegawaiService;
 use App\Services\Hr\StrukturOrganisasiService;
+use App\Services\Pemutu\PegawaiService;
 use Yajra\DataTables\DataTables;
 
 class PegawaiController extends Controller
@@ -14,12 +15,12 @@ class PegawaiController extends Controller
     public function __construct(
         protected PegawaiService $pegawaiService,
         protected StrukturOrganisasiService $strukturOrganisasiService,
-    )
-    {}
+    ) {}
 
     public function index()
     {
         $units = $this->strukturOrganisasiService->getHierarchicalList();
+
         return view('pages.pemutu.pegawai.index', compact('units'));
     }
 
@@ -38,7 +39,7 @@ class PegawaiController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('pemutu.pegawai.edit', $row->encrypted_pegawai_id),
+                    'editUrl' => route('pemutu.pegawai.edit', $row->encrypted_pegawai_id),
                     'editModal' => true,
                     'deleteUrl' => route('pemutu.pegawai.destroy', $row->encrypted_pegawai_id),
                 ])->render();
@@ -49,8 +50,9 @@ class PegawaiController extends Controller
 
     public function create()
     {
-        $pegawai = new \App\Models\Hr\Pegawai();
-        $units   = StrukturOrganisasi::orderBy('name')->get();
+        $pegawai = new \App\Models\Hr\Pegawai;
+        $units = StrukturOrganisasi::orderBy('name')->get();
+
         return view('pages.pemutu.pegawai.create-edit-ajax', compact('hr_pegawai', 'units'));
     }
 
@@ -58,7 +60,7 @@ class PegawaiController extends Controller
     {
         $this->pegawaiService->createPegawai($request->validated());
 
-        logActivity('pemutu', "Menambah pegawai baru: " . ($request->nama ?? ''));
+        logActivity('pemutu', 'Menambah pegawai baru: '.($request->nama ?? ''));
 
         return jsonSuccess('Pegawai created successfully.');
     }
@@ -66,6 +68,7 @@ class PegawaiController extends Controller
     public function edit(\App\Models\Hr\Pegawai $pegawai)
     {
         $units = StrukturOrganisasi::orderBy('name')->get();
+
         return view('pages.pemutu.pegawai.create-edit-ajax', compact('hr_pegawai', 'units'));
     }
 
@@ -96,7 +99,7 @@ class PegawaiController extends Controller
 
         $this->pegawaiService->importPegawai($request->file('file'));
 
-        logActivity('pemutu', "Mengimport data pegawai via Excel");
+        logActivity('pemutu', 'Mengimport data pegawai via Excel');
 
         return jsonSuccess('Pegawai imported successfully.', route('pemutu.pegawai.index'));
     }

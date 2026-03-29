@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use App\Models\Project\Project;
 use App\Models\Project\ProjectMember;
 use App\Models\Project\ProjectTask;
 use App\Models\User;
-use Faker\Factory as Faker;
 use Carbon\Carbon;
+use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class MainProjectSeeder extends Seeder
 {
@@ -34,6 +34,7 @@ class MainProjectSeeder extends Seeder
 
         if ($allUsers->count() == 0) {
             $this->command->info('No users found. Please seed users first.');
+
             return;
         }
 
@@ -48,12 +49,12 @@ class MainProjectSeeder extends Seeder
 
             // Create Project
             $project = Project::create([
-                'project_name' => 'Project ' . ucwords($faker->company),
+                'project_name' => 'Project '.ucwords($faker->company),
                 'project_desc' => $faker->paragraph(),
-                'is_agile'     => $faker->boolean(70),
-                'start_date'   => $startDate,
-                'end_date'     => $endDate,
-                'status'       => $faker->randomElement($projectStatuses),
+                'is_agile' => $faker->boolean(70),
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'status' => $faker->randomElement($projectStatuses),
             ]);
 
             // Assign 3-5 Members
@@ -66,11 +67,11 @@ class MainProjectSeeder extends Seeder
                 $position = ($index === 0) ? 'Project Manager' : $faker->randomElement($positions);
 
                 ProjectMember::create([
-                    'project_id'     => $project->project_id,
-                    'user_id'        => $user->id,
-                    'role'           => $role,
+                    'project_id' => $project->project_id,
+                    'user_id' => $user->id,
+                    'role' => $role,
                     'alias_position' => $position,
-                    'rate_per_hour'  => rand(50000, 250000),
+                    'rate_per_hour' => rand(50000, 250000),
                 ]);
 
                 $projectMembers[] = $user->id;
@@ -82,19 +83,19 @@ class MainProjectSeeder extends Seeder
                 $taskDueDate = clone $taskStartDate->addDays(rand(2, 14));
 
                 ProjectTask::create([
-                    'project_id'  => $project->project_id,
+                    'project_id' => $project->project_id,
                     'assignee_id' => $faker->randomElement($projectMembers),
-                    'task_title'  => ucwords($faker->words(rand(3, 6), true)),
-                    'task_desc'   => $faker->text(100),
-                    'status'      => $faker->randomElement($taskStatuses),
-                    'weight'      => rand(1, 10),
-                    'seq'         => $j,
-                    'priority'    => $faker->randomElement($taskPriorities),
-                    'due_date'    => $taskDueDate,
+                    'task_title' => ucwords($faker->words(rand(3, 6), true)),
+                    'task_desc' => $faker->text(100),
+                    'status' => $faker->randomElement($taskStatuses),
+                    'weight' => rand(1, 10),
+                    'seq' => $j,
+                    'priority' => $faker->randomElement($taskPriorities),
+                    'due_date' => $taskDueDate,
                 ]);
             }
 
-            $this->command->info("Created Project {$i} with " . count($projectMembers) . " members and 20 tasks.");
+            $this->command->info("Created Project {$i} with ".count($projectMembers).' members and 20 tasks.');
         }
 
         $this->command->info('ProjectSeeder completed successfully.');

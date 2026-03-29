@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Pemutu;
 
 use App\Traits\Blameable;
@@ -11,16 +12,19 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class DokSub extends Model implements HasMedia
 {
-    use HasFactory, Blameable, HashidBinding, SoftDeletes, InteractsWithMedia;
+    use Blameable, HasFactory, HashidBinding, InteractsWithMedia, SoftDeletes;
 
-    protected $table      = 'pemutu_dok_sub';
+    protected $table = 'pemutu_dok_sub';
+
     protected $primaryKey = 'doksub_id';
-    protected $appends    = ['encrypted_doksub_id', 'encrypted_dok_id'];
+
+    protected $appends = ['encrypted_doksub_id', 'encrypted_dok_id'];
 
     public function getRouteKeyName()
     {
         return 'doksub_id';
     }
+
     protected $fillable = [
         'dok_id',
         'jenis', // poin_visi, poin_misi, poin_rjp, etc.
@@ -36,6 +40,7 @@ class DokSub extends Model implements HasMedia
     protected $casts = [
         'is_hasilkan_indikator' => 'boolean',
     ];
+
     public $timestamps = false;
 
     public function getEncryptedDoksubIdAttribute()

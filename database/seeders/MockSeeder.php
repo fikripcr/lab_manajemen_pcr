@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -16,13 +17,13 @@ class MockSeeder extends Seeder
     public function run(): void
     {
         $permissions = [];
-        $batchSize   = 1000; // Insert in batches to prevent memory issues
+        $batchSize = 1000; // Insert in batches to prevent memory issues
 
         echo "Starting to create 500,000 random permissions...\n";
 
         for ($i = 0; $i < 500; $i++) {
             $permissions[] = [
-                'name'       => 'test_permission_' . Str::random(10) . '_' . $i,
+                'name' => 'test_permission_'.Str::random(10).'_'.$i,
                 'guard_name' => 'web',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -32,7 +33,7 @@ class MockSeeder extends Seeder
             if (($i + 1) % $batchSize === 0) {
                 Permission::insert($permissions);
                 $permissions = []; // Reset the array
-                echo "Inserted batch ending with permission " . ($i + 1) . "\n";
+                echo 'Inserted batch ending with permission '.($i + 1)."\n";
             }
         }
 

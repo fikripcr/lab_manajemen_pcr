@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Survei;
 
 use App\Models\Survei\Halaman;
@@ -15,8 +16,8 @@ class FormBuilderService
     public function getSurveyForBuilder(Survei $survei): Survei
     {
         return $survei->load([
-            'halaman'            => fn($q)            => $q->orderBy('urutan'),
-            'halaman.pertanyaan' => fn($q) => $q->orderBy('urutan'),
+            'halaman' => fn ($q) => $q->orderBy('urutan'),
+            'halaman.pertanyaan' => fn ($q) => $q->orderBy('urutan'),
             'halaman.pertanyaan.opsi',
             'halaman.pertanyaan.logika',
         ]);
@@ -27,9 +28,10 @@ class FormBuilderService
     public function addHalaman(Survei $survei): Halaman
     {
         $count = $survei->halaman()->count();
+
         return $survei->halaman()->create([
-            'judul_halaman' => 'Halaman ' . ($count + 1),
-            'urutan'        => $count + 1,
+            'judul_halaman' => 'Halaman '.($count + 1),
+            'urutan' => $count + 1,
         ]);
     }
 
@@ -43,6 +45,7 @@ class FormBuilderService
         if ($halaman->survei->halaman()->count() <= 1) {
             throw new Exception('Survei harus memiliki minimal satu halaman.');
         }
+
         return $halaman->delete();
     }
 
@@ -60,16 +63,16 @@ class FormBuilderService
     public function addPertanyaan(Survei $survei, array $data): Pertanyaan
     {
         return DB::transaction(function () use ($survei, $data) {
-            $halaman  = Halaman::findOrFail($data['halaman_id']);
+            $halaman = Halaman::findOrFail($data['halaman_id']);
             $maxOrder = $halaman->pertanyaan()->max('urutan') ?? 0;
 
             $pertanyaan = $survei->pertanyaan()->create([
-                'halaman_id'      => $halaman->halaman_id,
+                'halaman_id' => $halaman->halaman_id,
                 'teks_pertanyaan' => $data['teks_pertanyaan'],
-                'tipe'            => $data['tipe'],
-                'urutan'          => $maxOrder + 1,
-                'wajib_diisi'     => true,
-                'config_json'     => [],
+                'tipe' => $data['tipe'],
+                'urutan' => $maxOrder + 1,
+                'wajib_diisi' => true,
+                'config_json' => [],
             ]);
 
             // Add default options for choice types
@@ -84,7 +87,7 @@ class FormBuilderService
             if ($data['tipe'] === 'Skala_Linear') {
                 $pertanyaan->update([
                     'config_json' => [
-                        'min'       => 1, 'max' => 5,
+                        'min' => 1, 'max' => 5,
                         'label_min' => 'Sangat Buruk',
                         'label_max' => 'Sangat Baik',
                     ],
@@ -106,8 +109,8 @@ class FormBuilderService
 
             // Handle type change
             if (isset($data['tipe'])) {
-                $oldTipe            = $pertanyaan->tipe;
-                $newTipe            = $data['tipe'];
+                $oldTipe = $pertanyaan->tipe;
+                $newTipe = $data['tipe'];
                 $updateData['tipe'] = $newTipe;
 
                 $choiceTypes = ['Pilihan_Ganda', 'Kotak_Centang', 'Dropdown'];
@@ -125,7 +128,7 @@ class FormBuilderService
 
                 if ($newTipe === 'Skala_Linear' && $oldTipe !== 'Skala_Linear') {
                     $updateData['config_json'] = [
-                        'min'       => 1, 'max' => 5,
+                        'min' => 1, 'max' => 5,
                         'label_min' => 'Sangat Buruk',
                         'label_max' => 'Sangat Baik',
                     ];
@@ -136,7 +139,7 @@ class FormBuilderService
 
             // Handle Options Update
             if (isset($data['opsi']) && is_array($data['opsi'])) {
-                $incomingIds = collect($data['opsi'])->map(fn($o) => is_array($o) ? ($o['id'] ?? null) : null)->filter()->toArray();
+                $incomingIds = collect($data['opsi'])->map(fn ($o) => is_array($o) ? ($o['id'] ?? null) : null)->filter()->toArray();
                 $pertanyaan->opsi()->whereNotIn('opsi_id', $incomingIds)->delete();
 
                 foreach ($data['opsi'] as $index => $opsiData) {
@@ -145,8 +148,8 @@ class FormBuilderService
                         $pertanyaan->opsi()->updateOrCreate(
                             ['opsi_id' => is_array($opsiData) ? ($opsiData['id'] ?? null) : null],
                             [
-                                'label'              => $label,
-                                'urutan'             => $index + 1,
+                                'label' => $label,
+                                'urutan' => $index + 1,
                                 'next_pertanyaan_id' => is_array($opsiData) ? ($opsiData['next_pertanyaan_id'] ?? null) : null,
                             ]
                         );

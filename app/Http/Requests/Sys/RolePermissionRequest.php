@@ -7,9 +7,6 @@ use App\Http\Requests\BaseRequest;
 class RolePermissionRequest extends BaseRequest
 {
     /**
-     */
-
-    /**
      * Get the validation rules that apply to the request.
      */
     public function rules(): array
@@ -19,9 +16,6 @@ class RolePermissionRequest extends BaseRequest
             'sys.permissions.*' => 'exists:sys_permissions,name',
         ];
     }
-
-    /**
-     */
 
     public function attributes(): array
     {

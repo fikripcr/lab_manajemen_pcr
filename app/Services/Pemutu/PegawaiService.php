@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Pemutu;
 
 use App\Imports\Pemutu\PegawaiImport;
@@ -70,7 +71,7 @@ class PegawaiService
 
             logActivity(
                 'pegawai_management',
-                "Memperbarui pegawai: {$oldName}" . ($oldName !== $pegawai->nama ? " menjadi {$pegawai->nama}" : "")
+                "Memperbarui pegawai: {$oldName}".($oldName !== $pegawai->nama ? " menjadi {$pegawai->nama}" : '')
             );
 
             return true;
@@ -81,7 +82,7 @@ class PegawaiService
     {
         return DB::transaction(function () use ($id) {
             $pegawai = $this->findOrFail($id);
-            $name    = $pegawai->nama;
+            $name = $pegawai->nama;
 
             $pegawai->delete();
 
@@ -101,8 +102,9 @@ class PegawaiService
 
             logActivity(
                 'pegawai_management',
-                "Import pegawai dari file."
+                'Import pegawai dari file.'
             );
+
             return true;
         });
     }
@@ -113,6 +115,7 @@ class PegawaiService
         if (! $model) {
             throw new \Exception("Pegawai dengan ID {$id} tidak ditemukan.");
         }
+
         return $model;
     }
 }

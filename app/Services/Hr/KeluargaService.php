@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Hr;
 
 use App\Models\Hr\Keluarga;
@@ -7,14 +8,13 @@ use Illuminate\Support\Facades\DB;
 
 class KeluargaService
 {
-    public function __construct(protected ApprovalService $approvalService)
-    {}
+    public function __construct(protected ApprovalService $approvalService) {}
 
     public function requestAddition(Pegawai $pegawai, array $data)
     {
         return DB::transaction(function () use ($pegawai, $data) {
             $data['pegawai_id'] = $pegawai->pegawai_id;
-            $keluarga           = Keluarga::create($data);
+            $keluarga = Keluarga::create($data);
 
             $approval = $this->approvalService->createRequest(
                 Keluarga::class,
@@ -23,6 +23,7 @@ class KeluargaService
             );
 
             $keluarga->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
+
             return $keluarga;
         });
     }
@@ -38,7 +39,7 @@ class KeluargaService
             }
 
             $data['pegawai_id'] = $pegawai->pegawai_id;
-            $keluarga           = Keluarga::create($data);
+            $keluarga = Keluarga::create($data);
 
             $approval = $this->approvalService->createRequest(
                 Keluarga::class,
@@ -47,6 +48,7 @@ class KeluargaService
             );
 
             $keluarga->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
+
             return $keluarga;
         });
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Event;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class EventTeam extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'event_teams';
+    protected $table = 'event_teams';
+
     protected $primaryKey = 'eventteam_id';
 
     protected $appends = ['encrypted_eventteam_id'];
@@ -59,6 +61,7 @@ class EventTeam extends Model
         if ($this->memberable) {
             return $this->memberable->name ?? $this->memberable->nama ?? $this->name;
         }
+
         return $this->name;
     }
 }

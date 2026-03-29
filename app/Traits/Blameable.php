@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Traits;
 
 use Illuminate\Support\Facades\Auth;
@@ -7,13 +8,27 @@ use Illuminate\Support\Facades\Auth;
  * Trait Blameable
  *
  * Automatically sets created_by, updated_by, and deleted_by from the authenticated user.
+ * Stores the USER NAME (string), not ID, for better audit trail readability.
  *
  * Usage: Add `use Blameable;` to your model.
  *
- * Assumes the model has these nullable columns:
- * - created_by (bigint, nullable)
- * - updated_by (bigint, nullable)
- * - deleted_by (bigint, nullable) - only for soft deletes
+ * Database Migration Requirements:
+ * - created_by (string, nullable) -- Stores user NAME, not ID
+ * - updated_by (string, nullable) -- Stores user NAME, not ID
+ * - deleted_by (string, nullable) -- Stores user NAME, not ID (for soft deletes)
+ *
+ * Example Migration:
+ * ```php
+ * $table->string('created_by')->nullable();
+ * $table->string('updated_by')->nullable();
+ * $table->string('deleted_by')->nullable();
+ * ```
+ *
+ * Why NAME instead of ID?
+ * - Better audit trail: You can see who created/updated directly without joining users table
+ * - Historical accuracy: Even if user is deleted, you still know who created the record
+ * - No foreign key constraints needed
+ * - Simpler queries for audit reports
  */
 trait Blameable
 {

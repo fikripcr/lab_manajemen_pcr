@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
@@ -21,7 +22,7 @@ class AppConfigController extends Controller
     public function update(AppConfigurationRequest $request)
     {
         $configSection = $request->input('config_section', 'app');
-        $data          = $request->validated();
+        $data = $request->validated();
 
         switch ($configSection) {
             case 'app':
@@ -53,18 +54,20 @@ class AppConfigController extends Controller
                 return redirect()->back()->with('error', 'Invalid configuration section.');
         }
 
-        return redirect()->back()->with('success', $sectionName . ' configuration updated successfully!');
+        return redirect()->back()->with('success', $sectionName.' configuration updated successfully!');
     }
 
     public function clearCache()
     {
         $this->appConfigService->clearCache();
+
         return redirect()->back()->with('success', 'Cache cleared successfully!');
     }
 
     public function optimize()
     {
         $this->appConfigService->optimize();
+
         return redirect()->back()->with('success', 'Application optimized successfully!');
     }
 }

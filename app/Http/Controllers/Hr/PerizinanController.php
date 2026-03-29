@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\PerizinanApproveRequest;
 use App\Http\Requests\Hr\PerizinanRequest;
 use App\Models\Hr\JenisIzin;
-use App\Models\Hr\Perizinan;
 use App\Models\Hr\Pegawai;
+use App\Models\Hr\Perizinan;
 use App\Services\Hr\PerizinanService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -30,14 +31,14 @@ class PerizinanController extends Controller
         }
 
         $selectedYear = $request->input('year', date('Y'));
-        $pageTitle    = 'Data Perizinan';
+        $pageTitle = 'Data Perizinan';
 
         return view('pages.hr.perizinan.index', compact('years', 'selectedYear', 'pageTitle'));
     }
 
     public function data(Request $request)
     {
-        $year   = $request->input('year', date('Y'));
+        $year = $request->input('year', date('Y'));
         $status = $request->input('status');
 
         $query = Perizinan::with(['jenisIzin', 'pengusulPegawai.latestDataDiri', 'latestApproval']);
@@ -68,10 +69,10 @@ class PerizinanController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'viewUrl'   => route('hr.perizinan.show', $row->encrypted_perizinan_id),
+                    'viewUrl' => route('hr.perizinan.show', $row->encrypted_perizinan_id),
                     'viewModal' => false,
                     'viewTitle' => 'Detail Perizinan',
-                    'editUrl'   => in_array($row->status, ['Draft', 'Diajukan']) ? route('hr.perizinan.edit', $row->encrypted_perizinan_id) : null,
+                    'editUrl' => in_array($row->status, ['Draft', 'Diajukan']) ? route('hr.perizinan.edit', $row->encrypted_perizinan_id) : null,
                     'editModal' => true,
                     'editTitle' => 'Edit Perizinan',
                     'deleteUrl' => in_array($row->status, ['Draft', 'Diajukan']) ? route('hr.perizinan.destroy', $row->encrypted_perizinan_id) : null,
@@ -84,8 +85,9 @@ class PerizinanController extends Controller
     public function create()
     {
         $jenisIzin = JenisIzin::active()->get();
-        $pegawais  = Pegawai::with('latestDataDiri')->get();
-        $perizinan = new Perizinan();
+        $pegawais = Pegawai::with('latestDataDiri')->get();
+        $perizinan = new Perizinan;
+
         return view('pages.hr.perizinan.create-edit-ajax', compact('jenisIzin', 'pegawais', 'perizinan'));
     }
 
@@ -99,14 +101,16 @@ class PerizinanController extends Controller
     public function show(Perizinan $perizinan)
     {
         $perizinan->load(['jenisIzin', 'pengusulPegawai.latestDataDiri', 'approvalHistory']);
+
         return view('pages.hr.perizinan.show', compact('perizinan'));
     }
 
     public function edit(Perizinan $perizinan)
     {
         $jenisIzin = JenisIzin::active()->get();
-        $pegawais  = Pegawai::with('latestDataDiri')->get();
+        $pegawais = Pegawai::with('latestDataDiri')->get();
         $perizinan->load(['pengusulPegawai.latestDataDiri']);
+
         return view('pages.hr.perizinan.create-edit-ajax', compact('perizinan', 'jenisIzin', 'pegawais'));
     }
 
@@ -117,6 +121,7 @@ class PerizinanController extends Controller
         }
 
         $this->perizinanService->update($perizinan, $request->validated());
+
         return jsonSuccess('Perizinan berhasil diperbarui.');
     }
 
@@ -141,9 +146,9 @@ class PerizinanController extends Controller
         $statusText = [
             'Approved' => 'disetujui',
             'Rejected' => 'ditolak',
-            'Pending'  => 'ditangguhkan',
+            'Pending' => 'ditangguhkan',
         ];
 
-        return jsonSuccess('Perizinan berhasil di-' . ($statusText[$request->status] ?? 'proses'), route('hr.perizinan.show', $perizinan->encrypted_perizinan_id));
+        return jsonSuccess('Perizinan berhasil di-'.($statusText[$request->status] ?? 'proses'), route('hr.perizinan.show', $perizinan->encrypted_perizinan_id));
     }
 }

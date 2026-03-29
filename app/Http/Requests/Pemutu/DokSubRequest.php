@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Requests\Pemutu;
 
 use App\Http\Requests\BaseRequest;
@@ -6,9 +7,6 @@ use Illuminate\Validation\Rule;
 
 class DokSubRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      */
@@ -39,9 +37,9 @@ class DokSubRequest extends BaseRequest
         }
 
         $rules = [
-            'judul'                 => 'required|string|max:150',
-            'kode'                  => ['nullable', 'string', 'max:50', $kodeRule],
-            'isi'                   => 'nullable|string',
+            'judul' => 'required|string|max:150',
+            'kode' => ['nullable', 'string', 'max:50', $kodeRule],
+            'isi' => 'nullable|string',
             'is_hasilkan_indikator' => 'nullable|boolean',
         ];
 
@@ -55,11 +53,11 @@ class DokSubRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'judul'                 => 'Judul Sub-Dokumen',
-            'kode'                  => 'Kode Sub-Dokumen',
-            'isi'                   => 'Isi Sub-Dokumen',
+            'judul' => 'Judul Sub-Dokumen',
+            'kode' => 'Kode Sub-Dokumen',
+            'isi' => 'Isi Sub-Dokumen',
             'is_hasilkan_indikator' => 'Menghasilkan Indikator',
-            'dok_id'                => 'Dokumen Induk',
+            'dok_id' => 'Dokumen Induk',
         ];
     }
 }

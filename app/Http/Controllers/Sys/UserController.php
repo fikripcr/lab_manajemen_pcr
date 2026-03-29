@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Sys;
 
 use App\Exports\UserExport;
@@ -7,17 +8,19 @@ use App\Http\Requests\Sys\UserImportRequest;
 use App\Http\Requests\Sys\UserRequest;
 use App\Imports\UserImport;
 use App\Models\User;
+use App\Services\Sys\RoleService;
 use App\Services\Sys\UserService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-use Spatie\Permission\Models\Role;
 use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
 {
-    public function __construct(protected UserService $userService)
-    {}
+    public function __construct(
+        protected UserService $userService,
+        protected RoleService $roleService
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -32,8 +35,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        $user  = new User();
-        $roles = Role::all();
+        $user = new User;
+        $roles = $this->roleService->getAllRoles();
+
         return view('pages.sys.users.create-edit-ajax', compact('user', 'roles'));
     }
 
@@ -42,7 +46,7 @@ class UserController extends Controller
      */
     public function data(Request $request)
     {
-        $users = $this->userService->getFilteredQuery($request->all());
+        $users = $this->userService->getBaseQuery();
 
         return DataTables::of($users)
             ->addIndexColumn()
@@ -57,13 +61,13 @@ class UserController extends Controller
             ->editColumn('name', function ($user) {
                 $userCreatedAt = formatTanggalIndo($user->created_at);
 
-                $html  = '<div class="d-flex align-items-center">';
+                $html = '<div class="d-flex align-items-center">';
                 $html .= '<div class="avatar flex-shrink-0 me-3">';
-                $html .= '<img src="' . $user->avatar_small_url . '" alt="' . $user->name . '" class="rounded-circle w-px-40 h-40">';
+                $html .= '<img src="'.$user->avatar_small_url.'" alt="'.$user->name.'" class="rounded-circle w-px-40 h-40">';
                 $html .= '</div>';
                 $html .= '<div class="d-flex flex-column">';
-                $html .= '<span class="text-nowrap">' . $user->name . '</span>';
-                $html .= '<small class="text-muted">' . $userCreatedAt . '</small>';
+                $html .= '<span class="text-nowrap">'.$user->name.'</span>';
+                $html .= '<small class="text-muted">'.$userCreatedAt.'</small>';
                 $html .= '</div>';
                 $html .= '</div>';
 
@@ -71,13 +75,14 @@ class UserController extends Controller
             })
             ->editColumn('expired_at', function ($user) {
                 if ($user->expired_at) {
-                    $isExpired     = $user->isExpired();
+                    $isExpired = $user->isExpired();
                     $formattedDate = formatTanggalIndo($user->expired_at);
-                    $badgeClass    = $isExpired ? 'bg-label-danger' : 'bg-label-warning';
-                    $statusText    = $isExpired ? 'Expired' : 'Active';
+                    $badgeClass = $isExpired ? 'bg-label-danger' : 'bg-label-warning';
+                    $statusText = $isExpired ? 'Expired' : 'Active';
 
-                    return '<span class="badge ' . $badgeClass . '">' . $formattedDate . ' (' . $statusText . ')</span>';
+                    return '<span class="badge '.$badgeClass.'">'.$formattedDate.' ('.$statusText.')</span>';
                 }
+
                 return '<span class="badge bg-label-success">No Expiration</span>';
             })
             ->editColumn('roles', function ($user) {
@@ -88,26 +93,25 @@ class UserController extends Controller
 
                 $roleBadges = '';
                 foreach ($roles as $role) {
-                    $roleBadges .= '<span class="badge bg-label-primary me-1">' . ucfirst($role) . '</span>';
+                    $roleBadges .= '<span class="badge bg-label-primary me-1">'.ucfirst($role).'</span>';
                 }
 
                 return $roleBadges;
             })
             ->addColumn('action', function ($user) {
-                $encryptedId = encryptId($user->id);
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'      => route('sys.users.edit', $encryptedId),
-                    'editModal'    => true,
-                    'viewUrl'      => route('sys.users.show', $encryptedId),
-                    'loginAsUrl'   => route('sys.users.impersonate', $encryptedId),
-                    'loginAsName'  => addslashes($user->name),
-                    'deleteUrl'    => route('sys.users.destroy', $encryptedId),
+                    'editUrl' => route('sys.users.edit', $user->encrypted_id),
+                    'editModal' => true,
+                    'viewUrl' => route('sys.users.show', $user->encrypted_id),
+                    'loginAsUrl' => route('sys.users.impersonate', $user->encrypted_id),
+                    'loginAsName' => addslashes($user->name),
+                    'deleteUrl' => route('sys.users.destroy', $user->encrypted_id),
                     'extraActions' => [
                         [
-                            'icon'       => 'ti-lock',
-                            'text'       => 'Reset Password',
-                            'class'      => 'ajax-modal-btn',
-                            'attributes' => 'data-url="' . route('sys.users.reset-password', $encryptedId) . '" data-modal-title="Reset Password: ' . addslashes($user->name) . '"',
+                            'icon' => 'ti-lock',
+                            'text' => 'Reset Password',
+                            'class' => 'ajax-modal-btn',
+                            'attributes' => 'data-url="'.route('sys.users.reset-password', $user->encrypted_id).'" data-modal-title="Reset Password: '.addslashes($user->name).'"',
                         ],
                     ],
                 ])->render();
@@ -128,15 +132,17 @@ class UserController extends Controller
         }
 
         $this->userService->createUser($validated);
+
         return jsonSuccess('Pengguna berhasil dibuat.', route('sys.users.index'));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(User $user = null)
+    public function show(?User $user = null)
     {
         $user = $user ?: auth()->user();
+
         return view('pages.sys.users.show', compact('user'));
     }
 
@@ -158,8 +164,8 @@ class UserController extends Controller
 
         $this->userService->updateUser($user->id, [
             'password' => $request->password,
-            'name'     => $user->name,
-            'email'    => $user->email,
+            'name' => $user->name,
+            'email' => $user->email,
         ]);
 
         return jsonSuccess('Password berhasil diperbarui.');
@@ -170,7 +176,8 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        $roles = Role::all();
+        $roles = $this->roleService->getAllRoles();
+
         return view('pages.sys.users.create-edit-ajax', compact('user', 'roles'));
     }
 
@@ -186,20 +193,22 @@ class UserController extends Controller
         }
 
         $this->userService->updateUser($user->id, $validated);
+
         return jsonSuccess('Pengguna berhasil diperbarui.');
     }
 
-    public function editProfileAjax(User $user = null)
+    public function editProfileAjax(?User $user = null)
     {
         $user = $user ?: auth()->user();
+
         return view('pages.sys.users.edit-profile-ajax', compact('user'));
     }
 
-    public function updateProfileAjax(Request $request, User $user = null)
+    public function updateProfileAjax(Request $request, ?User $user = null)
     {
-        $user      = $user ?: auth()->user();
+        $user = $user ?: auth()->user();
         $validated = $request->validate([
-            'name'   => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'avatar' => 'nullable|image|max:2048',
         ]);
 
@@ -218,6 +227,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $this->userService->deleteUser($user->id);
+
         return jsonSuccess('Data berhasil dihapus.', route('sys.users.index'));
     }
 
@@ -233,27 +243,28 @@ class UserController extends Controller
 
         $export = new UserExport($filters, $columns);
 
-        return Excel::download($export, 'users_' . date('Y-m-d_H-i-s') . '.xlsx');
+        return Excel::download($export, 'users_'.date('Y-m-d_H-i-s').'.xlsx');
     }
 
     /**
      * Export users to PDF (summary or detail based on parameters)
      */
-    public function exportPdf(Request $request, User $user = null)
+    public function exportPdf(Request $request, ?User $user = null)
     {
         if ($user) {
             // Detail report for specific user
             $data = [
-                'user'       => $user,
+                'user' => $user,
                 'reportType' => 'detail',
                 'reportDate' => now()->format('d M Y H:i'),
             ];
 
             $pdf = Pdf::loadView('pages.sys.users.pdf.detail', $data);
-            return $pdf->download('user-detail-' . $user->name . '-' . now()->format('Y-m-d-H-i') . '.pdf');
+
+            return $pdf->download('user-detail-'.$user->name.'-'.now()->format('Y-m-d-H-i').'.pdf');
         } else {
             // Summary report for all users
-            $type    = $request->get('type', 'summary');
+            $type = $request->get('type', 'summary');
             $filters = $request->all(); // Pass all filters to Service
 
             // Use Service to get Query
@@ -261,14 +272,15 @@ class UserController extends Controller
             $users = $query->get();
 
             $data = [
-                'users'       => $users,
+                'users' => $users,
                 'summaryType' => $type,
-                'reportDate'  => now()->format('d M Y H:i'),
-                'filters'     => $filters,
+                'reportDate' => now()->format('d M Y H:i'),
+                'filters' => $filters,
             ];
 
             $pdf = Pdf::loadView('pages.sys.users.pdf.export', $data);
-            return $pdf->download('users-report-' . $type . '-' . now()->format('Y-m-d-H-i') . '.pdf');
+
+            return $pdf->download('users-report-'.$type.'-'.now()->format('Y-m-d-H-i').'.pdf');
         }
     }
 
@@ -277,7 +289,8 @@ class UserController extends Controller
      */
     public function showImport()
     {
-        $roles = Role::all();
+        $roles = $this->roleService->getAllRoles();
+
         return view('pages.sys.users.import', compact('roles'));
     }
 
@@ -288,7 +301,7 @@ class UserController extends Controller
     {
         $file = $request->file('file');
 
-        $defaultRole       = $request->input('role_default');
+        $defaultRole = $request->input('role_default');
         $overwriteExisting = $request->input('overwrite_existing', false);
 
         $import = new UserImport($defaultRole, $overwriteExisting);
@@ -297,7 +310,7 @@ class UserController extends Controller
         logActivity('user', 'Import users from file.');
 
         return redirect()->route('sys.users.index')
-            ->with('success', "Import completed successfully. Users have been added to the database.");
+            ->with('success', 'Import completed successfully. Users have been added to the database.');
     }
 
     /**
@@ -324,7 +337,7 @@ class UserController extends Controller
         // Use laravel-impersonate
         app('impersonate')->take(auth()->user(), $targetUser);
 
-        logActivity('impersonation', 'User impersonated ' . $targetUser->name . ' (ID: ' . $targetUser->id . ')', $targetUser);
+        logActivity('impersonation', 'User impersonated '.$targetUser->name.' (ID: '.$targetUser->id.')', $targetUser);
 
         return jsonSuccess('Impersonation successful', url('/'), [
             'user_id' => $targetUser->id,
@@ -367,8 +380,8 @@ class UserController extends Controller
         // Set the active role in session
         setActiveRole($role);
 
-        logActivity('role_switch', 'User switched active role to ' . $role, $user);
+        logActivity('role_switch', 'User switched active role to '.$role, $user);
 
-        return redirect()->back()->with('success', 'Successfully switched to ' . $role . ' role.');
+        return redirect()->back()->with('success', 'Successfully switched to '.$role.' role.');
     }
 }

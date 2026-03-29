@@ -10,16 +10,11 @@
             'icon'  => 'ti ti-layout-dashboard',
         ],
         [
-            'type'  => 'item',
-            'title' => 'Jadwal Rapat',
-            'route' => 'Kegiatan.rapat.index',
-            'icon'  => 'ti ti-calendar-event',
-        ],
-        [
-            'type'  => 'item',
-            'title' => 'Data Pegawai',
-            'route' => 'hr.pegawai.index',
-            'icon'  => 'ti ti-user-circle',
+            'type'          => 'item',
+            'title'         => 'Approval Dokumen',
+            'route'         => 'pemutu.approval.index',
+            'active_routes' => ['pemutu.approval.*'],
+            'icon'          => 'ti ti-file-check',
         ],
 
         [
@@ -27,8 +22,14 @@
             'title'         => 'Master Data',
             'id'            => 'navbar-master-data',
             'icon'          => 'ti ti-database',
-            'active_routes' => ['pemutu.label.*', 'pemutu.label-type.*', 'pemutu.periode-spmi.*', 'pemutu.periode-kpi.*', 'pemutu.tim-mutu.*'],
+            'active_routes' => ['pemutu.label.*', 'pemutu.label-type.*', 'pemutu.periode-spmi.*', 'pemutu.periode-kpi.*', 'pemutu.tim-mutu.*', 'hr.pegawai.*'],
             'children'      => [
+                [
+                    'title' => 'Data Pegawai',
+                    'route' => 'hr.pegawai.index',
+                    'active_routes' => ['hr.pegawai.*'],
+                    'icon' => 'ti ti-user-circle',
+                ],
                 [
                     'title' => 'Label',
                     'route' => 'pemutu.label.index',
@@ -91,12 +92,12 @@
             'type'          => 'dropdown',
             'id'            => 'navbar-pelaksanaan',
             'icon'          => 'ti ti-broadcast',
-            'active_routes' => ['pemutu.pelaksanaan.*'],
+            'active_routes' => ['pemutu.pemantauan.*'],
             'children'      => [
                 [
                     'title'         => 'Pemantauan',
-                    'route'         => 'pemutu.pelaksanaan.pemantauan.index',
-                    'active_routes' => ['pemutu.pelaksanaan.pemantauan.*'],
+                    'route'         => 'pemutu.pemantauan.index',
+                    'active_routes' => ['pemutu.pemantauan.*'],
                     'icon'          => 'ti ti-device-heart-monitor',
                 ],
             ],

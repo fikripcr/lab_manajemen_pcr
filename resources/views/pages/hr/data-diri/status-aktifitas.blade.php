@@ -1,20 +1,21 @@
 <x-tabler.card-header class="border-bottom">
-    <div class="d-flex flex-wrap gap-2 w-100">
-        <div>
-            <x-tabler.datatable-page-length dataTableId="status-aktifitas-table" />
-        </div>
-        <div>
-            <x-tabler.datatable-search dataTableId="status-aktifitas-table" />
-        </div>
-        <div>
-            <x-tabler.datatable-filter dataTableId="status-aktifitas-table">
-                <div style="min-width: 150px;">
-                    <x-tabler.form-select name="status_aktifitas_id" placeholder="Semua Aktifitas" class="mb-0" :options="[]" />
-                </div>
-            </x-tabler.datatable-filter>
-        </div>
+    <div class="d-flex gap-2 align-items-center">
+        <x-tabler.datatable-page-length dataTableId="status-aktifitas-table" />
+        <x-tabler.datatable-filter dataTableId="status-aktifitas-table" type="button" target="#status-aktifitas-filter-area" />
+        <x-tabler.datatable-search dataTableId="status-aktifitas-table" />
     </div>
 </x-tabler.card-header>
+<div class="collapse" id="status-aktifitas-filter-area">
+    <x-tabler.datatable-filter dataTableId="status-aktifitas-table" type="bare">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <x-tabler.form-select name="status_aktifitas_id" label="Status Aktifitas" placeholder="" class="mb-0" :options="[]">
+                    <option value="all" selected>Semua Status Aktifitas</option>
+                </x-tabler.form-select>
+            </div>
+        </div>
+    </x-tabler.datatable-filter>
+</div>
 <div class="table-responsive">
     <x-tabler.datatable
         id="status-aktifitas-table"

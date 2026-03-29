@@ -1,14 +1,34 @@
 <?php
+
 namespace App\Services\Hr;
 
 use App\Models\Hr\Lembur;
+use App\Models\Hr\Pegawai;
 use App\Models\Hr\RiwayatApproval;
 use Illuminate\Support\Facades\DB;
 
 class LemburService
 {
-    public function __construct(protected ApprovalService $approvalService)
-    {}
+    public function __construct(protected ApprovalService $approvalService) {}
+
+    /**
+     * Data untuk dropdown form
+     */
+    public function getFormData(): array
+    {
+        return [
+            'pegawais' => Pegawai::with('latestDataDiri')->get(),
+        ];
+    }
+
+    /**
+     * Base query untuk datatable index
+     */
+    public function getDataQuery()
+    {
+        return Lembur::with(['pengusul.latestDataDiri', 'latestApproval', 'pegawais'])
+            ->orderBy('tgl_pelaksanaan', 'desc');
+    }
 
     /**
      * Simpan pengajuan lembur baru.
@@ -19,13 +39,13 @@ class LemburService
         return DB::transaction(function () use ($data) {
             // 1. Insert Lembur — latest_riwayatapproval_id = null dulu
             $lembur = Lembur::create([
-                'pengusul_id'      => $data['pengusul_id'],
-                'judul'            => $data['judul'],
+                'pengusul_id' => $data['pengusul_id'],
+                'judul' => $data['judul'],
                 'uraian_pekerjaan' => $data['uraian_pekerjaan'] ?? null,
-                'alasan'           => $data['alasan'] ?? null,
-                'tgl_pelaksanaan'  => $data['tgl_pelaksanaan'],
-                'jam_mulai'        => $data['jam_mulai'],
-                'jam_selesai'      => $data['jam_selesai'],
+                'alasan' => $data['alasan'] ?? null,
+                'tgl_pelaksanaan' => $data['tgl_pelaksanaan'],
+                'jam_mulai' => $data['jam_mulai'],
+                'jam_selesai' => $data['jam_selesai'],
             ]);
 
             // 2. Attach pegawai ke lembur
@@ -60,13 +80,13 @@ class LemburService
     {
         return DB::transaction(function () use ($lembur, $data) {
             $lembur->update([
-                'pengusul_id'      => $data['pengusul_id'],
-                'judul'            => $data['judul'],
+                'pengusul_id' => $data['pengusul_id'],
+                'judul' => $data['judul'],
                 'uraian_pekerjaan' => $data['uraian_pekerjaan'] ?? null,
-                'alasan'           => $data['alasan'] ?? null,
-                'tgl_pelaksanaan'  => $data['tgl_pelaksanaan'],
-                'jam_mulai'        => $data['jam_mulai'],
-                'jam_selesai'      => $data['jam_selesai'],
+                'alasan' => $data['alasan'] ?? null,
+                'tgl_pelaksanaan' => $data['tgl_pelaksanaan'],
+                'jam_mulai' => $data['jam_mulai'],
+                'jam_selesai' => $data['jam_selesai'],
             ]);
 
             $syncData = [];

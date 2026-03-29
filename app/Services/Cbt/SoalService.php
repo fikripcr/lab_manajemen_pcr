@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Cbt;
 
 use App\Models\Cbt\OpsiJawaban;
@@ -22,12 +23,12 @@ class SoalService
     {
         return DB::transaction(function () use ($data) {
             $soalData = [
-                'mata_uji_id'       => $data['mata_uji_id'],
-                'tipe_soal'         => $data['tipe_soal'],
+                'mata_uji_id' => $data['mata_uji_id'],
+                'tipe_soal' => $data['tipe_soal'],
                 'konten_pertanyaan' => $data['konten_pertanyaan'],
                 'tingkat_kesulitan' => $data['tingkat_kesulitan'],
-                'is_aktif'          => true,
-                'dibuat_oleh'       => auth()->id(),
+                'is_aktif' => true,
+                'dibuat_oleh' => auth()->id(),
             ];
 
             $soal = Soal::create($soalData);
@@ -35,11 +36,11 @@ class SoalService
             if ($data['tipe_soal'] == 'Pilihan_Ganda' && isset($data['opsi'])) {
                 foreach ($data['opsi'] as $label => $teks) {
                     OpsiJawaban::create([
-                        'soal_id'          => $soal->soal_id,
-                        'label'            => $label,
-                        'teks_jawaban'     => $teks,
+                        'soal_id' => $soal->soal_id,
+                        'label' => $label,
+                        'teks_jawaban' => $teks,
                         'is_kunci_jawaban' => ($data['kunci_jawaban'] == $label),
-                        'bobot_nilai'      => ($data['kunci_jawaban'] == $label ? 1 : 0),
+                        'bobot_nilai' => ($data['kunci_jawaban'] == $label ? 1 : 0),
                     ]);
                 }
             }
@@ -47,11 +48,11 @@ class SoalService
             if ($data['tipe_soal'] == 'Benar_Salah') {
                 foreach (['Benar', 'Salah'] as $val) {
                     OpsiJawaban::create([
-                        'soal_id'          => $soal->soal_id,
-                        'label'            => $val,
-                        'teks_jawaban'     => $val,
+                        'soal_id' => $soal->soal_id,
+                        'label' => $val,
+                        'teks_jawaban' => $val,
                         'is_kunci_jawaban' => ($data['kunci_jawaban'] == $val),
-                        'bobot_nilai'      => ($data['kunci_jawaban'] == $val ? 1 : 0),
+                        'bobot_nilai' => ($data['kunci_jawaban'] == $val ? 1 : 0),
                     ]);
                 }
             }
@@ -66,8 +67,8 @@ class SoalService
     {
         return DB::transaction(function () use ($soal, $data) {
             $soal->update([
-                'mata_uji_id'       => $data['mata_uji_id'],
-                'tipe_soal'         => $data['tipe_soal'],
+                'mata_uji_id' => $data['mata_uji_id'],
+                'tipe_soal' => $data['tipe_soal'],
                 'konten_pertanyaan' => $data['konten_pertanyaan'],
                 'tingkat_kesulitan' => $data['tingkat_kesulitan'],
             ]);
@@ -76,11 +77,11 @@ class SoalService
                 $soal->opsiJawaban()->delete();
                 foreach ($data['opsi'] as $label => $teks) {
                     OpsiJawaban::create([
-                        'soal_id'          => $soal->soal_id,
-                        'label'            => $label,
-                        'teks_jawaban'     => $teks,
+                        'soal_id' => $soal->soal_id,
+                        'label' => $label,
+                        'teks_jawaban' => $teks,
                         'is_kunci_jawaban' => ($data['kunci_jawaban'] == $label),
-                        'bobot_nilai'      => ($data['kunci_jawaban'] == $label ? 1 : 0),
+                        'bobot_nilai' => ($data['kunci_jawaban'] == $label ? 1 : 0),
                     ]);
                 }
             }
@@ -89,11 +90,11 @@ class SoalService
                 $soal->opsiJawaban()->delete();
                 foreach (['Benar', 'Salah'] as $val) {
                     OpsiJawaban::create([
-                        'soal_id'          => $soal->soal_id,
-                        'label'            => $val,
-                        'teks_jawaban'     => $val,
+                        'soal_id' => $soal->soal_id,
+                        'label' => $val,
+                        'teks_jawaban' => $val,
                         'is_kunci_jawaban' => ($data['kunci_jawaban'] == $val),
-                        'bobot_nilai'      => ($data['kunci_jawaban'] == $val ? 1 : 0),
+                        'bobot_nilai' => ($data['kunci_jawaban'] == $val ? 1 : 0),
                     ]);
                 }
             }
@@ -107,6 +108,7 @@ class SoalService
     public function delete(Soal $soal)
     {
         logActivity('cbt', "Menghapus soal ID: {$soal->soal_id}", $soal);
+
         return $soal->delete();
     }
 }

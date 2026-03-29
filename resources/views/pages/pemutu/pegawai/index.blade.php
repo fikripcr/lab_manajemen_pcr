@@ -31,7 +31,7 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <x-tabler.form-select name="org_unit_id" label="Unit / Area" placeholder="Semua Unit">
-                                <option value="">Semua Unit</option>
+                                <option value="all">Semua Unit</option>
                                 @foreach($units as $unit)
                                     <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
                                 @endforeach
@@ -39,7 +39,7 @@
                         </div>
                         <div class="col-md-6">
                             <x-tabler.form-select name="jenis" label="Jenis Pegawai" placeholder="Semua Jenis">
-                                <option value="">Semua Jenis</option>
+                                <option value="all">Semua Jenis</option>
                                 <option value="Dosen">Dosen</option>
                                 <option value="Tendik">Tendik</option>
                             </x-tabler.form-select>

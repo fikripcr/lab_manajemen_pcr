@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Models\Survei;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,6 +10,7 @@ class Pengisian extends Model
     use HasFactory;
 
     protected $table = 'survei_pengisian';
+
     protected $primaryKey = 'pengisian_id';
 
     protected $fillable = [
@@ -24,7 +25,7 @@ class Pengisian extends Model
     ];
 
     protected $casts = [
-        'waktu_mulai'   => 'datetime',
+        'waktu_mulai' => 'datetime',
         'waktu_selesai' => 'datetime',
     ];
 

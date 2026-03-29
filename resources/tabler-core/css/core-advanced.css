@@ -436,164 +436,156 @@
 
     :root { --tblr-bg-texture: none; }
 
-    /* Common pseudo-element styles for all textures */
-    [data-theme-texture] body::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: -1;
-        pointer-events: none;
+    /* Common styles for all textures directly on body */
+    [data-theme-texture] body {
+        background-attachment: fixed !important;
     }
 
-    /* Dots Patterns */
-    [data-theme-texture="dots-light"] body::before {
-        background-image: radial-gradient(circle, rgba(156,146,172,0.15) 1px, transparent 1px);
-        background-size: 8px 8px;
+    [data-theme-texture="dots-light"] body {
+        background-image: radial-gradient(circle, rgba(156,146,172,0.15) 1px, transparent 1px) !important;
+        background-size: 8px 8px !important;
     }
 
-    [data-theme-texture="dots-dense"] body::before {
-        background-image: radial-gradient(circle, rgba(156,146,172,0.2) 1px, transparent 1px);
-        background-size: 5px 5px;
+    [data-theme-texture="dots-dense"] body {
+        background-image: radial-gradient(circle, rgba(156,146,172,0.2) 1px, transparent 1px) !important;
+        background-size: 5px 5px !important;
     }
 
-    [data-theme-texture="dots-large"] body::before {
-        background-image: radial-gradient(circle, rgba(156,146,172,0.12) 2px, transparent 2px);
-        background-size: 16px 16px;
+    [data-theme-texture="dots-large"] body {
+        background-image: radial-gradient(circle, rgba(156,146,172,0.12) 2px, transparent 2px) !important;
+        background-size: 16px 16px !important;
     }
 
     /* Grid Patterns */
-    [data-theme-texture="grid-fine"] body::before {
+    [data-theme-texture="grid-fine"] body {
         background-image:
             linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px);
-        background-size: 10px 10px;
+            linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px) !important;
+        background-size: 10px 10px !important;
     }
 
-    [data-theme-texture="grid-medium"] body::before {
+    [data-theme-texture="grid-medium"] body {
         background-image:
             linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
-        background-size: 20px 20px;
+            linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px) !important;
+        background-size: 20px 20px !important;
     }
 
-    [data-theme-texture="grid-large"] body::before {
+    [data-theme-texture="grid-large"] body {
         background-image:
             linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
-        background-size: 40px 40px;
+            linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px) !important;
+        background-size: 40px 40px !important;
     }
 
     /* Diagonal Lines */
-    [data-theme-texture="diagonal"] body::before {
+    [data-theme-texture="diagonal"] body {
         background-image: repeating-linear-gradient(
             45deg,
             transparent,
             transparent 8px,
             rgba(0,0,0,0.04) 8px,
             rgba(0,0,0,0.04) 9px
-        );
+        ) !important;
     }
 
     /* Honeycomb Pattern - Minified SVG */
-    [data-theme-texture="honeycomb"] body::before {
-        background-image: url("data:image/svg+xml,%3Csvg width='52' height='52' viewBox='0 0 52 52' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.12'%3E%3Cpath d='M26 0l22.5 13v26L26 52 3.5 39V13L26 0zm0 4L6 15v22l20 11 20-11V15L26 4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    [data-theme-texture="honeycomb"] body {
+        background-image: url("data:image/svg+xml,%3Csvg width='52' height='52' viewBox='0 0 52 52' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.12'%3E%3Cpath d='M26 0l22.5 13v26L26 52 3.5 39V13L26 0zm0 4L6 15v22l20 11 20-11V15L26 4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") !important;
     }
 
     /* Topography Pattern - Minified SVG */
-    [data-theme-texture="topography"] body::before {
-        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7z' fill='%239C92AC' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+    [data-theme-texture="topography"] body {
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7z' fill='%239C92AC' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E") !important;
     }
 
     /* Waves Pattern - Minified SVG */
-    [data-theme-texture="waves"] body::before {
-        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 25 Q 25 15, 50 25 T 100 25' stroke='%239C92AC' stroke-width='2' fill='none' stroke-opacity='0.15'/%3E%3Cpath d='M0 50 Q 25 40, 50 50 T 100 50' stroke='%239C92AC' stroke-width='2' fill='none' stroke-opacity='0.15'/%3E%3Cpath d='M0 75 Q 25 65, 50 75 T 100 75' stroke='%239C92AC' stroke-width='2' fill='none' stroke-opacity='0.15'/%3E%3C/svg%3E");
-        background-size: 100px 100px;
+    [data-theme-texture="waves"] body {
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 25 Q 25 15, 50 25 T 100 25' stroke='%239C92AC' stroke-width='2' fill='none' stroke-opacity='0.15'/%3E%3Cpath d='M0 50 Q 25 40, 50 50 T 100 50' stroke='%239C92AC' stroke-width='2' fill='none' stroke-opacity='0.15'/%3E%3Cpath d='M0 75 Q 25 65, 50 75 T 100 75' stroke='%239C92AC' stroke-width='2' fill='none' stroke-opacity='0.15'/%3E%3C/svg%3E") !important;
+        background-size: 100px 100px !important;
     }
 
     /* Crosshatch Pattern */
-    [data-theme-texture="crosshatch"] body::before {
+    [data-theme-texture="crosshatch"] body {
         background-image:
             linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%),
-            linear-gradient(-45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%);
-        background-size: 16px 16px;
+            linear-gradient(-45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%) !important;
+        background-size: 16px 16px !important;
     }
 
     /* Circles Pattern */
-    [data-theme-texture="circles"] body::before {
-        background-image: radial-gradient(rgba(156,146,172,0.1) 3px, transparent 3px);
-        background-size: 24px 24px;
+    [data-theme-texture="circles"] body {
+        background-image: radial-gradient(rgba(156,146,172,0.1) 3px, transparent 3px) !important;
+        background-size: 24px 24px !important;
     }
 
     /* Dark mode adaptations */
-    [data-bs-theme="dark"][data-theme-texture="dots-light"] body::before {
-        background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px);
+    [data-bs-theme="dark"][data-theme-texture="dots-light"] body {
+        background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px) !important;
     }
 
-    [data-bs-theme="dark"][data-theme-texture="dots-dense"] body::before {
-        background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px);
+    [data-bs-theme="dark"][data-theme-texture="dots-dense"] body {
+        background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px) !important;
     }
 
-    [data-bs-theme="dark"][data-theme-texture="dots-large"] body::before {
-        background-image: radial-gradient(circle, rgba(255,255,255,0.1) 2px, transparent 2px);
+    [data-bs-theme="dark"][data-theme-texture="dots-large"] body {
+        background-image: radial-gradient(circle, rgba(255,255,255,0.1) 2px, transparent 2px) !important;
     }
 
-    [data-bs-theme="dark"][data-theme-texture="grid-fine"] body::before {
+    [data-bs-theme="dark"][data-theme-texture="grid-fine"] body {
         background-image:
             linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+            linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px) !important;
     }
 
-    [data-bs-theme="dark"][data-theme-texture="grid-medium"] body::before {
+    [data-bs-theme="dark"][data-theme-texture="grid-medium"] body {
         background-image:
             linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+            linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px) !important;
     }
 
-    [data-bs-theme="dark"][data-theme-texture="grid-large"] body::before {
+    [data-bs-theme="dark"][data-theme-texture="grid-large"] body {
         background-image:
             linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+            linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px) !important;
     }
 
-    [data-bs-theme="dark"][data-theme-texture="diagonal"] body::before {
+    [data-bs-theme="dark"][data-theme-texture="diagonal"] body {
         background-image: repeating-linear-gradient(
             45deg,
             transparent,
             transparent 8px,
             rgba(255,255,255,0.06) 8px,
             rgba(255,255,255,0.06) 9px
-        );
+        ) !important;
     }
 
-    [data-bs-theme="dark"][data-theme-texture="honeycomb"] body::before {
-        background-image: url("data:image/svg+xml,%3Csvg width='52' height='52' viewBox='0 0 52 52' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M26 0l22.5 13v26L26 52 3.5 39V13L26 0z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    [data-bs-theme="dark"][data-theme-texture="honeycomb"] body {
+        background-image: url("data:image/svg+xml,%3Csvg width='52' height='52' viewBox='0 0 52 52' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M26 0l22.5 13v26L26 52 3.5 39V13L26 0z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") !important;
     }
 
-    [data-bs-theme="dark"][data-theme-texture="topography"] body::before {
-        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7' fill='%23ffffff' fill-opacity='0.08'/%3E%3C/svg%3E");
+    [data-bs-theme="dark"][data-theme-texture="topography"] body {
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7' fill='%23ffffff' fill-opacity='0.08'/%3E%3C/svg%3E") !important;
     }
 
-    [data-bs-theme="dark"][data-theme-texture="waves"] body::before {
-        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 25 Q 25 15, 50 25 T 100 25' stroke='%23ffffff' stroke-width='2' fill='none' stroke-opacity='0.12'/%3E%3Cpath d='M0 50 Q 25 40, 50 50 T 100 50' stroke='%23ffffff' stroke-width='2' fill='none' stroke-opacity='0.12'/%3E%3C/svg%3E");
+    [data-bs-theme="dark"][data-theme-texture="waves"] body {
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 25 Q 25 15, 50 25 T 100 25' stroke='%23ffffff' stroke-width='2' fill='none' stroke-opacity='0.12'/%3E%3Cpath d='M0 50 Q 25 40, 50 50 T 100 50' stroke='%23ffffff' stroke-width='2' fill='none' stroke-opacity='0.12'/%3E%3C/svg%3E") !important;
     }
 
-    [data-bs-theme="dark"][data-theme-texture="crosshatch"] body::before {
+    [data-bs-theme="dark"][data-theme-texture="crosshatch"] body {
         background-image:
             linear-gradient(45deg, rgba(255,255,255,0.06) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.06) 75%),
-            linear-gradient(-45deg, rgba(255,255,255,0.06) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.06) 75%);
+            linear-gradient(-45deg, rgba(255,255,255,0.06) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.06) 75%) !important;
     }
 
-    [data-bs-theme="dark"][data-theme-texture="circles"] body::before {
-        background-image: radial-gradient(rgba(255,255,255,0.08) 3px, transparent 3px);
+    [data-bs-theme="dark"][data-theme-texture="circles"] body {
+        background-image: radial-gradient(rgba(255,255,255,0.08) 3px, transparent 3px) !important;
     }
 
     /* Print styles */
     @media print {
-        [data-theme-texture] body::before {
-            display: none;
+        [data-theme-texture] body {
+            background-image: none !important;
         }
     }
 }

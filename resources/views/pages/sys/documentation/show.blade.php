@@ -1,202 +1,446 @@
-@if(request()->ajax() || request()->has('ajax'))
-    <x-tabler.form-modal title="Documentation: {{ $fileName }}" method="none">
-        <div class="documentation-content p-2" id="doc-content-modal" style="max-height: 400px; overflow-y: auto;">
-            {!! $htmlContent !!}
-        </div>
-        <div class="text-muted small mt-3 border-top pt-2">
-            <div class="d-flex align-items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 8l0 4" /><path d="M12 16l0 .01" /><path d="M3 12a9 9 0 1 1 18 0a9 9 0 0 1 -18 0" /></svg>
-                Last updated: {{ formatTanggalIndo($lastUpdated) }}
-            </div>
-        </div>
-        
-        <x-slot:footer>
-            <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
-            <div class="d-flex gap-2 ms-auto">
-                <x-tabler.button :href="route('sys.documentation.edit', $fileName)" class="btn-outline-primary" icon="ti ti-pencil" text="Edit" />
-                <x-tabler.button :href="route('sys.documentation.show', $fileName)" icon="ti ti-external-link" text="View Full Page" />
-            </div>
-        </x-slot:footer>
-    </x-tabler.form-modal>
-@else
-    @extends('layouts.tabler.app')
+@extends('layouts.tabler.app')
 
-    @section('header')
-        <x-tabler.page-header title="{{ $pageTitle }}" pretitle="Documentation">
-            <x-slot:actions>
-                <div class="btn-group">
-                    <x-tabler.button type="back" :href="route('sys.documentation.index')" />
-                    <x-tabler.button type="button" class="btn-outline-primary" icon="ti ti-pencil" :href="route('sys.documentation.edit', $fileName)" text="Edit" />
+@section('title', $pageTitle)
+
+@section('header')
+<x-tabler.page-header title="{{ $pageTitle }}" pretitle="Documentation">
+    <x-slot:actions>
+        <div class="btn-group">
+            <x-tabler.button type="back" :href="route('sys.documentation.index')" />
+            <x-tabler.button type="button" class="btn-outline-primary" icon="ti ti-pencil" :href="route('sys.documentation.edit', ['path' => $filePath])" text="Edit" />
+        </div>
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
+
+@section('content')
+@push('styles')
+<link rel="stylesheet" href="{{ Vite::asset('resources/assets/sys/css/documentation.css') }}">
+<link rel="stylesheet" href="{{ Vite::asset('resources/assets/sys/css/documentation-show.css') }}">
+{{-- Prism.js untuk syntax highlighting code blocks --}}
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+{{-- Mermaid untuk diagram --}}
+<style>
+/* Improved code block styling */
+.documentation-content pre[class*="language-"] {
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.documentation-content pre {
+    position: relative;
+}
+
+/* Mermaid diagram container */
+.mermaid {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: var(--tblr-light);
+    border-radius: 0.5rem;
+    overflow-x: auto;
+}
+
+/* Diagram container for code blocks with mermaid class */
+pre.language-mermaid {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+/* Table improvements */
+.documentation-content table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+/* Callout/Tip boxes for better documentation */
+.documentation-content .callout {
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    border-radius: 0.5rem;
+    border-left: 4px solid;
+}
+
+.documentation-content .callout-info {
+    background-color: rgba(32, 131, 216, 0.1);
+    border-left-color: var(--tblr-primary);
+}
+
+.documentation-content .callout-warning {
+    background-color: rgba(245, 158, 11, 0.1);
+    border-left-color: var(--tblr-warning);
+}
+
+.documentation-content .callout-danger {
+    background-color: rgba(213, 57, 64, 0.1);
+    border-left-color: var(--tblr-danger);
+}
+
+.documentation-content .callout-success {
+    background-color: rgba(37, 150, 190, 0.1);
+    border-left-color: var(--tblr-success);
+}
+
+/* Dark mode adjustments */
+[data-bs-theme="dark"] .mermaid {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-bs-theme="dark"] .documentation-content pre[class*="language-"] {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+</style>
+@endpush
+
+<div class="row">
+    <!-- Table of Contents - Sidebar -->
+    <div class="col-lg-3">
+        <!-- Breadcrumb Card -->
+        <x-tabler.card class="mb-3">
+            <x-tabler.card-body>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb breadcrumb-arrows mb-0">
+                        @foreach($breadcrumb as $item)
+                            @if($item['url'])
+                                <li class="breadcrumb-item">
+                                    <a href="{{ $item['url'] }}">{{ $item['label'] }}</a>
+                                </li>
+                            @else
+                                <li class="breadcrumb-item active" aria-current="page">{{ $item['label'] }}</li>
+                            @endif
+                        @endforeach
+                    </ol>
+                </nav>
+            </x-tabler.card-body>
+        </x-tabler.card>
+
+        <!-- Table of Contents -->
+        <x-tabler.card class="sticky-top" style="top: 1rem; z-index: 100;">
+            <x-tabler.card-header class="text-primary">
+                <h5 class="card-title mb-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" /><path d="M9 4v16" /><path d="M14 8v8" /><path d="M9 9h1" /><path d="M9 14h1" /><path d="M14 13h1" /><path d="M14 18h1" /></svg>
+                    Table of Contents
+                </h5>
+            </x-tabler.card-header>
+            <x-tabler.card-body class="p-0">
+                <nav id="toc-nav" class="nav flex-column p-2">
+                    <!-- TOC will be generated by JavaScript -->
+                    <div class="text-center text-muted py-4">
+                        <div class="spinner-border spinner-border-sm text-muted mb-2" role="status"></div>
+                        <div class="small">Loading contents...</div>
+                    </div>
+                </nav>
+            </x-tabler.card-body>
+            <x-tabler.card-footer class="bg-surface-secondary">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 8l0 4" /><path d="M12 16l0 .01" /><path d="M3 12a9 9 0 1 1 18 0a9 9 0 0 1 -18 0" /></svg>
+                        <small class="text-muted">
+                            {{ formatTanggalIndo($doc['lastUpdated']) }}
+                        </small>
+                    </div>
+                    <small class="text-muted">
+                        {{ number_format($doc['size'] / 1024, 1) }} KB
+                    </small>
                 </div>
-            </x-slot:actions>
-        </x-tabler.page-header>
-    @endsection
+            </x-tabler.card-footer>
+        </x-tabler.card>
 
-    @section('content')
-        @push('css')
-            <link rel="stylesheet" href="{{ Vite::asset('resources/assets/sys/css/documentation-show.css') }}">
-        @endpush
-
-        <div class="row">
-            <!-- Table of Contents - Sidebar -->
-            <div class="col-lg-3">
-                <x-tabler.card class="sticky-top" style="top: 1rem; z-index: 100;">
-                    <x-tabler.card-header class="text-primary">
-                        <h5 class="card-title mb-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" /><path d="M9 4v16" /><path d="M14 8v8" /><path d="M9 9h1" /><path d="M9 14h1" /><path d="M14 13h1" /><path d="M14 18h1" /></svg>
-                            Table of Contents
-                        </h5>
-                    </x-tabler.card-header>
-                    <x-tabler.card-body class="p-0">
-                        <nav id="toc-nav" class="nav flex-column p-2">
-                            <!-- TOC will be generated by JavaScript -->
-                            <div class="text-center text-muted py-4">
-                                <div class="spinner-border spinner-border-sm text-muted mb-2" role="status"></div>
-                                <div class="small">Loading contents...</div>
-                            </div>
-                        </nav>
-                    </x-tabler.card-body>
-                    <x-tabler.card-footer class="bg-surface-secondary">
-                        <div class="d-flex align-items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 8l0 4" /><path d="M12 16l0 .01" /><path d="M3 12a9 9 0 1 1 18 0a9 9 0 0 1 -18 0" /></svg>
-                            <small class="text-muted">
-                                Updated: {{ formatTanggalIndo($lastUpdated) }}
-                            </small>
+        <!-- Navigation (Prev/Next) -->
+        @if($navigation['previous'] || $navigation['next'])
+        <x-tabler.card class="mt-3">
+            <x-tabler.card-body class="p-2">
+                @if($navigation['previous'])
+                    <a href="{{ route('sys.documentation.show', ['path' => $navigation['previous']['name']]) }}"
+                       class="d-flex align-items-center p-2 rounded mb-2 text-decoration-none text-reset hover-bg-light">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>
+                        <div>
+                            <div class="small text-muted">Previous</div>
+                            <div class="fw-medium">{{ $navigation['previous']['title'] }}</div>
                         </div>
-                    </x-tabler.card-footer>
-                </x-tabler.card>
-            </div>
+                    </a>
+                @endif
 
-            <!-- Main Content -->
-            <div class="col-lg-9">
-                <x-tabler.card>
-                    <x-tabler.card-body class="p-4 p-lg-5">
-                        <div class="documentation-content" id="doc-content">
-                            {!! $htmlContent !!}
+                @if($navigation['next'])
+                    <a href="{{ route('sys.documentation.show', ['path' => $navigation['next']['name']]) }}"
+                       class="d-flex align-items-center p-2 rounded text-decoration-none text-reset hover-bg-light">
+                        <div class="ms-auto text-end">
+                            <div class="small text-muted">Next</div>
+                            <div class="fw-medium">{{ $navigation['next']['title'] }}</div>
                         </div>
-                    </x-tabler.card-body>
-                </x-tabler.card>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon ms-2" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                    </a>
+                @endif
+            </x-tabler.card-body>
+        </x-tabler.card>
+        @endif
+    </div>
 
-                <!-- Footer Actions -->
-                <div class="mt-4 d-flex justify-content-between">
-                    <x-tabler.button type="back" :href="route('sys.documentation.index')" />
-                    <x-tabler.button type="button" class="btn-outline-primary" icon="ti ti-pencil" :href="route('sys.documentation.edit', $fileName)" text="Edit This Page" />
+    <!-- Main Content -->
+    <div class="col-lg-9">
+        <x-tabler.card>
+            <x-tabler.card-body class="p-4 p-lg-5">
+                <div class="documentation-content" id="doc-content">
+                    {!! $htmlContent !!}
                 </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
+
+        <!-- Footer Actions -->
+        <div class="mt-4 d-flex justify-content-between align-items-center">
+            <x-tabler.button type="back" :href="route('sys.documentation.index')" />
+
+            <div class="d-flex gap-2">
+                <x-tabler.button type="button" class="btn-outline-secondary" icon="ti ti-share" :href="route('sys.documentation.index')" text="Share" />
+                <x-tabler.button type="button" class="btn-outline-primary" icon="ti ti-pencil" :href="route('sys.documentation.edit', ['path' => $filePath])" text="Edit Page" />
             </div>
         </div>
-    @endsection
 
-    @push('scripts')
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const docContent = document.getElementById('doc-content');
-                const tocNav = document.getElementById('toc-nav');
+        <!-- Related Documentation -->
+        @if($related->count() > 0)
+        <x-tabler.card class="mt-4">
+            <x-tabler.card-header title="Related Documentation" icon="ti ti-link" />
+            <x-tabler.card-body>
+                <div class="row g-2">
+                    @foreach($related->take(6) as $relDoc)
+                        <div class="col-sm-6 col-lg-4">
+                            <a href="{{ route('sys.documentation.show', ['path' => $relDoc['name']]) }}"
+                               class="d-flex align-items-center p-3 rounded border text-decoration-none text-reset hover-bg-light h-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-primary" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /></svg>
+                                <div class="small fw-medium text-truncate">{{ $relDoc['title'] }}</div>
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
+        @endif
+    </div>
+</div>
+@endsection
 
-                // Generate Table of Contents from headings
-                if(docContent && tocNav) {
-                    const headings = Array.from(docContent.querySelectorAll('h1, h2, h3, h4'));
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const docContent = document.getElementById('doc-content');
+        const tocNav = document.getElementById('toc-nav');
 
-                    // Clear existing TOC
-                    tocNav.innerHTML = '';
+        // Generate Table of Contents from headings
+        if(docContent && tocNav) {
+            // Get all headings, exclude h1 (title) for cleaner TOC
+            const headings = Array.from(docContent.querySelectorAll('h2, h3, h4'));
 
-                    if (headings.length === 0) {
-                        tocNav.innerHTML = '<div class="text-center text-muted py-3"><small>No sections found</small></div>';
-                    } else {
-                        // Generate TOC links
-                        headings.forEach((heading, index) => {
-                            const level = parseInt(heading.tagName.charAt(1));
-                            const id = heading.id || 'heading-' + index;
+            // Clear existing TOC
+            tocNav.innerHTML = '';
 
-                            // Add ID if not exists
-                            if (!heading.id) {
-                                heading.id = id;
+            if (headings.length === 0) {
+                tocNav.innerHTML = '<div class="text-center text-muted py-3"><small class="text-muted">No sections found</small></div>';
+            } else {
+                // Generate TOC links
+                headings.forEach((heading, index) => {
+                    const level = parseInt(heading.tagName.charAt(1));
+                    let id = heading.id;
+                    
+                    // Generate ID if not exists
+                    if (!id) {
+                        id = 'heading-' + index;
+                        heading.id = id;
+                    }
+
+                    // Get heading text WITHOUT the anchor link
+                    // Clone the heading to avoid modifying original
+                    const headingClone = heading.cloneNode(true);
+                    // Remove anchor link from clone
+                    const anchorLink = headingClone.querySelector('.anchor-link');
+                    if (anchorLink) {
+                        anchorLink.remove();
+                    }
+                    const headingText = headingClone.textContent.trim();
+
+                    const link = document.createElement('a');
+                    link.href = '#' + id;
+                    link.className = 'nav-link py-1 px-2';
+                    link.dataset.depth = level;
+                    link.textContent = headingText;
+                    link.title = headingText;
+
+                    // Add indentation based on level
+                    const indentMap = { 2: 0, 3: 12, 4: 24 };
+                    link.style.paddingLeft = (indentMap[level] || 0) + 8 + 'px';
+                    link.style.fontSize = level === 2 ? '0.9rem' : '0.85rem';
+                    link.style.borderLeft = level === 2 ? '2px solid transparent' : 'none';
+                    link.style.transition = 'all 0.2s ease';
+
+                    // Add click handler for smooth scroll with better offset
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const target = document.getElementById(id);
+                        if (target) {
+                            // Calculate offset for fixed header
+                            const headerOffset = 80;
+                            const elementPosition = target.getBoundingClientRect().top + window.pageYOffset;
+                            const offsetPosition = elementPosition - headerOffset;
+
+                            window.scrollTo({
+                                top: offsetPosition,
+                                behavior: 'smooth'
+                            });
+
+                            // Update active state
+                            tocNav.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                            link.classList.add('active');
+
+                            // Update URL without jumping
+                            history.pushState(null, null, '#' + id);
+                        }
+                    });
+
+                    tocNav.appendChild(link);
+                });
+
+                // Highlight active section on scroll
+                let currentActive = null;
+                const observerOptions = {
+                    root: null,
+                    rootMargin: '-100px 0px -50% 0px',
+                    threshold: 0
+                };
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const id = entry.target.id;
+                            const link = tocNav.querySelector(`a[href="#${id}"]`);
+
+                            if (currentActive && currentActive !== link) {
+                                currentActive.classList.remove('active');
                             }
 
-                            const link = document.createElement('a');
-                            link.href = '#' + id;
-                            link.className = 'nav-link';
-                            link.dataset.depth = level;
-                            link.textContent = heading.textContent.trim();
-                            link.title = heading.textContent.trim();
+                            if (link && !link.classList.contains('active')) {
+                                if (currentActive) currentActive.classList.remove('active');
+                                link.classList.add('active');
+                                currentActive = link;
 
-                            // Add click handler for smooth scroll
-                            link.addEventListener('click', function(e) {
-                                e.preventDefault();
-                                const target = document.getElementById(id);
-                                if (target) {
-                                    const offset = 100; // Header offset
-                                    const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
-                                    
-                                    window.scrollTo({
-                                        top: targetPosition,
-                                        behavior: 'smooth'
-                                    });
+                                // Smooth scroll TOC to keep active item visible (only if needed)
+                                const tocContainer = tocNav.parentElement;
+                                const linkTop = link.offsetTop - tocContainer.offsetTop;
+                                const linkBottom = linkTop + link.offsetHeight;
+                                const tocVisibleTop = tocContainer.scrollTop;
+                                const tocVisibleBottom = tocVisibleTop + tocContainer.clientHeight;
+
+                                if (linkTop < tocVisibleTop) {
+                                    tocContainer.scrollTo({ top: linkTop, behavior: 'smooth' });
+                                } else if (linkBottom > tocVisibleBottom) {
+                                    tocContainer.scrollTo({ top: linkBottom - tocContainer.clientHeight, behavior: 'smooth' });
                                 }
-                            });
-
-                            tocNav.appendChild(link);
-                        });
-
-                        // Highlight active section on scroll
-                        let currentActive = null;
-                        const observerOptions = {
-                            root: null,
-                            rootMargin: '-100px 0px -60% 0px',
-                            threshold: 0
-                        };
-
-                        const observer = new IntersectionObserver((entries) => {
-                            entries.forEach(entry => {
-                                if (entry.isIntersecting) {
-                                    const id = entry.target.id;
-                                    const link = tocNav.querySelector(`a[href="#${id}"]`);
-
-                                    if (currentActive) {
-                                        currentActive.classList.remove('active');
-                                    }
-
-                                    if (link) {
-                                        link.classList.add('active');
-                                        currentActive = link;
-                                        
-                                        // Scroll TOC to keep active item visible
-                                        link.scrollIntoView({
-                                            behavior: 'smooth',
-                                            block: 'nearest'
-                                        });
-                                    }
-                                }
-                            });
-                        }, observerOptions);
-
-                        // Observe all headings
-                        headings.forEach(heading => observer.observe(heading));
-                    }
-                }
-
-                // Add copy button to code blocks
-                const codeBlocks = docContent.querySelectorAll('pre');
-                codeBlocks.forEach(pre => {
-                    const button = document.createElement('button');
-                    button.className = 'btn btn-sm btn-ghost-primary position-absolute top-0 end-0 m-2';
-                    button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /><path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>';
-                    button.title = 'Copy code';
-                    button.style.cssText = 'z-index: 10;';
-                    
-                    pre.style.position = 'relative';
-                    pre.appendChild(button);
-                    
-                    button.addEventListener('click', function() {
-                        const code = pre.querySelector('code') || pre;
-                        navigator.clipboard.writeText(code.textContent).then(() => {
-                            button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon text-success" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>';
-                            setTimeout(() => {
-                                button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /><path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>';
-                            }, 2000);
-                        });
+                            }
+                        }
                     });
+                }, observerOptions);
+
+                // Observe all headings
+                headings.forEach(heading => observer.observe(heading));
+            }
+        }
+
+        // Add copy button to code blocks (custom button that stays visible)
+        const codeBlocks = docContent.querySelectorAll('pre');
+        codeBlocks.forEach(pre => {
+            const button = document.createElement('button');
+            button.className = 'btn btn-sm btn-ghost-primary position-absolute top-0 end-0 m-2 copy-code-btn';
+            button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /><path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>';
+            button.title = 'Copy code';
+            button.style.cssText = 'z-index: 10;';
+
+            pre.style.position = 'relative';
+            pre.appendChild(button);
+
+            button.addEventListener('click', function() {
+                const code = pre.querySelector('code') || pre;
+                navigator.clipboard.writeText(code.textContent).then(() => {
+                    button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon text-success" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>';
+                    setTimeout(() => {
+                        button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /><path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>';
+                    }, 2000);
                 });
             });
-        </script>
-    @endpush
-@endif
+        });
+
+        // Add anchor links to headings
+        const headingsWithLinks = docContent.querySelectorAll('h1[id], h2[id], h3[id], h4[id]');
+        headingsWithLinks.forEach(heading => {
+            // Don't add anchor if already exists
+            if (heading.querySelector('.anchor-link')) return;
+            
+            const anchor = document.createElement('a');
+            anchor.href = '#' + heading.id;
+            anchor.className = 'anchor-link';
+            anchor.textContent = '#';
+            anchor.title = 'Copy link to this section';
+            anchor.setAttribute('aria-hidden', 'true');
+
+            heading.appendChild(anchor);
+
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                navigator.clipboard.writeText(window.location.href.split('#')[0] + '#' + heading.id).then(() => {
+                    showSuccessMessage('Link copied to clipboard!');
+                });
+            });
+        });
+
+        // Initialize Prism.js untuk syntax highlighting
+        if (typeof Prism !== 'undefined') {
+            Prism.highlightAllUnder(docContent);
+        }
+
+        // Initialize Mermaid untuk diagram
+        if (typeof mermaid !== 'undefined') {
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'dark' : 'default',
+                securityLevel: 'loose',
+                fontFamily: 'var(--tblr-font-sans-serif)',
+            });
+
+            // Render semua diagram mermaid
+            const mermaidElements = docContent.querySelectorAll('.mermaid');
+            mermaidElements.forEach((element, index) => {
+                // Cek apakah sudah di-render
+                if (!element.getAttribute('data-processed')) {
+                    const graphDefinition = element.textContent.trim();
+                    if (graphDefinition) {
+                        element.removeAttribute('data-processed');
+                        element.setAttribute('id', 'mermaid-' + index);
+                    }
+                }
+            });
+
+            mermaid.run({
+                querySelector: '.mermaid'
+            }).catch(err => {
+                console.error('Mermaid rendering error:', err);
+            });
+        }
+    });
+
+    // Re-render mermaid saat theme berubah
+    document.addEventListener('color-scheme-change', function() {
+        if (typeof mermaid !== 'undefined') {
+            location.reload(); // Simple approach: reload untuk apply theme
+        }
+    });
+</script>
+{{-- Prism.js untuk syntax highlighting --}}
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+{{-- Mermaid untuk diagram --}}
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    window.mermaid = mermaid;
+</script>
+@endpush

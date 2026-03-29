@@ -115,9 +115,9 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
     });
 
     // Mass Struktural Routes
-    Route::get('pegawai/mass-struktural', [RiwayatStrukturalController::class, 'massIndex'])->name('pegawai.mass-struktural.index');
-    Route::get('pegawai/mass-struktural/{unitId}', [RiwayatStrukturalController::class, 'massDetail'])->name('pegawai.mass-struktural.detail');
-    Route::post('pegawai/mass-struktural/assign', [RiwayatStrukturalController::class, 'massAssign'])->name('pegawai.mass-struktural.assign');
+    Route::get('pegawai/mass-struktural', [RiwayatStrukturalController::class, 'massIndex'])->name('mass-struktural.index');
+    Route::get('pegawai/mass-struktural/{unitId}', [RiwayatStrukturalController::class, 'massDetail'])->name('mass-struktural.detail');
+    Route::post('pegawai/mass-struktural/assign', [RiwayatStrukturalController::class, 'massAssign'])->name('mass-struktural.assign');
 
     // Tanggal Libur (Holidays)
     Route::resource('tanggal-libur', TanggalLiburController::class);
@@ -150,6 +150,7 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
 
     // Struktur Organisasi (Merged from Shared)
     Route::get('struktur-organisasi/data', [\App\Http\Controllers\Hr\StrukturOrganisasiController::class, 'data'])->name('struktur-organisasi.data');
+    Route::get('struktur-organisasi/chart-data', [\App\Http\Controllers\Hr\StrukturOrganisasiController::class, 'chartData'])->name('struktur-organisasi.chart-data');
     Route::post('struktur-organisasi/reorder', [\App\Http\Controllers\Hr\StrukturOrganisasiController::class, 'reorder'])->name('struktur-organisasi.reorder');
     Route::post('struktur-organisasi/{struktur_organisasi}/toggle-status', [\App\Http\Controllers\Hr\StrukturOrganisasiController::class, 'toggleStatus'])->name('struktur-organisasi.toggle-status');
     Route::post('struktur-organisasi/{struktur_organisasi}/set-auditee', [\App\Http\Controllers\Hr\StrukturOrganisasiController::class, 'setAuditee'])->name('struktur-organisasi.set-auditee');

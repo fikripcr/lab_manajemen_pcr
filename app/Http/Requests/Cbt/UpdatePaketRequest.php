@@ -1,12 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Cbt;
 
 use App\Http\Requests\BaseRequest;
 
 class UpdatePaketRequest extends BaseRequest
 {
-    
-
     protected function prepareForValidation()
     {
         $this->merge([
@@ -18,24 +17,24 @@ class UpdatePaketRequest extends BaseRequest
     public function rules()
     {
         return [
-            'nama_paket'         => 'required|string|max:255',
-            'tipe_paket'         => 'required|in:PMB,Akademik',
+            'nama_paket' => 'required|string|max:255',
+            'tipe_paket' => 'required|in:PMB,Akademik',
             'total_durasi_menit' => 'required|integer|min:1',
-            'kk_nilai_minimal'   => 'nullable|integer|min:0',
-            'is_acak_soal'       => 'boolean',
-            'is_acak_opsi'       => 'boolean',
+            'kk_nilai_minimal' => 'nullable|integer|min:0',
+            'is_acak_soal' => 'boolean',
+            'is_acak_opsi' => 'boolean',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'nama_paket'         => 'Nama Paket',
-            'tipe_paket'         => 'Tipe Paket',
+            'nama_paket' => 'Nama Paket',
+            'tipe_paket' => 'Tipe Paket',
             'total_durasi_menit' => 'Total Durasi (Menit)',
-            'kk_nilai_minimal'   => 'KK / Nilai Minimal',
-            'is_acak_soal'       => 'Acak Soal',
-            'is_acak_opsi'       => 'Acak Opsi',
+            'kk_nilai_minimal' => 'KK / Nilai Minimal',
+            'is_acak_soal' => 'Acak Soal',
+            'is_acak_opsi' => 'Acak Opsi',
         ];
     }
 }

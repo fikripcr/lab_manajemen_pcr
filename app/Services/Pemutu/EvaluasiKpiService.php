@@ -1,10 +1,10 @@
 <?php
+
 namespace App\Services\Pemutu;
 
 use App\Models\Pemutu\IndikatorPegawai;
 use App\Models\Pemutu\PeriodeKpi;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Storage;
 
 class EvaluasiKpiService
 {
@@ -26,7 +26,7 @@ class EvaluasiKpiService
     {
         $periodes = PeriodeKpi::orderBy('tahun', 'desc')->orderBy('semester', 'desc')->paginate($perPage);
 
-        $periodeIds  = $periodes->pluck('periode_kpi_id');
+        $periodeIds = $periodes->pluck('periode_kpi_id');
         $totalCounts = IndikatorPegawai::whereIn('periode_kpi_id', $periodeIds)
             ->selectRaw('periode_kpi_id, COUNT(*) as total')
             ->groupBy('periode_kpi_id')
@@ -49,7 +49,7 @@ class EvaluasiKpiService
 
         // Hierarki Indikator
         $breadcrumbs = [];
-        $current     = $indikator;
+        $current = $indikator;
         while ($current) {
             array_unshift($breadcrumbs, compact('current'));
             $current = $current->parent;
@@ -57,26 +57,26 @@ class EvaluasiKpiService
 
         // Pohon Dokumen Induk
         $indukDokumenTree = [];
-        $firstDokSub      = $indikator->dokSubs()->with('dokumen')->first();
+        $firstDokSub = $indikator->dokSubs()->with('dokumen')->first();
         if (! $firstDokSub) {
             $parent = $indikator->parent;
             while ($parent && ! $firstDokSub) {
                 $firstDokSub = $parent->dokSubs()->with('dokumen')->first();
-                $parent      = $parent->parent;
+                $parent = $parent->parent;
             }
         }
         if ($firstDokSub) {
             array_unshift($indukDokumenTree, [
                 'judul' => $firstDokSub->judul,
-                'kode'  => '',
-                'type'  => 'dok_sub',
+                'kode' => '',
+                'type' => 'dok_sub',
             ]);
             $currDok = $firstDokSub->dokumen;
             while ($currDok) {
                 array_unshift($indukDokumenTree, [
                     'judul' => $currDok->judul,
-                    'kode'  => $currDok->kode,
-                    'type'  => 'dokumen',
+                    'kode' => $currDok->kode,
+                    'type' => 'dokumen',
                 ]);
                 $currDok = $currDok->parent;
             }
@@ -108,15 +108,15 @@ class EvaluasiKpiService
         }
 
         $updatePayload = [
-            'realization'  => $data['realization'] ?? null,
+            'realization' => $data['realization'] ?? null,
             'kpi_analisis' => $data['kpi_analisis'] ?? null,
-            'kpi_links'    => ! empty($linksArray) ? json_encode($linksArray) : null,
-            'status'       => 'submitted',
+            'kpi_links' => ! empty($linksArray) ? json_encode($linksArray) : null,
+            'status' => 'submitted',
         ];
 
         $indikatorPegawai->update($updatePayload);
 
-        logActivity('pemutu', 'Memperbarui evaluasi KPI: ' . ($indikatorPegawai->indikator->no_indikator ?? '-'));
+        logActivity('pemutu', 'Memperbarui evaluasi KPI: '.($indikatorPegawai->indikator->no_indikator ?? '-'));
 
         return $indikatorPegawai;
     }

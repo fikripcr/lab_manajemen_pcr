@@ -13,6 +13,7 @@ class RapatUndanganNotification extends Notification implements ShouldQueue
     use Queueable;
 
     protected Rapat $rapat;
+
     protected string $jabatan;
 
     /**
@@ -42,8 +43,8 @@ class RapatUndanganNotification extends Notification implements ShouldQueue
         $url = route('Kegiatan.rapat.show', $this->rapat->encrypted_rapat_id);
 
         return (new MailMessage)
-            ->subject('Undangan Rapat: ' . $this->rapat->judul_kegiatan)
-            ->greeting('Yth. ' . ($notifiable->name ?? 'Bapak/Ibu'))
+            ->subject('Undangan Rapat: '.$this->rapat->judul_kegiatan)
+            ->greeting('Yth. '.($notifiable->name ?? 'Bapak/Ibu'))
             ->line('Anda telah diundang untuk menghadiri rapat dengan detail berikut:')
             ->markdown('event.mail.undangan-rapat', [
                 'rapat' => $this->rapat,
@@ -63,7 +64,7 @@ class RapatUndanganNotification extends Notification implements ShouldQueue
     {
         return [
             'title' => 'Undangan Rapat',
-            'message' => 'Anda diundang untuk menghadiri rapat: ' . $this->rapat->judul_kegiatan,
+            'message' => 'Anda diundang untuk menghadiri rapat: '.$this->rapat->judul_kegiatan,
             'rapat_id' => $this->rapat->rapat_id,
             'encrypted_rapat_id' => $this->rapat->encrypted_rapat_id,
             'jabatan' => $this->jabatan,

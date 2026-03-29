@@ -19,7 +19,7 @@
                     <div class="col-md-4">
                         <label class="form-label">Jenis Layanan</label>
                         <x-tabler.form-select name="jenislayanan_id" class="select2-filter">
-                            <option value="">Semua Jenis Layanan</option>
+                            <option value="all">Semua Jenis Layanan</option>
                             @foreach($jenisLayanans as $jl)
                                 <option value="{{ $jl->jenislayanan_id }}">{{ $jl->nama_layanan }}</option>
                             @endforeach
@@ -28,7 +28,7 @@
                     <div class="col-md-4">
                         <label class="form-label">Status</label>
                         <x-tabler.form-select name="status">
-                            <option value="">Semua Status</option>
+                            <option value="all">Semua Status</option>
                             <option value="Diajukan">Diajukan</option>
                             <option value="Diproses">Diproses</option>
                             <option value="Disposisi">Disposisi</option>

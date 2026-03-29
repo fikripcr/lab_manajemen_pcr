@@ -113,9 +113,3 @@
             </div>
         </form>
 @endsection
-
-@push('scripts')
-<script>
-    // HugeRTE is auto-initialized by x-tabler.form-textarea with type="editor"
-</script>
-@endpush

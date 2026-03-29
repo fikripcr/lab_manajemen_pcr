@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JabatanFungsional extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_jabatan_fungsional';
+    protected $table = 'hr_jabatan_fungsional';
+
     protected $primaryKey = 'jabfungsional_id';
 
     protected $appends = ['encrypted_jabfungsional_id'];
@@ -39,5 +41,4 @@ class JabatanFungsional extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
-
 }

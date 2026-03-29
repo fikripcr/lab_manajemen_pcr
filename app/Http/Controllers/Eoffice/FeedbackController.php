@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Eoffice;
 
 use App\Http\Controllers\Controller;
@@ -10,15 +11,14 @@ use Yajra\DataTables\Facades\DataTables;
 
 class FeedbackController extends Controller
 {
-    public function __construct(protected FeedbackService $feedbackService)
-    {}
+    public function __construct(protected FeedbackService $feedbackService) {}
 
     /**
      * Feedback listing page.
      */
     public function index()
     {
-        $pageTitle        = 'Feedback Layanan';
+        $pageTitle = 'Feedback Layanan';
         $jenisLayananList = JenisLayanan::where('is_active', true)->orderBy('nama_layanan')->get();
 
         return view('pages.eoffice.feedback.index', compact('pageTitle', 'jenisLayananList'));
@@ -32,6 +32,7 @@ class FeedbackController extends Controller
         $validated = $request->validated();
 
         $this->feedbackService->store($validated);
+
         return jsonSuccess('Feedback berhasil disimpan.');
     }
 
@@ -52,21 +53,22 @@ class FeedbackController extends Controller
                     return '-';
                 }
 
-                return '<a href="' . route('eoffice.layanan.show', $row->layanan->hashid) . '">' . $row->layanan->no_layanan . '</a>';
+                return '<a href="'.route('eoffice.layanan.show', $row->layanan->hashid).'">'.$row->layanan->no_layanan.'</a>';
             })
             ->addColumn('action', function ($row) {
                 if (! $row->layanan) {
                     return '-';
                 }
 
-                return '<a href="' . route('eoffice.layanan.show', $row->layanan->hashid) . '" class="btn btn-sm btn-outline-primary">
+                return '<a href="'.route('eoffice.layanan.show', $row->layanan->hashid).'" class="btn btn-sm btn-outline-primary">
                             <i class="ti ti-eye"></i> Detail
                         </a>';
             })
             ->addColumn('rating_stars', function ($row) {
                 $stars = str_repeat('<i class="ti ti-star-filled text-yellow"></i>', $row->rating);
                 $empty = str_repeat('<i class="ti ti-star text-muted"></i>', 5 - $row->rating);
-                return $stars . $empty;
+
+                return $stars.$empty;
             })
             ->addColumn('tanggal', function ($row) {
                 return $row->created_at ? $row->created_at->format('d M Y H:i') : '-';

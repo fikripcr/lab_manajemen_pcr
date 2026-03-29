@@ -2,8 +2,8 @@
 
 namespace Database\Seeders\Pemutu;
 
-use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\DokSub;
+use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\Label;
 use Illuminate\Database\Seeder;
@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Seeder untuk Dokumen SPMI - Siklus Lengkap
- * 
+ *
  * Hierarchy:
- * VISI (2 poin) 
+ * VISI (2 poin)
  *   ↓ mapped_by
  * MISI (5 poin) → mapped to VISI
  *   ↓ mapped_by
@@ -38,7 +38,7 @@ class DokumenSpmiSeeder extends Seeder
         // ─────────────────────────────────────────────────────────
         // Check if label exists
         $existingLabel = DB::table('pemutu_label')->where('name', 'renop')->first();
-        
+
         if ($existingLabel) {
             $renopLabelId = $existingLabel->label_id;
         } else {
@@ -314,7 +314,7 @@ class DokumenSpmiSeeder extends Seeder
         // ─────────────────────────────────────────────────────────
         // 7. CREATE RENOP INDICATORS (with 'renop' label)
         // ─────────────────────────────────────────────────────────
-        
+
         // Indikator 1 - From Renop Poin 1
         $indikator1 = Indikator::create([
             'type' => 'renop',

@@ -9,7 +9,6 @@ class NotificationComposer
     /**
      * Bind data to the view.
      *
-     * @param  \Illuminate\View\View  $view
      * @return void
      */
     public function compose(View $view)
@@ -21,10 +20,10 @@ class NotificationComposer
             $topNotifications = $user->notifications()->take(10)->get();
 
             $view->with('unreadCount', $unreadCount)
-                 ->with('topNotifications', $topNotifications);
+                ->with('topNotifications', $topNotifications);
         } else {
             $view->with('unreadCount', 0)
-                 ->with('topNotifications', collect([]));
+                ->with('topNotifications', collect([]));
         }
     }
 }

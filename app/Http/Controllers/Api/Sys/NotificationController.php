@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api\Sys;
 
 use App\Http\Controllers\Controller;
@@ -7,8 +8,7 @@ use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-    public function __construct(protected NotificationService $notificationService)
-    {}
+    public function __construct(protected NotificationService $notificationService) {}
 
     /**
      * Get count of unread notifications for the authenticated user
@@ -16,6 +16,7 @@ class NotificationController extends Controller
     public function getCount()
     {
         $count = $this->notificationService->getUnreadCount(auth()->id());
+
         return jsonSuccess(['data' => ['count' => $count]]);
     }
 
@@ -24,7 +25,7 @@ class NotificationController extends Controller
      */
     public function getList(Request $request)
     {
-        $limit  = $request->get('limit', 10);
+        $limit = $request->get('limit', 10);
         $userId = auth()->id();
 
         $notifications = $this->notificationService->getDropdownData($userId, $limit);
@@ -37,12 +38,12 @@ class NotificationController extends Controller
      */
     public function markAllAsRead()
     {
-        $userId       = auth()->id();
+        $userId = auth()->id();
         $updatedCount = $this->notificationService->markAllAsReadForUser($userId);
 
         return jsonSuccess([
             'message' => 'All notifications marked as read',
-            'data'    => ['updated_count' => $updatedCount],
+            'data' => ['updated_count' => $updatedCount],
         ]);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Akademik;
 
 use App\Models\Akademik\Semester;
@@ -43,7 +44,7 @@ class SemesterService
         return DB::transaction(function () use ($data) {
             $semester = Semester::create($data);
 
-            logActivity('semester_management', "Membuat semester baru: {$semester->tahun_ajaran} " . ($semester->semester == 1 ? 'Ganjil' : 'Genap'));
+            logActivity('semester_management', "Membuat semester baru: {$semester->tahun_ajaran} ".($semester->semester == 1 ? 'Ganjil' : 'Genap'));
 
             return $semester;
         });
@@ -55,15 +56,15 @@ class SemesterService
     public function updateSemester(Semester $semester, array $data): bool
     {
         return DB::transaction(function () use ($semester, $data) {
-            $oldName = "{$semester->tahun_ajaran} " . ($semester->semester == 1 ? 'Ganjil' : 'Genap');
+            $oldName = "{$semester->tahun_ajaran} ".($semester->semester == 1 ? 'Ganjil' : 'Genap');
 
             $semester->update($data);
 
-            $newName = "{$semester->tahun_ajaran} " . ($semester->semester == 1 ? 'Ganjil' : 'Genap');
+            $newName = "{$semester->tahun_ajaran} ".($semester->semester == 1 ? 'Ganjil' : 'Genap');
 
             logActivity(
                 'semester_management',
-                "Memperbarui semester: {$oldName}" . ($oldName !== $newName ? " menjadi {$newName}" : "")
+                "Memperbarui semester: {$oldName}".($oldName !== $newName ? " menjadi {$newName}" : '')
             );
 
             return true;
@@ -81,7 +82,7 @@ class SemesterService
                 throw new Exception('Tidak dapat menghapus semester karena masih digunakan dalam Jadwal.');
             }
 
-            $name = "{$semester->tahun_ajaran} " . ($semester->semester == 1 ? 'Ganjil' : 'Genap');
+            $name = "{$semester->tahun_ajaran} ".($semester->semester == 1 ? 'Ganjil' : 'Genap');
             $semester->delete();
 
             logActivity('semester_management', "Menghapus semester: {$name}");
@@ -96,6 +97,7 @@ class SemesterService
         if (! $model) {
             throw new Exception("Semester dengan ID {$id} tidak ditemukan.");
         }
+
         return $model;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Exports;
 
 use App\Models\Inventaris;
@@ -11,9 +12,10 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class InventarisExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidths, WithStyles, WithEvents
+class InventarisExport implements FromQuery, WithColumnWidths, WithEvents, WithHeadings, WithMapping, WithStyles
 {
     protected $filters;
+
     protected $columns;
 
     public function __construct($filters = [], $columns = [])
@@ -34,7 +36,7 @@ class InventarisExport implements FromQuery, WithHeadings, WithMapping, WithColu
             'inventaris.kondisi_terakhir',
             'inventaris.tanggal_pengecekan',
             'inventaris.created_at',
-            'inventaris.updated_at'
+            'inventaris.updated_at',
         ])
             ->leftJoin('labs', 'inventaris.lab_id', '=', 'labs.lab_id');
 
@@ -71,14 +73,14 @@ class InventarisExport implements FromQuery, WithHeadings, WithMapping, WithColu
     public function headings(): array
     {
         $headingMap = [
-            'id'                 => 'ID',
-            'nama_alat'          => 'Equipment Name',
-            'jenis_alat'         => 'Equipment Type',
-            'kondisi_terakhir'   => 'Condition',
+            'id' => 'ID',
+            'nama_alat' => 'Equipment Name',
+            'jenis_alat' => 'Equipment Type',
+            'kondisi_terakhir' => 'Condition',
             'tanggal_pengecekan' => 'Check Date',
-            'created_at'         => 'Created At',
-            'updated_at'         => 'Updated At',
-            'lab_name'           => 'Lab',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'lab_name' => 'Lab',
         ];
 
         $headings = [];
@@ -95,14 +97,14 @@ class InventarisExport implements FromQuery, WithHeadings, WithMapping, WithColu
     public function map($inventaris): array
     {
         $dataMap = [
-            'id'                 => $inventaris->id,
-            'nama_alat'          => $inventaris->nama_alat,
-            'jenis_alat'         => $inventaris->jenis_alat,
-            'kondisi_terakhir'   => $inventaris->kondisi_terakhir ?: '-',
+            'id' => $inventaris->id,
+            'nama_alat' => $inventaris->nama_alat,
+            'jenis_alat' => $inventaris->jenis_alat,
+            'kondisi_terakhir' => $inventaris->kondisi_terakhir ?: '-',
             'tanggal_pengecekan' => $inventaris->tanggal_pengecekan ? $inventaris->tanggal_pengecekan->format('Y-m-d') : '-',
-            'created_at'         => $inventaris->created_at ? $inventaris->created_at->format('Y-m-d H:i:s') : '-',
-            'updated_at'         => $inventaris->updated_at ? $inventaris->updated_at->format('Y-m-d H:i:s') : '-',
-            'lab_name'           => $inventaris->lab_name ?: '-',
+            'created_at' => $inventaris->created_at ? $inventaris->created_at->format('Y-m-d H:i:s') : '-',
+            'updated_at' => $inventaris->updated_at ? $inventaris->updated_at->format('Y-m-d H:i:s') : '-',
+            'lab_name' => $inventaris->lab_name ?: '-',
         ];
 
         $row = [];

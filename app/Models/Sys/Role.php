@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Sys;
 
 use App\Traits\Blameable;
@@ -10,7 +11,8 @@ use Spatie\Searchable\SearchResult;
 
 class Role extends SpatieRole implements Searchable
 {
-    use SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HashidBinding, SoftDeletes;
+
     protected $table = 'sys_roles';
 
     /**
@@ -23,7 +25,7 @@ class Role extends SpatieRole implements Searchable
 
     public function getSearchResult(): SearchResult
     {
-        $url = route('sys.roles.index') . '?search=' . urlencode($this->name);
+        $url = route('sys.roles.index').'?search='.urlencode($this->name);
 
         return new SearchResult(
             $this,

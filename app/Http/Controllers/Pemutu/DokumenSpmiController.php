@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
@@ -24,27 +25,27 @@ class DokumenSpmiController extends Controller
      */
     public function index(Request $request)
     {
-        $pageTitle   = 'Workspace Dokumen SPMI';
+        $pageTitle = 'Workspace Dokumen SPMI';
         $activeJenis = $request->query('jenis', 'kebijakan');
-        
+
         // Use Global Cycle from Session (Handled by PeriodeSpmiService fallback)
         $siklusData = $this->PeriodeSpmiService->getSiklusData();
         $selectedYe = $siklusData['tahun'];
 
         // Tree-based: Multiple documents allowed (Standar, Formulir, Manual, and Generic Kebijakan)
         $isTreeBased = in_array($activeJenis, ['standar', 'formulir', 'manual_prosedur', 'kebijakan']);
-        
+
         // Optimization: ONLY fetch documents for the active jenis to improve performance
         $dokumentByJenis = [
-            $activeJenis => $this->dokumenSpmiService->getDokumenByJenis($activeJenis, $selectedYe)
+            $activeJenis => $this->dokumenSpmiService->getDokumenByJenis($activeJenis, $selectedYe),
         ];
 
         return view('pages.pemutu.dokumen.index', [
-            'pageTitle'       => $pageTitle,
-            'activeJenis'     => $activeJenis,
+            'pageTitle' => $pageTitle,
+            'activeJenis' => $activeJenis,
             'selectedPeriode' => $selectedYe,
             'dokumentByJenis' => $dokumentByJenis,
-            'activeTab'       => $isTreeBased ? 'standar' : 'kebijakan',
+            'activeTab' => $isTreeBased ? 'standar' : 'kebijakan',
         ]);
     }
 
@@ -54,11 +55,11 @@ class DokumenSpmiController extends Controller
     public function show(Request $request, $type, $id)
     {
         if ($type === 'dokumen') {
-            $item          = Dokumen::with('mappedDokSubs.dokumen')->findOrFail(decryptIdIfEncrypted($id));
-            $parentJenis   = strtolower(trim($item->jenis));
-            $childLabel    = pemutuChildLabel($parentJenis);
+            $item = Dokumen::with(['mappedDokSubs.dokumen', 'riwayatApprovals'])->findOrFail(decryptIdIfEncrypted($id));
+            $parentJenis = strtolower(trim($item->jenis));
+            $childLabel = pemutuChildLabel($parentJenis);
             $isDokSubBased = pemutuIsDokSubBased($parentJenis);
-            $isKebijakan   = in_array($parentJenis, pemutuKebijakanJenisList());
+            $isKebijakan = in_array($parentJenis, pemutuKebijakanJenisList());
 
             // For Formulir: load available mapping options (targets: Standar or Manual Prosedur parent documents)
             $mappableOptions = collect();
@@ -71,7 +72,7 @@ class DokumenSpmiController extends Controller
 
             return view('pages.pemutu.dokumen._workspace', compact('type', 'item', 'childLabel', 'isDokSubBased', 'isKebijakan', 'mappableOptions'));
         } elseif ($type === 'poin') {
-            $item        = DokSub::with('dokumen', 'mappedTo.dokumen', 'mappedFrom.dokumen')->findOrFail(decryptIdIfEncrypted($id));
+            $item = DokSub::with('dokumen', 'mappedTo.dokumen', 'mappedFrom.dokumen')->findOrFail(decryptIdIfEncrypted($id));
             $parentJenis = strtolower(trim($item->dokumen->jenis ?? ''));
             $isKebijakan = in_array($parentJenis, pemutuKebijakanJenisList());
 
@@ -95,17 +96,17 @@ class DokumenSpmiController extends Controller
      */
     public function create(Request $request)
     {
-        $type         = $request->query('type', 'dokumen');
+        $type = $request->query('type', 'dokumen');
         $allowedTypes = ['standar' => 'Standar', 'manual_prosedur' => 'Manual Prosedur', 'formulir' => 'Formulir'];
 
         if ($request->tabs === 'kebijakan') {
             $allowedTypes = ['kebijakan' => 'Kebijakan', 'visi' => 'Visi', 'misi' => 'Misi', 'rjp' => 'RPJP', 'renstra' => 'Renstra', 'renop' => 'Renop'];
         }
 
-        $fixedJenis   = $request->fixed_jenis;
-        $parent       = null;
+        $fixedJenis = $request->fixed_jenis;
+        $parent = null;
         $parentDokSub = null;
-        $parentDok    = null;
+        $parentDok = null;
 
         if ($request->filled('parent_id')) {
             $parent = Dokumen::find(decryptIdIfEncrypted($request->parent_id));
@@ -131,13 +132,13 @@ class DokumenSpmiController extends Controller
         }
 
         // Fallback to Global Cycle if not provided
-        if (!$currentPeriode) {
+        if (! $currentPeriode) {
             $siklusData = $this->PeriodeSpmiService->getSiklusData();
             // We only need the year as an indicator if no specific PeriodeSpmi record exists for it yet
             // But we can create a dummy object or just use the year
             $currentPeriode = (object) [
                 'periode' => $siklusData['tahun'],
-                'jenis_periode' => 'Global'
+                'jenis_periode' => 'Global',
             ];
         }
 
@@ -147,6 +148,7 @@ class DokumenSpmiController extends Controller
         } elseif ($type === 'poin') {
             if ($request->filled('parent_id')) {
                 $dokumen = Dokumen::find(decryptIdIfEncrypted($request->parent_id));
+
                 return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'dokumen', 'currentPeriode'));
             }
         } elseif ($type === 'indikator') {
@@ -168,7 +170,7 @@ class DokumenSpmiController extends Controller
 
         // Validate required
         if (empty($data['judul'])) {
-            return jsonError("Judul wajib diisi.");
+            return jsonError('Judul wajib diisi.');
         }
 
         if ($type === 'dokumen') {
@@ -214,17 +216,17 @@ class DokumenSpmiController extends Controller
         $redirect = null;
         if ($type === 'dokumen') {
             $redirect = route('pemutu.dokumen.index', [
-                'jenis'   => $model->jenis,
+                'jenis' => $model->jenis,
                 'periode' => $model->periode,
-                'id'      => $model->encrypted_dok_id,
-                'type'    => 'dokumen',
+                'id' => $model->encrypted_dok_id,
+                'type' => 'dokumen',
             ]);
         } elseif ($type === 'poin') {
             $redirect = route('pemutu.dokumen.index', [
-                'jenis'   => $model->dokumen->jenis ?? 'standar',
+                'jenis' => $model->dokumen->jenis ?? 'standar',
                 'periode' => $model->dokumen->periode ?? date('Y'),
-                'id'      => $model->encrypted_doksub_id,
-                'type'    => 'doksub',
+                'id' => $model->encrypted_doksub_id,
+                'type' => 'doksub',
             ]);
         } elseif ($type === 'indikator') {
             // Indikators might not have a direct direct parent "jenis" in the same way, but often we want to stay on the same tab
@@ -232,7 +234,7 @@ class DokumenSpmiController extends Controller
             $redirect = url()->previous();
         }
 
-        return jsonSuccess(ucfirst($type) . ' berhasil dibuat.', $redirect);
+        return jsonSuccess(ucfirst($type).' berhasil dibuat.', $redirect);
     }
 
     /**
@@ -241,16 +243,19 @@ class DokumenSpmiController extends Controller
     public function edit(Request $request, $type, $id)
     {
         $decryptedId = decryptIdIfEncrypted($id);
-        $mode        = $request->query('mode'); // 'title' or 'content'
+        $mode = $request->query('mode'); // 'title' or 'content'
 
         if ($type === 'dokumen') {
-            $dokumen  = Dokumen::findOrFail($decryptedId);
+            $dokumen = Dokumen::findOrFail($decryptedId);
+
             return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'dokumen', 'mode'));
         } elseif ($type === 'poin') {
             $dokSub = DokSub::findOrFail($decryptedId);
+
             return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'dokSub', 'mode'));
         } elseif ($type === 'indikator') {
             $indikator = Indikator::findOrFail($decryptedId);
+
             return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'indikator', 'mode'));
         }
 
@@ -263,7 +268,7 @@ class DokumenSpmiController extends Controller
     public function update(Request $request, $type, $id)
     {
         $decryptedId = decryptIdIfEncrypted($id);
-        $data        = $request->all();
+        $data = $request->all();
 
         if ($type === 'dokumen') {
             if (! empty($data['parent_id'])) {
@@ -296,7 +301,7 @@ class DokumenSpmiController extends Controller
             $redirect = url()->previous();
         }
 
-        return jsonSuccess(ucfirst($type) . ' berhasil diperbarui.', $redirect);
+        return jsonSuccess(ucfirst($type).' berhasil diperbarui.', $redirect);
     }
 
     /**
@@ -305,7 +310,7 @@ class DokumenSpmiController extends Controller
     public function destroy(Request $request, $type, $id)
     {
         $decryptedId = decryptIdIfEncrypted($id);
-        $redirect    = url()->previous();
+        $redirect = url()->previous();
 
         if ($type === 'dokumen') {
             $item = Dokumen::withTrashed()->find($decryptedId);
@@ -323,7 +328,7 @@ class DokumenSpmiController extends Controller
             $this->dokumenSpmiService->deleteIndikator($decryptedId);
         }
 
-        return jsonSuccess(ucfirst($type) . ' berhasil dihapus.', $redirect);
+        return jsonSuccess(ucfirst($type).' berhasil dihapus.', $redirect);
     }
 
     /**
@@ -342,52 +347,57 @@ class DokumenSpmiController extends Controller
                     return $row->kode ?: '-';
                 })
                 ->addColumn('judul', function ($row) {
-                    $html = '<div class="fw-bold">' . e($row->judul) . '</div>';
+                    $html = '<div class="fw-bold">'.e($row->judul).'</div>';
                     if ($row->is_hasilkan_indikator) {
                         $html .= '<div class="badge bg-green-lt mt-1">Hasilkan Indikator</div>';
                     }
+
                     return $html;
                 })
                 ->addColumn('jumlah_turunan', function ($row) {
                     $html = '';
                     if ($row->child_dokumens_count > 0) {
-                        $html .= '<span class="badge bg-blue-lt me-1">' . $row->child_dokumens_count . ' Dokumen</span>';
+                        $html .= '<span class="badge bg-blue-lt me-1">'.$row->child_dokumens_count.' Dokumen</span>';
                     }
 
                     if ($row->indikators_count > 0) {
-                        $html .= '<span class="badge bg-green-lt">' . $row->indikators_count . ' Indikator</span>';
+                        $html .= '<span class="badge bg-green-lt">'.$row->indikators_count.' Indikator</span>';
                     }
 
                     return $html ?: '-';
                 })
                 ->addColumn('action', function ($row) {
                     return view('components.tabler.datatables-actions', [
-                        'editUrl'       => route('pemutu.dokumen-spmi.edit', ['type' => 'poin', 'id' => $row->encrypted_doksub_id, 'mode' => 'title']),
-                        'editModal'     => true,
+                        'editUrl' => route('pemutu.dokumen-spmi.edit', ['type' => 'poin', 'id' => $row->encrypted_doksub_id, 'mode' => 'title']),
+                        'editModal' => true,
                         'editModalSize' => 'modal-lg',
-                        'deleteUrl'     => route('pemutu.dokumen-spmi.destroy', ['type' => 'poin', 'id' => $row->encrypted_doksub_id]),
+                        'deleteUrl' => route('pemutu.dokumen-spmi.destroy', ['type' => 'poin', 'id' => $row->encrypted_doksub_id]),
                     ])->render();
                 })
                 ->rawColumns(['judul', 'kode', 'jumlah_turunan', 'action'])
                 ->make(true);
         } elseif ($type === 'poin_dokumen') {
             $query = Dokumen::where('parent_doksub_id', $decryptedId)->orderBy('seq');
+
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('judul', function ($row) {
-                    $html = '<div class="fw-bold">' . e($row->judul) . '</div>';
+                    $html = '<div class="fw-bold">'.e($row->judul).'</div>';
                     if ($row->kode) {
-                        $html .= '<small class="text-muted">' . e($row->kode) . '</small>';
+                        $html .= '<small class="text-muted">'.e($row->kode).'</small>';
                     }
+
                     return $html;
                 })
-                ->addColumn('jenis', function ($row) {return '<span class="badge bg-blue-lt">' . strtoupper($row->jenis) . '</span>';})
+                ->addColumn('jenis', function ($row) {
+                    return '<span class="badge bg-blue-lt">'.strtoupper($row->jenis).'</span>';
+                })
                 ->addColumn('action', function ($row) {
                     return view('components.tabler.datatables-actions', [
-                        'editUrl'       => route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $row->encrypted_dok_id, 'mode' => 'title']),
-                        'editModal'     => true,
+                        'editUrl' => route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $row->encrypted_dok_id, 'mode' => 'title']),
+                        'editModal' => true,
                         'editModalSize' => 'modal-lg',
-                        'deleteUrl'     => route('pemutu.dokumen-spmi.destroy', ['type' => 'dokumen', 'id' => $row->encrypted_dok_id]),
+                        'deleteUrl' => route('pemutu.dokumen-spmi.destroy', ['type' => 'dokumen', 'id' => $row->encrypted_dok_id]),
                     ])->render();
                 })
                 ->rawColumns(['judul', 'jenis', 'action'])
@@ -397,89 +407,85 @@ class DokumenSpmiController extends Controller
             $query = Indikator::with('orgUnits')->whereHas('dokSubs', function ($q) use ($decryptedId) {
                 $q->where('pemutu_dok_sub.doksub_id', $decryptedId);
             });
+
             return DataTables::of($query)
-                ->addIndexColumn()
-                ->addColumn('no_indikator', function ($row) {
-                    return $row->no_indikator ?: '-';
+                ->addColumn('no', function ($row) {
+                    return pemutuDtColNo($row);
                 })
-                ->addColumn('indikator', function ($row) {
-                    return '<div class="fw-bold">' . e($row->indikator) . '</div>';
+                ->editColumn('indikator', function ($row) {
+                    return pemutuDtColIndikator($row);
                 })
-                ->addColumn('unit_target', function ($row) {
-                    if ($row->orgUnits->isEmpty()) {
-                        return '<span class="text-muted">-</span>';
-                    }
-                    return $row->orgUnits->map(function ($unit) {
-                        $target = $unit->pivot->target ?? '-';
-                        return '<div class="d-flex justify-content-between gap-2"><span class="text-muted small">' . e($unit->name) . '</span><span class="badge bg-blue-lt">' . e($target) . '</span></div>';
-                    })->implode('');
+                ->addColumn('target', function ($row) {
+                    return pemutuDtColTarget($row);
                 })
                 ->addColumn('action', function ($row) {
                     return view('components.tabler.datatables-actions', [
-                        'editUrl'   => route('pemutu.indikator.edit', ['indikator' => $row->encrypted_indikator_id, 'redirect_to' => url()->current()]),
+                        'viewUrl' => route('pemutu.indikator.show', $row->encrypted_indikator_id),
+                        'editUrl' => route('pemutu.indikator.edit', ['indikator' => $row->encrypted_indikator_id, 'redirect_to' => url()->current()]),
                         'editModal' => false,
                         'deleteUrl' => route('pemutu.dokumen-spmi.destroy', ['type' => 'indikator', 'id' => $row->encrypted_indikator_id]),
                     ])->render();
                 })
-                ->rawColumns(['indikator', 'no_indikator', 'unit_target', 'action'])
+                ->rawColumns(['no', 'indikator', 'target', 'action'])
                 ->make(true);
         } elseif ($type === 'renop_indikator') {
             // Renop indicators are standar type with 'renop' label
             // Renop doesn't have dokSubs, so we filter by label and year
             $renopDoc = Dokumen::find($decryptedId);
             $year = $renopDoc ? $renopDoc->periode : date('Y');
-            
+
             $query = Indikator::with('orgUnits')
                 ->where('type', 'standar')
-                ->whereHas('labels', function($q) {
+                ->whereHas('labels', function ($q) {
                     $q->where('name', 'renop');
                 })
-                ->whereYear('created_at', '=', $year); // Filter by year context
+                ->where(function ($q) use ($year) {
+                    $q->whereHas('dokSubs.dokumen', function ($sq) use ($year) {
+                        $sq->where('periode', 'like', '%' . $year . '%');
+                    })
+                    ->orWhereDoesntHave('dokSubs'); // Include loose indicators that have the renop label
+                }); // Filter by year context from documents or loose indicators
+
             return DataTables::of($query)
-                ->addIndexColumn()
-                ->addColumn('no_indikator', function ($row) {
-                    return $row->no_indikator ?: '-';
+                ->addColumn('no', function ($row) {
+                    return pemutuDtColNo($row);
                 })
-                ->addColumn('indikator', function ($row) {
-                    return '<div class="fw-bold">' . e($row->indikator) . '</div>';
+                ->editColumn('indikator', function ($row) {
+                    return pemutuDtColIndikator($row);
                 })
-                ->addColumn('unit_target', function ($row) {
-                    if ($row->orgUnits->isEmpty()) {
-                        return '<span class="text-muted">-</span>';
-                    }
-                    return $row->orgUnits->map(function ($unit) {
-                        $target = $unit->pivot->target ?? '-';
-                        return '<div class="d-flex justify-content-between gap-2"><span class="text-muted small">' . e($unit->name) . '</span><span class="badge bg-blue-lt">' . e($target) . '</span></div>';
-                    })->implode('');
+                ->addColumn('target', function ($row) {
+                    return pemutuDtColTarget($row);
                 })
                 ->addColumn('action', function ($row) {
                     return view('components.tabler.datatables-actions', [
-                        'editUrl'   => route('pemutu.indikator.edit', ['indikator' => $row->encrypted_indikator_id, 'redirect_to' => url()->current()]),
+                        'viewUrl' => route('pemutu.indikator.show', $row->encrypted_indikator_id),
+                        'editUrl' => route('pemutu.indikator.edit', ['indikator' => $row->encrypted_indikator_id, 'redirect_to' => url()->current()]),
                         'editModal' => false,
                     ])->render();
                 })
-                ->rawColumns(['indikator', 'no_indikator', 'unit_target', 'action'])
+                ->rawColumns(['no', 'indikator', 'target', 'action'])
                 ->make(true);
         } elseif ($type === 'poin_mapping') {
             // Get mapped poin (from the level above) for a given DokSub
             $doksub = DokSub::with('dokumen')->findOrFail($decryptedId);
-            $query  = $doksub->mappedTo()->with('dokumen');
+            $query = $doksub->mappedTo()->with('dokumen');
 
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('judul', function ($row) {
-                    $html = '<div class="fw-bold">' . e($row->judul) . '</div>';
+                    $html = '<div class="fw-bold">'.e($row->judul).'</div>';
                     if ($row->dokumen) {
-                        $html .= '<small class="text-muted">' . pemutuJenisLabel($row->dokumen->jenis) . '</small>';
+                        $html .= '<small class="text-muted">'.pemutuJenisLabel($row->dokumen->jenis).'</small>';
                     }
+
                     return $html;
                 })
-                ->addColumn('kode', fn($row) => $row->kode ? '<span class="badge bg-secondary-lt">' . e($row->kode) . '</span>' : '-')
+                ->addColumn('kode', fn ($row) => $row->kode ? '<span class="badge bg-secondary-lt">'.e($row->kode).'</span>' : '-')
                 ->addColumn('action', function ($row) use ($doksub) {
                     return '<button class="btn btn-sm btn-outline-danger btn-remove-mapping" '
-                    . 'data-doksub-id="' . $doksub->encrypted_doksub_id . '" '
-                    . 'data-mapped-id="' . $row->encrypted_doksub_id . '"'
-                        . '><i class="ti ti-unlink"></i> Lepas</button>';
+                    .'data-doksub-id="'.$doksub->encrypted_doksub_id.'" '
+                    .'data-mapped-id="'.$row->encrypted_doksub_id.'"'
+                        .'><i class="ti ti-unlink"></i> Lepas</button>';
                 })
                 ->rawColumns(['judul', 'kode', 'action'])
                 ->make(true);
@@ -494,16 +500,16 @@ class DokumenSpmiController extends Controller
     public function mappingSync(Request $request)
     {
         $request->validate([
-            'source_id'   => 'required',
+            'source_id' => 'required',
             'source_type' => 'required|in:dokumen,poin',
-            'mapped_id'   => 'required', // can be dok_id or doksub_id
-            'action'      => 'required|in:attach,detach',
+            'mapped_id' => 'required', // can be dok_id or doksub_id
+            'action' => 'required|in:attach,detach',
         ]);
 
         $sourceId = decryptIdIfEncrypted($request->source_id);
-        $action   = $request->action;
+        $action = $request->action;
         $mappedInput = is_array($request->mapped_id) ? $request->mapped_id : [$request->mapped_id];
-        $mappedIds   = array_map('decryptIdIfEncrypted', $mappedInput);
+        $mappedIds = array_map('decryptIdIfEncrypted', $mappedInput);
 
         if ($request->source_type === 'dokumen') {
             $source = Dokumen::findOrFail($sourceId);
@@ -518,26 +524,29 @@ class DokumenSpmiController extends Controller
         }
 
         $expectedTargetJenis = pemutuMappableJenis($sourceJenis);
-        
+
         // Validate target jenis for all IDs
         foreach ($mappedIds as $mId) {
-            $target = ($request->source_type === 'dokumen') 
+            $target = ($request->source_type === 'dokumen')
                 ? Dokumen::findOrFail($mId)
                 : DokSub::with('dokumen')->findOrFail($mId);
-            
+
             $targetJenis = strtolower(trim(($request->source_type === 'dokumen') ? $target->jenis : ($target->dokumen->jenis ?? '')));
 
             if (! in_array($targetJenis, ($expectedTargetJenis ?: []))) {
                 $targetLabels = implode(' atau ', array_map('pemutuJenisLabel', $expectedTargetJenis ?: []));
-                return jsonError('Mapping tidak valid. Target harus berupa ' . ($targetLabels ?: 'tipe yang sesuai') . '.');
+
+                return jsonError('Mapping tidak valid. Target harus berupa '.($targetLabels ?: 'tipe yang sesuai').'.');
             }
         }
 
         if ($action === 'attach') {
             $relation->syncWithoutDetaching($mappedIds);
+
             return jsonSuccess('Mapping berhasil ditambahkan.');
         } else {
             $relation->detach($mappedIds);
+
             return jsonSuccess('Mapping berhasil dilepas.');
         }
     }
@@ -549,7 +558,7 @@ class DokumenSpmiController extends Controller
     public function uploadFile(Request $request, $type, $id)
     {
         $request->validate([
-            'files'   => 'required|array',
+            'files' => 'required|array',
             'files.*' => 'file|max:20480', // max 20MB per file
         ]);
 
@@ -563,9 +572,10 @@ class DokumenSpmiController extends Controller
         }
 
         $judul = ($type === 'poin') ? $model->judul : $model->judul;
-        logActivity('dokumen_management', "Mengunggah " . count($request->file('files')) . " file ke {$type}: {$judul}");
+        logActivity('dokumen_management', 'Mengunggah '.count($request->file('files'))." file ke {$type}: {$judul}");
 
-        return jsonSuccess('File berhasil diunggah.');
+        // Reload halaman untuk refresh file list
+        return jsonSuccess('File berhasil diunggah.', url()->previous());
     }
 
     /**
@@ -594,15 +604,15 @@ class DokumenSpmiController extends Controller
      */
     public function summary(Request $request)
     {
-        $pageTitle   = 'Rekap Capaian';
+        $pageTitle = 'Rekap Capaian';
         $activeJenis = $request->query('jenis', 'visi');
-        $siklus      = $this->PeriodeSpmiService->getSiklusData();
+        $siklus = $this->PeriodeSpmiService->getSiklusData();
 
         $data = [
-            'pageTitle'      => $pageTitle,
-            'activeJenis'    => $activeJenis,
+            'pageTitle' => $pageTitle,
+            'activeJenis' => $activeJenis,
             'kebijakanTypes' => ['visi', 'misi', 'rjp', 'renstra', 'renop'],
-            'siklus'         => $siklus,
+            'siklus' => $siklus,
         ];
 
         foreach (['akademik', 'non_akademik'] as $type) {
@@ -617,7 +627,7 @@ class DokumenSpmiController extends Controller
                 }
             }
 
-            $data[$type . 'DokumentByJenis'] = $dokumentByJenis;
+            $data[$type.'DokumentByJenis'] = $dokumentByJenis;
         }
 
         return view('pages.pemutu.summary.summary', $data);
@@ -629,15 +639,15 @@ class DokumenSpmiController extends Controller
     public function summaryData(Request $request, $type, $id)
     {
         $kebijakanChain = ['visi', 'misi', 'rjp', 'renstra', 'renop'];
-        $indicators     = collect();
-        $title          = '';
-        $jenis          = '';
-        $periode        = $request->periode ?: date('Y');
+        $indicators = collect();
+        $title = '';
+        $jenis = '';
+        $periode = $request->periode ?: date('Y');
 
         if ($type === 'dokumen') {
-            $doc     = Dokumen::with('dokSubs')->findOrFail(decryptIdIfEncrypted($id));
-            $title   = $doc->judul;
-            $jenis   = strtolower(trim($doc->jenis));
+            $doc = Dokumen::with('dokSubs')->findOrFail(decryptIdIfEncrypted($id));
+            $title = $doc->judul;
+            $jenis = strtolower(trim($doc->jenis));
             $periode = $doc->periode;
 
             $startIndex = array_search($jenis, $kebijakanChain);
@@ -647,29 +657,29 @@ class DokumenSpmiController extends Controller
                 // If it's already renop, get indicators directly
                 if ($jenis === 'renop') {
                     if ($poin->is_hasilkan_indikator) {
-                        $inds       = $poin->indikators()->with(['orgUnits', 'parent.orgUnits'])->get();
+                        $inds = $poin->indikators()->with(['orgUnits', 'parent.orgUnits'])->get();
                         $indicators = $indicators->merge($inds);
                     }
                 } else {
-                    $chain      = $this->traceChainDown($poin, $kebijakanChain, $startIndex, $periode);
+                    $chain = $this->traceChainDown($poin, $kebijakanChain, $startIndex, $periode);
                     $indicators = $indicators->merge($this->collectIndicatorsFromChain($chain));
                 }
             }
         } elseif ($type === 'poin') {
-            $poin    = DokSub::with('dokumen')->findOrFail(decryptIdIfEncrypted($id));
-            $title   = "Poin: " . $poin->judul;
-            $jenis   = strtolower(trim($poin->dokumen->jenis ?? ''));
+            $poin = DokSub::with('dokumen')->findOrFail(decryptIdIfEncrypted($id));
+            $title = 'Poin: '.$poin->judul;
+            $jenis = strtolower(trim($poin->dokumen->jenis ?? ''));
             $periode = $poin->dokumen->periode ?? date('Y');
 
             $startIndex = array_search($jenis, $kebijakanChain);
 
             if ($jenis === 'renop') {
                 if ($poin->is_hasilkan_indikator) {
-                    $inds       = $poin->indikators()->with(['orgUnits', 'parent.orgUnits'])->get();
+                    $inds = $poin->indikators()->with(['orgUnits', 'parent.orgUnits'])->get();
                     $indicators = $indicators->merge($inds);
                 }
             } else {
-                $chain      = $this->traceChainDown($poin, $kebijakanChain, $startIndex, $periode);
+                $chain = $this->traceChainDown($poin, $kebijakanChain, $startIndex, $periode);
                 $indicators = $indicators->merge($this->collectIndicatorsFromChain($chain));
             }
         }
@@ -679,12 +689,12 @@ class DokumenSpmiController extends Controller
 
         // Aggregate AMI Results
         $unitsEvaluated = collect();
-        $amiCounts      = [
-            'total'     => 0,
+        $amiCounts = [
+            'total' => 0,
             'terpenuhi' => 0,
             'melampaui' => 0,
-            'kts'       => 0,
-            'none'      => 0,
+            'kts' => 0,
+            'none' => 0,
         ];
 
         $detailUnits = []; // Store specific scores per unit to show in the UI
@@ -694,7 +704,7 @@ class DokumenSpmiController extends Controller
                 $unitsEvaluated->push($ou->name);
                 $amiResult = $ou->pivot->ami_hasil_akhir;
                 $edCapaian = $ou->pivot->ed_capaian;
-                $target    = $ou->pivot->target;
+                $target = $ou->pivot->target;
 
                 $amiCounts['total']++;
                 if ($amiResult === 1) {
@@ -710,12 +720,12 @@ class DokumenSpmiController extends Controller
                 // Collect breakdown per unit
                 if (! isset($detailUnits[$ou->name])) {
                     $detailUnits[$ou->name] = [
-                        'name'            => $ou->name,
+                        'name' => $ou->name,
                         'total_indikator' => 0,
-                        'terpenuhi'       => 0,
-                        'melampaui'       => 0,
-                        'kts'             => 0,
-                        'indicators'      => [],
+                        'terpenuhi' => 0,
+                        'melampaui' => 0,
+                        'kts' => 0,
+                        'indicators' => [],
                     ];
                 }
 
@@ -729,11 +739,11 @@ class DokumenSpmiController extends Controller
                 }
 
                 $detailUnits[$ou->name]['indicators'][] = [
-                    'no'      => $ind->no_indikator,
-                    'nama'    => $ind->indikator,
-                    'target'  => $target,
+                    'no' => $ind->no_indikator,
+                    'nama' => $ind->indikator,
+                    'target' => $target,
                     'capaian' => $edCapaian,
-                    'ami'     => $amiResult,
+                    'ami' => $amiResult,
                 ];
             }
         }
@@ -741,11 +751,11 @@ class DokumenSpmiController extends Controller
         $unitsEvaluated = $unitsEvaluated->unique()->values();
 
         // Calculate Percentages
-        $total       = $amiCounts['total'];
+        $total = $amiCounts['total'];
         $percentages = [
             'terpenuhi' => $total > 0 ? round(($amiCounts['terpenuhi'] / $total) * 100, 1) : 0,
             'melampaui' => $total > 0 ? round(($amiCounts['melampaui'] / $total) * 100, 1) : 0,
-            'kts'       => $total > 0 ? round(($amiCounts['kts'] / $total) * 100, 1) : 0,
+            'kts' => $total > 0 ? round(($amiCounts['kts'] / $total) * 100, 1) : 0,
         ];
 
         return view('pages.pemutu.summary._summary_data', compact(
@@ -758,7 +768,7 @@ class DokumenSpmiController extends Controller
      */
     private function traceChainDown(DokSub $poin, array $kebijakanChain, int $currentLevel, $periode): array
     {
-        $result    = [];
+        $result = [];
         $nextLevel = $currentLevel + 1;
 
         if ($nextLevel >= count($kebijakanChain)) {
@@ -776,10 +786,10 @@ class DokumenSpmiController extends Controller
 
         foreach ($children as $child) {
             $childData = [
-                'poin'       => $child,
-                'jenis'      => $kebijakanChain[$nextLevel],
+                'poin' => $child,
+                'jenis' => $kebijakanChain[$nextLevel],
                 'indicators' => collect(),
-                'chain'      => [],
+                'chain' => [],
             ];
 
             // If this is a Renop poin with indicators, collect them

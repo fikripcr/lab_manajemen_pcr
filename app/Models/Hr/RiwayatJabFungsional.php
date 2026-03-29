@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -9,11 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RiwayatJabFungsional extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_riwayat_jabfungsional';
+    protected $table = 'hr_riwayat_jabfungsional';
+
     protected $primaryKey = 'riwayatjabfungsional_id';
-    protected $guarded    = ['riwayatjabfungsional_id'];
+
+    protected $guarded = ['riwayatjabfungsional_id'];
 
     protected $appends = ['encrypted_riwayatjabfungsional_id'];
 

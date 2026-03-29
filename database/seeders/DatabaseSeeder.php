@@ -1,7 +1,7 @@
 <?php
+
 namespace Database\Seeders;
 
-use Database\Seeders\MainProjectSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -42,7 +42,7 @@ class DatabaseSeeder extends Seeder
             FAQSeeder::class,
 
             // Optional/Mock
-            //MockSeeder::class,
+            // MockSeeder::class,
         ]);
     }
 }

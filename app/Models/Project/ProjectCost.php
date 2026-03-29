@@ -2,7 +2,6 @@
 
 namespace App\Models\Project;
 
-use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,9 +11,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProjectCost extends Model
 {
-    use HasFactory, SoftDeletes, HashidBinding, Blameable;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
     protected $table = 'pr_project_costs';
+
     protected $primaryKey = 'project_cost_id';
 
     protected $fillable = [
@@ -32,8 +32,8 @@ class ProjectCost extends Model
     ];
 
     protected $casts = [
-        'amount'     => 'decimal:2',
-        'cost_date'  => 'date',
+        'amount' => 'decimal:2',
+        'cost_date' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
@@ -57,15 +57,15 @@ class ProjectCost extends Model
     public function getApprovalStatusBadgeClassAttribute(): string
     {
         return match ($this->approval_status) {
-            'pending'  => 'bg-yellow-lt',
+            'pending' => 'bg-yellow-lt',
             'approved' => 'bg-green-lt',
             'rejected' => 'bg-red-lt',
-            default    => 'bg-gray-lt',
+            default => 'bg-gray-lt',
         };
     }
 
     public function getFormattedAmountAttribute(): string
     {
-        return 'Rp ' . number_format($this->amount, 0, ',', '.');
+        return 'Rp '.number_format($this->amount, 0, ',', '.');
     }
 }

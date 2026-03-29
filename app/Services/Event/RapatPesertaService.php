@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Event;
 
 use App\Models\Event\RapatPeserta;
@@ -17,6 +18,7 @@ class RapatPesertaService
     {
         return DB::transaction(function () use ($rapatPeserta, $data) {
             $rapatPeserta->update($data);
+
             return $rapatPeserta;
         });
     }

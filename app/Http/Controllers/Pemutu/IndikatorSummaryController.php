@@ -1,13 +1,13 @@
 <?php
+
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pemutu\IndikatorSummary;
-use App\Models\Pemutu\PeriodeSpmi;
+use App\Services\Hr\StrukturOrganisasiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Services\Hr\StrukturOrganisasiService;
 use Yajra\DataTables\Facades\DataTables;
 
 class IndikatorSummaryController extends Controller
@@ -32,7 +32,7 @@ class IndikatorSummaryController extends Controller
         $pageTitle = 'Summary Indikator Standar';
 
         // Global summary statistics untuk Standar
-        $totalIndikator       = DB::table('pemutu_indikator')->where('type', 'standar')->count();
+        $totalIndikator = DB::table('pemutu_indikator')->where('type', 'standar')->count();
         $totalIndikatorActive = DB::table('pemutu_indikator')->where('type', 'standar')->whereNull('deleted_at')->count();
 
         // Summary ED (hanya untuk standar)
@@ -107,7 +107,7 @@ class IndikatorSummaryController extends Controller
         $pageTitle = 'Summary Indikator Performa (KPI)';
 
         // Global summary statistics untuk Performa
-        $totalIndikator       = DB::table('pemutu_indikator')->where('type', 'performa')->count();
+        $totalIndikator = DB::table('pemutu_indikator')->where('type', 'performa')->count();
         $totalIndikatorActive = DB::table('pemutu_indikator')->where('type', 'performa')->whereNull('deleted_at')->count();
 
         // Summary KPI
@@ -148,7 +148,7 @@ class IndikatorSummaryController extends Controller
             ->join('vw_pemutu_summary_indikator_standar as v', 'io.indikator_id', '=', 'v.indikator_id')
             ->leftJoin('hr_struktur_organisasi as so', 'io.org_unit_id', '=', 'so.orgunit_id')
             ->select(
-                'io.indikorgunit_id', 'io.indikator_id', 'io.org_unit_id', 'io.target', 'io.ed_capaian', 'io.ed_analisis', 
+                'io.indikorgunit_id', 'io.indikator_id', 'io.org_unit_id', 'io.target', 'io.ed_capaian', 'io.ed_analisis',
                 'io.ami_hasil_akhir', 'io.ami_rtp_isi', 'io.ed_ptp_isi', 'io.ami_te_isi', 'io.pengend_status',
                 'v.*', 'so.name as unit_name', 'so.code as unit_code'
             );
@@ -157,7 +157,6 @@ class IndikatorSummaryController extends Controller
         if ($request->filled('kelompok_indikator') && $request->kelompok_indikator !== '') {
             $query->where('v.kelompok_indikator', $request->kelompok_indikator);
         }
-
 
         // Filter by ED Status (skip if 'all')
         if ($request->filled('ed_status') && $request->ed_status !== '') {
@@ -193,7 +192,7 @@ class IndikatorSummaryController extends Controller
         // For dynamic summary count, we need the search applied to the query.
         if ($request->filled('search')) {
             $searchValue = $request->input('search.value') ?? $request->input('search');
-            $search      = is_array($searchValue) ? ($searchValue['value'] ?? '') : (string) $searchValue;
+            $search = is_array($searchValue) ? ($searchValue['value'] ?? '') : (string) $searchValue;
             if ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('v.no_indikator', 'LIKE', "%{$search}%")
@@ -226,21 +225,21 @@ class IndikatorSummaryController extends Controller
                     return '<span class="text-muted small">-</span>';
                 }
 
-                return '<span class="badge bg-warning-lt" title="' . e($row->ami_rtp_isi) . '">RTP</span>';
+                return '<span class="badge bg-warning-lt" title="'.e($row->ami_rtp_isi).'">RTP</span>';
             })
             ->addColumn('ptp', function ($row) {
                 if (empty($row->ed_ptp_isi)) {
                     return '<span class="text-muted small">-</span>';
                 }
 
-                return '<span class="badge bg-purple-lt" title="' . e($row->ed_ptp_isi) . '">PTP</span>';
+                return '<span class="badge bg-purple-lt" title="'.e($row->ed_ptp_isi).'">PTP</span>';
             })
             ->addColumn('te', function ($row) {
                 if (empty($row->ami_te_isi)) {
                     return '<span class="text-muted small">-</span>';
                 }
 
-                return '<span class="badge bg-azure-lt" title="' . e($row->ami_te_isi) . '">TE</span>';
+                return '<span class="badge bg-azure-lt" title="'.e($row->ami_te_isi).'">TE</span>';
             })
             ->addColumn('pengend_detail', function ($row) {
                 if (! $row->pengend_status) {
@@ -253,11 +252,12 @@ class IndikatorSummaryController extends Controller
                 return '<span class="text-muted small">-</span>';
             })
             ->addColumn('action', function ($row) {
-                $html  = '<div class="btn-group btn-group-sm" role="group">';
-                $html .= '<a href="' . route('pemutu.indikator.show', encryptId($row->indikator_id)) . '" class="btn btn-ghost-primary" title="Detail Indikator">';
+                $html = '<div class="btn-group btn-group-sm" role="group">';
+                $html .= '<a href="'.route('pemutu.indikator.show', encryptId($row->indikator_id)).'" class="btn btn-ghost-primary" title="Detail Indikator">';
                 $html .= '<i class="ti ti-eye"></i>';
                 $html .= '</a>';
                 $html .= '</div>';
+
                 return $html;
             })
             ->rawColumns([
@@ -285,7 +285,7 @@ class IndikatorSummaryController extends Controller
 
         return DataTables::of($query)
             ->addColumn('no', function ($row) {
-                return '<div class="text-center">' . pemutuDtColNo($row->indikator) . '</div>';
+                return '<div class="text-center">'.pemutuDtColNo($row->indikator).'</div>';
             })
             ->addColumn('indikator_full', function ($row) {
                 return pemutuDtColIndikator($row->indikator);
@@ -298,34 +298,35 @@ class IndikatorSummaryController extends Controller
             })
             ->addColumn('analisis', function ($row) {
                 $text = $row->kpi_analisis ?? '-';
-                $html = '<div style="max-height: 200px; overflow-y: auto;" class="mb-2">' . $text . '</div>';
+                $html = '<div style="max-height: 200px; overflow-y: auto;" class="mb-2">'.$text.'</div>';
 
                 // Evidence items
                 $evidenceHtml = '';
                 if ($row->attachment) {
-                    $url           = route('pemutu.evaluasi-kpi.download', $row->encrypted_indikator_pegawai_id);
-                    $evidenceHtml .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1" title="Unduh File Pendukung" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
+                    $url = route('pemutu.evaluasi-kpi.download', $row->encrypted_indikator_pegawai_id);
+                    $evidenceHtml .= '<a href="'.$url.'" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1" title="Unduh File Pendukung" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
                 }
 
                 if (! empty($row->kpi_links)) {
                     $links = json_decode($row->kpi_links, true) ?? [];
                     foreach ($links as $link) {
-                        $name          = htmlspecialchars($link['name'] ?? 'Tautan');
-                        $url           = htmlspecialchars($link['url'] ?? '#');
-                        $evidenceHtml .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-info me-1 mb-1" title="' . $name . '" data-bs-toggle="tooltip"><i class="ti ti-link fs-3"></i></a>';
+                        $name = htmlspecialchars($link['name'] ?? 'Tautan');
+                        $url = htmlspecialchars($link['url'] ?? '#');
+                        $evidenceHtml .= '<a href="'.$url.'" target="_blank" class="btn btn-sm btn-ghost-info me-1 mb-1" title="'.$name.'" data-bs-toggle="tooltip"><i class="ti ti-link fs-3"></i></a>';
                     }
                 }
 
                 if ($evidenceHtml) {
-                    $html .= '<div class="d-flex flex-wrap border-top pt-2">' . $evidenceHtml . '</div>';
+                    $html .= '<div class="d-flex flex-wrap border-top pt-2">'.$evidenceHtml.'</div>';
                 }
 
                 return $html;
             })
             ->addColumn('parent_info', function ($row) {
                 if ($row->indikator?->parent?->no_indikator) {
-                    return '<span class="status status-azure">' . e($row->indikator->parent->no_indikator) . '</span>';
+                    return '<span class="status status-azure">'.e($row->indikator->parent->no_indikator).'</span>';
                 }
+
                 return '<span class="text-muted fst-italic">-</span>';
             })
             ->addColumn('labels', function ($row) {
@@ -337,49 +338,51 @@ class IndikatorSummaryController extends Controller
                 $html = '<div class="d-flex flex-wrap gap-1">';
                 foreach ($labels as $indikatorLabel) {
                     if ($indikatorLabel->label) {
-                        $name   = $indikatorLabel->label->name;
-                        $color  = $indikatorLabel->label->color ?? 'secondary';
-                        $html  .= '<span class="status status-' . e($color) . '">' . e($name) . '</span>';
+                        $name = $indikatorLabel->label->name;
+                        $color = $indikatorLabel->label->color ?? 'secondary';
+                        $html .= '<span class="status status-'.e($color).'">'.e($name).'</span>';
                     }
                 }
                 $html .= '</div>';
+
                 return $html;
             })
             ->addColumn('kpi_detail', function ($row) {
                 $statusColor = match ($row->status) {
                     'submitted' => 'info',
-                    'approved'  => 'success',
-                    'rejected'  => 'danger',
-                    default     => 'secondary',
+                    'approved' => 'success',
+                    'rejected' => 'danger',
+                    default => 'secondary',
                 };
 
-                $html  = '<div class="row">';
+                $html = '<div class="row">';
                 $html .= '<div class="col-12 mb-1">';
-                $html .= '<strong class="text-primary d-block">' . e($row->pegawai?->nama ?? '-') . '</strong>';
-                $html .= '<span class="text-muted small d-block">' . e($row->pegawai?->nip ?? '-') . '</span>';
+                $html .= '<strong class="text-primary d-block">'.e($row->pegawai?->nama ?? '-').'</strong>';
+                $html .= '<span class="text-muted small d-block">'.e($row->pegawai?->nip ?? '-').'</span>';
                 $html .= '</div>';
 
                 if ($row->pegawai?->orgUnit) {
                     $html .= '<div class="col-12 mb-1">';
-                    $html .= '<span class="status status-azure status-lite small">' . e($row->pegawai->orgUnit->name) . '</span>';
+                    $html .= '<span class="status status-azure status-lite small">'.e($row->pegawai->orgUnit->name).'</span>';
                     $html .= '</div>';
                 }
 
                 $html .= '<div class="col-12">';
-                $html .= '<span class="badge bg-' . $statusColor . '-lt">' . ucfirst($row->status ?? 'draft') . '</span>';
+                $html .= '<span class="badge bg-'.$statusColor.'-lt">'.ucfirst($row->status ?? 'draft').'</span>';
                 $html .= '</div>';
                 $html .= '</div>';
+
                 return $html;
             })
             ->addColumn('kpi_score', function ($row) {
-                $score  = $row->score !== null ? number_format($row->score, 1) : '-';
+                $score = $row->score !== null ? number_format($row->score, 1) : '-';
                 $target = $row->target_value !== null ? e($row->target_value) : '-';
-                $weight = $row->weight !== null ? e($row->weight) . '%' : '-';
+                $weight = $row->weight !== null ? e($row->weight).'%' : '-';
 
-                $html  = '<div class="text-center">';
-                $html .= '<div class="h3 mb-0 text-primary">' . $score . '</div>';
-                $html .= '<div class="text-muted small">Target: ' . $target . '</div>';
-                $html .= '<div class="text-muted small">Bobot: ' . $weight . '</div>';
+                $html = '<div class="text-center">';
+                $html .= '<div class="h3 mb-0 text-primary">'.$score.'</div>';
+                $html .= '<div class="text-muted small">Target: '.$target.'</div>';
+                $html .= '<div class="text-muted small">Bobot: '.$weight.'</div>';
                 $html .= '</div>';
 
                 return $html;
@@ -388,7 +391,7 @@ class IndikatorSummaryController extends Controller
                 $html = '<div class="btn-group btn-group-sm" role="group">';
 
                 // Route for editing this specific KPI assignment
-                $html .= '<a href="' . route('pemutu.evaluasi-kpi.index', ['pegawai_id' => $row->pegawai_id]) . '" class="btn btn-ghost-success" title="Evaluasi KPI Pegawai">';
+                $html .= '<a href="'.route('pemutu.evaluasi-kpi.index', ['pegawai_id' => $row->pegawai_id]).'" class="btn btn-ghost-success" title="Evaluasi KPI Pegawai">';
                 $html .= '<i class="ti ti-clipboard-data"></i>';
                 $html .= '</a>';
                 $html .= '</div>';
@@ -468,7 +471,7 @@ class IndikatorSummaryController extends Controller
             )
             ->get();
 
-        $pageTitle = 'Detail Indikator: ' . ($indikator->no_indikator ?? 'N/A');
+        $pageTitle = 'Detail Indikator: '.($indikator->no_indikator ?? 'N/A');
 
         return view('pages.pemutu.indikator-summary.detail', compact(
             'pageTitle',
@@ -485,7 +488,8 @@ class IndikatorSummaryController extends Controller
     public function export(Request $request)
     {
         if ($request->type === 'performa') {
-            $fileName = 'summary_indikator_performa_' . date('Ymd_His') . '.xlsx';
+            $fileName = 'summary_indikator_performa_'.date('Ymd_His').'.xlsx';
+
             return Excel::download(new \App\Exports\Pemutu\IndikatorSummaryPerformaExport($request), $fileName);
         }
 
@@ -499,10 +503,11 @@ class IndikatorSummaryController extends Controller
         if ($request->filled('search')) {
             $filters['search'] = $request->input('search');
         }
-        $fileName = 'summary_indikator_standar_' . date('Ymd_His') . '.xlsx';
+        $fileName = 'summary_indikator_standar_'.date('Ymd_His').'.xlsx';
 
         return Excel::download(new \App\Exports\Pemutu\IndikatorSummaryExport($filters), $fileName);
     }
+
     /**
      * Helper to render truncated text with "Read More" button.
      */
@@ -513,17 +518,17 @@ class IndikatorSummaryController extends Controller
         }
 
         $plainText = strip_tags($text);
-        $excerpt   = mb_strimwidth($plainText, 0, 100, '...');
+        $excerpt = mb_strimwidth($plainText, 0, 100, '...');
 
         if (mb_strlen($plainText) <= 100) {
-            return '<div class="summary-text ' . $extraClass . '">' . $text . '</div>';
+            return '<div class="summary-text '.$extraClass.'">'.$text.'</div>';
         }
 
-        $id    = 'text-' . uniqid();
-        $html  = '<div class="summary-wrapper">';
-        $html .= '<div id="' . $id . '-excerpt" class="summary-text-excerpt ' . $extraClass . '">' . e($excerpt) . '</div>';
-        $html .= '<div id="' . $id . '-full" class="summary-text-full ' . $extraClass . ' d-none">' . $text . '</div>';
-        $html .= '<a href="javascript:void(0)" class="text-primary small btn-read-more" data-target="' . $id . '">Selengkapnya</a>';
+        $id = 'text-'.uniqid();
+        $html = '<div class="summary-wrapper">';
+        $html .= '<div id="'.$id.'-excerpt" class="summary-text-excerpt '.$extraClass.'">'.e($excerpt).'</div>';
+        $html .= '<div id="'.$id.'-full" class="summary-text-full '.$extraClass.' d-none">'.$text.'</div>';
+        $html .= '<a href="javascript:void(0)" class="text-primary small btn-read-more" data-target="'.$id.'">Selengkapnya</a>';
         $html .= '</div>';
 
         return $html;
@@ -587,18 +592,19 @@ class IndikatorSummaryController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => [
-                'edTotalUnits'          => $allData->count(),
+            'data' => [
+                'edTotalUnits' => $allData->count(),
                 'uniqueAssignedStandar' => $allData->pluck('indikator_id')->unique()->count(),
-                'edFilledUnits'         => $allData->filter(fn($r) => ! empty($r->ed_capaian))->count(),
-                'amiAssessed'           => $allData->filter(fn($r) => $r->ami_hasil_akhir !== null)->count(),
-                'amiKts'                => $allData->filter(fn($r) => $r->ami_hasil_akhir == 0 && $r->ami_hasil_akhir !== null)->count(),
-                'amiTerpenuhi'          => $allData->filter(fn($r) => $r->ami_hasil_akhir == 1)->count(),
-                'amiTerlampaui'         => $allData->filter(fn($r) => $r->ami_hasil_akhir == 2)->count(),
-                'pengendFilled'         => $allData->filter(fn($r) => ! empty($r->pengend_status))->count(),
+                'edFilledUnits' => $allData->filter(fn ($r) => ! empty($r->ed_capaian))->count(),
+                'amiAssessed' => $allData->filter(fn ($r) => $r->ami_hasil_akhir !== null)->count(),
+                'amiKts' => $allData->filter(fn ($r) => $r->ami_hasil_akhir == 0 && $r->ami_hasil_akhir !== null)->count(),
+                'amiTerpenuhi' => $allData->filter(fn ($r) => $r->ami_hasil_akhir == 1)->count(),
+                'amiTerlampaui' => $allData->filter(fn ($r) => $r->ami_hasil_akhir == 2)->count(),
+                'pengendFilled' => $allData->filter(fn ($r) => ! empty($r->pengend_status))->count(),
             ],
         ]);
     }
+
     /**
      * Get summary counts for Performa cards based on filters.
      */
@@ -608,7 +614,7 @@ class IndikatorSummaryController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => $counts,
+            'data' => $counts,
         ]);
     }
 }

@@ -13,24 +13,24 @@
                     </a>
                 </div>
                 <!-- /Logo -->
-                <h4 class="mb-2">Verify Your Email Address 📧</h4>
-                <p class="mb-4">Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.</p>
+                <h4 class="mb-2">Verifikasi Alamat Email Anda 📧</h4>
+                <p class="mb-4">Terima kasih telah mendaftar! Sebelum memulai, mohon verifikasi alamat email Anda dengan mengeklik tautan yang baru saja kami kirimkan ke email Anda. Jika Anda tidak menerima emailnya, kami dengan senang hati akan mengirimkan yang baru.</p>
 
                 @if (session('status') == 'verification-link-sent')
                     <div class="alert alert-success mb-4">
-                        {{ __('A new verification link has been sent to the email address you provided during registration.') }}
+                        {{ __('Tautan verifikasi baru telah dikirimkan ke alamat email yang Anda berikan saat pendaftaran.') }}
                     </div>
                 @endif
 
                 <form method="POST" action="{{ route('verification.send') }}" class="mb-3">
                     @csrf
-                    <x-tabler.button type="submit" class="w-100" text="Resend Verification Email" />
+                    <x-tabler.button type="submit" class="w-100" text="Kirim Ulang Email Verifikasi" icon="" />
                 </form>
 
                 <div class="d-flex justify-content-between">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <x-tabler.button type="submit" style="link" class="text-muted" text="Log Out" />
+                        <x-tabler.button type="submit" style="link" class="text-muted" text="Logout" icon="" />
                     </form>
                 </div>
             </x-tabler.card-body>
@@ -39,4 +39,3 @@
     </div>
 </div>
 @endsection
-

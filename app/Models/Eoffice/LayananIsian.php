@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Eoffice;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LayananIsian extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'eoffice_layanan_isian';
+    protected $table = 'eoffice_layanan_isian';
+
     protected $primaryKey = 'layananisian_id';
 
     protected $appends = ['encrypted_layananisian_id'];
@@ -39,5 +41,4 @@ class LayananIsian extends Model
     {
         return $this->belongsTo(Layanan::class, 'layanan_id', 'layanan_id');
     }
-
 }

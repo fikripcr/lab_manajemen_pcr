@@ -1,16 +1,16 @@
 <?php
+
 namespace App\Http\Requests\Hr;
 
 use App\Http\Requests\BaseRequest;
 
 class StatusAktifitasRequest extends BaseRequest
 {
-
     public function rules()
     {
         return [
             'kode_status' => 'required|string|max:5',
-            'is_active'   => 'boolean',
+            'is_active' => 'boolean',
         ];
     }
 
@@ -19,7 +19,7 @@ class StatusAktifitasRequest extends BaseRequest
         return [
             'kode_status' => 'Kode Status',
             'nama_status' => 'Nama Status',
-            'is_active'   => 'Status Aktif',
+            'is_active' => 'Status Aktif',
         ];
     }
 }

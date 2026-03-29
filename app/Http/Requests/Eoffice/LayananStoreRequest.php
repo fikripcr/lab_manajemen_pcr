@@ -2,15 +2,12 @@
 
 namespace App\Http\Requests\Eoffice;
 
-use App\Models\Eoffice\JenisLayanan;
 use App\Http\Requests\BaseRequest;
+use App\Models\Eoffice\JenisLayanan;
 use Illuminate\Validation\Validator;
 
 class LayananStoreRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -20,12 +17,11 @@ class LayananStoreRequest extends BaseRequest
     {
         return [
             'jenislayanan_id' => 'required|exists:eoffice_jenis_layanan,jenislayanan_id',
-            'keterangan'      => 'nullable|string|max:1000',
+            'keterangan' => 'nullable|string|max:1000',
         ];
     }
 
     /**
-     *
      * @return array<string, string>
      */
 
@@ -37,45 +33,46 @@ class LayananStoreRequest extends BaseRequest
         $validator->after(function (Validator $validator) {
             // Get the jenis layanan to validate dynamic fields
             $jenisLayananId = $this->input('jenislayanan_id');
-            
-            if (!$jenisLayananId) {
+
+            if (! $jenisLayananId) {
                 return;
             }
 
             $jenisLayanan = JenisLayanan::with('isians.kategoriIsian')
                 ->find($jenisLayananId);
 
-            if (!$jenisLayanan) {
+            if (! $jenisLayanan) {
                 return;
             }
 
             // Validate each required field
             foreach ($jenisLayanan->isians as $isian) {
-                if (!$isian->is_required) {
+                if (! $isian->is_required) {
                     continue;
                 }
 
                 $kategoriIsian = $isian->kategoriIsian;
-                if (!$kategoriIsian) {
+                if (! $kategoriIsian) {
                     continue;
                 }
 
-                $fieldName = 'field_' . $kategoriIsian->kategoriisian_id;
-                $value     = $this->input($fieldName);
+                $fieldName = 'field_'.$kategoriIsian->kategoriisian_id;
+                $value = $this->input($fieldName);
 
                 // Check if required field is empty
-                if (empty($value) && !$this->hasFile($fieldName)) {
+                if (empty($value) && ! $this->hasFile($fieldName)) {
                     $validator->errors()->add(
                         $fieldName,
                         "Field '{$kategoriIsian->nama_isian}' wajib diisi."
                     );
+
                     continue;
                 }
 
                 // Validate file uploads
                 if ($kategoriIsian->type === 'file' && $this->hasFile($fieldName)) {
                     $file = $this->file($fieldName);
-                    
+
                     // Validate file size (max 2MB)
                     if ($file->getSize() > 2 * 1024 * 1024) {
                         $validator->errors()->add(
@@ -87,18 +84,18 @@ class LayananStoreRequest extends BaseRequest
                     // Validate file type
                     $allowedMimes = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
                     $extension = strtolower($file->getClientOriginalExtension());
-                    
-                    if (!in_array($extension, $allowedMimes)) {
+
+                    if (! in_array($extension, $allowedMimes)) {
                         $validator->errors()->add(
                             $fieldName,
-                            "Format file '{$kategoriIsian->nama_isian}' tidak diizinkan. Format yang diperbolehkan: " . implode(', ', $allowedMimes)
+                            "Format file '{$kategoriIsian->nama_isian}' tidak diizinkan. Format yang diperbolehkan: ".implode(', ', $allowedMimes)
                         );
                     }
                 }
 
                 // Validate email fields
-                if ($kategoriIsian->type === 'email' && !empty($value)) {
-                    if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                if ($kategoriIsian->type === 'email' && ! empty($value)) {
+                    if (! filter_var($value, FILTER_VALIDATE_EMAIL)) {
                         $validator->errors()->add(
                             $fieldName,
                             "Format email '{$kategoriIsian->nama_isian}' tidak valid."
@@ -107,8 +104,8 @@ class LayananStoreRequest extends BaseRequest
                 }
 
                 // Validate number fields
-                if ($kategoriIsian->type === 'number' && !empty($value)) {
-                    if (!is_numeric($value)) {
+                if ($kategoriIsian->type === 'number' && ! empty($value)) {
+                    if (! is_numeric($value)) {
                         $validator->errors()->add(
                             $fieldName,
                             "Field '{$kategoriIsian->nama_isian}' harus berupa angka."

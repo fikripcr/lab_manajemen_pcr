@@ -87,7 +87,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        DB::statement("DROP VIEW IF EXISTS vw_pemutu_summary_indikator_standar");
-        DB::statement("DROP VIEW IF EXISTS vw_pemutu_summary_indikator");
+        DB::statement('DROP VIEW IF EXISTS vw_pemutu_summary_indikator_standar');
+        DB::statement('DROP VIEW IF EXISTS vw_pemutu_summary_indikator');
     }
 };

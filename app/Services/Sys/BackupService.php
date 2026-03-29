@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Sys;
 
 use Exception;
@@ -9,14 +10,15 @@ class BackupService
     /**
      * Create a backup based on type
      *
-     * @param string $type 'files' or 'db'
+     * @param  string  $type  'files' or 'db'
      * @return string Path to created backup file
+     *
      * @throws Exception
      */
     public function createBackup(string $type): string
     {
         return match ($type) {
-            'db'    => $this->createDatabaseBackup(),
+            'db' => $this->createDatabaseBackup(),
             'files' => $this->createFileBackup(),
             default => throw new Exception("Invalid backup type: {$type}")
         };
@@ -26,6 +28,7 @@ class BackupService
      * Create a custom file backup
      *
      * @return string Path to backup file
+     *
      * @throws Exception
      */
     private function createFileBackup(): string
@@ -35,12 +38,12 @@ class BackupService
             mkdir($backupDir, 0755, true);
         }
 
-        $filename = 'web_backup_' . date('Y-m-d_H-i-s') . '.zip';
-        $fullPath = $backupDir . '/' . $filename;
+        $filename = 'web_backup_'.date('Y-m-d_H-i-s').'.zip';
+        $fullPath = $backupDir.'/'.$filename;
 
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         if (! $zip->open($fullPath, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
-            throw new Exception("Failed to create zip archive");
+            throw new Exception('Failed to create zip archive');
         }
 
         // Directories to include
@@ -94,17 +97,18 @@ class BackupService
      * Create a custom database backup
      *
      * @return string Path to backup file
+     *
      * @throws Exception
      */
     private function createDatabaseBackup(): string
     {
-        $driver   = config('database.default');
+        $driver = config('database.default');
         $dbConfig = config("database.connections.{$driver}");
 
         if (($dbConfig['driver'] ?? null) !== 'mysql') {
             throw new Exception(
-                'Database backup hanya didukung untuk MySQL. ' .
-                'Driver saat ini: ' . ($dbConfig['driver'] ?? 'unknown')
+                'Database backup hanya didukung untuk MySQL. '.
+                'Driver saat ini: '.($dbConfig['driver'] ?? 'unknown')
             );
         }
 
@@ -113,8 +117,8 @@ class BackupService
             mkdir($backupDir, 0755, true);
         }
 
-        $filename = 'database_backup_' . date('Y-m-d_H-i-s') . '.sql';
-        $fullPath = $backupDir . '/' . $filename;
+        $filename = 'database_backup_'.date('Y-m-d_H-i-s').'.sql';
+        $fullPath = $backupDir.'/'.$filename;
 
         $mysqldumpPath = env('MYSQLDUMP_PATH', 'C:/laragon/bin/mysql/mysql-8.0.30-winx64/bin/mysqldump.exe');
 
@@ -122,13 +126,13 @@ class BackupService
             throw new Exception("mysqldump tidak ditemukan di: {$mysqldumpPath}. Pastikan path benar di file .env.");
         }
 
-        $command = '"' . $mysqldumpPath . '" ' .
-        '--host=' . escapeshellarg($dbConfig['host']) . ' ' .
-        '--port=' . escapeshellarg($dbConfig['port'] ?? 3306) . ' ' .
-        '--user=' . escapeshellarg($dbConfig['username']) . ' ' .
-        '--password=' . escapeshellarg($dbConfig['password']) . ' ' .
-        escapeshellarg($dbConfig['database']) . ' ' .
-        '> ' . escapeshellarg(str_replace('/', DIRECTORY_SEPARATOR, $fullPath));
+        $command = '"'.$mysqldumpPath.'" '.
+        '--host='.escapeshellarg($dbConfig['host']).' '.
+        '--port='.escapeshellarg($dbConfig['port'] ?? 3306).' '.
+        '--user='.escapeshellarg($dbConfig['username']).' '.
+        '--password='.escapeshellarg($dbConfig['password']).' '.
+        escapeshellarg($dbConfig['database']).' '.
+        '> '.escapeshellarg(str_replace('/', DIRECTORY_SEPARATOR, $fullPath));
 
         $exitCode = 0;
         exec($command, $output, $exitCode);
@@ -139,7 +143,7 @@ class BackupService
 
         // Compress to ZIP
         $zipFile = str_replace('.sql', '.zip', $fullPath);
-        $zip     = new ZipArchive();
+        $zip = new ZipArchive;
         if ($zip->open($zipFile, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
             $zip->addFile($fullPath, basename($fullPath));
             $zip->close();
@@ -154,11 +158,6 @@ class BackupService
 
     /**
      * Add a directory to the zip file recursively
-     *
-     * @param ZipArchive $zip
-     * @param string $dir
-     * @param string $baseDir
-     * @return void
      */
     private function addDirToZip(ZipArchive $zip, string $dir, string $baseDir): void
     {
@@ -182,12 +181,10 @@ class BackupService
 
     /**
      * Get list of all backups
-     *
-     * @return array
      */
     public function getBackupList(): array
     {
-        $backups   = [];
+        $backups = [];
         $backupDir = storage_path('app/private/backup');
 
         if (! file_exists($backupDir)) {
@@ -205,22 +202,22 @@ class BackupService
                 continue;
             }
 
-            $filePath = $backupDir . '/' . $file;
+            $filePath = $backupDir.'/'.$file;
             if (! is_file($filePath)) {
                 continue;
             }
 
             $backups[] = [
-                'name'           => 'backup/' . $file,
-                'size'           => filesize($filePath),
-                'modified'       => filemtime($filePath),
+                'name' => 'backup/'.$file,
+                'size' => filesize($filePath),
+                'modified' => filemtime($filePath),
                 'formatted_size' => formatBytes(filesize($filePath)),
                 'formatted_date' => date('M j, Y g:i A', filemtime($filePath)),
             ];
         }
 
         // Sort by modification time (newest first)
-        usort($backups, fn($a, $b) => $b['modified'] - $a['modified']);
+        usort($backups, fn ($a, $b) => $b['modified'] - $a['modified']);
 
         return $backups;
     }
@@ -228,8 +225,6 @@ class BackupService
     /**
      * Get file path for download
      *
-     * @param string $filename
-     * @return string
      * @throws Exception
      */
     public function getBackupFilePath(string $filename): string
@@ -238,13 +233,13 @@ class BackupService
 
         if (strpos($filename, 'backup/') === 0) {
             $filename = substr($filename, strlen('backup/'));
-            $filePath = storage_path('app/private/backup/' . $filename);
+            $filePath = storage_path('app/private/backup/'.$filename);
         } else {
-            $filePath = storage_path('app/private/' . $filename);
+            $filePath = storage_path('app/private/'.$filename);
         }
 
         if (! file_exists($filePath)) {
-            throw new Exception('Backup file not found: ' . basename($filename));
+            throw new Exception('Backup file not found: '.basename($filename));
         }
 
         return $filePath;
@@ -253,8 +248,6 @@ class BackupService
     /**
      * Delete a backup file
      *
-     * @param string $filename
-     * @return bool
      * @throws Exception
      */
     public function deleteBackup(string $filename): bool
@@ -263,13 +256,13 @@ class BackupService
 
         if (strpos($filename, 'backup/') === 0) {
             $filename = substr($filename, strlen('backup/'));
-            $filePath = storage_path('app/private/backup/' . $filename);
+            $filePath = storage_path('app/private/backup/'.$filename);
         } else {
-            $filePath = storage_path('app/private/' . $filename);
+            $filePath = storage_path('app/private/'.$filename);
         }
 
         if (! file_exists($filePath)) {
-            throw new Exception('Backup file not found: ' . basename($filename));
+            throw new Exception('Backup file not found: '.basename($filename));
         }
 
         return unlink($filePath);

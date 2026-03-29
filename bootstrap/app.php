@@ -13,18 +13,18 @@ use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__ . '/../routes/web.php',
-        api: __DIR__ . '/../routes/api.php',
-        commands: __DIR__ . '/../routes/console.php',
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
+        commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             // 'auth' => \App\Http\Middleware\Authenticate::class,
-            'role'               => RoleMiddleware::class,
-            'permission'         => PermissionMiddleware::class,
+            'role' => RoleMiddleware::class,
+            'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
-            'check.expired'      => CheckAccountExpiration::class,
+            'check.expired' => CheckAccountExpiration::class,
             // 'validatePasswordResetToken' => \App\Http\Middleware\ValidatePasswordResetToken::class,
         ]);
     })
@@ -56,6 +56,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 if ($request->expectsJson()) {
                     return jsonError($e->getMessage(), 404);
                 }
+
                 return back()->with('error', $e->getMessage());
             }
 
@@ -64,7 +65,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 if ($e instanceof ValidationException) {
                     return null;
                 }
-                return jsonError('Terjadi kesalahan sistem: ' . $e->getMessage());
+
+                return jsonError('Terjadi kesalahan sistem: '.$e->getMessage());
             }
 
             // 2. Tangani request HTTP Biasa
@@ -73,10 +75,10 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             // Jika error terjadi pada saat submit data (bukan GET), redirect back dengan flash message
-            if (!$request->isMethod('GET')) {
+            if (! $request->isMethod('GET')) {
                 return back()
                     ->withInput()
-                    ->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+                    ->with('error', 'Terjadi kesalahan sistem: '.$e->getMessage());
             }
 
             return null; // Fallback ke default handler (Error Page 500) untuk request GET

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Pemutu;
 
 use App\Traits\Blameable;
@@ -9,16 +10,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Label extends Model
 {
-    use HasFactory, Blameable, HashidBinding, SoftDeletes;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'pemutu_label';
+    protected $table = 'pemutu_label';
+
     protected $primaryKey = 'label_id';
-    protected $appends    = ['encrypted_label_id'];
+
+    protected $appends = ['encrypted_label_id'];
 
     public function getRouteKeyName()
     {
         return 'label_id';
     }
+
     protected $fillable = [
         'parent_id',
         'name',
@@ -29,6 +33,7 @@ class Label extends Model
         'updated_by', 'deleted_by',
 
     ];
+
     public $timestamps = false;
 
     public function getEncryptedLabelIdAttribute()

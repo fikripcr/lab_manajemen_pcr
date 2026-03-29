@@ -1,11 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Hr;
 
 use App\Http\Requests\BaseRequest;
 
 class EndStrukturalRequest extends BaseRequest
 {
-
     public function rules()
     {
         return [

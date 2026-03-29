@@ -206,16 +206,23 @@ class ThemeTabler {
 
         // 2. Auth Flow Visibility
         if (this.mode === 'auth') {
+            const authLayout = this.form.querySelector('select[name="auth-layout"]')?.value || 'basic';
+            setVisible('auth-form-position-wrapper', authLayout === 'cover' || authLayout === 'illustration');
+
             const position = this.form.querySelector('input[name="auth-form-position"]:checked')?.value;
             const formCol = document.querySelector('[data-form-column]');
             const mediaCol = document.querySelector('[data-media-column]');
             if (formCol && mediaCol) {
+                // Remove existing order classes
+                formCol.classList.remove('order-1', 'order-2');
+                mediaCol.classList.remove('order-1', 'order-2');
+                
                 if (position === 'right') {
-                    formCol.style.order = '2';
-                    mediaCol.style.order = '1';
+                    formCol.classList.add('order-2');
+                    mediaCol.classList.add('order-1');
                 } else {
-                    formCol.style.order = '';
-                    mediaCol.style.order = '';
+                    formCol.classList.add('order-1');
+                    mediaCol.classList.add('order-2');
                 }
             }
         }

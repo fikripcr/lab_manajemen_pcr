@@ -1,28 +1,32 @@
 <?php
+
 namespace App\Imports;
 
-use App\Models\Lab;
-use App\Models\User;
 use App\Models\JadwalKuliah;
-use App\Models\Semester;
+use App\Models\Lab;
 use App\Models\MataKuliah;
+use App\Models\Semester;
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class JadwalImport implements ToCollection,WithHeadingRow
+class JadwalImport implements ToCollection, WithHeadingRow
 {
     protected $semesters;
+
     protected $mks;
+
     protected $labs;
+
     protected $dosens;
 
     public function __construct()
     {
         $this->semesters = Semester::all();
-        $this->mks       = MataKuliah::all();
-        $this->labs      = Lab::all();
-        $this->dosens    = User::all();
+        $this->mks = MataKuliah::all();
+        $this->labs = Lab::all();
+        $this->dosens = User::all();
     }
 
     public function collection(Collection $rows)
@@ -122,16 +126,16 @@ class JadwalImport implements ToCollection,WithHeadingRow
         foreach ($rows as $row) {
             // Ensure all required keys exist
             if (
-                !isset($row['tahun_ajaran']) ||
-                !isset($row['semester']) ||
-                !isset($row['kode_mk']) ||
-                !isset($row['dosen']) ||
-                !isset($row['hari']) ||
-                !isset($row['jam_mulai']) ||
-                !isset($row['jam_selesai']) ||
-                !isset($row['lab'])
+                ! isset($row['tahun_ajaran']) ||
+                ! isset($row['semester']) ||
+                ! isset($row['kode_mk']) ||
+                ! isset($row['dosen']) ||
+                ! isset($row['hari']) ||
+                ! isset($row['jam_mulai']) ||
+                ! isset($row['jam_selesai']) ||
+                ! isset($row['lab'])
             ) {
-                throw new \Exception("Kolom Excel tidak sesuai template. Pastikan semua kolom sudah benar.");
+                throw new \Exception('Kolom Excel tidak sesuai template. Pastikan semua kolom sudah benar.');
             }
 
             // Determine semester based on value
@@ -187,13 +191,13 @@ class JadwalImport implements ToCollection,WithHeadingRow
                 // Create a unique email if only name was provided
                 $dosenName = $row['dosen'];
                 $emailDomain = '@university.ac.id'; // Default domain
-                $email = strtolower(str_replace(' ', '.', $dosenName)) . $emailDomain;
+                $email = strtolower(str_replace(' ', '.', $dosenName)).$emailDomain;
 
                 // Check if email already exists and modify if needed
                 $counter = 1;
                 $originalEmail = $email;
                 while (User::where('email', $email)->exists()) {
-                    $email = strtolower(str_replace(' ', '.', $dosenName)) . $counter . $emailDomain;
+                    $email = strtolower(str_replace(' ', '.', $dosenName)).$counter.$emailDomain;
                     $counter++;
                 }
 
@@ -202,7 +206,7 @@ class JadwalImport implements ToCollection,WithHeadingRow
                     'email' => $email,
                     'password' => bcrypt('password'), // Default password
                     'role' => 'dosen', // Default role
-                    'nomor_induk' => 'DOSEN' . rand(10000, 99999), // Generate random ID
+                    'nomor_induk' => 'DOSEN'.rand(10000, 99999), // Generate random ID
                     'is_verified' => 1, // Mark as verified
                 ]);
                 // Refresh the cache
@@ -241,20 +245,20 @@ class JadwalImport implements ToCollection,WithHeadingRow
 
             // Add data to collection
             $jadwals[] = [
-                'semester_id'    => $semester->semester_id,
+                'semester_id' => $semester->semester_id,
                 'mata_kuliah_id' => $mataKuliah->id,
-                'dosen_id'       => $dosen->id,
-                'hari'           => $row['hari'],
-                'jam_mulai'      => $row['jam_mulai'],
-                'jam_selesai'    => $row['jam_selesai'],
-                'lab_id'         => $lab->lab_id,
-                'created_at'     => now(),
-                'updated_at'     => now(),
+                'dosen_id' => $dosen->id,
+                'hari' => $row['hari'],
+                'jam_mulai' => $row['jam_mulai'],
+                'jam_selesai' => $row['jam_selesai'],
+                'lab_id' => $lab->lab_id,
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
         }
 
         // Perform bulk insert
-        if (!empty($jadwals)) {
+        if (! empty($jadwals)) {
             JadwalKuliah::insert($jadwals);
         }
     }

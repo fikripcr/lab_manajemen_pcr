@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Survei;
 
 use App\Http\Controllers\Controller;
@@ -8,8 +9,7 @@ use App\Services\Survei\FormPlayerService;
 
 class FormPlayerController extends Controller
 {
-    public function __construct(protected FormPlayerService $formPlayerService)
-    {}
+    public function __construct(protected FormPlayerService $formPlayerService) {}
 
     /**
      * Welcome page before starting survey
@@ -24,7 +24,7 @@ class FormPlayerController extends Controller
 
         // Load survey structure
         $survei = $this->formPlayerService->getSurveyForPlayer($survei);
-        
+
         // Calculate stats
         $totalPertanyaan = $survei->pertanyaan->count();
         $estimatedTime = $totalPertanyaan * 2; // 2 minutes per question estimate
@@ -44,10 +44,10 @@ class FormPlayerController extends Controller
             ->firstOrFail();
 
         $this->formPlayerService->validateAccessibility($survei);
-        
+
         // Create session flag for survey in progress
-        session(['survei_in_progress_' . $survei->id => true]);
-        
+        session(['survei_in_progress_'.$survei->id => true]);
+
         return redirect()->route('survei.public.show', $survei->slug);
     }
 
@@ -72,13 +72,14 @@ class FormPlayerController extends Controller
 
         $jawaban = $request->input('jawaban', []);
         $this->formPlayerService->submitSurvey($survei, $jawaban, $request->ip());
-        
+
         return jsonSuccess('Jawaban berhasil disimpan', route('survei.public.thankyou', $survei->slug));
     }
 
     public function thankyou($slug)
     {
         $survei = Survei::where('slug', $slug)->firstOrFail();
+
         return view('pages.survei.player.thankyou', compact('survei'));
     }
 }

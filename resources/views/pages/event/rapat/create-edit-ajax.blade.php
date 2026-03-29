@@ -1,382 +1,273 @@
-@extends('layouts.tabler.app')
+@php
+    $isEdit = $rapat->exists;
+    $route = $isEdit ? route('Kegiatan.rapat.update', $rapat->encrypted_rapat_id) : route('Kegiatan.rapat.store');
+    $method = $isEdit ? 'PUT' : 'POST';
+@endphp
 
-@section('title', $pageTitle)
+<x-tabler.form-modal
+    :title="$pageTitle"
+    :route="$route"
+    :method="$method"
+    submitText="{{ $isEdit ? 'Simpan Perubahan' : 'Jadwalkan Rapat' }}"
+    size="modal-xl"
+>
+    {{-- Hidden fields for entitas linking --}}
+    <input type="hidden" name="entitas_type" value="{{ $entitasType ?? '' }}">
+    <input type="hidden" name="entitas_id" value="{{ $entitasId ?? '' }}">
 
-@section('header')
-<x-tabler.page-header :title="$pageTitle" pretitle="Kegiatan / Rapat / {{ $rapat->exists ? 'Edit' : 'Jadwalkan' }}">
-    <x-slot:actions>
-        <x-tabler.button type="back" href="{{ route('Kegiatan.rapat.index') }}" />
-    </x-slot:actions>
-</x-tabler.page-header>
-@endsection
-
-@section('content')
-<div class="row">
-    <div class="col-12">
-        <form class="ajax-form" action="{{ $rapat->exists ? route('Kegiatan.rapat.update', $rapat->encrypted_rapat_id) : route('Kegiatan.rapat.store') }}" method="POST">
-            @csrf
-            @if($rapat->exists)
-                @method('PUT')
-            @endif
-
-            <div class="row justify-content-center">
-                {{-- KOLOM KIRI: DATA UMUM --}}
-                <div class="{{ $rapat->exists ? 'col-lg-6' : 'col-lg-5' }}">
-                    <x-tabler.card>
-                        <x-tabler.card-header title="<i class='ti ti-info-circle me-2'></i>Data Umum" />
-                        <x-tabler.card-body>
-                            <div class="mb-3">
-                                <x-tabler.form-input
-                                    name="jenis_rapat"
-                                    label="Jenis Rapat"
-                                    type="text"
-                                    value="{{ old('jenis_rapat', $rapat->jenis_rapat) }}"
-                                    placeholder="Contoh: Rapat Koordinasi, Rapat Tinjauan Manajemen"
-                                    required="true"
-                                />
-                            </div>
-
-                            <div class="mb-3">
-                                <x-tabler.form-input
-                                    name="judul_kegiatan"
-                                    label="Judul Kegiatan"
-                                    type="text"
-                                    value="{{ old('judul_kegiatan', $rapat->judul_kegiatan) }}"
-                                    placeholder="Masukkan judul kegiatan"
-                                    required="true"
-                                />
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12">
-                                    <x-tabler.form-input
-                                        name="tgl_rapat"
-                                        label="Tanggal Rapat"
-                                        type="date"
-                                        value="{{ old('tgl_rapat', $rapat->exists ? $rapat->tgl_rapat?->format('Y-m-d') : ($defaultDate ?? date('Y-m-d'))) }}"
-                                        required="true"
-                                    />
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-6">
-                                    <x-tabler.form-input
-                                        name="waktu_mulai"
-                                        label="Waktu Mulai"
-                                        type="time"
-                                        value="{{ old('waktu_mulai', $rapat->exists ? $rapat->waktu_mulai?->format('H:i') : ($defaultStartTime ?? date('H:i'))) }}"
-                                        required="true"
-                                    />
-                                </div>
-                                <div class="col-6">
-                                    <x-tabler.form-input
-                                        name="waktu_selesai"
-                                        label="Waktu Selesai"
-                                        type="time"
-                                        value="{{ old('waktu_selesai', $rapat->exists ? $rapat->waktu_selesai?->format('H:i') : ($defaultEndTime ?? date('H:i', strtotime('+2 hours')))) }}"
-                                        required="true"
-                                    />
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <x-tabler.form-input
-                                    name="tempat_rapat"
-                                    label="Tempat Rapat"
-                                    type="text"
-                                    value="{{ old('tempat_rapat', $rapat->tempat_rapat) }}"
-                                    placeholder="Contoh: Ruang Rapat Utama, Zoom Meeting"
-                                    required="true"
-                                />
-                            </div>
-
-                            <div class="mb-3">
-                                <x-tabler.form-textarea
-                                    name="keterangan"
-                                    label="Keterangan Tambahan"
-                                    value="{{ old('keterangan', $rapat->keterangan) }}"
-                                    placeholder="Informasi tambahan (opsional)"
-                                    rows="2"
-                                />
-                            </div>
-                        </x-tabler.card-body>
-                        <x-tabler.card-footer class="text-end">
-                            <x-tabler.button type="submit" :text="$rapat->exists ? 'Simpan Perubahan' : 'Jadwalkan Rapat'" icon="ti ti-check" />
-                        </x-tabler.card-footer>
-                    </x-tabler.card>
-                </div>
-
-                @if(!$rapat->exists)
-                {{-- KOLOM KANAN: AGENDA & PESERTA --}}
-                <div class="col-lg-7">
-                    {{-- AGENDA CARD --}}
-                    <x-tabler.card class="mb-3">
-                        <x-tabler.card-header title="<i class='ti ti-list-check me-2'></i>Agenda Rapat {{ $rapat->exists ? '<span class=\'badge bg-primary text-white ms-2\'>' . $rapat->agendas->count() . '</span>' : '' }}" />
-                        <x-tabler.card-body>
-                            <div id="agenda-container">
-                                @if($rapat->exists && $rapat->agendas->count() > 0)
-                                    @foreach($rapat->agendas->sortBy('seq') as $index => $agenda)
-                                        <x-tabler.card class="agenda-item mb-2">
-                                            <x-tabler.card-body class="py-2">
-                                                <div class="row align-items-center">
-                                                    <div class="col-auto">
-                                                        <span class="badge bg-primary rounded-pill">{{ $loop->iteration }}</span>
-                                                    </div>
-                                                    <div class="col">
-                                                        <x-tabler.form-input name="agendas[{{ $index }}][judul_agenda]" value="{{ $agenda->judul_agenda }}" placeholder="Judul Agenda" required="true" />
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <x-tabler.button type="button" class="btn-danger remove-agenda" title="Hapus Agenda" iconOnly="true" icon="ti ti-x" />
-                                                    </div>
-                                                </div>
-                                            </x-tabler.card-body>
-                                        </x-tabler.card>
-                                    @endforeach
-                                @else
-                                    <x-tabler.card class="agenda-item mb-2">
-                                        <x-tabler.card-body class="py-2">
-                                            <div class="row align-items-center">
-                                                <div class="col-auto">
-                                                    <span class="badge badge-primary rounded-pill">#1</span>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="text" 
-                                                           name="agendas[0][judul_agenda]" 
-                                                           class="form-control form-control-sm fw-bold" 
-                                                           placeholder="Judul Agenda"
-                                                           required>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <x-tabler.button type="button" class="btn-danger remove-agenda" title="Hapus Agenda" iconOnly="true" icon="ti ti-x" />
-                                                </div>
-                                            </div>
-                                        </x-tabler.card-body>
-                                    </x-tabler.card>
-                                @endif
-                            </div>
-
-                            <x-tabler.button type="create" id="add-agenda-btn" class="mt-2" />
-                        </x-tabler.card-body>
-                    </x-tabler.card>
-
-                    {{-- PESERTA CARD --}}
-                    <x-tabler.card>
-                        <x-tabler.card-header title="<i class='ti ti-users me-2'></i>Peserta Rapat {{ $rapat->exists ? '<span class=\'badge bg-success text-white ms-2\'>' . $rapat->pesertas->count() . '</span>' : '' }}" />
-                        <x-tabler.card-body>
-                            <div class="mb-3">
-                                <label class="form-label">Undang Peserta</label>
-                                <select name="participants[]" 
-                                        id="select-participants" 
-                                        class="form-select select2-multiple" 
-                                        multiple="multiple"
-                                        data-placeholder="Pilih peserta yang akan diundang...">
-                                    @foreach($users as $user)
-                                        @php
-                                            $pegawaiName = $user->pegawai?->nama ?? $user->name;
-                                            $nip = $user->pegawai?->nip ?? '-';
-                                        @endphp
-                                        <option value="{{ $user->id }}" 
-                                                {{ $rapat->exists && $rapat->pesertas->contains('user_id', $user->id) ? 'selected' : '' }}>
-                                            {{ $pegawaiName }} ({{ $nip }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <small class="text-muted">Ctrl+Click (Windows) atau Cmd+Click (Mac) untuk pilih banyak</small>
-                            </div>
-
-                            <div class="mb-3">
-                                <x-tabler.form-input
-                                    name="jabatan_peserta"
-                                    label="Jabatan dalam Rapat"
-                                    type="text"
-                                    value="{{ old('jabatan_peserta', 'Peserta') }}"
-                                    placeholder="Contoh: Peserta, Narasumber"
-                                />
-                            </div>
-
-                            @if($rapat->exists && $rapat->pesertas->count() > 0)
-                                <x-tabler.card>
-                                    <x-tabler.card-header title="Quick Stats" />
-                                    <x-tabler.card-body>
-                                        <div class="mb-3">
-                                            <div class="d-flex justify-content-between mb-1">
-                                                <span class="text-muted">Presence</span>
-                                                <span class="text-muted">0/0</span>
-                                            </div>
-                                            <div class="progress progress-sm">
-                                                <div class="progress-bar bg-primary" style="width: 0%"></div>
-                                            </div>
-                                        </div>
-                                    </x-tabler.card-body>
-                                </x-tabler.card>
-                                <div class="mt-3">
-                                    <h6 class="card-title mb-2">Peserta Terundang</h6>
-                                    <div class="table-responsive">
-                                        <table class="table table-sm table-vcenter">
-                                            <thead>
-                                                <tr>
-                                                    <th>Nama</th>
-                                                    <th>Jabatan</th>
-                                                    <th>Status</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($rapat->pesertas as $peserta)
-                                                    <tr>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <span class="avatar avatar-xs me-2 rounded-circle bg-light text-muted">
-                                                                    {{ strtoupper(substr($peserta->user->name ?? '?', 0, 1)) }}
-                                                                </span>
-                                                                <div class="text-truncate" style="max-width: 150px;">
-                                                                    {{ $peserta->user->name ?? 'User N/A' }}
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td><span class="badge bg-light text-dark">{{ $peserta->jabatan }}</span></td>
-                                                        <td>
-                                                            @if($peserta->is_invited)
-                                                                <span class="badge bg-green-lt">
-                                                                    <i class="ti ti-check me-1"></i>Terkirim
-                                                                </span>
-                                                            @else
-                                                                <span class="badge bg-yellow-lt">
-                                                                    <i class="ti ti-clock me-1"></i>Belum
-                                                                </span>
-                                                            @endif
-                                                        </td>
-                                                        <td class="text-end">
-                                                            <x-tabler.button type="button" class="btn-primary resend-invite-btn"
-                                                                    data-peserta-id="{{ $peserta->encrypted_rapatpeserta_id }}"
-                                                                    data-peserta-name="{{ $peserta->user->name }}"
-                                                                    title="Kirim ulang undangan"
-                                                                    iconOnly="true" icon="ti ti-mail" />
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            @endif
-                        </x-tabler.card-body>
-                    </x-tabler.card>
-                </div>
-                @endif
-            </div>
-        </form>
-    </div>
-</div>
-@endsection
-
-@push('scripts')
-<script>
-let agendaCounter = {{ $rapat->exists && $rapat->agendas->count() > 0 ? $rapat->agendas->count() : 1 }};
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Select2 for participants
-    if (window.loadSelect2) {
-        window.loadSelect2().then(() => {
-            $('.select2-multiple').select2({
-                theme: 'bootstrap-5',
-                width: '100%',
-                placeholder: 'Pilih peserta yang akan diundang...',
-                allowClear: true
-            });
-        });
-    }
-
-    // Add agenda button
-    document.getElementById('add-agenda-btn')?.addEventListener('click', function() {
-        const container = document.getElementById('agenda-container');
-        const newAgenda = document.createElement('div');
-        newAgenda.className = 'agenda-item mb-2';
-        newAgenda.innerHTML = `
+    <div class="row g-3">
+        {{-- KOLOM KIRI: DATA UMUM --}}
+        <div class="col-lg-5">
             <x-tabler.card>
-                <x-tabler.card-body class="py-2">
-                    <div class="row align-items-center">
-                        <div class="col-auto">
-                            <span class="badge bg-primary rounded-pill">${agendaCounter + 1}</span>
+                <x-tabler.card-header title="<i class='ti ti-info-circle me-2'></i>Data Umum" />
+                <x-tabler.card-body>
+                    <div class="mb-3">
+                        <x-tabler.form-input
+                            name="jenis_rapat"
+                            label="Jenis Rapat"
+                            type="text"
+                            value="{{ old('jenis_rapat', $rapat->jenis_rapat) }}"
+                            placeholder="Contoh: Rapat Koordinasi, Rapat Tinjauan Manajemen"
+                            required="true"
+                        />
+                    </div>
+
+                    <div class="mb-3">
+                        <x-tabler.form-input
+                            name="judul_kegiatan"
+                            label="Judul Kegiatan"
+                            type="text"
+                            value="{{ old('judul_kegiatan', $rapat->judul_kegiatan) }}"
+                            placeholder="Masukkan judul kegiatan"
+                            required="true"
+                        />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <x-tabler.form-input
+                                name="tgl_rapat"
+                                label="Tanggal Rapat"
+                                type="date"
+                                value="{{ old('tgl_rapat', $rapat->exists ? $rapat->tgl_rapat?->format('Y-m-d') : ($defaultDate ?? date('Y-m-d'))) }}"
+                                required="true"
+                            />
                         </div>
-                        <div class="col">
-                            <input type="text" 
-                                   name="agendas[${agendaCounter}][judul_agenda]" 
-                                   class="form-control form-control-sm fw-bold" 
-                                   placeholder="Judul Agenda"
-                                   required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            <x-tabler.form-input
+                                name="waktu_mulai"
+                                label="Waktu Mulai"
+                                type="time"
+                                value="{{ old('waktu_mulai', $rapat->exists ? $rapat->waktu_mulai?->format('H:i') : ($defaultStartTime ?? date('H:i'))) }}"
+                                required="true"
+                            />
                         </div>
-                        <div class="col-auto">
-                            <button type="button" class="btn btn-icon btn-sm btn-danger remove-agenda" title="Hapus Agenda">
-                                <i class="ti ti-x"></i>
-                            </button>
+                        <div class="col-6">
+                            <x-tabler.form-input
+                                name="waktu_selesai"
+                                label="Waktu Selesai"
+                                type="time"
+                                value="{{ old('waktu_selesai', $rapat->exists ? $rapat->waktu_selesai?->format('H:i') : ($defaultEndTime ?? date('H:i', strtotime('+2 hours')))) }}"
+                                required="true"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <x-tabler.form-input
+                            name="tempat_rapat"
+                            label="Tempat Rapat"
+                            type="text"
+                            value="{{ old('tempat_rapat', $rapat->tempat_rapat) }}"
+                            placeholder="Contoh: Ruang Rapat Utama, Zoom Meeting"
+                            required="true"
+                        />
+                    </div>
+
+                    <div class="mb-3">
+                        <x-tabler.form-textarea
+                            name="keterangan"
+                            label="Keterangan Tambahan"
+                            value="{{ old('keterangan', $rapat->keterangan) }}"
+                            placeholder="Informasi tambahan (opsional)"
+                            rows="2"
+                        />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            <x-tabler.form-select name="ketua_user_id" label="Ketua Rapat" placeholder="Pilih Ketua">
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}" {{ (old('ketua_user_id', $rapat->ketua_user_id) == $user->id) ? 'selected' : '' }}>
+                                        {{ $user->name }}
+                                    </option>
+                                @endforeach
+                            </x-tabler.form-select>
+                        </div>
+                        <div class="col-6">
+                            <x-tabler.form-select name="notulen_user_id" label="Notulen" placeholder="Pilih Notulen">
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}" {{ (old('notulen_user_id', $rapat->notulen_user_id) == $user->id) ? 'selected' : '' }}>
+                                        {{ $user->name }}
+                                    </option>
+                                @endforeach
+                            </x-tabler.form-select>
                         </div>
                     </div>
                 </x-tabler.card-body>
             </x-tabler.card>
-        `;
-        container.appendChild(newAgenda);
-        agendaCounter++;
-        updateAgendaNumbers();
-    });
+        </div>
 
-    // Remove agenda button (event delegation)
-    document.getElementById('agenda-container')?.addEventListener('click', function(e) {
-        if (e.target.closest('.remove-agenda')) {
-            const agendaItem = e.target.closest('.agenda-item');
-            if (document.querySelectorAll('.agenda-item').length > 1) {
-                agendaItem.remove();
-                updateAgendaNumbers();
-            } else {
-                showWarningMessage('Minimal 1 Agenda', 'Rapat harus memiliki minimal 1 agenda');
-            }
-        }
-    });
+        {{-- KOLOM KANAN: AGENDA & PESERTA (Selalu tampil untuk sinkronisasi) --}}
+        <div class="col-lg-7">
+            {{-- AGENDA CARD --}}
+            <x-tabler.card class="mb-3">
+                <x-tabler.card-header title="<i class='ti ti-list-check me-2'></i>Agenda Rapat" />
+                <x-tabler.card-body>
+                    <div id="agenda-container">
+                        @php
+                            $agendas = [];
+                            if (old('agendas')) {
+                                $agendas = old('agendas');
+                            } elseif ($rapat->exists && $rapat->agendas->count() > 0) {
+                                $agendas = $rapat->agendas->toArray();
+                            } elseif (isset($prefilledAgendas) && count($prefilledAgendas) > 0) {
+                                $agendas = $prefilledAgendas;
+                            } else {
+                                $agendas = [['judul_agenda' => '']];
+                            }
+                        @endphp
 
-    // Update agenda numbers
-    function updateAgendaNumbers() {
-        document.querySelectorAll('.agenda-item').forEach((item, index) => {
-            const badge = item.querySelector('.badge');
-            if (badge) badge.textContent = index + 1;
-        });
-    }
+                        @foreach($agendas as $index => $agenda)
+                            <div class="agenda-item mb-2 border rounded p-2 bg-light-lt">
+                                <div class="row align-items-center g-2">
+                                    <div class="col-auto">
+                                        <span class="badge bg-primary text-white rounded-pill">{{ $index + 1 }}</span>
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" name="agendas[{{ $index }}][judul_agenda]" class="form-control fw-bold" value="{{ $agenda['judul_agenda'] ?? $agenda->judul_agenda ?? '' }}" placeholder="Judul Agenda" required>
+                                        @if(isset($agenda['rapatagenda_id']))
+                                            <input type="hidden" name="agendas[{{ $index }}][rapatagenda_id]" value="{{ $agenda['rapatagenda_id'] }}">
+                                        @endif
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="button" class="btn btn-icon btn-outline-danger remove-agenda" title="Hapus Agenda"><i class="ti ti-x"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    <x-tabler.button type="button" id="add-agenda-btn" class="mt-2 btn-sm" text="Tambah Agenda" icon="ti ti-plus" />
+                </x-tabler.card-body>
+            </x-tabler.card>
 
-    // Resend invitation button
-    document.querySelectorAll('.resend-invite-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const pesertaId = this.dataset.pesertaId;
-            const pesertaName = this.dataset.pesertaName;
-            
-            showConfirmation('Kirim Ulang Undangan?', `Kirim ulang undangan email ke ${pesertaName}?`, 'Ya, Kirim').then((result) => {
-                if (result.isConfirmed) {
-                    showLoadingMessage('Mengirim...', 'Sedang mengirim ulang undangan');
-                    axios.post(`{{ route('Kegiatan.rapat.peserta.resend-invite', '__ID__') }}`.replace('__ID__', pesertaId))
-                        .then((response) => {
-                            showSuccessMessage('Berhasil', response.data.message || 'Undangan berhasil dikirim ulang');
-                        })
-                        .catch((error) => {
-                            showErrorMessage('Gagal', error.response?.data?.message || 'Gagal mengirim ulang undangan');
-                        });
-                }
+            {{-- PESERTA CARD --}}
+            <x-tabler.card>
+                <x-tabler.card-header title="<i class='ti ti-users me-2'></i>Peserta Rapat" />
+                <x-tabler.card-body>
+                    @if($isEdit)
+                        <div class="alert alert-info py-2 small mb-2">
+                            <i class="ti ti-info-circle me-1"></i> Anda dapat menambah peserta baru di sini. Peserta yang sudah ada dapat dikelola di halaman detail.
+                        </div>
+                    @endif
+                    <div class="mb-3">
+                        <label class="form-label">Pilih Peserta</label>
+                        <select name="participants[]" id="select-participants" class="form-select select2-multiple" multiple="multiple">
+                            @foreach($users as $user)
+                                @php
+                                    $isSelected = false;
+                                    if (old('participants')) {
+                                        $isSelected = in_array($user->id, old('participants'));
+                                    } elseif ($isEdit) {
+                                        $isSelected = $rapat->pesertas->pluck('user_id')->contains($user->id);
+                                    }
+                                @endphp
+                                <option value="{{ $user->id }}" {{ $isSelected ? 'selected' : '' }}>
+                                    {{ $user->name }} ({{ $user->pegawai?->nip ?? '-' }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-0">
+                        <x-tabler.form-input name="jabatan_peserta" label="Jabatan Default" type="text" value="Peserta" placeholder="Contoh: Peserta, Narasumber" />
+                    </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
+        </div>
+    </div>
+</x-tabler.form-modal>
+
+<script>
+(function() {
+    var agendaCounter = {{ count($agendas) }};
+
+    var initRapatForm = function() {
+        // Initialize Select2 if it's available and not already initialized
+        if (typeof $ !== 'undefined' && $.fn.select2) {
+            $('.select2-multiple').select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                placeholder: 'Pilih peserta...',
+                allowClear: true,
+                dropdownParent: $('#select-participants').parent()
             });
-        });
-    });
-
-    // Form success handler
-    document.addEventListener('form-success', function(e) {
-        if (e.detail.redirect) {
-            window.location.href = e.detail.redirect;
         }
-    });
-});
-</script>
-@endpush
 
-@push('styles')
+        // Add agenda button logic
+        const addBtn = document.getElementById('add-agenda-btn');
+        if (addBtn) {
+            addBtn.onclick = function() {
+                const container = document.getElementById('agenda-container');
+                const newAgenda = document.createElement('div');
+                newAgenda.className = 'agenda-item mb-2 border rounded p-2 bg-light-lt';
+                newAgenda.innerHTML = `
+                    <div class="row align-items-center g-2">
+                        <div class="col-auto">
+                            <span class="badge bg-primary text-white rounded-pill">${agendaCounter + 1}</span>
+                        </div>
+                        <div class="col">
+                            <input type="text" name="agendas[${agendaCounter}][judul_agenda]" class="form-control fw-bold" placeholder="Judul Agenda" required>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-icon btn-outline-danger remove-agenda" title="Hapus Agenda"><i class="ti ti-x"></i></button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(newAgenda);
+                agendaCounter++;
+            };
+        }
+
+        // Remove agenda delegate
+        document.getElementById('agenda-container')?.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-agenda')) {
+                const items = document.querySelectorAll('.agenda-item');
+                if (items.length > 1) {
+                    e.target.closest('.agenda-item').remove();
+                    // Renumber
+                    document.querySelectorAll('.agenda-item').forEach((it, idx) => {
+                        it.querySelector('.badge').textContent = idx + 1;
+                    });
+                }
+            }
+        });
+    };
+
+    // Auto-run on load
+    setTimeout(initRapatForm, 100);
+})();
+</script>
+
 <style>
     .select2-container--bootstrap-5 .select2-selection--multiple {
-        min-height: 38px;
+        border: 1px solid #dadcde;
+        border-radius: 4px;
+    }
+    .bg-light-lt {
+        background-color: rgba(246, 248, 251, 0.6) !important;
     }
 </style>
-@endpush

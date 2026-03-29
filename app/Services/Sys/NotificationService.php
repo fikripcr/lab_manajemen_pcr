@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Sys;
 
 use App\Models\Sys\Notification;
@@ -18,7 +19,7 @@ class NotificationService
 
         // Apply filters
         if (isset($filters['type'])) {
-            $query->where('type', 'like', '%' . $filters['type'] . '%');
+            $query->where('type', 'like', '%'.$filters['type'].'%');
         }
 
         if (isset($filters['read_status'])) {
@@ -114,7 +115,7 @@ class NotificationService
 
         // Apply filters
         if (isset($filters['type'])) {
-            $query->where('sys_notifications.type', 'like', '%' . $filters['type'] . '%');
+            $query->where('sys_notifications.type', 'like', '%'.$filters['type'].'%');
         }
 
         if (isset($filters['read_status'])) {
@@ -140,7 +141,7 @@ class NotificationService
         $query = Notification::query();
 
         if (isset($filters['type'])) {
-            $query->where('type', 'like', '%' . $filters['type'] . '%');
+            $query->where('type', 'like', '%'.$filters['type'].'%');
         }
 
         if (isset($filters['read_status'])) {
@@ -165,14 +166,14 @@ class NotificationService
 
         $user = User::find($userId);
 
-        $total  = $user->notifications()->count();
+        $total = $user->notifications()->count();
         $unread = $user->unreadNotifications()->count();
-        $read   = $total - $unread;
+        $read = $total - $unread;
 
         return [
-            'total'  => $total,
+            'total' => $total,
             'unread' => $unread,
-            'read'   => $read,
+            'read' => $read,
         ];
     }
 
@@ -197,6 +198,7 @@ class NotificationService
         }
 
         $notification->markAsRead();
+
         return true;
     }
 
@@ -253,11 +255,11 @@ class NotificationService
 
         return $notifications->map(function ($notification) {
             return [
-                'id'         => $notification->id,
-                'title'      => $notification->data['title'] ?? 'Notification',
-                'body'       => $notification->data['body'] ?? 'New notification',
+                'id' => $notification->id,
+                'title' => $notification->data['title'] ?? 'Notification',
+                'body' => $notification->data['body'] ?? 'New notification',
                 'created_at' => formatTanggalIndo($notification->created_at),
-                'is_unread'  => is_null($notification->read_at),
+                'is_unread' => is_null($notification->read_at),
                 'action_url' => route('sys.notifications.mark-as-read', $notification->id),
             ];
         });
@@ -283,7 +285,7 @@ class NotificationService
         }
 
         if (isset($filters['type'])) {
-            $query->where('sys_notifications.type', 'like', '%' . $filters['type'] . '%');
+            $query->where('sys_notifications.type', 'like', '%'.$filters['type'].'%');
         }
 
         if (isset($filters['date_from']) && isset($filters['date_to'])) {

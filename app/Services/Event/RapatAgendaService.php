@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Event;
 
 use App\Models\Event\RapatAgenda;
@@ -11,6 +12,7 @@ class RapatAgendaService
         return DB::transaction(function () use ($data) {
             $agenda = RapatAgenda::create($data);
             logActivity('event', "Menambah agenda rapat baru: {$agenda->judul_agenda}", $agenda);
+
             return $agenda;
         });
     }
@@ -20,6 +22,7 @@ class RapatAgendaService
         return DB::transaction(function () use ($rapatAgenda, $data) {
             $rapatAgenda->update($data);
             logActivity('event', "Memperbarui agenda rapat: {$rapatAgenda->judul_agenda}", $rapatAgenda);
+
             return $rapatAgenda;
         });
     }

@@ -137,44 +137,6 @@
     </div>
     @endif
 
-    {{-- FILTERS ROW --}}
-    <x-tabler.card class="mb-3 metric-card">
-        <x-tabler.card-body class="py-2">
-            <form method="GET" action="{{ route('pemutu.dashboard') }}" class="row g-3" id="filter-form">
-                <div class="col-md-3 form-col-filter">
-                    <label class="form-label mb-1">Tahun</label>
-                    <x-tabler.form-select name="year" class="form-select-sm" onchange="document.getElementById('filter-form').submit()">
-                        <option value="">Semua Tahun</option>
-                        @foreach($years as $yr)
-                            <option value="{{ $yr }}" {{ $currentYear == $yr ? 'selected' : '' }}>{{ $yr }}</option>
-                        @endforeach
-                    </x-tabler.form-select>
-                </div>
-                <div class="col-md-3 form-col-filter">
-                    <label class="form-label mb-1">Bidang, Unit/Prodi</label>
-                    <x-tabler.form-select name="unit_id" class="form-select-sm" onchange="document.getElementById('filter-form').submit()">
-                        <option value="">All</option>
-                        @foreach($units as $u)
-                            <option value="{{ $u->encrypted_org_unit_id }}" {{ $currentUnit == $u->encrypted_org_unit_id ? 'selected' : '' }}>{{ $u->name }}</option>
-                        @endforeach
-                    </x-tabler.form-select>
-                </div>
-                <div class="col-md-3 form-col-filter">
-                    <label class="form-label mb-1">Kriteria Standar</label>
-                    <x-tabler.form-select name="kriteria" class="form-select-sm" onchange="document.getElementById('filter-form').submit()">
-                        <option value="">All</option>
-                        @foreach($kriterias as $k)
-                            <option value="{{ $k }}" {{ $currentKriteria == $k ? 'selected' : '' }}>{{ $k }}</option>
-                        @endforeach
-                    </x-tabler.form-select>
-                </div>
-                <div class="col-md-3 form-col-filter d-flex align-items-end">
-                    <a href="{{ route('pemutu.dashboard') }}" class="btn btn-sm btn-light w-100">Reset Filters</a>
-                </div>
-            </form>
-        </x-tabler.card-body>
-    </x-tabler.card>
-
     {{-- TOP ROW: 8 KPI CARDS (2 rows of 4) --}}
     <div class="row g-3 mb-3">
         {{-- Row 1: Totals & Primary Metrics --}}

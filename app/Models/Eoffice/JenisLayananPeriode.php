@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Eoffice;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JenisLayananPeriode extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'eoffice_jenis_layanan_periode';
+    protected $table = 'eoffice_jenis_layanan_periode';
+
     protected $primaryKey = 'jlperiode_id';
 
     protected $appends = ['encrypted_jlperiode_id'];
@@ -38,7 +40,7 @@ class JenisLayananPeriode extends Model
     ];
 
     protected $casts = [
-        'tgl_mulai'   => 'date',
+        'tgl_mulai' => 'date',
         'tgl_selesai' => 'date',
     ];
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
@@ -16,28 +17,28 @@ class GlobalSearchController extends Controller
 
         if (empty($query)) {
             return jsonSuccess('Search results', null, [
-                'users'       => [],
-                'roles'       => [],
+                'users' => [],
+                'roles' => [],
                 'permissions' => [],
             ]);
         }
 
         // Perform search with spatie/laravel-searchable
-        $searchResults = (new Search())
+        $searchResults = (new Search)
             ->registerModel(User::class, 'name', 'email')
             ->registerModel(Role::class, 'name')
             ->registerModel(Permission::class, 'name')
             ->search($query);
 
-        $users       = $searchResults->where('type', 'users');
-        $roles       = $searchResults->where('type', 'roles');
+        $users = $searchResults->where('type', 'users');
+        $roles = $searchResults->where('type', 'roles');
         $permissions = $searchResults->where('type', 'permissions');
 
         return jsonSuccess('Search results', null, [
-            'users'       => $users,
-            'roles'       => $roles,
+            'users' => $users,
+            'roles' => $roles,
             'permissions' => $permissions,
-            'query'       => $query,
+            'query' => $query,
         ]);
     }
 }

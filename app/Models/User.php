@@ -1,16 +1,17 @@
 <?php
+
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Akademik\Mahasiswa;
+use App\Models\Hr\Pegawai;
+use App\Models\Hr\Personil;
 use App\Models\Lab\Kegiatan;
 use App\Models\Lab\LaporanKerusakan;
 use App\Models\Lab\LogPenggunaanPc;
 use App\Models\Lab\PcAssignment;
 use App\Models\Lab\RequestSoftware;
 use App\Models\Pmb\Camaba;
-use App\Models\Hr\Pegawai;
-use App\Models\Hr\Personil;
-use App\Models\Akademik\Mahasiswa;
 use App\Models\Sys\Notification;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
@@ -32,7 +33,7 @@ use Spatie\Searchable\SearchResult;
 
 class User extends Authenticatable implements HasMedia, Searchable
 {
-    use HasFactory, Notifiable, HasRoles, InteractsWithMedia, SoftDeletes, LogsActivity, HasApiTokens, Blameable, HashidBinding;
+    use Blameable, HasApiTokens, HasFactory, HashidBinding, HasRoles, InteractsWithMedia, LogsActivity, Notifiable, SoftDeletes;
 
     /**
      * Get the Pegawai associated with this user.
@@ -85,8 +86,6 @@ class User extends Authenticatable implements HasMedia, Searchable
         'deleted_by',
     ];
 
-    protected $appends = ['encrypted_id'];
-
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -104,10 +103,10 @@ class User extends Authenticatable implements HasMedia, Searchable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'expired_at'        => 'datetime',
-        'last_login_at'     => 'datetime',
-        'password'          => 'hashed',
-        'id'                => 'string', // Ensure id is treated as string for encryption purposes
+        'expired_at' => 'datetime',
+        'last_login_at' => 'datetime',
+        'password' => 'hashed',
+        'id' => 'string', // Ensure id is treated as string for encryption purposes
     ];
 
     public function isExpired(): bool
@@ -115,8 +114,10 @@ class User extends Authenticatable implements HasMedia, Searchable
         return $this->expired_at && $this->expired_at->isPast();
     }
 
-    protected static $logName      = 'user';
-    protected static $logFillable  = true;
+    protected static $logName = 'user';
+
+    protected static $logFillable = true;
+
     protected static $logOnlyDirty = true;
 
     public function getActivitylogOptions(): LogOptions
@@ -263,5 +264,4 @@ class User extends Authenticatable implements HasMedia, Searchable
     {
         return $this->getFirstMediaUrl('avatar', 'small');
     }
-
 }

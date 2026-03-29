@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api\Sys;
 
 use App\Http\Controllers\Controller;
@@ -7,7 +8,6 @@ use App\Services\Auth\ApiAuthService;
 use App\Services\Auth\TokenManagementService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -23,7 +23,7 @@ class AuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
         $credentials = $request->validated();
-        $deviceName  = $request->input('device_name', $request->userAgent());
+        $deviceName = $request->input('device_name', $request->userAgent());
 
         $result = $this->apiAuthService->loginAndCreateToken($credentials, $deviceName);
 
@@ -34,10 +34,10 @@ class AuthController extends Controller
         }
 
         // Log the login activity
-        logActivity('auth', 'API token generated for user: ' . $result['user']->name, $result['user']);
+        logActivity('auth', 'API token generated for user: '.$result['user']->name, $result['user']);
 
         return jsonSuccess('Login successful', null, [
-            'user'  => $result['user'],
+            'user' => $result['user'],
             'token' => $result['token'],
         ]);
     }
@@ -53,7 +53,7 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         // Log the logout activity
-        logActivity('auth', 'API token revoked for user: ' . $user->name, $user);
+        logActivity('auth', 'API token revoked for user: '.$user->name, $user);
 
         return jsonSuccess('Successfully logged out');
     }

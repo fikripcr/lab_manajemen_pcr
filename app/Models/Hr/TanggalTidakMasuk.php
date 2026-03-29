@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TanggalTidakMasuk extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_tanggal_tidak_masuk';
+    protected $table = 'hr_tanggal_tidak_masuk';
+
     protected $primaryKey = 'tidakmasuk_id';
 
     protected $appends = ['encrypted_tidakmasuk_id'];
@@ -25,6 +27,7 @@ class TanggalTidakMasuk extends Model
     {
         return encryptId($this->tidakmasuk_id);
     }
+
     protected $fillable = [
         'tanggal',
         'tahun',

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Cms;
 
 use App\Models\Cms\FAQ;
@@ -63,14 +64,15 @@ class FAQService
                         $id = decryptIdIfEncrypted($encryptedId, false);
                         if ($id) {
                             FAQ::where('id', $id)->update([
-                                'seq'      => $index + 1,
+                                'seq' => $index + 1,
                                 'category' => $catValue,
                             ]);
                         }
                     }
                 }
             }
-            logActivity('faq_management', "Memperbarui urutan FAQ");
+            logActivity('faq_management', 'Memperbarui urutan FAQ');
+
             return true;
         });
     }

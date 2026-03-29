@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Models\Pemutu\Indikator;
@@ -17,6 +18,7 @@ class Spmi20252026Seeder extends Seeder
         $units = OrgUnit::where('type', 'Prodi')->limit(1)->get();
         if ($units->count() < 1) {
             $this->command->error('Tidak ada Prodi ditemukan.');
+
             return;
         }
         $unit = $units->first();
@@ -30,25 +32,25 @@ class Spmi20252026Seeder extends Seeder
         // Skenario 1: Test Pelaksanaan Perbaikan (Di ED 2025)
         // ==========================================
         $ind1_2024 = Indikator::create([
-            'type'          => 'standar', 'kelompok_indikator'                                 => 'Akademik', 'no_indikator' => 'TEST-01-24',
-            'indikator'     => '[TEST 1] Indikator Uji Pelaksanaan Perbaikan (2024)', 'target' => '100%',
-            'periode_mulai' => 2024, 'periode_selesai'                                         => 2024, 'created_by'         => 1,
+            'type' => 'standar', 'kelompok_indikator' => 'Akademik', 'no_indikator' => 'TEST-01-24',
+            'indikator' => '[TEST 1] Indikator Uji Pelaksanaan Perbaikan (2024)', 'target' => '100%',
+            'periode_mulai' => 2024, 'periode_selesai' => 2024, 'created_by' => 1,
         ]);
         $iou1_2024 = IndikatorOrgUnit::create([
-            'indikator_id'    => $ind1_2024->indikator_id, 'org_unit_id' => $unit->orgunit_id, 'target' => '100%',
-            'ed_capaian'      => '70%', 'ed_skala'                       => 2,
-            'ami_hasil_akhir' => 0, 'ami_hasil_temuan'                   => 'Temuan 2024',
-            'ami_rtp_isi'     => 'Rencana Tindak Perbaikan 2024: Review dan update modul praktikum',
+            'indikator_id' => $ind1_2024->indikator_id, 'org_unit_id' => $unit->orgunit_id, 'target' => '100%',
+            'ed_capaian' => '70%', 'ed_skala' => 2,
+            'ami_hasil_akhir' => 0, 'ami_hasil_temuan' => 'Temuan 2024',
+            'ami_rtp_isi' => 'Rencana Tindak Perbaikan 2024: Review dan update modul praktikum',
         ]);
 
         $ind1_2025 = Indikator::create([
-            'type'              => 'standar', 'kelompok_indikator'                                 => 'Akademik', 'no_indikator' => 'TEST-01-25',
-            'indikator'         => '[TEST 1] Indikator Uji Pelaksanaan Perbaikan (2025)', 'target' => '100%',
-            'periode_mulai'     => 2025, 'periode_selesai'                                         => 2025, 'created_by'         => 1,
+            'type' => 'standar', 'kelompok_indikator' => 'Akademik', 'no_indikator' => 'TEST-01-25',
+            'indikator' => '[TEST 1] Indikator Uji Pelaksanaan Perbaikan (2025)', 'target' => '100%',
+            'periode_mulai' => 2025, 'periode_selesai' => 2025, 'created_by' => 1,
             'prev_indikator_id' => $ind1_2024->indikator_id,
         ]);
         IndikatorOrgUnit::create([
-            'indikator_id'         => $ind1_2025->indikator_id, 'org_unit_id' => $unit->orgunit_id, 'target' => '100%',
+            'indikator_id' => $ind1_2025->indikator_id, 'org_unit_id' => $unit->orgunit_id, 'target' => '100%',
             'prev_indikorgunit_id' => $iou1_2024->indikorgunit_id,
         ]);
 
@@ -56,28 +58,28 @@ class Spmi20252026Seeder extends Seeder
         // Skenario 2: Test Tinjauan Efektivitas (Di AMI 2026)
         // ==========================================
         $ind2_2025 = Indikator::create([
-            'type'          => 'standar', 'kelompok_indikator'                                => 'Akademik', 'no_indikator' => 'TEST-02-25',
-            'indikator'     => '[TEST 2] Indikator Uji Tinjauan Efektivitas (2025)', 'target' => '100%',
-            'periode_mulai' => 2025, 'periode_selesai'                                        => 2025, 'created_by'         => 1,
+            'type' => 'standar', 'kelompok_indikator' => 'Akademik', 'no_indikator' => 'TEST-02-25',
+            'indikator' => '[TEST 2] Indikator Uji Tinjauan Efektivitas (2025)', 'target' => '100%',
+            'periode_mulai' => 2025, 'periode_selesai' => 2025, 'created_by' => 1,
         ]);
         $iou2_2025 = IndikatorOrgUnit::create([
-            'indikator_id'    => $ind2_2025->indikator_id, 'org_unit_id' => $unit->orgunit_id, 'target' => '100%',
-            'ed_capaian'      => '60%', 'ed_skala'                       => 1,
-            'ami_hasil_akhir' => 0, 'ami_hasil_temuan'                   => 'Temuan Minor',
-            'ami_rtp_isi'     => 'RTP 2025: Harus ada pelatihan sistem',
+            'indikator_id' => $ind2_2025->indikator_id, 'org_unit_id' => $unit->orgunit_id, 'target' => '100%',
+            'ed_capaian' => '60%', 'ed_skala' => 1,
+            'ami_hasil_akhir' => 0, 'ami_hasil_temuan' => 'Temuan Minor',
+            'ami_rtp_isi' => 'RTP 2025: Harus ada pelatihan sistem',
         ]);
 
         $ind2_2026 = Indikator::create([
-            'type'              => 'standar', 'kelompok_indikator'                                => 'Akademik', 'no_indikator' => 'TEST-02-26',
-            'indikator'         => '[TEST 2] Indikator Uji Tinjauan Efektivitas (2026)', 'target' => '100%',
-            'periode_mulai'     => 2026, 'periode_selesai'                                        => 2026, 'created_by'         => 1,
+            'type' => 'standar', 'kelompok_indikator' => 'Akademik', 'no_indikator' => 'TEST-02-26',
+            'indikator' => '[TEST 2] Indikator Uji Tinjauan Efektivitas (2026)', 'target' => '100%',
+            'periode_mulai' => 2026, 'periode_selesai' => 2026, 'created_by' => 1,
             'prev_indikator_id' => $ind2_2025->indikator_id,
         ]);
         IndikatorOrgUnit::create([
-            'indikator_id'         => $ind2_2026->indikator_id, 'org_unit_id' => $unit->orgunit_id, 'target' => '100%',
+            'indikator_id' => $ind2_2026->indikator_id, 'org_unit_id' => $unit->orgunit_id, 'target' => '100%',
             'prev_indikorgunit_id' => $iou2_2025->indikorgunit_id,
-            'ed_capaian'           => '90%', 'ed_skala'                       => 3,
-            'ed_ptp_isi'           => 'PTP 2026: Pelatihan sudah dilakukan kepada 20 staf pengajar.',
+            'ed_capaian' => '90%', 'ed_skala' => 3,
+            'ed_ptp_isi' => 'PTP 2026: Pelatihan sudah dilakukan kepada 20 staf pengajar.',
         ]);
 
         $this->command->info('Seeder selesai!');

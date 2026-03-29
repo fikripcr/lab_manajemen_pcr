@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
@@ -21,6 +22,7 @@ class LabInventarisController extends Controller
     public function index(Lab $lab)
     {
         $lab->load(['labInventaris.inventaris']);
+
         return view('pages.lab.labs.inventaris.index', compact('lab'));
     }
 
@@ -31,7 +33,7 @@ class LabInventarisController extends Controller
         return DataTables::of($labInventaris)
             ->addIndexColumn()
             ->editColumn('kode_inventaris', function ($item) {
-                return '<code>' . $item->kode_inventaris . '</code>';
+                return '<code>'.$item->kode_inventaris.'</code>';
             })
             ->editColumn('no_series', function ($item) {
                 return $item->no_series ?: '-';
@@ -44,12 +46,13 @@ class LabInventarisController extends Controller
             })
             ->editColumn('status', function ($item) {
                 $statusClass = match ($item->status) {
-                    'active'   => 'success',
-                    'moved'    => 'warning',
+                    'active' => 'success',
+                    'moved' => 'warning',
                     'inactive' => 'secondary',
-                    default    => 'secondary',
+                    default => 'secondary',
                 };
-                return '<span class="status status-' . $statusClass . '"><span class="status-dot"></span> ' . ucfirst($item->status) . '</span>';
+
+                return '<span class="status status-'.$statusClass.'"><span class="status-dot"></span> '.ucfirst($item->status).'</span>';
             })
             ->addColumn('nama_alat', function ($item) {
                 return $item->inventaris->nama_alat;
@@ -59,7 +62,7 @@ class LabInventarisController extends Controller
             })
             ->addColumn('action', function ($item) use ($lab) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('lab.labs.inventaris.edit', [$lab->encrypted_lab_id, $item->encrypted_id]),
+                    'editUrl' => route('lab.labs.inventaris.edit', [$lab->encrypted_lab_id, $item->encrypted_id]),
                     'editModal' => true,
                     'deleteUrl' => route('lab.labs.inventaris.destroy', [$lab->encrypted_lab_id, $item->encrypted_id]),
                 ])->render();
@@ -71,43 +74,48 @@ class LabInventarisController extends Controller
     public function create(Lab $lab)
     {
         $inventarisList = $this->inventarisService->getUnassignedForLab($lab->lab_id);
-        $labInventaris  = new LabInventaris();
+        $labInventaris = new LabInventaris;
+
         return view('pages.lab.labs.inventaris.create-edit-ajax', compact('lab', 'inventarisList', 'labInventaris'));
     }
 
     public function store(LabInventarisRequest $request, Lab $lab)
     {
         $this->labInventarisService->assignInventaris($lab->lab_id, $request->all());
+
         return jsonSuccess('Inventaris berhasil ditambahkan ke lab.', route('lab.labs.inventaris.index', $lab->encrypted_lab_id));
     }
 
     public function edit(Lab $lab, LabInventaris $inventarisLab)
     {
-        $labInventaris  = $inventarisLab;
+        $labInventaris = $inventarisLab;
         $inventarisList = Inventaris::all();
+
         return view('pages.lab.labs.inventaris.create-edit-ajax', compact('lab', 'labInventaris', 'inventarisList'));
     }
 
     public function update(LabInventarisRequest $request, Lab $lab, LabInventaris $inventarisLab)
     {
         $this->labInventarisService->updateAssignment($inventarisLab, $request->validated());
+
         return jsonSuccess('Data inventaris lab berhasil diperbarui.', route('lab.labs.inventaris.index', $lab->encrypted_lab_id));
     }
 
     public function destroy(Lab $lab, LabInventaris $inventarisLab)
     {
         $this->labInventarisService->deleteAssignment($inventarisLab);
+
         return jsonSuccess('Inventaris berhasil dihapus dari lab.', route('lab.labs.inventaris.index', $lab->encrypted_lab_id));
     }
 
     public function getInventaris(Request $request, Lab $lab)
     {
-        $search     = $request->get('search');
+        $search = $request->get('search');
         $inventaris = $this->inventarisService->getUnassignedForLab($lab->lab_id, $search, 10);
 
-        $results = $inventaris->map(fn($item) => [
-            'id'   => $item->inventaris_id,
-            'text' => $item->nama_alat . ' (' . $item->jenis_alat . ')',
+        $results = $inventaris->map(fn ($item) => [
+            'id' => $item->inventaris_id,
+            'text' => $item->nama_alat.' ('.$item->jenis_alat.')',
         ]);
 
         return jsonSuccess('Data retrieved', null, ['results' => $results]);

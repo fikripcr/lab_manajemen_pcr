@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Eoffice;
 
 use App\Http\Controllers\Controller;
@@ -7,8 +8,7 @@ use App\Services\Eoffice\LayananDiskusiService;
 
 class LayananDiskusiController extends Controller
 {
-    public function __construct(protected LayananDiskusiService $LayananDiskusiService)
-    {}
+    public function __construct(protected LayananDiskusiService $LayananDiskusiService) {}
 
     /**
      * Store a new discussion message.
@@ -19,10 +19,11 @@ class LayananDiskusiController extends Controller
 
         if ($request->hasFile('file_lampiran')) {
             $validated['file_lampiran'] = $request->file('file_lampiran')
-                ->store('eoffice/diskusi/' . date('Y/m'), 'public');
+                ->store('eoffice/diskusi/'.date('Y/m'), 'public');
         }
 
         $this->LayananDiskusiService->store($validated);
+
         return jsonSuccess('Diskusi berhasil dikirim.');
     }
 }

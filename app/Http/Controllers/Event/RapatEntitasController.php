@@ -1,17 +1,14 @@
 <?php
+
 namespace App\Http\Controllers\Event;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Event\RapatEntitasRequest;
 use App\Models\Event\Rapat;
 use App\Models\Event\RapatEntitas;
-use App\Models\Pemutu\Indikator;
-use App\Models\Pemutu\IndikatorOrgUnit;
-use App\Models\Hr\StrukturOrganisasi;
 use App\Services\Event\RapatEntitasService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Yajra\DataTables\Facades\DataTables;
 
 class RapatEntitasController extends Controller
 {
@@ -22,42 +19,25 @@ class RapatEntitasController extends Controller
     public function index(Rapat $rapat)
     {
         $rapat->load(['entitas']);
+
         return view('pages.event.rapat.entitas.index', compact('rapat'));
     }
 
     public function data(Rapat $rapat, Request $request)
     {
         $query = $this->service->getFilteredQuery($rapat, $request->all());
+
         return datatables()->of($query)
             ->addIndexColumn()
             ->addColumn('model_info', function ($row) {
-                $modelName = class_basename($row->model);
-
-                if ($row->model === IndikatorOrgUnit::class) {
-                    $item = IndikatorOrgUnit::with('indikator')->find($row->model_id);
-                    if ($item && $item->indikator) {
-                        return '[Indikator Unit] ' . $item->indikator->no_indikator . ' - ' . Str::limit($item->indikator->indikator, 30);
-                    }
-                }
-
-                if ($row->model === StrukturOrganisasi::class) {
-                    $item = StrukturOrganisasi::find($row->model_id);
-                    return $item ? '[Unit Kerja] ' . $item->name : $modelName . ' - ID: ' . $row->model_id;
-                }
-
-                if ($row->model === Indikator::class) {
-                    $item = Indikator::find($row->model_id);
-                    return $item ? '[Indikator Mutu] ' . $item->no_indikator . ' - ' . Str::limit($item->indikator, 30) : $modelName . ' - ID: ' . $row->model_id;
-                }
-
-                return $modelName . ' - ID: ' . $row->model_id;
+                return $this->service->resolveEntityInfo($row);
             })
             ->addColumn('keterangan', function ($row) {
                 return Str::limit($row->keterangan, 50);
             })
             ->addColumn('action', function ($row) use ($rapat) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('Kegiatan.rapat.entitas.edit', [$rapat->encrypted_rapat_id, $row->encrypted_rapatentitas_id]),
+                    'editUrl' => route('Kegiatan.rapat.entitas.edit', [$rapat->encrypted_rapat_id, $row->encrypted_rapatentitas_id]),
                     'deleteUrl' => route('Kegiatan.rapat.entitas.destroy', [$rapat->encrypted_rapat_id, $row->encrypted_rapatentitas_id]),
                 ])->render();
             })
@@ -83,8 +63,8 @@ class RapatEntitasController extends Controller
             ->get()
             ->map(function ($item) {
                 return [
-                    'id'   => 'IndikatorOrgUnit:' . $item->indikorgunit_id,
-                    'text' => '[Indikator Unit] ' . $item->no_indikator . ' - ' . $item->indikator,
+                    'id' => 'IndikatorOrgUnit:'.$item->indikorgunit_id,
+                    'text' => '[Indikator Unit] '.$item->no_indikator.' - '.$item->indikator,
                 ];
             });
         $results = $results->concat($indikatorOrgUnits);
@@ -97,8 +77,8 @@ class RapatEntitasController extends Controller
             ->get()
             ->map(function ($item) {
                 return [
-                    'id'   => 'StrukturOrganisasi:' . $item->orgunit_id,
-                    'text' => '[Unit Kerja] ' . $item->name . ($item->code ? " ({$item->code})" : ""),
+                    'id' => 'StrukturOrganisasi:'.$item->orgunit_id,
+                    'text' => '[Unit Kerja] '.$item->name.($item->code ? " ({$item->code})" : ''),
                 ];
             });
         $results = $results->concat($units);
@@ -111,8 +91,8 @@ class RapatEntitasController extends Controller
             ->get()
             ->map(function ($item) {
                 return [
-                    'id'   => 'Indikator:' . $item->indikator_id,
-                    'text' => '[Indikator Mutu] ' . $item->no_indikator . ' - ' . $item->indikator,
+                    'id' => 'Indikator:'.$item->indikator_id,
+                    'text' => '[Indikator Mutu] '.$item->no_indikator.' - '.$item->indikator,
                 ];
             });
         $results = $results->concat($indikators);
@@ -123,31 +103,40 @@ class RapatEntitasController extends Controller
     public function create(Rapat $rapat)
     {
         $entitas = new RapatEntitas(['rapat_id' => $rapat->rapat_id]);
+
         return view('pages.event.rapat.entitas.create-edit-ajax', compact('rapat', 'entitas'));
     }
 
     public function edit(Rapat $rapat, RapatEntitas $entitas)
     {
-        return view('pages.event.rapat.entitas.create-edit-ajax', compact('rapat', 'entitas'));
+        $entityDisplay = $this->service->resolveEntityDisplay($entitas);
+
+        return view('pages.event.rapat.entitas.create-edit-ajax', array_merge(
+            compact('rapat', 'entitas'),
+            $entityDisplay
+        ));
     }
 
     public function store(RapatEntitasRequest $request, Rapat $rapat)
     {
-        $data             = $request->validated();
+        $data = $request->validated();
         $data['rapat_id'] = $rapat->rapat_id;
         $this->service->store($data);
+
         return jsonSuccess('Entitas berhasil ditambahkan');
     }
 
     public function update(RapatEntitasRequest $request, Rapat $rapat, RapatEntitas $entitas)
     {
         $this->service->update($entitas, $request->validated());
+
         return jsonSuccess('Entitas berhasil diperbarui');
     }
 
     public function destroy(Rapat $rapat, RapatEntitas $entitas)
     {
         $this->service->destroy($entitas);
-        return jsonSuccess('Entitas berhasil dihapus', route('Kegiatan.rapat.show', $rapat->encrypted_rapat_id) . '#section-entitas');
+
+        return jsonSuccess('Entitas berhasil dihapus', route('Kegiatan.rapat.show', $rapat->encrypted_rapat_id).'#section-entitas');
     }
 }

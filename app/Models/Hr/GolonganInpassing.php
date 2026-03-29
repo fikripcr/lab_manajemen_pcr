@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -8,10 +9,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class GolonganInpassing extends Model
 {
-    use SoftDeletes, Blameable, HashidBinding;
-    protected $table      = 'hr_golongan_inpassing';
+    use Blameable, HashidBinding, SoftDeletes;
+
+    protected $table = 'hr_golongan_inpassing';
+
     protected $primaryKey = 'gol_inpassing_id';
-    protected $guarded    = ['gol_inpassing_id'];
+
+    protected $guarded = ['gol_inpassing_id'];
 
     protected $appends = ['encrypted_gol_inpassing_id'];
 

@@ -1,10 +1,10 @@
 @extends('layouts.auth.app')
 
 @section('content')
-<x-tabler.card class="card-md">
+<x-tabler.card class="p-2">
     <x-tabler.card-body>
-        <h2 class="h2 text-center mb-4">Forgot password</h2>
-        <p class="text-secondary mb-4">Enter your email address and your password will be reset and emailed to you.</p>
+        <h2 class="h2 text-center mb-4">Lupa password</h2>
+        <p class="text-secondary mb-4">Masukkan alamat email Anda dan kami akan mengirimkan tautan untuk mereset password Anda.</p>
         
         @if (session('status'))
             <div class="alert alert-success mb-3" role="alert">
@@ -24,22 +24,22 @@
             
             <x-tabler.form-input 
                 name="email" 
-                label="Email address" 
+                label="Email" 
                 type="email" 
                 value="{{ old('email') }}" 
-                placeholder="Enter email" 
+                placeholder="Masukkan email" 
                 required="true" 
                 autofocus
             />
             
             <div class="form-footer">
-                <x-tabler.button type="submit" class="w-100" icon="ti ti-mail" text="Send me new password" />
+                <x-tabler.button type="submit" class="w-100" icon="ti ti-mail" text="Kirim link reset password" />
             </div>
         </form>
     </x-tabler.card-body>
 </x-tabler.card>
 
 <div class="text-center text-secondary mt-3">
-    Forget it, <a href="{{ route('login') }}">send me back</a> to the sign in screen.
+    Abaikan, kembali ke halaman <a href="{{ route('login') }}">Login</a>.
 </div>
 @endsection

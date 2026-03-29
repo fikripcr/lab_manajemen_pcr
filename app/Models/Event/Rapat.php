@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Event;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Rapat extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'event_rapat';
+    protected $table = 'event_rapat';
+
     protected $primaryKey = 'rapat_id';
 
     protected $appends = ['encrypted_rapat_id'];
@@ -43,8 +45,8 @@ class Rapat extends Model
     ];
 
     protected $casts = [
-        'tgl_rapat'     => 'date',
-        'waktu_mulai'   => 'datetime',
+        'tgl_rapat' => 'date',
+        'waktu_mulai' => 'datetime',
         'waktu_selesai' => 'datetime',
     ];
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Hr;
 
 use App\Models\Hr\JenisShift;
@@ -11,6 +12,7 @@ class JenisShiftService
         return DB::transaction(function () use ($data) {
             $jenisShift = JenisShift::create($data);
             logActivity('hr', "Menambahkan jenis shift: {$jenisShift->nama_shift}", $jenisShift);
+
             return $jenisShift;
         });
     }
@@ -20,6 +22,7 @@ class JenisShiftService
         return DB::transaction(function () use ($jenisShift, $data) {
             $jenisShift->update($data);
             logActivity('hr', "Memperbarui jenis shift: {$jenisShift->nama_shift}", $jenisShift);
+
             return $jenisShift;
         });
     }

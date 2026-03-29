@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthService
 {
@@ -37,23 +36,23 @@ class AuthService
     /**
      * Rate limited web login with proper error handling
      */
-    public function rateLimitedWebLogin(array $credentials, bool $remember = false, string $ip = null): void
+    public function rateLimitedWebLogin(array $credentials, bool $remember = false, ?string $ip = null): void
     {
         $email = $credentials['email'];
 
         // Create a throttle key based on email and IP
-        $throttleKey = Str::transliterate(Str::lower($email) . '|' . ($ip ?: request()->ip()));
+        $throttleKey = Str::transliterate(Str::lower($email).'|'.($ip ?: request()->ip()));
 
         // Check if too many attempts
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
             throw ValidationException::withMessages([
-                'email' => ['Too many login attempts. Please try again in ' . $seconds . ' seconds.'],
+                'email' => ['Too many login attempts. Please try again in '.$seconds.' seconds.'],
             ]);
         }
 
         // Attempt authentication
-        if (!Auth::attempt($credentials, $remember)) {
+        if (! Auth::attempt($credentials, $remember)) {
             // Increment the rate limiter
             RateLimiter::hit($throttleKey);
 
@@ -73,7 +72,7 @@ class AuthService
     {
         $user = $this->verifyCredentials(['email' => $email, 'password' => $password]);
 
-        if (!$user) {
+        if (! $user) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -84,7 +83,7 @@ class AuthService
 
         return [
             'user' => $user,
-            'token' => $token
+            'token' => $token,
         ];
     }
 
@@ -95,7 +94,7 @@ class AuthService
     {
         $user = $this->verifyCredentials($credentials);
 
-        if (!$user) {
+        if (! $user) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -106,7 +105,7 @@ class AuthService
 
         return [
             'user' => $user,
-            'token' => $token
+            'token' => $token,
         ];
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Requests\Lab;
 
 use App\Http\Requests\BaseRequest;
@@ -6,7 +7,6 @@ use App\Http\Requests\BaseRequest;
 class LabRequest extends BaseRequest
 {
     /**
-     *
      * @return bool
      */
 
@@ -18,8 +18,8 @@ class LabRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'name'        => ['required', 'string', 'max:255'],
-            'location'    => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
+            'location' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
         ];
     }
@@ -27,9 +27,9 @@ class LabRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'name'        => 'Nama Lab',
-            'location'    => 'Lokasi',
-            'capacity'    => 'Kapasitas',
+            'name' => 'Nama Lab',
+            'location' => 'Lokasi',
+            'capacity' => 'Kapasitas',
             'description' => 'Deskripsi',
         ];
     }

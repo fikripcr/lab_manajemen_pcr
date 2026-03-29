@@ -25,6 +25,10 @@ class IndikatorService
             $query->where('type', $filters['type']);
         }
 
+        if (! empty($filters['kelompok_indikator'])) {
+            $query->where('kelompok_indikator', $filters['kelompok_indikator']);
+        }
+
         if (! empty($filters['parent_id'])) {
             $query->where('parent_id', decryptIdIfEncrypted($filters['parent_id']));
         }
@@ -62,9 +66,9 @@ class IndikatorService
      * Ambil query Indikator berdasarkan satu Unit Organisasi.
      * Digunakan oleh fitur Evaluasi Diri (ED) dan Audit Mutu Internal (AMI).
      *
-     * @param int|null $unitId ID dari StrukturOrganisasi (opsional)
-     * @param bool $withAmiFilter Jika true, hanya tampilkan yang sudah mengisi ED capaian (untuk AMI)
-     * @param array $filters Filter tambahan (opsional) seperti 'kelompok_indikator' atau 'tahun_dokumen'
+     * @param  int|null  $unitId  ID dari StrukturOrganisasi (opsional)
+     * @param  bool  $withAmiFilter  Jika true, hanya tampilkan yang sudah mengisi ED capaian (untuk AMI)
+     * @param  array  $filters  Filter tambahan (opsional) seperti 'kelompok_indikator' atau 'tahun_dokumen'
      */
     public function getByOrgUnit(?int $unitId = null, array $filters = [])
     {
@@ -309,18 +313,30 @@ class IndikatorService
 
         return $prefix . $nextSequence;
     }
+
     /**
-     * Get a unified query for Indicators and their OrgUnit pivot data.
-     * Standardized for ED, AMI, and Pengendalian.
+     * Unified Query for SPMI Modules (Evaluasi Diri, AMI, Pengendalian).
+     * Automatically filters by Periode and eager-loads the pivot data.
      */
-    public function getUnifiedSpmiQuery(PeriodeSpmi $periode, ?int $unitId = null, array $additionalFilters = []): Builder
+    public function getUnifiedSpmiQuery(PeriodeSpmi $periode, array $additionalFilters = []): Builder
     {
-        $query = Indikator::with(['orgUnits' => function ($q) use ($unitId, $additionalFilters) {
+        // Mendapatkan unitId dari filter array
+        $unitId = null;
+        if (isset($additionalFilters['unit_id'])) {
+            $unitId = $additionalFilters['unit_id'];
+            unset($additionalFilters['unit_id']);
+        } elseif (isset($additionalFilters['orgunit_id'])) {
+            $unitId = $additionalFilters['orgunit_id'];
+            unset($additionalFilters['orgunit_id']);
+        }
+
+        $query = Indikator::query()
+            ->with(['orgUnits' => function ($q) use ($unitId, $additionalFilters) {
             if ($unitId) {
                 $q->where('pemutu_indikator_orgunit.org_unit_id', $unitId);
             }
 
-            // Apply same result filters to the loaded units to ensure context consistency
+            // Filter by AMI Hasil Akhir (in eager load context)
             if (isset($additionalFilters['ami_hasil_akhir']) && $additionalFilters['ami_hasil_akhir'] !== '') {
                 $val = $additionalFilters['ami_hasil_akhir'];
                 if ($val === 'empty') {
@@ -332,6 +348,7 @@ class IndikatorService
                 }
             }
 
+            // Filter Pengendalian Status (in eager load context)
             if (! empty($additionalFilters['pengend_status'])) {
                 $status = $additionalFilters['pengend_status'];
                 if ($status === 'empty') {
@@ -502,21 +519,21 @@ class IndikatorService
             },
             'orgUnit',
         ])
-        ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
-        ->where('pemutu_indikator.kelompok_indikator', $periode->jenis_periode)
-        ->whereHas('indikator.dokSubs.dokumen', function ($q) use ($periode, $additionalFilters) {
-            $q->where('periode', $periode->periode);
+            ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
+            ->where('pemutu_indikator.kelompok_indikator', $periode->jenis_periode)
+            ->whereHas('indikator.dokSubs.dokumen', function ($q) use ($periode, $additionalFilters) {
+                $q->where('periode', $periode->periode);
 
-            // Filter specific document (Standar/Root) if provided
-            if (! empty($additionalFilters['dok_id'])) {
-                $dokId = decryptIdIfEncrypted($additionalFilters['dok_id']);
-                $q->where(function ($sq) use ($dokId) {
-                    $sq->where('dok_id', $dokId)
-                        ->orWhere('parent_id', $dokId);
-                });
-            }
-        })
-        ->where('pemutu_indikator.deleted_at', null);
+                // Filter specific document (Standar/Root) if provided
+                if (! empty($additionalFilters['dok_id'])) {
+                    $dokId = decryptIdIfEncrypted($additionalFilters['dok_id']);
+                    $q->where(function ($sq) use ($dokId) {
+                        $sq->where('dok_id', $dokId)
+                            ->orWhere('parent_id', $dokId);
+                    });
+                }
+            })
+            ->where('pemutu_indikator.deleted_at', null);
 
         // Filter Unit
         if ($unitId) {
@@ -561,10 +578,11 @@ class IndikatorService
             ->join('pemutu_indikator', 'pemutu_indikator.indikator_id', '=', 'pemutu_indikator_orgunit.indikator_id')
             ->leftJoin('pemutu_indikator_orgunit as prev_ou', 'pemutu_indikator_orgunit.prev_indikorgunit_id', '=', 'prev_ou.indikorgunit_id')
             ->leftJoin('hr_struktur_organisasi as org', 'pemutu_indikator_orgunit.org_unit_id', '=', 'org.orgunit_id')
-            ->leftJoin('pemutu_indikator_doksub as ids', 'pemutu_indikator.indikator_id', '=', 'ids.indikator_id')
+            ->leftJoin('pemutu_indikator_doksub as ids', 'pemutu_indikator.indikator_id', '=', 'ids.source_id')
             ->leftJoin('pemutu_dok_sub as ds', 'ds.doksub_id', '=', 'ids.doksub_id')
             ->leftJoin('pemutu_dokumen as d', 'd.dok_id', '=', 'ds.dok_id')
-            ->where('pemutu_indikator.origin_from', 'peningkatan_' . $periode->periode);
+            ->where('pemutu_indikator.origin_from', 'peningkatan_' . $periode->periode)
+            ->where('pemutu_indikator.kelompok_indikator', $periode->jenis_periode);
 
         // Apply Filters
         $status = $filters['pengend_status'] ?? null;
@@ -597,6 +615,7 @@ class IndikatorService
         if (! empty($filters['unit_id'])) {
             $query->where('pemutu_indikator_orgunit.org_unit_id', decryptIdIfEncrypted($filters['unit_id']));
         }
+
         return $query->select([
             'pemutu_indikator_orgunit.indikorgunit_id',
             'pemutu_indikator.indikator_id',

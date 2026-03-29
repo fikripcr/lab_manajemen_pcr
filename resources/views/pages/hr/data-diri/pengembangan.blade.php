@@ -1,21 +1,22 @@
 <x-tabler.card-header class="border-bottom">
-    <div class="d-flex flex-wrap gap-2 w-100">
-        <div>
-            <x-tabler.datatable-page-length dataTableId="pengembangan-table" />
-        </div>
-        <div>
-            <x-tabler.datatable-search dataTableId="pengembangan-table" />
-        </div>
-        <div>
-            <x-tabler.datatable-filter dataTableId="pengembangan-table">
-                <div style="min-width: 150px;">
-                    <x-tabler.form-select name="jenis_kegiatan" placeholder="Semua Jenis" class="mb-0" 
-                        :options="['Diklat' => 'Diklat', 'Bimtek' => 'Bimtek', 'Seminar/Workshop' => 'Seminar/Workshop', 'Lainnya' => 'Lainnya']" />
-                </div>
-            </x-tabler.datatable-filter>
-        </div>
+    <div class="d-flex gap-2 align-items-center">
+        <x-tabler.datatable-page-length dataTableId="pengembangan-table" />
+        <x-tabler.datatable-filter dataTableId="pengembangan-table" type="button" target="#pengembangan-filter-area" />
+        <x-tabler.datatable-search dataTableId="pengembangan-table" />
     </div>
 </x-tabler.card-header>
+<div class="collapse" id="pengembangan-filter-area">
+    <x-tabler.datatable-filter dataTableId="pengembangan-table" type="bare">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <x-tabler.form-select name="jenis_kegiatan" label="Jenis Kegiatan" placeholder="" class="mb-0" 
+                    :options="['Diklat' => 'Diklat', 'Bimtek' => 'Bimtek', 'Seminar/Workshop' => 'Seminar/Workshop', 'Lainnya' => 'Lainnya']">
+                    <option value="all" selected>Semua Jenis Kegiatan</option>
+                </x-tabler.form-select>
+            </div>
+        </div>
+    </x-tabler.datatable-filter>
+</div>
 <div class="table-responsive">
     <x-tabler.datatable
         id="pengembangan-table"

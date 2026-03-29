@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Eoffice;
 
 use App\Http\Controllers\Controller;

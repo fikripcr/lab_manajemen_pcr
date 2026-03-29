@@ -1,15 +1,8 @@
 <?php
+
 namespace App\Models\Pmb;
 
-use App\Models\Pmb\DokumenUpload;
-use App\Models\Pmb\Jalur;
-use App\Models\Pmb\Pembayaran;
-use App\Models\Pmb\Periode;
-use App\Models\Pmb\PesertaUjian;
-use App\Models\Pmb\PilihanProdi;
-use App\Models\Pmb\RiwayatPendaftaran;
 use App\Models\Hr\StrukturOrganisasi;
-use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,11 +12,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pendaftaran extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'pmb_pendaftaran';
+    protected $table = 'pmb_pendaftaran';
+
     protected $primaryKey = 'pendaftaran_id';
-    protected $appends    = ['encrypted_pendaftaran_id'];
+
+    protected $appends = ['encrypted_pendaftaran_id'];
 
     public function getRouteKeyName()
     {

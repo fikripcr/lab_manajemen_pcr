@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Requests\Pemutu;
 
 use App\Http\Requests\BaseRequest;
@@ -6,9 +7,6 @@ use Illuminate\Validation\Rule;
 
 class DokumenRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Prepare the data for validation.
      */
@@ -49,26 +47,26 @@ class DokumenRequest extends BaseRequest
         }
 
         return [
-            'judul'            => 'required|string|max:255',
-            'parent_id'        => 'nullable|exists:pemutu_dokumen,dok_id',
+            'judul' => 'required|string|max:255',
+            'parent_id' => 'nullable|exists:pemutu_dokumen,dok_id',
             'parent_doksub_id' => 'nullable|integer|exists:pemutu_dok_sub,doksub_id',
-            'kode'             => ['nullable', 'string', 'max:50', $kodeRule],
-            'isi'              => 'nullable|string',
-            'jenis'            => 'required|in:visi,misi,rjp,renstra,renop,standar,formulir,manual_prosedur,dll',
-            'periode'          => 'nullable|integer',
+            'kode' => ['nullable', 'string', 'max:50', $kodeRule],
+            'isi' => 'nullable|string',
+            'jenis' => 'required|in:visi,misi,rjp,renstra,renop,standar,formulir,manual_prosedur,dll',
+            'periode' => 'nullable|integer',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'judul'            => 'Judul Dokumen',
-            'parent_id'        => 'Dokumen Induk',
+            'judul' => 'Judul Dokumen',
+            'parent_id' => 'Dokumen Induk',
             'parent_doksub_id' => 'Sub-Dokumen Induk',
-            'kode'             => 'Kode Dokumen',
-            'isi'              => 'Isi Dokumen',
-            'jenis'            => 'Jenis Dokumen',
-            'periode'          => 'Periode',
+            'kode' => 'Kode Dokumen',
+            'isi' => 'Isi Dokumen',
+            'jenis' => 'Jenis Dokumen',
+            'periode' => 'Periode',
         ];
     }
 }

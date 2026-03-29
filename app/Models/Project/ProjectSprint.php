@@ -12,9 +12,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProjectSprint extends Model
 {
-    use HasFactory, SoftDeletes, HashidBinding, Blameable;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
     protected $table = 'pr_project_sprints';
+
     protected $primaryKey = 'project_sprint_id';
 
     protected $fillable = [
@@ -31,7 +32,7 @@ class ProjectSprint extends Model
 
     protected $casts = [
         'start_date' => 'date',
-        'end_date'   => 'date',
+        'end_date' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
@@ -50,10 +51,10 @@ class ProjectSprint extends Model
     public function getStatusBadgeClassAttribute(): string
     {
         return match ($this->status) {
-            'pending'   => 'bg-yellow-lt',
-            'active'    => 'bg-green-lt',
+            'pending' => 'bg-yellow-lt',
+            'active' => 'bg-green-lt',
             'completed' => 'bg-blue-lt',
-            default     => 'bg-gray-lt',
+            default => 'bg-gray-lt',
         };
     }
 

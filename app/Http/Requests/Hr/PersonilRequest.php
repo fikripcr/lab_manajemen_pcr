@@ -1,11 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Hr;
 
 use App\Http\Requests\BaseRequest;
 
 class PersonilRequest extends BaseRequest
 {
-
     public function rules(): array
     {
         $id = $this->route('hr_personil');
@@ -14,11 +14,11 @@ class PersonilRequest extends BaseRequest
         }
 
         return [
-            'nama'        => 'required|string|max:100',
-            'email'       => 'nullable|email|max:100|unique:personil,email,' . $id . ',personil_id',
-            'nip'         => 'nullable|string|max:50|unique:personil,nip,' . $id . ',personil_id',
-            'posisi'      => 'nullable|string|max:191',
-            'tipe'        => 'nullable|string|max:30',
+            'nama' => 'required|string|max:100',
+            'email' => 'nullable|email|max:100|unique:personil,email,'.$id.',personil_id',
+            'nip' => 'nullable|string|max:50|unique:personil,nip,'.$id.',personil_id',
+            'posisi' => 'nullable|string|max:191',
+            'tipe' => 'nullable|string|max:30',
             'org_unit_id' => 'nullable|exists:struktur_organisasi,orgunit_id',
         ];
     }
@@ -26,12 +26,12 @@ class PersonilRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'nama'        => 'Nama',
-            'email'       => 'Email',
-            'nip'         => 'NIP',
-            'posisi'      => 'Posisi',
-            'tipe'        => 'Tipe',
-            'vendor'      => 'Vendor',
+            'nama' => 'Nama',
+            'email' => 'Email',
+            'nip' => 'NIP',
+            'posisi' => 'Posisi',
+            'tipe' => 'Tipe',
+            'vendor' => 'Vendor',
             'org_unit_id' => 'Unit Organisasi',
         ];
     }

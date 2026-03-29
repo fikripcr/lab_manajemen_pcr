@@ -1,14 +1,14 @@
 <?php
+
 namespace App\Services\Hr;
 
-use App\Models\Hr\RiwayatInpassing;
 use App\Models\Hr\Pegawai;
+use App\Models\Hr\RiwayatInpassing;
 use Illuminate\Support\Facades\DB;
 
 class RiwayatInpassingService
 {
-    public function __construct(protected ApprovalService $approvalService)
-    {}
+    public function __construct(protected ApprovalService $approvalService) {}
 
     public function requestChange(Pegawai $pegawai, array $data, ?RiwayatInpassing $existingModel = null)
     {
@@ -21,7 +21,7 @@ class RiwayatInpassingService
             }
 
             $data['pegawai_id'] = $pegawai->pegawai_id;
-            $model              = RiwayatInpassing::create($data);
+            $model = RiwayatInpassing::create($data);
 
             $approval = $this->approvalService->createRequest(
                 RiwayatInpassing::class,
@@ -30,6 +30,7 @@ class RiwayatInpassingService
             );
 
             $model->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
+
             return $model;
         });
     }
@@ -39,7 +40,7 @@ class RiwayatInpassingService
         return DB::transaction(function () use ($approvalId, $status, $reason) {
             $approval = $this->approvalService->processApproval($approvalId, $status, $reason);
 
-            $model   = RiwayatInpassing::findOrFail($approval->model_id);
+            $model = RiwayatInpassing::findOrFail($approval->model_id);
             $pegawai = Pegawai::findOrFail($model->pegawai_id);
             $pegawai->update(['latest_riwayatinpassing_id' => $model->riwayatinpassing_id]);
             logActivity('hr', "Memproses ({$status}) Inpassing: {$pegawai->nama}", $pegawai);

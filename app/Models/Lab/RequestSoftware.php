@@ -1,8 +1,8 @@
 <?php
-namespace App\Models\Lab;
- 
-use App\Models\Akademik\MataKuliah;
 
+namespace App\Models\Lab;
+
+use App\Models\Akademik\MataKuliah;
 use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
@@ -12,9 +12,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RequestSoftware extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'lab_request_software';
+    protected $table = 'lab_request_software';
+
     protected $primaryKey = 'request_software_id';
 
     protected $appends = ['encrypted_request_software_id'];
@@ -81,6 +82,7 @@ class RequestSoftware extends Model
     {
         return encryptId($this->dosen_id);
     }
+
     /**
      * Relationship: Latest approval record
      */

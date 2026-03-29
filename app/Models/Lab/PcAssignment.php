@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Lab;
 
 use App\Models\User;
@@ -10,9 +11,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PcAssignment extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'lab_pc_assignments';
+    protected $table = 'lab_pc_assignments';
+
     protected $primaryKey = 'pc_assignment_id';
 
     protected $appends = ['encrypted_pc_assignment_id'];
@@ -35,9 +37,9 @@ class PcAssignment extends Model
 
     protected $casts = [
         'assigned_date' => 'date',
-        'is_active'     => 'boolean',
-        'nomor_pc'      => 'integer',
-        'nomor_loker'   => 'integer',
+        'is_active' => 'boolean',
+        'nomor_pc' => 'integer',
+        'nomor_loker' => 'integer',
     ];
 
     /**

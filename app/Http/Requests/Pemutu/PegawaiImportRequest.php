@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Pemutu;
 
 use App\Http\Requests\BaseRequest;
 
 class PegawaiImportRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *

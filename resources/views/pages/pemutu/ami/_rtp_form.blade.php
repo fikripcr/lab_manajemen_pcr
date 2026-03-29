@@ -1,10 +1,12 @@
+@php $isReadonly = request('readonly') == 1; @endphp
 <x-tabler.form-modal 
-    title="Rencana Tindakan Perbaikan (RTP)" 
-    route="{{ route('pemutu.ami.rtp-update', $indOrg->encrypted_indorgunit_id) }}" 
-    method="POST"
+    :title="$isReadonly ? 'Detail Rencana Tindakan Perbaikan (RTP)' : 'Rencana Tindakan Perbaikan (RTP)'" 
+    :route="route('pemutu.ami.rtp-update', $indOrg->encrypted_indorgunit_id)" 
+    :method="$isReadonly ? 'none' : 'POST'"
     submitText="Simpan RTP"
     submitIcon="ti-device-floppy"
     data-reload="true">
+    <fieldset {{ $isReadonly ? 'disabled' : '' }}>
     
     {{-- Info Temuan KTS --}}
     <x-tabler.card class="bg-warning-lt border-0 border-start border-4 border-warning mb-4 shadow-sm">
@@ -57,6 +59,7 @@
         </div>
     </div>
 
+    </fieldset>
 </x-tabler.form-modal>
 
 <script>

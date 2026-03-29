@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Survei;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;

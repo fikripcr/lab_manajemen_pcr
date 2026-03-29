@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Public\PublicSoftwareRequest;
 use App\Models\Akademik\MataKuliah;
-use App\Models\Cms\Slideshow;
 use App\Models\Cms\Pengumuman;
+use App\Models\Cms\Slideshow;
 use App\Models\Lab\RequestSoftware;
 use Illuminate\Http\Request;
 
@@ -68,8 +69,8 @@ class PublicController extends Controller
 
         $softwareRequest = RequestSoftware::create([
             'nama_software' => $validated['nama_software'],
-            'alasan'        => $validated['alasan'],
-            'status'        => 'Pending', // waiting for approval
+            'alasan' => $validated['alasan'],
+            'status' => 'Pending', // waiting for approval
         ]);
 
         // Attach selected mata kuliah if provided
@@ -99,8 +100,8 @@ class PublicController extends Controller
             ->get()
             ->map(function ($mk) {
                 return [
-                    'id'   => $mk->mata_kuliah_id,
-                    'text' => $mk->kode_mk . ' - ' . $mk->nama_mk,
+                    'id' => $mk->mata_kuliah_id,
+                    'text' => $mk->kode_mk.' - '.$mk->nama_mk,
                 ];
             });
 

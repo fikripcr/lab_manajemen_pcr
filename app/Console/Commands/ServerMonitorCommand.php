@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Spatie\ServerMonitor\Models\Check;
 
 class ServerMonitorCommand extends Command
@@ -93,11 +92,11 @@ class ServerMonitorCommand extends Command
         $databaseSizeFormatted = '0 B';
 
         if (config("database.connections.{$databaseConnection}.driver") === 'mysql') {
-            $databaseSize = DB::select("
+            $databaseSize = DB::select('
                 SELECT SUM(data_length + index_length) as size
                 FROM information_schema.tables
                 WHERE table_schema = ?
-            ", [$databaseName])[0]->size;
+            ', [$databaseName])[0]->size;
 
             $databaseSizeFormatted = formatBytes($databaseSize);
         }
@@ -120,9 +119,9 @@ class ServerMonitorCommand extends Command
     {
         // Get or create a host for this application
         $host = \App\Models\Sys\ServerMonitorHost::firstOrCreate(
-            ['name' => config('app.name') . ' - Local Server'],
+            ['name' => config('app.name').' - Local Server'],
             [
-                'name' => config('app.name') . ' - Local Server',
+                'name' => config('app.name').' - Local Server',
                 'ssh_user' => null,
                 'port' => null,
                 'ip' => null,
@@ -171,7 +170,7 @@ class ServerMonitorCommand extends Command
 
         // Store in server monitor checks
         $this->updateOrCreateCheck('projectsize', [
-            'latest_human_output' => "Project breakdown: Apps={".formatBytes($appsSize)."}, Storage={".formatBytes($storageSize)."}, Logs={".formatBytes($logSize)."}, Uploads={".formatBytes($uploadsSize)."}",
+            'latest_human_output' => 'Project breakdown: Apps={'.formatBytes($appsSize).'}, Storage={'.formatBytes($storageSize).'}, Logs={'.formatBytes($logSize).'}, Uploads={'.formatBytes($uploadsSize).'}',
             'output' => json_encode([
                 'project_path' => base_path(),
                 'size_bytes' => $projectSize,
@@ -244,6 +243,7 @@ class ServerMonitorCommand extends Command
                 }
             }
         }
+
         return $size;
     }
 
@@ -256,6 +256,7 @@ class ServerMonitorCommand extends Command
         if (file_exists($backupDir)) {
             return $this->calculateDirectorySize($backupDir, []);
         }
+
         return 0;
     }
 
@@ -268,6 +269,7 @@ class ServerMonitorCommand extends Command
         if (file_exists($dir)) {
             return $this->calculateDirectorySize($dir, []);
         }
+
         return 0;
     }
 
@@ -287,6 +289,7 @@ class ServerMonitorCommand extends Command
                 $size += $this->calculateDirectorySize($dir, []);
             }
         }
+
         return $size;
     }
 
@@ -299,6 +302,7 @@ class ServerMonitorCommand extends Command
         if (file_exists($dir)) {
             return $this->calculateDirectorySize($dir, []);
         }
+
         return 0;
     }
 
@@ -311,13 +315,15 @@ class ServerMonitorCommand extends Command
         if (file_exists($dir)) {
             return $this->calculateDirectorySize($dir, []);
         }
+
         return 0;
     }
 
     /**
      * Calculate directory size recursively
-     * @param string $path Directory path to calculate size for
-     * @param array $excludedDirs Directories to exclude from calculation
+     *
+     * @param  string  $path  Directory path to calculate size for
+     * @param  array  $excludedDirs  Directories to exclude from calculation
      * @return int Size in bytes
      */
     private function calculateDirectorySize($path, $excludedDirs = [])
@@ -339,7 +345,7 @@ class ServerMonitorCommand extends Command
                 }
             }
 
-            if (!$isExcluded && $file->isFile()) {
+            if (! $isExcluded && $file->isFile()) {
                 $size += $file->getSize();
             }
         }

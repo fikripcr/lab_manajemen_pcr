@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Services\Hr;
 
+use App\Models\Hr\Pegawai;
 use App\Models\Hr\RiwayatApproval;
 use App\Models\Hr\RiwayatDataDiri;
-use App\Models\Hr\Pegawai;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -20,14 +21,14 @@ class PegawaiService
 
             // 2. Buat RiwayatDataDiri (data awal pegawai) — latest_riwayatapproval_id null dulu
             $data['pegawai_id'] = $pegawai->pegawai_id;
-            $riwayat            = RiwayatDataDiri::create($data);
+            $riwayat = RiwayatDataDiri::create($data);
 
             // 3. Buat approval record yang langsung Approved (karena ini registrasi awal oleh admin)
             $approval = RiwayatApproval::create([
-                'model'      => RiwayatDataDiri::class,
-                'model_id'   => $riwayat->riwayatdatadiri_id,
-                'status'     => 'Approved',
-                'pejabat'    => Auth::user()->name ?? 'System',
+                'model' => RiwayatDataDiri::class,
+                'model_id' => $riwayat->riwayatdatadiri_id,
+                'status' => 'Approved',
+                'pejabat' => Auth::user()->name ?? 'System',
                 'keterangan' => 'Pendaftaran pegawai baru',
             ]);
 
@@ -50,6 +51,7 @@ class PegawaiService
             $pegawai = Pegawai::findOrFail($pegawaiId);
             logActivity('hr', "Menghapus data pegawai: {$pegawai->nama}", $pegawai);
             $pegawai->delete();
+
             return true;
         });
     }
@@ -70,13 +72,13 @@ class PegawaiService
             ]);
 
         // Add filtering if needed
-        if ($request->filled('orgunit_id')) {
+        if ($request->filled('orgunit_id') && $request->orgunit_id !== 'all') {
             $query->whereHas('latestDataDiri', function ($q) use ($request) {
                 $q->where('orgunit_departemen_id', $request->orgunit_id);
             });
         }
 
-        if ($request->filled('posisi_id')) {
+        if ($request->filled('posisi_id') && $request->posisi_id !== 'all') {
             $query->whereHas('latestDataDiri', function ($q) use ($request) {
                 $q->where('orgunit_posisi_id', $request->posisi_id);
             });

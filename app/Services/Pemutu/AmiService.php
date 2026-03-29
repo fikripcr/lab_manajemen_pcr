@@ -1,21 +1,22 @@
 <?php
+
 namespace App\Services\Pemutu;
 
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Models\Pemutu\TimMutu;
-use App\Services\Pemutu\PelaksanaanService;
 
 class AmiService
 {
     public function __construct(
         protected PelaksanaanService $PelaksanaanService,
     ) {}
+
     public function getIndikatorQuery(PeriodeSpmi $periode, ?int $unitId = null)
     {
         $filters = [
             'kelompok_indikator' => $periode->jenis,
-            'tahun_dokumen'      => $periode->tahun,
+            'tahun_dokumen' => $periode->tahun,
         ];
 
         return app(IndikatorService::class)->getByOrgUnit($unitId, $filters);
@@ -51,18 +52,18 @@ class AmiService
         ]);
 
         $indikator = $indOrg->indikator;
-        $skala     = $indikator->skala ?? [];
+        $skala = $indikator->skala ?? [];
 
         // Bangun tree breadcrumb hierarki indikator
         $breadcrumbs = [];
-        $current     = $indikator;
+        $current = $indikator;
         while ($current) {
             array_unshift($breadcrumbs, $current);
             $current = $current->parent;
         }
 
         $hasilAkhirLabels = IndikatorOrgUnit::$hasilAkhirLabels;
-        $monitorings      = $this->PelaksanaanService->getMonitoringForIndikator($indOrg);
+        $monitorings = $this->PelaksanaanService->getMonitoringForIndikator($indOrg);
 
         return compact('indOrg', 'indikator', 'skala', 'breadcrumbs', 'hasilAkhirLabels', 'monitorings');
     }
@@ -73,14 +74,14 @@ class AmiService
     public function submitPenilaian(IndikatorOrgUnit $indOrg, array $data): IndikatorOrgUnit
     {
         $indOrg->update([
-            'ami_hasil_akhir'         => $data['ami_hasil_akhir'],
-            'ami_hasil_temuan'        => $data['ami_hasil_temuan'] ?? null,
-            'ami_hasil_temuan_sebab'  => $data['ami_hasil_temuan_sebab'] ?? null,
+            'ami_hasil_akhir' => $data['ami_hasil_akhir'],
+            'ami_hasil_temuan' => $data['ami_hasil_temuan'] ?? null,
+            'ami_hasil_temuan_sebab' => $data['ami_hasil_temuan_sebab'] ?? null,
             'ami_hasil_temuan_akibat' => $data['ami_hasil_temuan_akibat'] ?? null,
-            'ami_hasil_temuan_rekom'  => $data['ami_hasil_temuan_rekom'] ?? null,
+            'ami_hasil_temuan_rekom' => $data['ami_hasil_temuan_rekom'] ?? null,
         ]);
 
-        logActivity('pemutu', 'Submit penilaian AMI: indikator #' . $indOrg->indikator_id . ' unit #' . $indOrg->org_unit_id, $indOrg);
+        logActivity('pemutu', 'Submit penilaian AMI: indikator #'.$indOrg->indikator_id.' unit #'.$indOrg->org_unit_id, $indOrg);
 
         return $indOrg;
     }
@@ -91,11 +92,11 @@ class AmiService
     public function updateRtp(IndikatorOrgUnit $indOrg, array $data): IndikatorOrgUnit
     {
         $indOrg->update([
-            'ami_rtp_isi'             => $data['ami_rtp_isi'],
+            'ami_rtp_isi' => $data['ami_rtp_isi'],
             'ami_rtp_tgl_pelaksanaan' => $data['ami_rtp_tgl_pelaksanaan'],
         ]);
 
-        logActivity('pemutu', 'Update RTP AMI: indikator #' . $indOrg->indikator_id . ' unit #' . $indOrg->org_unit_id, $indOrg);
+        logActivity('pemutu', 'Update RTP AMI: indikator #'.$indOrg->indikator_id.' unit #'.$indOrg->org_unit_id, $indOrg);
 
         return $indOrg;
     }

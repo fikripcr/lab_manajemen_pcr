@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Survei;
 
 use App\Http\Requests\BaseRequest;
 
 class HalamanRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -16,7 +14,7 @@ class HalamanRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'judul_halaman'     => 'nullable|string|max:255',
+            'judul_halaman' => 'nullable|string|max:255',
             'deskripsi_halaman' => 'nullable|string',
         ];
     }
@@ -24,7 +22,7 @@ class HalamanRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'judul_halaman'     => 'Judul Halaman',
+            'judul_halaman' => 'Judul Halaman',
             'deskripsi_halaman' => 'Deskripsi Halaman',
         ];
     }

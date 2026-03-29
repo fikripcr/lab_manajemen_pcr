@@ -4,17 +4,16 @@ namespace App\Http\Controllers\Pemutu;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\EvaluasiDiriRequest;
 use App\Http\Requests\Pemutu\PtpRequest;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Models\Pemutu\TimMutu;
-use App\Models\Hr\StrukturOrganisasi;
 use App\Services\Hr\StrukturOrganisasiService;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class EvaluasiDiriController extends Controller
@@ -48,25 +47,19 @@ class EvaluasiDiriController extends Controller
         return view('pages.pemutu.evaluasi-diri.index', $data);
     }
 
-
     public function data(Request $request, PeriodeSpmi $periode)
     {
-        $unitId = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
-        
-        // SIMPLE LOGIC: If not 'all', add to filters
         $filters = [];
-        
-        $edStatus = $request->input('ed_status');
-        if ($edStatus !== null && $edStatus !== '') {
-            $filters['ed_status'] = $edStatus;
-        }
-        
-        $dokId = $request->input('dok_id');
-        if ($dokId !== null && $dokId !== '') {
-            $filters['dok_id'] = $dokId;
+        foreach ($request->only(['unit_id', 'ed_status', 'dok_id']) as $key => $value) {
+            if ($value !== null && $value !== '' && $value !== 'all') {
+                $filters[$key] = ($key === 'unit_id' || $key === 'dok_id') ? decryptIdIfEncrypted($value) : $value;
+            }
         }
 
-        $query = $this->IndikatorService->getUnifiedSpmiQuery($periode, $unitId, $filters);
+        // Simpan unitId untuk digunakan di kolom action
+        $unitId = $filters['unit_id'] ?? null;
+
+        $query = $this->IndikatorService->getUnifiedSpmiQuery($periode, $filters);
 
         return DataTables::of($query)
             ->addColumn('no', function ($row) {
@@ -84,7 +77,7 @@ class EvaluasiDiriController extends Controller
             ->addColumn('analisis', function ($row) {
                 return pemutuDtColAnalisisEd($row);
             })
-            ->addColumn('action', function ($row) use ($unitId) {
+            ->addColumn('action', function ($row) use ($unitId, $periode) {
                 // If a specific unit is filtered, pass it. Otherwise try to get it from the pivot.
                 $targetUnit = $unitId ?? ($row->orgUnits->first()->pivot->org_unit_id ?? '');
                 $url        = route('pemutu.evaluasi-diri.edit', $row->encrypted_indikator_id);
@@ -92,12 +85,24 @@ class EvaluasiDiriController extends Controller
                     $url .= '?unit_id=' . $targetUnit;
                 }
 
-                return '<button type="button" class="btn btn-sm btn-primary ajax-modal-btn"
-                    data-url="' . $url . '"
-                    data-modal-title="Isi Evaluasi Diri"
-                    data-modal-size="modal-xl">
-                    Isi
-                    </button>';
+                $periodeInfo = pemutuPeriodeStatus($periode->ed_awal, $periode->ed_akhir);
+                if ($periodeInfo['is_active']) {
+                    return '<button type="button" class="btn btn-sm btn-primary ajax-modal-btn"
+                        data-url="' . $url . '"
+                        data-modal-title="Isi Evaluasi Diri"
+                        data-modal-size="modal-xl">
+                        <i class="ti ti-edit me-1"></i>Isi
+                        </button>';
+                } else {
+                    $url .= str_contains($url, '?') ? '&readonly=1' : '?readonly=1';
+
+                    return '<button type="button" class="btn btn-sm btn-outline-secondary ajax-modal-btn"
+                        data-url="' . $url . '"
+                        data-modal-title="Detail Evaluasi Diri"
+                        data-modal-size="modal-xl">
+                        <i class="ti ti-eye me-1"></i>Detail
+                        </button>';
+                }
             })
             ->rawColumns(['no', 'indikator_full', 'target', 'capaian', 'analisis', 'action'])
             ->make(true);
@@ -224,7 +229,7 @@ class EvaluasiDiriController extends Controller
             $data['org_unit_id']  = $targetUnitId;
             $data['target']       = '-';
             $data['created_at']   = now();
-            $indikatorOrgUnitId = DB::table('pemutu_indikator_orgunit')->insertGetId($data);
+            $indikatorOrgUnitId   = DB::table('pemutu_indikator_orgunit')->insertGetId($data);
         }
 
         if ($request->hasFile('filepond')) {
@@ -238,7 +243,7 @@ class EvaluasiDiriController extends Controller
 
         logActivity('pemutu', "Mengisi Evaluasi Diri untuk indikator ID: {$indikator->indikator_id}");
 
-        return jsonSuccess('Evaluasi Diri berhasil disimpan.');
+        return jsonSuccess('Evaluasi Diri berhasil disimpan.', url()->previous());
     }
 
     public function uploadFile(Request $request, $id)
@@ -254,8 +259,9 @@ class EvaluasiDiriController extends Controller
             $model->addMedia($file)->toMediaCollection('ed_attachments');
         }
 
-        logActivity('pemutu', "Mengunggah " . count($request->file('files')) . " file ke Evaluasi Diri ID: {$model->indikorgunit_id}");
-        return jsonSuccess('File berhasil diunggah.');
+        logActivity('pemutu', 'Mengunggah ' . count($request->file('files')) . " file ke Evaluasi Diri ID: {$model->indikorgunit_id}");
+
+        return jsonSuccess('File berhasil diunggah.', url()->previous());
     }
 
     public function deleteFile(Request $request, $id, $mediaId)
@@ -270,16 +276,11 @@ class EvaluasiDiriController extends Controller
         $media->delete();
         logActivity('pemutu', "Menghapus file dari Evaluasi Diri ID: {$model->indikorgunit_id}");
 
-        return jsonSuccess('File berhasil dihapus.');
+        return jsonSuccess('File berhasil dihapus.', url()->previous());
     }
 
-    /**
-     * Data untuk tab Pelaksanaan Perbaikan (KTS Tahun Lalu).
-     */
     public function ptpData(Request $request, PeriodeSpmi $periode)
     {
-        $unitId = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
-
         // Cari periode tahun lalu dengan jenis yang sama
         $prevYear   = (int) $periode->periode - 1;
         $prevPeriod = PeriodeSpmi::where('periode', $prevYear)
@@ -291,11 +292,13 @@ class EvaluasiDiriController extends Controller
         }
 
         // Ambil indikator KTS dari periode tahun lalu
-        $query = $this->IndikatorService->getUnifiedSpmiQuery($prevPeriod, $unitId, [
-            'ami_hasil_akhir' => 0, // KTS
-            'dok_id'          => $request->input('dok_id'),
-            'ptp_status'      => $request->input('ptp_status'),
-        ]);
+        $filters = ['ami_hasil_akhir' => 0]; // KTS
+        foreach ($request->only(['unit_id', 'dok_id', 'ptp_status']) as $key => $value) {
+            if ($value !== null && $value !== '' && $value !== 'all') {
+                $filters[$key] = ($key === 'unit_id' || $key === 'dok_id') ? decryptIdIfEncrypted($value) : $value;
+            }
+        }
+        $query = $this->IndikatorService->getUnifiedSpmiQuery($prevPeriod, $filters);
 
         return DataTables::of($query)
             ->addColumn('no', function ($row) {
@@ -317,7 +320,7 @@ class EvaluasiDiriController extends Controller
                     data-url="' . route('pemutu.evaluasi-diri.ptp-edit', encryptId($indOrgId)) . '"
                     data-modal-title="Isi Pelaksanaan Tindakan Perbaikan (PTP)"
                     data-modal-size="modal-lg">
-                    Isi PTP
+                    Isi
                 </button>';
             })
             ->rawColumns(['no', 'indikator_full', 'rtp_isi', 'ptp_isi', 'action'])

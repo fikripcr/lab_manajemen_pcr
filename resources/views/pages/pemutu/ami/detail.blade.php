@@ -184,6 +184,18 @@
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
+                        <a href="#tabs-te" class="nav-link" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">
+                            <div class="d-flex align-items-center">
+                                <i class="ti ti-clipboard-list me-2"></i>Rencana Tindakan Elektif (TE)
+                                @if(!request('readonly'))
+                                <button type="button" class="btn btn-sm btn-primary ajax-modal-btn ms-2" data-url="{{ route('pemutu.ami.te-edit', $indOrg->encrypted_indorgunit_id) }}" data-title="Tindakan Elektif (TE)">
+                                    <i class="ti ti-edit me-1"></i> {{ $teData ? 'Edit TE' : 'Isi TE' }}
+                                </button>
+                                @endif
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
                         <a href="#tabs-diskusi" class="nav-link" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">
                             <i class="ti ti-messages me-2"></i>Diskusi
                             @if($indOrg->diskusi->count() > 0)
@@ -197,20 +209,28 @@
                 {{-- TAB: AUDIT (PENILAIAN) --}}
                 <div class="tab-pane active show" id="tabs-audit" role="tabpanel">
                     <x-tabler.card-body>
-                        <form action="{{ route('pemutu.ami.submit-nilai', $indOrg->encrypted_indorgunit_id) }}" method="POST" class="ajax-form" data-redirect="true">
-                            @csrf
+                @if(request('readonly') == 1)
+                <div class="alert alert-warning mb-3">
+                    <i class="ti ti-info-circle me-1"></i> Mode Read-Only: Jadwal pengisian AMI di luar masa aktif sehingga penginputan dikunci.
+                </div>
+                @endif
+                <fieldset {{ request('readonly') == 1 ? 'disabled' : '' }}>
+                <form action="{{ route('pemutu.ami.submit-nilai', $indOrg->encrypted_indorgunit_id) }}" method="POST" id="form-penilaian-ami" class="ajax-form" data-redirect="true">
+                    @csrf
 
                             {{-- Hasil Akhir AMI: Radio Buttons --}}
                             <div class="mb-3">
                                 <label class="form-label required fw-semibold">Hasil Akhir AMI</label>
-                                <div id="radio-hasil-akhir-container">
+                                <div id="radio-hasil-akhir-container" class="form-selectgroup">
                                     @foreach($hasilAkhirLabels as $value => $meta)
-                                    <label class="form-check form-check-inline cursor-pointer border rounded p-2 me-3 lh-1 radio-hasil-item
-                                        {{ $indOrg->ami_hasil_akhir === $value ? 'border-' . $meta['color'] . ' bg-' . $meta['color'] . '-lt' : 'border-secondary-subtle' }}"
-                                        data-color="{{ $meta['color'] }}">
-                                        <input class="form-check-input mt-0" type="radio" name="ami_hasil_akhir" value="{{ $value }}"
-                                               @checked($indOrg->ami_hasil_akhir === $value) required>
-                                        <span class="form-check-label text-{{ $meta['color'] }} fw-semibold ms-1">
+                                    <label class="form-selectgroup-item">
+                                        <input type="radio" 
+                                               name="ami_hasil_akhir" 
+                                               value="{{ $value }}" 
+                                               class="form-selectgroup-input"
+                                               @checked($indOrg->ami_hasil_akhir === $value) 
+                                               required>
+                                        <span class="form-selectgroup-button border-{{ $meta['color'] }} text-{{ $meta['color'] }} fw-semibold">
                                             {{ $meta['label'] }}
                                         </span>
                                     </label>
@@ -245,11 +265,14 @@
                                 </div>
                             </div>
                             
-                            <div class="text-end">
-                                <x-tabler.button type="submit" size="lg" icon="ti ti-device-floppy" text="Simpan Penilaian Audit" />
-                            </div>
-                        </form>
-                    </x-tabler.card-body>
+                            @if(!request('readonly'))
+                    <div class="mt-4 text-end">
+                        <x-tabler.button type="submit" class="btn-primary" icon="ti-device-floppy" text="Simpan Penilaian" />
+                    </div>
+                    @endif
+                </form>
+                </fieldset>
+            </x-tabler.card-body>
                 </div>
 
                 {{-- TAB: DISKUSI --}}
@@ -368,15 +391,7 @@ function updateHasilAkhirState() {
     let isKts = false;
     
     radios.forEach(radio => {
-        const parentLabel = radio.closest('.radio-hasil-item');
-        const color = parentLabel.dataset.color;
-        
-        // Reset
-        parentLabel.className = 'form-check form-check-inline cursor-pointer border rounded p-2 me-3 lh-1 radio-hasil-item border-secondary-subtle';
-        
         if (radio.checked) {
-            parentLabel.classList.remove('border-secondary-subtle');
-            parentLabel.classList.add('border-' + color, 'bg-' + color + '-lt');
             if (radio.value === '0') isKts = true;
         }
     });

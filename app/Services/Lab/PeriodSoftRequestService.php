@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Lab;
 
 use App\Models\Lab\PeriodSoftRequest;

@@ -1,12 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Cbt;
 
 use App\Http\Requests\BaseRequest;
 
 class StoreSoalRequest extends BaseRequest
 {
-    
-
     protected function prepareForValidation()
     {
         $mu = $this->route('mata_uji');
@@ -18,24 +17,24 @@ class StoreSoalRequest extends BaseRequest
     public function rules()
     {
         return [
-            'mata_uji_id'       => 'required|exists:cbt_mata_uji,id',
-            'tipe_soal'         => 'required|in:Pilihan_Ganda,Esai,Benar_Salah',
+            'mata_uji_id' => 'required|exists:cbt_mata_uji,id',
+            'tipe_soal' => 'required|in:Pilihan_Ganda,Esai,Benar_Salah',
             'konten_pertanyaan' => 'required|string',
             'tingkat_kesulitan' => 'required|in:Mudah,Sedang,Sulit',
-            'opsi'              => 'required_if:tipe_soal,Pilihan_Ganda|array',
-            'kunci_jawaban'     => 'required_unless:tipe_soal,Esai',
+            'opsi' => 'required_if:tipe_soal,Pilihan_Ganda|array',
+            'kunci_jawaban' => 'required_unless:tipe_soal,Esai',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'mata_uji_id'       => 'Mata Uji',
-            'tipe_soal'         => 'Tipe Soal',
+            'mata_uji_id' => 'Mata Uji',
+            'tipe_soal' => 'Tipe Soal',
             'konten_pertanyaan' => 'Konten Pertanyaan',
             'tingkat_kesulitan' => 'Tingkat Kesulitan',
-            'opsi'              => 'Opsi Jawaban',
-            'kunci_jawaban'     => 'Kunci Jawaban',
+            'opsi' => 'Opsi Jawaban',
+            'kunci_jawaban' => 'Kunci Jawaban',
         ];
     }
 }

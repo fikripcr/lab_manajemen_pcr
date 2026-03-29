@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Pmb;
 
 use App\Models\Pmb\Jalur;
@@ -21,6 +22,7 @@ class JalurService
     {
         $jalur = Jalur::create($data);
         logActivity('pmb_jalur', "Menambahkan jalur baru: {$jalur->nama_jalur}", $jalur);
+
         return $jalur;
     }
 
@@ -28,6 +30,7 @@ class JalurService
     {
         $jalur->update($data);
         logActivity('pmb_jalur', "Memperbarui jalur: {$jalur->nama_jalur}", $jalur);
+
         return true;
     }
 
@@ -36,6 +39,7 @@ class JalurService
         $nama = $jalur->nama_jalur;
         $jalur->delete();
         logActivity('pmb_jalur', "Menghapus jalur: {$nama}");
+
         return true;
     }
 

@@ -9,16 +9,19 @@ class IndikatorSummaryStandar extends Model
 {
     use HashidBinding;
 
-    protected $table      = 'vw_pemutu_summary_indikator_standar';
+    protected $table = 'vw_pemutu_summary_indikator_standar';
+
     protected $primaryKey = 'indikorgunit_id';
-    public $incrementing  = false;
-    public $timestamps    = false;
+
+    public $incrementing = false;
+
+    public $timestamps = false;
 
     protected $appends = ['encrypted_indikorgunit_id'];
 
     protected $casts = [
         'indikorgunit_id' => 'integer',
-        'indikator_id'   => 'integer',
+        'indikator_id' => 'integer',
     ];
 
     /**

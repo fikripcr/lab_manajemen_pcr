@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Eoffice;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JenisLayananIsian extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'eoffice_jenis_layanan_isian';
+    protected $table = 'eoffice_jenis_layanan_isian';
+
     protected $primaryKey = 'jlisian_id';
 
     protected $appends = ['encrypted_jlisian_id'];
@@ -20,6 +22,7 @@ class JenisLayananIsian extends Model
     {
         return encryptId($this->jlisian_id);
     }
+
     protected $fillable = [
         'jenislayanan_id',
         'kategoriisian_id',
@@ -40,7 +43,7 @@ class JenisLayananIsian extends Model
     }
 
     protected $casts = [
-        'is_required'         => 'boolean',
+        'is_required' => 'boolean',
         'is_show_on_validasi' => 'boolean',
     ];
 

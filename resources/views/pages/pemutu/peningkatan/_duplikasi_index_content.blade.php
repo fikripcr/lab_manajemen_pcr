@@ -76,8 +76,8 @@
                 <div class="text-center py-5 text-muted">
                     <i class="ti ti-loader ti-spin fs-2 d-block mb-2"></i> Memuat...
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 </div>
 

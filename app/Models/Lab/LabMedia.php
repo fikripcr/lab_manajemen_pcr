@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Lab;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LabMedia extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'lab_media';
+    protected $table = 'lab_media';
+
     protected $primaryKey = 'lab_media_id';
 
     protected $appends = ['encrypted_lab_media_id'];
@@ -30,7 +32,7 @@ class LabMedia extends Model
     ];
 
     protected $casts = [
-        'lab_id'   => 'integer',
+        'lab_id' => 'integer',
         'media_id' => 'integer',
     ];
 

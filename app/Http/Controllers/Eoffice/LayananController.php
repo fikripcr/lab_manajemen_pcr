@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Eoffice;
 
 use App\Http\Controllers\Controller;
@@ -16,16 +17,16 @@ use Yajra\DataTables\DataTables;
 
 class LayananController extends Controller
 {
-    public function __construct(protected LayananService $LayananService)
-    {}
+    public function __construct(protected LayananService $LayananService) {}
 
     /**
      * List of requests (For User or Admin/PIC)
      */
     public function index()
     {
-        $pageTitle     = 'Daftar Pengajuan Layanan';
+        $pageTitle = 'Daftar Pengajuan Layanan';
         $jenisLayanans = JenisLayanan::where('is_active', true)->orderBy('nama_layanan')->get();
+
         return view('pages.eoffice.layanan.index', compact('pageTitle', 'jenisLayanans'));
     }
 
@@ -65,7 +66,7 @@ class LayananController extends Controller
     public function services()
     {
         $pageTitle = 'Pilih Jenis Layanan';
-        $services  = JenisLayanan::withCount(['layanans', 'isians', 'pics'])
+        $services = JenisLayanan::withCount(['layanans', 'isians', 'pics'])
             ->with(['pics.user'])
             ->where('is_active', true)
             ->orderBy('kategori')
@@ -83,7 +84,7 @@ class LayananController extends Controller
      */
     public function create(JenisLayanan $jenisLayanan)
     {
-        $pageTitle = 'Pengajuan: ' . $jenisLayanan->nama_layanan;
+        $pageTitle = 'Pengajuan: '.$jenisLayanan->nama_layanan;
 
         return view('pages.eoffice.layanan.create-edit-ajax', compact('pageTitle', 'jenisLayanan'));
     }
@@ -93,23 +94,24 @@ class LayananController extends Controller
      */
     public function store(LayananStoreRequest $request)
     {
-        $validated    = $request->validated();
+        $validated = $request->validated();
         $jenisLayanan = JenisLayanan::with('isians.kategoriIsian')->findOrFail($validated['jenislayanan_id']);
 
-        $data          = $request->only(['jenislayanan_id', 'keterangan']);
+        $data = $request->only(['jenislayanan_id', 'keterangan']);
         $dynamicFields = [];
 
         // Handle dynamic fields from the request
         foreach ($jenisLayanan->isians as $item) {
-            $field     = $item->kategoriIsian;
-            
+            $field = $item->kategoriIsian;
+
             // Skip if kategoriIsian is not loaded (defensive programming)
-            if (!$field) {
+            if (! $field) {
                 \Log::warning("Kategori Isian not found for JL Isian ID: {$item->jlisian_id}");
+
                 continue;
             }
-            
-            $fieldName = 'field_' . $field->kategoriisian_id;
+
+            $fieldName = 'field_'.$field->kategoriisian_id;
 
             if ($request->has($fieldName)) {
                 $value = $request->input($fieldName);
@@ -117,24 +119,25 @@ class LayananController extends Controller
                 // Handle file upload
                 if ($field->type === 'file' && $request->hasFile($fieldName)) {
                     $file = $request->file($fieldName);
-                    
+
                     // Validate file size (max 2MB)
                     if ($file->getSize() > 2 * 1024 * 1024) {
-                        return jsonError('File ' . $field->nama_isian . ' terlalu besar (maks 2MB)');
+                        return jsonError('File '.$field->nama_isian.' terlalu besar (maks 2MB)');
                     }
-                    
-                    $path  = $file->store('eoffice/requests/' . date('Y/m'), 'public');
+
+                    $path = $file->store('eoffice/requests/'.date('Y/m'), 'public');
                     $value = $path;
                 }
 
                 $dynamicFields[$field->nama_isian] = $value;
             } elseif ($item->is_required) {
                 // Required field is missing
-                return jsonError('Field "' . $field->nama_isian . '" wajib diisi.');
+                return jsonError('Field "'.$field->nama_isian.'" wajib diisi.');
             }
         }
 
         $this->LayananService->createLayanan($data, $dynamicFields);
+
         return jsonSuccess('Pengajuan berhasil dikirim.', route('eoffice.layanan.index'));
     }
 
@@ -154,18 +157,18 @@ class LayananController extends Controller
             'keterlibatan.user',
         ]);
 
-        $pageTitle = 'Detail Pengajuan: ' . $layanan->no_layanan;
+        $pageTitle = 'Detail Pengajuan: '.$layanan->no_layanan;
 
         // Group isian by fill_by logic
         // FIX: Map definitions to answers because LayananIsian table doesn't have 'fill_by'
         $definitions = $layanan->jenisLayanan->isians->sortBy('seq');
-        $answers     = $layanan->isians->keyBy('nama_isian');
+        $answers = $layanan->isians->keyBy('nama_isian');
 
         $dataIsian = [
-            'Pemohon'     => collect(),
+            'Pemohon' => collect(),
             'Disposisi 1' => collect(),
             'Disposisi 2' => collect(),
-            'Sistem'      => collect(),
+            'Sistem' => collect(),
         ];
 
         foreach ($definitions as $def) {
@@ -177,8 +180,9 @@ class LayananController extends Controller
 
             // Safe access to kategoriIsian
             $kategoriIsian = $def->kategoriIsian;
-            if (!$kategoriIsian) {
+            if (! $kategoriIsian) {
                 \Log::warning("Kategori Isian not found for JL Isian ID: {$def->jlisian_id}");
+
                 continue;
             }
 
@@ -187,17 +191,17 @@ class LayananController extends Controller
             // Construct object for view
             $obj = (object) [
                 'nama_isian' => $kategoriIsian->nama_isian,
-                'isi'        => $ans ? $ans->isi : '-',
-                'type'       => $kategoriIsian->type ?? 'text',
+                'isi' => $ans ? $ans->isi : '-',
+                'type' => $kategoriIsian->type ?? 'text',
             ];
 
             $dataIsian[$fillBy]->push($obj);
         }
 
         // Determine if current user can take action
-        $user      = Auth::user();
+        $user = Auth::user();
         $canAction = false;
-        $nextStep  = null;
+        $nextStep = null;
 
         // Basic permission check (simplified for now)
         if ($user->hasRole('admin')) {
@@ -211,9 +215,9 @@ class LayananController extends Controller
         }
 
         // Determine next disposition from the chain
-        $currentSeq     = $layanan->latestStatus?->seq ?? 0;
+        $currentSeq = $layanan->latestStatus?->seq ?? 0;
         $disposisiChain = $layanan->jenisLayanan->disposisis->sortBy('seq');
-        $nextDisposisi  = $disposisiChain->where('seq', '>', $currentSeq)->first();
+        $nextDisposisi = $disposisiChain->where('seq', '>', $currentSeq)->first();
 
         return view('pages.eoffice.layanan.show', compact('pageTitle', 'layanan', 'dataIsian', 'canAction', 'nextDisposisi'));
     }
@@ -227,6 +231,7 @@ class LayananController extends Controller
         }
 
         $this->LayananService->updateStatus($layanan->layanan_id, $data);
+
         return jsonSuccess('Status berhasil dirubah.');
     }
 
@@ -245,19 +250,19 @@ class LayananController extends Controller
 
         // Generate QR Code base64
         $renderer = new GDLibRenderer(400);
-        $writer   = new Writer($renderer);
-        $pngData  = $writer->writeString(route('eoffice.layanan.show', $layanan->hashid));
-        $qrcode   = base64_encode($pngData);
+        $writer = new Writer($renderer);
+        $pngData = $writer->writeString(route('eoffice.layanan.show', $layanan->hashid));
+        $qrcode = base64_encode($pngData);
 
         $data = [
             'layanan' => $layanan,
-            'qrcode'  => $qrcode,
-            'title'   => 'Bukti Pengajuan Layanan - ' . $layanan->no_layanan,
+            'qrcode' => $qrcode,
+            'title' => 'Bukti Pengajuan Layanan - '.$layanan->no_layanan,
         ];
 
         $pdf = Pdf::loadView('pages.eoffice.layanan.pdf', $data);
 
-        return $pdf->download('E-Office-' . $layanan->no_layanan . '.pdf');
+        return $pdf->download('E-Office-'.$layanan->no_layanan.'.pdf');
     }
 
     /**

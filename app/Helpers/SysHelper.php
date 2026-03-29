@@ -4,7 +4,7 @@ if (! function_exists('encryptId')) {
     /**
      * Encrypt an ID using Hashids
      *
-     * @param int $id
+     * @param  int  $id
      * @return string
      */
     function encryptId($id)
@@ -17,8 +17,8 @@ if (! function_exists('decryptId')) {
     /**
      * Decrypt a Hashid to get the original ID
      *
-     * @param string $hash
-     * @param bool $throwException Whether to throw exception on failure
+     * @param  string  $hash
+     * @param  bool  $throwException  Whether to throw exception on failure
      * @return int|null
      */
     function decryptId($hash, $throwException = false)
@@ -27,6 +27,7 @@ if (! function_exists('decryptId')) {
             if ($throwException) {
                 abort(404, 'Data tidak ditemukan.');
             }
+
             return null;
         }
 
@@ -36,6 +37,7 @@ if (! function_exists('decryptId')) {
             if ($throwException) {
                 abort(404, 'Data tidak ditemukan.');
             }
+
             return null;
         }
 
@@ -47,8 +49,8 @@ if (! function_exists('decryptIdIfEncrypted')) {
     /**
      * Decrypt an ID if it's a hashid, otherwise return it as is if it's numeric.
      *
-     * @param mixed $id
-     * @param bool $throwException
+     * @param  mixed  $id
+     * @param  bool  $throwException
      * @return int|null
      */
     function decryptIdIfEncrypted($id, $throwException = false)
@@ -84,13 +86,22 @@ if (! function_exists('decryptIdIfEncrypted')) {
 }
 
 if (! function_exists('logActivity')) {
-    function logActivity($logName, $description, $subject = null, $properties = [])
+    /**
+     * Log an activity to the activity log (Spatie Activity Log).
+     *
+     * @param  string  $logName  The name of the log (e.g., 'user_management', 'product_management')
+     * @param  string  $description  Description of the activity
+     * @param  \Illuminate\Database\Eloquent\Model|null  $subject  The model that the activity is about
+     * @param  array  $properties  Additional properties to store with the log
+     * @return \Spatie\Activitylog\Models\Activity
+     */
+    function logActivity($logName, $description, $subject = null, $properties = []): \Spatie\Activitylog\Models\Activity
     {
         // Get the current user
         $causer = auth()->user();
 
         // Get IP address and user agent from the request
-        $request   = request();
+        $request = request();
         $ipAddress = $request->ip();
         $userAgent = $request->userAgent();
 
@@ -109,13 +120,13 @@ if (! function_exists('logActivity')) {
         $properties = array_merge($properties, [
             'ip_address' => $ipAddress,
             'user_agent' => $userAgent,
-            'url'        => $request->fullUrl(),
-            'method'     => $request->method(),
-            'user_id'    => $causer?->id,
-            'user_name'  => $causer?->name,
+            'url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'user_id' => $causer?->id,
+            'user_name' => $causer?->name,
         ]);
 
-        $activity->withProperties($properties)->log($description);
+        return $activity->withProperties($properties)->log($description);
     }
 }
 
@@ -123,13 +134,14 @@ if (! function_exists('normalizePath')) {
     /**
      * Clean up the path to prevent directory traversal attacks
      *
-     * @param string $path
+     * @param  string  $path
      * @return string
      */
     function normalizePath($path)
     {
         // Clean up the path to prevent directory traversal attacks
         $path = str_replace(['../', '..\\', './', '.\\'], '', $path);
+
         return $path;
     }
 }
@@ -138,8 +150,8 @@ if (! function_exists('formatBytes')) {
     /**
      * Format bytes to human readable format
      *
-     * @param int $size Size in bytes
-     * @param int $precision Number of decimal places
+     * @param  int  $size  Size in bytes
+     * @param  int  $precision  Number of decimal places
      * @return string Formatted size with unit
      */
     function formatBytes($size, $precision = 2)
@@ -150,7 +162,7 @@ if (! function_exists('formatBytes')) {
             $size /= 1024;
         }
 
-        return round($size, $precision) . ' ' . $units[$i];
+        return round($size, $precision).' '.$units[$i];
     }
 }
 
@@ -158,9 +170,9 @@ if (! function_exists('logError')) {
     /**
      * Log an error directly to the ErrorLog model
      *
-     * @param \Throwable|string $error
-     * @param string $level
-     * @param array $context Additional context information
+     * @param  \Throwable|string  $error
+     * @param  string  $level
+     * @param  array  $context  Additional context information
      * @return \App\Models\Sys\ErrorLog|null
      */
     function logError($error, $level = 'error', $context = [])
@@ -175,12 +187,12 @@ if (! function_exists('logError')) {
             // Extract additional context data from exception if it's a database exception
             $additionalContext = [];
 
-            if ($exception instanceof \PDOException  || $exception instanceof \Illuminate\Database\QueryException) {
+            if ($exception instanceof \PDOException || $exception instanceof \Illuminate\Database\QueryException) {
                 if (isset($exception->errorInfo) && is_array($exception->errorInfo)) {
                     $additionalContext = [
                         'error_info' => [
-                            'SQLSTATE'       => $exception->errorInfo[0] ?? null,
-                            'Driver Code'    => $exception->errorInfo[1] ?? null,
+                            'SQLSTATE' => $exception->errorInfo[0] ?? null,
+                            'Driver Code' => $exception->errorInfo[1] ?? null,
                             'Driver Message' => $exception->errorInfo[2] ?? null,
                         ],
                     ];
@@ -192,52 +204,51 @@ if (! function_exists('logError')) {
             }
 
             // Get request information if available
-            $request      = app('request');
+            $request = app('request');
             $finalContext = array_merge([
-                'url'        => $request->fullUrl() ?? 'N/A',
-                'method'     => $request->method() ?? 'N/A',
+                'url' => $request->fullUrl() ?? 'N/A',
+                'method' => $request->method() ?? 'N/A',
                 'ip_address' => $request->ip() ?? 'N/A',
                 'user_agent' => $request->userAgent() ?? 'N/A',
-                'user_id'    => auth()->id() ?? null,
+                'user_id' => auth()->id() ?? null,
                 'session_id' => session()->getId() ?? null,
-                'timestamp'  => now()->toISOString(),
+                'timestamp' => now()->toISOString(),
             ], $context, $additionalContext);
 
             // Create the error log record
             return \App\Models\Sys\ErrorLog::create([
-                'level'           => $level,
-                'message'         => $exception->getMessage(),
+                'level' => $level,
+                'message' => $exception->getMessage(),
                 'exception_class' => get_class($exception),
-                'file'            => $exception->getFile(),
-                'line'            => $exception->getLine(),
-                'trace'           => collect($exception->getTrace())->map(function ($trace) {
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'trace' => collect($exception->getTrace())->map(function ($trace) {
                     return [
-                        'file'     => $trace['file'] ?? 'unknown',
-                        'line'     => $trace['line'] ?? 'unknown',
+                        'file' => $trace['file'] ?? 'unknown',
+                        'line' => $trace['line'] ?? 'unknown',
                         'function' => $trace['function'] ?? 'unknown',
-                        'class'    => $trace['class'] ?? null,
-                        'type'     => $trace['type'] ?? null,
+                        'class' => $trace['class'] ?? null,
+                        'type' => $trace['type'] ?? null,
                     ];
                 })->toArray(),
-                'context'         => $finalContext,
-                'url'             => $finalContext['url'] ?? $request->fullUrl(),
-                'method'          => $finalContext['method'] ?? $request->method(),
-                'ip_address'      => $finalContext['ip_address'] ?? $request->ip(),
-                'user_agent'      => $finalContext['user_agent'] ?? $request->userAgent(),
-                'user_id'         => $finalContext['user_id'] ?? auth()->id(),
+                'context' => $finalContext,
+                'url' => $finalContext['url'] ?? $request->fullUrl(),
+                'method' => $finalContext['method'] ?? $request->method(),
+                'ip_address' => $finalContext['ip_address'] ?? $request->ip(),
+                'user_agent' => $finalContext['user_agent'] ?? $request->userAgent(),
+                'user_id' => $finalContext['user_id'] ?? auth()->id(),
             ]);
         } catch (\Throwable $logError) {
             // If logging fails, at least log to standard Laravel logs
-            \Log::error('Failed to log error to sys_error_log: ' . $logError->getMessage());
+            \Log::error('Failed to log error to sys_error_log: '.$logError->getMessage());
+
             return null;
         }
     }
 }
 
-
 use BaconQrCode\Renderer\GDLibRenderer;
 use BaconQrCode\Writer;
-use Illuminate\Support\Facades\Session;
 
 if (! function_exists('setActiveRole')) {
     /**
@@ -269,33 +280,16 @@ if (! function_exists('getAllUserRoles')) {
     }
 }
 
-if (! function_exists('formatTanggalIndo')) {
-    /**
-     * Format tanggal ke bahasa Indonesia
-     */
-    function formatTanggalIndo($tanggal)
-    {
-        return \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('D MMMM YYYY HH:mm:ss');
-    }
-}
-
-if (! function_exists('formatTanggalWaktuIndo')) {
-    /**
-     * Format tanggal dan waktu ke bahasa Indonesia
-     */
-    function formatTanggalWaktuIndo($tanggal)
-    {
-        return \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY HH:mm');
-    }
-}
+// Note: formatTanggalIndo() and formatTanggalWaktuIndo() are defined in GlobalHelper.php
+// Do not duplicate here to avoid conflicts
 
 if (! function_exists('generateQrCodeImage')) {
     /**
      * Generate QR code image and save to file
      *
-     * @param string $text Text to encode in QR code
-     * @param string $filename Filename to save the QR code image
-     * @param string|null $directory Directory to save the image (default: storage/app/qrcodes)
+     * @param  string  $text  Text to encode in QR code
+     * @param  string  $filename  Filename to save the QR code image
+     * @param  string|null  $directory  Directory to save the image (default: storage/app/qrcodes)
      * @return string Path to the saved QR code image
      */
     function generateQrCodeImage($text, $filename, $directory = null)
@@ -308,11 +302,11 @@ if (! function_exists('generateQrCodeImage')) {
             mkdir($directory, 0755, true);
         }
 
-        $filePath = $directory . '/' . $filename;
+        $filePath = $directory.'/'.$filename;
 
         // Generate QR code using BaconQrCode (as used in TestController)
-        $renderer  = new GDLibRenderer(200);
-        $writer    = new Writer($renderer);
+        $renderer = new GDLibRenderer(200);
+        $writer = new Writer($renderer);
         $qrCodeSvg = $writer->writeString($text);
 
         // Save the PNG data to file
@@ -326,14 +320,14 @@ if (! function_exists('generateQrCodeBase64')) {
     /**
      * Generate QR code as base64 encoded image
      *
-     * @param string $text Text to encode in QR code
+     * @param  string  $text  Text to encode in QR code
      * @return string Base64 encoded QR code image
      */
     function generateQrCodeBase64($text)
     {
         // Generate QR code using BaconQrCode (as used in TestController)
-        $renderer  = new GDLibRenderer(200);
-        $writer    = new Writer($renderer);
+        $renderer = new GDLibRenderer(200);
+        $writer = new Writer($renderer);
         $qrCodeSvg = $writer->writeString($text);
 
         // Encode to base64
@@ -347,7 +341,7 @@ if (! function_exists('sysDataTableSearchValue')) {
     /**
      * Standardize extracting search string from DataTables request
      *
-     * @param mixed $searchValue
+     * @param  mixed  $searchValue
      * @return string
      */
     function sysDataTableSearchValue($searchValue)
@@ -355,6 +349,7 @@ if (! function_exists('sysDataTableSearchValue')) {
         if (is_array($searchValue)) {
             return $searchValue['value'] ?? '';
         }
+
         return (string) $searchValue;
     }
 }
@@ -363,12 +358,14 @@ if (! function_exists('sysParseDateRange')) {
     /**
      * Standardize parsing "to" separated date strings
      *
-     * @param string $rangeString
+     * @param  string  $rangeString
      * @return array [start, end]
      */
     function sysParseDateRange($rangeString)
     {
-        if (! $rangeString) return [null, null];
+        if (! $rangeString) {
+            return [null, null];
+        }
 
         $dates = explode(' to ', $rangeString);
         if (count($dates) === 2) {
@@ -383,15 +380,15 @@ if (! function_exists('sysGenerateRefNumber')) {
     /**
      * Standardize sequential reference number generation
      *
-     * @param string $prefix Prefix like "REG-YYYY-"
-     * @param string $modelClass Model to check
-     * @param string $column Column name
-     * @param int $padding Length of counter
+     * @param  string  $prefix  Prefix like "REG-YYYY-"
+     * @param  string  $modelClass  Model to check
+     * @param  string  $column  Column name
+     * @param  int  $padding  Length of counter
      * @return string
      */
     function sysGenerateRefNumber($prefix, $modelClass, $column, $padding = 4)
     {
-        $last = $modelClass::where($column, 'like', $prefix . '%')
+        $last = $modelClass::where($column, 'like', $prefix.'%')
             ->orderBy($column, 'desc')
             ->first();
 
@@ -405,7 +402,7 @@ if (! function_exists('sysGenerateRefNumber')) {
             $number = (int) $lastNumberStr + 1;
         }
 
-        return $prefix . str_pad($number, $padding, '0', STR_PAD_LEFT);
+        return $prefix.str_pad($number, $padding, '0', STR_PAD_LEFT);
     }
 }
 
@@ -416,9 +413,9 @@ if (! function_exists('downloadStorageFile')) {
      * Menggantikan pola manual response()->download() yang tersebar di controller.
      * Semua validasi, MIME type detection, dan sanitasi nama file ditangani di sini.
      *
-     * @param  string|null  $storagePath     Path relatif dari hasil ->store() (misal: "public/pemutu/ed-attachments/file.pdf")
-     * @param  string|null  $downloadFilename Nama file yang diterima user saat download. Jika null, gunakan nama asli.
-     * @param  bool         $logActivity     Apakah perlu log aktivitas download (default: false)
+     * @param  string|null  $storagePath  Path relatif dari hasil ->store() (misal: "public/pemutu/ed-attachments/file.pdf")
+     * @param  string|null  $downloadFilename  Nama file yang diterima user saat download. Jika null, gunakan nama asli.
+     * @param  bool  $logActivity  Apakah perlu log aktivitas download (default: false)
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      *
      * @example
@@ -449,20 +446,19 @@ if (! function_exists('downloadStorageFile')) {
             $downloadFilename = basename($storagePath);
         } else {
             // Sanitasi: hapus karakter berbahaya, pertahankan ekstensi
-            $originalExt    = pathinfo($storagePath, PATHINFO_EXTENSION);
-            $safeBasename   = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', pathinfo($downloadFilename, PATHINFO_FILENAME));
-            $providedExt    = pathinfo($downloadFilename, PATHINFO_EXTENSION);
-            $finalExt       = $providedExt ?: $originalExt;
-            $downloadFilename = $safeBasename . ($finalExt ? '.' . $finalExt : '');
+            $originalExt = pathinfo($storagePath, PATHINFO_EXTENSION);
+            $safeBasename = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', pathinfo($downloadFilename, PATHINFO_FILENAME));
+            $providedExt = pathinfo($downloadFilename, PATHINFO_EXTENSION);
+            $finalExt = $providedExt ?: $originalExt;
+            $downloadFilename = $safeBasename.($finalExt ? '.'.$finalExt : '');
         }
 
         // 5. Log aktivitas (opsional)
         if ($logActivity) {
-            logActivity('system', 'Download file: ' . $downloadFilename);
+            logActivity('system', 'Download file: '.$downloadFilename);
         }
 
         // 6. Stream file ke browser
         return \Illuminate\Support\Facades\Storage::download($storagePath, $downloadFilename);
     }
 }
-

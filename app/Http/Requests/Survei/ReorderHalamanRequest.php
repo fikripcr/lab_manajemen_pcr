@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Survei;
 
 use App\Http\Requests\BaseRequest;
 
 class ReorderHalamanRequest extends BaseRequest
 {
-    /**
-     */
-
     protected function prepareForValidation()
     {
         if ($this->has('order') && is_array($this->input('order'))) {
@@ -29,7 +27,7 @@ class ReorderHalamanRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'order'   => 'required|array',
+            'order' => 'required|array',
             'order.*' => 'integer',
         ];
     }
@@ -37,7 +35,7 @@ class ReorderHalamanRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'order'   => 'Urutan',
+            'order' => 'Urutan',
             'order.*' => 'Urutan',
         ];
     }

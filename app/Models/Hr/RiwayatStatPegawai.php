@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -9,11 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RiwayatStatPegawai extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_riwayat_statpegawai';
+    protected $table = 'hr_riwayat_statpegawai';
+
     protected $primaryKey = 'riwayatstatpegawai_id';
-    protected $guarded    = ['riwayatstatpegawai_id'];
+
+    protected $guarded = ['riwayatstatpegawai_id'];
 
     protected $appends = ['encrypted_riwayatstatpegawai_id'];
 
@@ -41,7 +44,7 @@ class RiwayatStatPegawai extends Model
     ];
 
     protected $casts = [
-        'tmt'       => 'date',
+        'tmt' => 'date',
         'tgl_akhir' => 'date',
     ];
 

@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Models\Cbt;
 
-use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,11 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Soal extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'cbt_soal';
+    protected $table = 'cbt_soal';
+
     protected $primaryKey = 'soal_id';
-    protected $appends    = ['encrypted_soal_id'];
+
+    protected $appends = ['encrypted_soal_id'];
 
     protected $fillable = [
         'mata_uji_id',

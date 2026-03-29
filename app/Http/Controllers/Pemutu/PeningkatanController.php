@@ -1,15 +1,15 @@
 <?php
+
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\DuplikasiRequest;
 use App\Http\Requests\Pemutu\PeningkatanRtmRequest;
-use App\Models\Hr\StrukturOrganisasi;
-use App\Services\Hr\StrukturOrganisasiService;
 use App\Models\Event\Rapat;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\PeriodeSpmi;
+use App\Services\Hr\StrukturOrganisasiService;
 use App\Services\Pemutu\DuplikasiService;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\PelaksanaanService;
@@ -39,15 +39,15 @@ class PeningkatanController extends Controller
 
         $data = [
             'pageTitle' => 'Peningkatan',
-            'siklus'    => $siklus,
-            'users'     => $users,
-            'units'     => $this->StrukturOrganisasiService->getHierarchicalList(),
+            'siklus' => $siklus,
+            'users' => $users,
+            'units' => $this->StrukturOrganisasiService->getHierarchicalList(),
         ];
 
         // Fetch RTM and duplication status for both periods
         foreach (['akademik', 'non_akademik'] as $type) {
             $periode = $siklus[$type];
-            $rapat   = null;
+            $rapat = null;
             $hasDuplicated = false;
 
             if ($periode) {
@@ -58,12 +58,12 @@ class PeningkatanController extends Controller
                 }
 
                 // Duplication check
-                $hasDuplicated = Indikator::where('origin_from', 'peningkatan_' . $periode->periode)->exists();
+                $hasDuplicated = Indikator::where('origin_from', 'peningkatan_'.$periode->periode)->exists();
             }
 
-            $data[$type . 'Rapat'] = $rapat;
-            $data[$type . 'HasDuplicated'] = $hasDuplicated;
-            $data[$type . 'RootDoks'] = \App\Models\Pemutu\Dokumen::whereNull('parent_id')
+            $data[$type.'Rapat'] = $rapat;
+            $data[$type.'HasDuplicated'] = $hasDuplicated;
+            $data[$type.'RootDoks'] = \App\Models\Pemutu\Dokumen::whereNull('parent_id')
                 ->where('periode', $siklus['tahun'])
                 ->orderBy('seq')
                 ->get();
@@ -71,7 +71,6 @@ class PeningkatanController extends Controller
 
         return view('pages.pemutu.peningkatan.index', $data);
     }
-
 
     // ─── RTM Methods ──────────────────────────────────────────────
 
@@ -112,7 +111,7 @@ class PeningkatanController extends Controller
     public function standarList(Request $request, PeriodeSpmi $periode)
     {
         $targetPeriode = (int) $request->input('target_periode', $periode->periode + 1);
-        $kelompok      = $periode->jenis_periode; // 'Akademik' atau 'Non Akademik'
+        $kelompok = $periode->jenis_periode; // 'Akademik' atau 'Non Akademik'
 
         // Standar lama: semua root Dokumen di periode ini yang punya indikator dgn kelompok tsb
         $rootDoks = Dokumen::whereNull('parent_id')
@@ -149,12 +148,12 @@ class PeningkatanController extends Controller
                 ->exists();
 
             $standarLama->push([
-                'id'                 => encryptId($dok->dok_id),
-                'dok_id'             => encryptId($dok->dok_id),
-                'encrypted_id'       => encryptId($dok->dok_id),
-                'kode'               => $dok->kode,
-                'judul'              => $dok->judul,
-                'indikator_count'    => $indikatorCount,
+                'id' => encryptId($dok->dok_id),
+                'dok_id' => encryptId($dok->dok_id),
+                'encrypted_id' => encryptId($dok->dok_id),
+                'kode' => $dok->kode,
+                'judul' => $dok->judul,
+                'indikator_count' => $indikatorCount,
                 'already_duplicated' => $alreadyDuplicated,
             ]);
         }
@@ -168,7 +167,7 @@ class PeningkatanController extends Controller
 
         $standarBaru = collect();
         foreach ($newRootDoks as $dok) {
-            $treeIds        = $this->collectDokumenTreeIds($dok->dok_id);
+            $treeIds = $this->collectDokumenTreeIds($dok->dok_id);
             $indikatorCount = \DB::table('pemutu_indikator_doksub as ids')
                 ->join('pemutu_dok_sub as ds', 'ds.doksub_id', '=', 'ids.doksub_id')
                 ->join('pemutu_indikator as i', 'i.indikator_id', '=', 'ids.indikator_id')
@@ -180,21 +179,21 @@ class PeningkatanController extends Controller
 
             // Tampilkan juga yang belum punya indikator (dokumen sudah ada tapi indikator belum dicopy)
             $standarBaru->push([
-                'id'              => encryptId($dok->dok_id),
-                'dok_id'          => encryptId($dok->dok_id),
-                'encrypted_id'    => encryptId($dok->dok_id),
-                'kode'            => $dok->kode,
-                'judul'           => $dok->judul,
+                'id' => encryptId($dok->dok_id),
+                'dok_id' => encryptId($dok->dok_id),
+                'encrypted_id' => encryptId($dok->dok_id),
+                'kode' => $dok->kode,
+                'judul' => $dok->judul,
                 'indikator_count' => $indikatorCount,
             ]);
         }
 
         return response()->json([
             'success' => true,
-            'data'    => [
-                'kelompok'     => $kelompok,
-                'old_periode'  => $periode->periode,
-                'new_periode'  => $targetPeriode,
+            'data' => [
+                'kelompok' => $kelompok,
+                'old_periode' => $periode->periode,
+                'new_periode' => $targetPeriode,
                 'standar_lama' => $standarLama->values(),
                 'standar_baru' => $standarBaru->values(),
             ],
@@ -206,7 +205,7 @@ class PeningkatanController extends Controller
      */
     protected function collectDokumenTreeIds(int $rootId): array
     {
-        $ids      = [$rootId];
+        $ids = [$rootId];
         $children = Dokumen::where('parent_id', $rootId)->pluck('dok_id');
 
         foreach ($children as $childId) {
@@ -221,25 +220,30 @@ class PeningkatanController extends Controller
      */
     public function duplicateStandar(DuplikasiRequest $request, PeriodeSpmi $periode)
     {
-        $validated      = $request->validated();
-        $targetPeriode  = (int) $validated['target_periode'];
+        $validated = $request->validated();
+        $targetPeriode = (int) $validated['target_periode'];
         $selectedDokIds = array_map('decryptIdIfEncrypted', $validated['selected_dok_ids']);
 
         $stats = $this->DuplikasiService->duplicateSelected($selectedDokIds, $periode->periode, $targetPeriode);
 
-        $message = "Duplikasi berhasil! "
-            . "Dokumen baru: {$stats['dokumen_cloned']}, reuse: {$stats['dokumen_reused']}, "
-            . "Indikator: {$stats['indikator_cloned']} "
-            . "(skip nonaktif: {$stats['indikator_skipped_nonaktif']}, skip KPI: {$stats['indikator_skipped_kpi']}), "
-            . "OrgUnit: {$stats['orgunit_cloned']}";
+        $message = 'Duplikasi berhasil! '
+            ."Dokumen baru: {$stats['dokumen_cloned']}, reuse: {$stats['dokumen_reused']}, "
+            ."Indikator: {$stats['indikator_cloned']} "
+            ."(skip nonaktif: {$stats['indikator_skipped_nonaktif']}, skip KPI: {$stats['indikator_skipped_kpi']}), "
+            ."OrgUnit: {$stats['orgunit_cloned']}";
 
         return jsonSuccess($message, route('pemutu.peningkatan.index'));
     }
 
     public function reviewData(Request $request, PeriodeSpmi $periode)
     {
-        $filters = $request->only(['pengend_status', 'pengend_important_matrix', 'pengend_urgent_matrix', 'dok_id', 'unit_id']);
-        $query   = $this->IndikatorService->getPeningkatanReviewQuery($periode, $filters);
+        $filters = [];
+        foreach ($request->only(['pengend_status', 'pengend_important_matrix', 'pengend_urgent_matrix', 'dok_id', 'unit_id']) as $key => $value) {
+            if ($value !== null && $value !== '' && $value !== 'all') {
+                $filters[$key] = $value;
+            }
+        }
+        $query = $this->IndikatorService->getPeningkatanReviewQuery($periode, $filters);
 
         return DataTables::of($query)
             ->addColumn('no', function ($row) {
@@ -255,16 +259,16 @@ class PeningkatanController extends Controller
                 return pemutuDtColStatusPeningkatan($row);
             })
             ->addColumn('dokumen_standar', function ($row) {
-                return '<span class="text-muted small"><i class="ti ti-folder me-1"></i> ' . e($row->dokumen_judul ?? 'Tanpa Dokumen') . '</span>';
+                return '<span class="text-muted small"><i class="ti ti-folder me-1"></i> '.e($row->dokumen_judul ?? 'Tanpa Dokumen').'</span>';
             })
             ->addColumn('keterangan_perubahan', function ($row) {
                 $parts = [];
 
                 if ($row->prev_pengend_analisis_atsn) {
-                    $parts[] = '<small class="text-muted">Analisis Atasan:</small> ' . $row->prev_pengend_analisis_atsn;
+                    $parts[] = '<small class="text-muted">Analisis Atasan:</small> '.$row->prev_pengend_analisis_atsn;
                 }
                 if ($row->target_lama && $row->target_lama !== $row->target_baru) {
-                    $parts[] = '<small class="text-muted">Target lama:</small> ' . e($row->target_lama) . ' → ' . e($row->target_baru);
+                    $parts[] = '<small class="text-muted">Target lama:</small> '.e($row->target_lama).' → '.e($row->target_baru);
                 }
 
                 return $parts ? implode('<br>', $parts) : '<span class="text-muted">—</span>';
@@ -295,12 +299,12 @@ class PeningkatanController extends Controller
     public function deleteStandarTargetBulk(Request $request, PeriodeSpmi $periode)
     {
         $request->validate([
-            'target_periode'     => 'required|integer',
-            'selected_dok_ids'   => 'required|array|min:1',
+            'target_periode' => 'required|integer',
+            'selected_dok_ids' => 'required|array|min:1',
             'selected_dok_ids.*' => 'required|string',
         ]);
 
-        $dokIds            = array_map('decryptIdIfEncrypted', $request->selected_dok_ids);
+        $dokIds = array_map('decryptIdIfEncrypted', $request->selected_dok_ids);
         $totalDeletedCount = 0;
 
         foreach ($dokIds as $dokId) {
@@ -308,14 +312,14 @@ class PeningkatanController extends Controller
 
             // Bypass if not found or wrong period
             if ($dokumen && $dokumen->periode == $request->target_periode) {
-                $count              = $this->DuplikasiService->deleteDuplicatedTree($dokumen->dok_id);
+                $count = $this->DuplikasiService->deleteDuplicatedTree($dokumen->dok_id);
                 $totalDeletedCount += $count;
             }
         }
 
         return response()->json([
             'success' => true,
-            'message' => count($dokIds) . " Standar terpilih (dan anak-anaknya) berhasil dihapus. Total $totalDeletedCount Dokumen terhapus bersih dari sistem.",
+            'message' => count($dokIds)." Standar terpilih (dan anak-anaknya) berhasil dihapus. Total $totalDeletedCount Dokumen terhapus bersih dari sistem.",
         ]);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Lab;
 
 use App\Models\Lab\JadwalKuliah;
@@ -44,7 +45,7 @@ class LogPenggunaanPcService
      */
     public function getCurrentActiveJadwal(): ?JadwalKuliah
     {
-        $now  = Carbon::now();
+        $now = Carbon::now();
         $hari = $this->getIndonesianDay($now->dayOfWeek);
         $time = $now->format('H:i:s');
 
@@ -75,7 +76,7 @@ class LogPenggunaanPcService
     {
         // Validasi Bisnis Logic
         $jadwalId = $data['jadwal_id'];
-        $userId   = $data['user_id']; // Usually from Auth::id()
+        $userId = $data['user_id']; // Usually from Auth::id()
 
         // 1. Cek User Assignment (Optional, bisa di-skip jika kebijakan lab bebas duduk)
         // Tapi request user: "mengisi Log ... sesuai jadwal perkuliahan saya".
@@ -92,14 +93,14 @@ class LogPenggunaanPcService
 
         return DB::transaction(function () use ($data, $assignment) {
             $log = LogPenggunaanPc::create([
-                'user_id'          => $data['user_id'],
-                'jadwal_id'        => $data['jadwal_id'],
-                'lab_id'           => $data['lab_id'],
+                'user_id' => $data['user_id'],
+                'jadwal_id' => $data['jadwal_id'],
+                'lab_id' => $data['lab_id'],
                 'pc_assignment_id' => $assignment ? $assignment->pc_assignment_id : null,
-                'status_pc'        => $data['status_pc'],       // Baik/Rusak
-                'kondisi'          => $data['kondisi'] ?? null, // Detail
-                'catatan_umum'     => $data['catatan_umum'] ?? null,
-                'waktu_isi'        => now(),
+                'status_pc' => $data['status_pc'],       // Baik/Rusak
+                'kondisi' => $data['kondisi'] ?? null, // Detail
+                'catatan_umum' => $data['catatan_umum'] ?? null,
+                'waktu_isi' => now(),
             ]);
 
             logActivity('log_penggunaan_pc', "Mahasiswa ID {$data['user_id']} mengisi log PC untuk jadwal ID {$data['jadwal_id']}");
@@ -119,6 +120,7 @@ class LogPenggunaanPcService
             5 => 'Jumat',
             6 => 'Sabtu',
         ];
+
         return $days[$dayOfWeek] ?? '';
     }
 }

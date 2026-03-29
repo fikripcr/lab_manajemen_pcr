@@ -1,8 +1,8 @@
 <?php
-namespace App\Models\Lab;
- 
-use App\Models\Akademik\Semester;
 
+namespace App\Models\Lab;
+
+use App\Models\Akademik\Semester;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,9 +11,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PeriodSoftRequest extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'lab_periode_softrequest';
+    protected $table = 'lab_periode_softrequest';
+
     protected $primaryKey = 'periodsoftreq_id';
 
     protected $appends = ['encrypted_periodsoftreq_id'];
@@ -35,9 +36,9 @@ class PeriodSoftRequest extends Model
     ];
 
     protected $casts = [
-        'is_active'  => 'boolean',
+        'is_active' => 'boolean',
         'start_date' => 'date',
-        'end_date'   => 'date',
+        'end_date' => 'date',
     ];
 
     /**

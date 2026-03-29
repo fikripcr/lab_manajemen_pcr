@@ -1,18 +1,18 @@
 <?php
+
 namespace App\Http\Requests\Event;
 
 use App\Http\Requests\BaseRequest;
 
 class RapatAgendaRequest extends BaseRequest
 {
-
     public function rules(): array
     {
         return [
-            'rapat_id'     => 'sometimes|exists:event_rapat,rapat_id',
+            'rapat_id' => 'sometimes|exists:event_rapat,rapat_id',
             'judul_agenda' => 'required|string|max:250',
-            'isi'          => 'nullable|string',
-            'seq'          => 'nullable|integer',
+            'isi' => 'nullable|string',
+            'seq' => 'nullable|integer',
         ];
     }
 
@@ -28,10 +28,10 @@ class RapatAgendaRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'rapat_id'     => 'Rapat',
+            'rapat_id' => 'Rapat',
             'judul_agenda' => 'Judul Agenda',
-            'isi'          => 'Isi Agenda',
-            'seq'          => 'Urutan',
+            'isi' => 'Isi Agenda',
+            'seq' => 'Urutan',
         ];
     }
 }

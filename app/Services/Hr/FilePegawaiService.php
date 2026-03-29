@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Hr;
 
 use App\Models\Hr\FilePegawai;
@@ -22,15 +23,15 @@ class FilePegawaiService
     {
         return DB::transaction(function () use ($pegawaiId, $data, $fileRequest) {
             $filePegawai = FilePegawai::create([
-                'pegawai_id'   => $pegawaiId,
+                'pegawai_id' => $pegawaiId,
                 'jenisfile_id' => $data['jenisfile_id'],
-                'keterangan'   => $data['keterangan'] ?? null,
+                'keterangan' => $data['keterangan'] ?? null,
             ]);
 
             $filePegawai->addMedia($fileRequest)
                 ->toMediaCollection('file_pegawai');
 
-            logActivity('hr', "Mengupload file baru untuk pegawai (ID: {$pegawaiId}): " . ($filePegawai->jenisfile->nama ?? 'File'), $filePegawai);
+            logActivity('hr', "Mengupload file baru untuk pegawai (ID: {$pegawaiId}): ".($filePegawai->jenisfile->nama ?? 'File'), $filePegawai);
 
             return $filePegawai;
         });
@@ -43,7 +44,8 @@ class FilePegawaiService
     {
         return DB::transaction(function () use ($id) {
             $filePegawai = FilePegawai::findOrFail($id);
-            logActivity('hr', "Menghapus file pegawai (ID: {$filePegawai->pegawai_id}): " . ($filePegawai->jenisfile->nama ?? 'File'), $filePegawai);
+            logActivity('hr', "Menghapus file pegawai (ID: {$filePegawai->pegawai_id}): ".($filePegawai->jenisfile->nama ?? 'File'), $filePegawai);
+
             return $filePegawai->delete();
         });
     }

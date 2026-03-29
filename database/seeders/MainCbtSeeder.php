@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Models\Cbt\JadwalUjian;
@@ -40,14 +41,14 @@ class MainCbtSeeder extends Seeder
         foreach ($subjectsData as $s) {
             $mataUjiModels[] = MataUji::create([
                 'nama_mata_uji' => $s['nama'],
-                'deskripsi'     => $s['deskripsi'],
-                'tipe'          => $s['tipe'],
+                'deskripsi' => $s['deskripsi'],
+                'tipe' => $s['tipe'],
             ]);
         }
 
         // Get a valid user ID for 'dibuat_oleh'
         $firstUser = \App\Models\User::first();
-        $userId    = $firstUser ? $firstUser->id : 1;
+        $userId = $firstUser ? $firstUser->id : 1;
 
         // 3. SOAL GENERATION (500 Questions)
         $this->command->info('Generating 500 high-variety CBT Questions...');
@@ -67,14 +68,14 @@ class MainCbtSeeder extends Seeder
                 'Ide pokok paragraf yang membahas tentang "{word}" adalah...',
                 'Penulisan kalimat efektif yang mengandung kata "{word}" adalah...',
             ],
-            'Bahasa Inggris'   => [
+            'Bahasa Inggris' => [
                 'What is the closest meaning of "{word}"?',
                 'Select the correct verb for: "They {verb} to the camp last week."',
                 'The opposite of the word "{word}" in this context is...',
                 'Choose the best preposition: "I am interested {prep} learning coding."',
                 'Which of these words has the closest meaning to "{word}"?',
             ],
-            'Penalaran Umum'   => [
+            'Penalaran Umum' => [
                 'Jika SEMUA {word} adalah {word2}, dan SEBAGIAN {word} adalah {word3}, maka...',
                 'Pola deret angka: {num1}, {num2}, {num3}, ... Angka selanjutnya adalah...',
                 'Lengkapi analogi berikut: {word} : {word2} = {word3} : ...',
@@ -92,12 +93,12 @@ class MainCbtSeeder extends Seeder
 
         $words_id_list = ['Kualitas', 'Apotek', 'Analisis', 'Objektif', 'Hierarki', 'Risiko', 'Sekadar', 'Zaman', 'Izin', 'Ekstrem'];
         $words_en_list = ['Resilient', 'Ambiguous', 'Prolific', 'Benevolent', 'Candid', 'Diligent', 'Eloquent', 'Frugal', 'Gullible', 'Hostile'];
-        $logic_words   = ['Mamalia', 'Hewan', 'Karnivora', 'Tumbuhan', 'Bunga', 'Mawar', 'Kendaraan', 'Mobil', 'Roda', 'Mesin'];
+        $logic_words = ['Mamalia', 'Hewan', 'Karnivora', 'Tumbuhan', 'Bunga', 'Mawar', 'Kendaraan', 'Mobil', 'Roda', 'Mesin'];
 
         for ($i = 1; $i <= 500; $i++) {
-            $mu           = $mataUjiModels[array_rand($mataUjiModels)];
+            $mu = $mataUjiModels[array_rand($mataUjiModels)];
             $templateList = $templates[$mu->nama_mata_uji];
-            $template     = $templateList[array_rand($templateList)];
+            $template = $templateList[array_rand($templateList)];
 
             // Fill placeholders
             $qText = $template;
@@ -112,17 +113,17 @@ class MainCbtSeeder extends Seeder
             $qText = str_replace('{verb}', ['went', 'gone', 'going', 'go'][rand(0, 3)], $qText);
 
             $soal = Soal::create([
-                'mata_uji_id'       => $mu->mata_uji_id,
+                'mata_uji_id' => $mu->mata_uji_id,
                 'konten_pertanyaan' => "<p>$qText</p>",
-                'tipe_soal'         => 'Pilihan_Ganda',
+                'tipe_soal' => 'Pilihan_Ganda',
                 'tingkat_kesulitan' => ['Mudah', 'Sedang', 'Sulit'][rand(0, 2)],
-                'dibuat_oleh'       => $userId,
-                'is_aktif'          => true,
+                'dibuat_oleh' => $userId,
+                'is_aktif' => true,
             ]);
 
             // Create 5 options
             $correctIdx = rand(0, 4);
-            $labels     = ['A', 'B', 'C', 'D', 'E'];
+            $labels = ['A', 'B', 'C', 'D', 'E'];
 
             // Variational data for answers
             $mathAnswers = [];
@@ -132,7 +133,7 @@ class MainCbtSeeder extends Seeder
 
             foreach ($labels as $idx => $label) {
                 $isCorrect = ($idx === $correctIdx);
-                $ansText   = "";
+                $ansText = '';
 
                 switch ($mu->nama_mata_uji) {
                     case 'Matematika Dasar':
@@ -148,15 +149,15 @@ class MainCbtSeeder extends Seeder
                         $ansText = $logic_words[array_rand($logic_words)];
                         break;
                     default:
-                        $ansText = "Pilihan " . $label . " untuk " . $mu->nama_mata_uji;
+                        $ansText = 'Pilihan '.$label.' untuk '.$mu->nama_mata_uji;
                 }
 
                 OpsiJawaban::create([
-                    'soal_id'          => $soal->soal_id,
-                    'label'            => $label,
-                    'teks_jawaban'     => $ansText,
+                    'soal_id' => $soal->soal_id,
+                    'label' => $label,
+                    'teks_jawaban' => $ansText,
                     'is_kunci_jawaban' => $isCorrect,
-                    'bobot_nilai'      => $isCorrect ? 1 : 0,
+                    'bobot_nilai' => $isCorrect ? 1 : 0,
                 ]);
             }
         }
@@ -167,12 +168,12 @@ class MainCbtSeeder extends Seeder
 
         for ($p = 1; $p <= 10; $p++) {
             $paket = PaketUjian::create([
-                'nama_paket'         => "Paket Soal Standar v.$p.0",
-                'tipe_paket'         => 'PMB',
-                'total_soal'         => 50,
+                'nama_paket' => "Paket Soal Standar v.$p.0",
+                'tipe_paket' => 'PMB',
+                'total_soal' => 50,
                 'total_durasi_menit' => 60,
-                'is_acak_soal'       => (bool) rand(0, 1),
-                'dibuat_oleh'        => $userId,
+                'is_acak_soal' => (bool) rand(0, 1),
+                'dibuat_oleh' => $userId,
             ]);
 
             // Assign 50 random questions to each package
@@ -181,20 +182,20 @@ class MainCbtSeeder extends Seeder
 
             foreach ($selectedIds as $index => $sid) {
                 KomposisiPaket::create([
-                    'paket_id'      => $paket->paket_ujian_id,
-                    'soal_id'       => $sid,
+                    'paket_id' => $paket->paket_ujian_id,
+                    'soal_id' => $sid,
                     'urutan_tampil' => $index + 1,
                 ]);
             }
 
-                                                // 5. Create Jadwal Ujian for each package (Shorter duration: 2 hours)
+            // 5. Create Jadwal Ujian for each package (Shorter duration: 2 hours)
             $startTime = now()->subMinutes(15); // Started 15 mins ago
             JadwalUjian::create([
-                'paket_id'       => $paket->paket_ujian_id,
-                'nama_kegiatan'  => "Ujian Saringan Masuk - " . $paket->nama_paket,
-                'waktu_mulai'    => $startTime,
-                'waktu_selesai'  => $startTime->copy()->addHours(2),
-                'token_ujian'    => strtoupper(substr(md5(uniqid()), 0, 6)),
+                'paket_id' => $paket->paket_ujian_id,
+                'nama_kegiatan' => 'Ujian Saringan Masuk - '.$paket->nama_paket,
+                'waktu_mulai' => $startTime,
+                'waktu_selesai' => $startTime->copy()->addHours(2),
+                'token_ujian' => strtoupper(substr(md5(uniqid()), 0, 6)),
                 'is_token_aktif' => true,
             ]);
         }

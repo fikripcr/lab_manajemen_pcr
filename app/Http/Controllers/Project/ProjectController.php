@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Project;
 
 use App\Http\Controllers\Controller;
@@ -15,8 +16,7 @@ class ProjectController extends Controller
     public function __construct(
         protected ProjectService $projectService,
         protected ProjectTaskService $taskService
-    ) {
-    }
+    ) {}
 
     /**
      * Display a listing of projects
@@ -41,7 +41,7 @@ class ProjectController extends Controller
                 ])->render();
             })
             ->editColumn('status', function ($item) {
-                return '<span class="badge ' . $item->status_badge_class . '">' . ucfirst(str_replace('_', ' ', $item->status)) . '</span>';
+                return '<span class="badge '.$item->status_badge_class.'">'.ucfirst(str_replace('_', ' ', $item->status)).'</span>';
             })
             ->editColumn('start_date', function ($item) {
                 return formatTanggalIndo($item->start_date);
@@ -51,6 +51,7 @@ class ProjectController extends Controller
             })
             ->addColumn('progress', function ($item) {
                 $percentage = $item->progress_percentage;
+
                 return view('components.project.progress-bar', [
                     'percentage' => $percentage,
                 ])->render();
@@ -60,9 +61,9 @@ class ProjectController extends Controller
             })
             ->addColumn('action', function ($item) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('projects.edit', $item),
+                    'editUrl' => route('projects.edit', $item),
                     'editModal' => false,
-                    'viewUrl'   => route('projects.show', $item),
+                    'viewUrl' => route('projects.show', $item),
                     'deleteUrl' => route('projects.destroy', $item),
                 ])->render();
             })
@@ -75,8 +76,8 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        $users   = User::all();
-        $project = new Project();
+        $users = User::all();
+        $project = new Project;
 
         return view('pages.projects.create-edit', compact('project', 'users'));
     }
@@ -86,7 +87,7 @@ class ProjectController extends Controller
      */
     public function store(ProjectRequest $request)
     {
-        $data    = $request->validated();
+        $data = $request->validated();
         $project = $this->projectService->createProject($data);
 
         return redirect()->route('projects.show', $project)
@@ -99,8 +100,8 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
         $statistics = $this->projectService->getProjectStatistics($project);
-        $tasks      = $project->tasks()->with('assignee')->ordered()->get();
-        $members    = $project->members()->with('user')->get();
+        $tasks = $project->tasks()->with('assignee')->ordered()->get();
+        $members = $project->members()->with('user')->get();
 
         return view('pages.projects.show', compact('project', 'statistics', 'tasks', 'members'));
     }

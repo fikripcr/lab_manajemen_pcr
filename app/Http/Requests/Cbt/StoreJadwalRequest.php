@@ -1,12 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Cbt;
 
 use App\Http\Requests\BaseRequest;
 
 class StoreJadwalRequest extends BaseRequest
 {
-    
-
     protected function prepareForValidation()
     {
         if ($this->has('paket_id')) {
@@ -19,9 +18,9 @@ class StoreJadwalRequest extends BaseRequest
     public function rules()
     {
         return [
-            'paket_id'      => 'required|exists:cbt_paket_ujian,paket_ujian_id',
+            'paket_id' => 'required|exists:cbt_paket_ujian,paket_ujian_id',
             'nama_kegiatan' => 'required|string|max:255',
-            'waktu_mulai'   => 'required|date',
+            'waktu_mulai' => 'required|date',
             'waktu_selesai' => 'required|date|after:waktu_mulai',
         ];
     }
@@ -29,9 +28,9 @@ class StoreJadwalRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'paket_id'      => 'Paket Ujian',
+            'paket_id' => 'Paket Ujian',
             'nama_kegiatan' => 'Nama Kegiatan',
-            'waktu_mulai'   => 'Waktu Mulai',
+            'waktu_mulai' => 'Waktu Mulai',
             'waktu_selesai' => 'Waktu Selesai',
         ];
     }

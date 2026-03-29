@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Event;
 
 use App\Models\Event\EventTeam;
@@ -19,12 +20,12 @@ class EventTeamService
             }
 
             $team = EventTeam::create([
-                'event_id'          => $data['event_id'],
-                'pegawai_id'        => $data['pegawai_id'],
-                'role'              => $data['role'] ?? null,
+                'event_id' => $data['event_id'],
+                'pegawai_id' => $data['pegawai_id'],
+                'role' => $data['role'] ?? null,
                 'jabatan_dalam_tim' => $data['jabatan_dalam_tim'] ?? null,
-                'is_pic'            => $data['is_pic'] ?? false,
-                'created_by'        => auth()->id(),
+                'is_pic' => $data['is_pic'] ?? false,
+                'created_by' => auth()->id(),
             ]);
 
             $memberName = $team->memberable?->nama_pegawai ?? 'N/A';
@@ -52,10 +53,10 @@ class EventTeamService
             }
 
             $team->update([
-                'pegawai_id'        => $data['pegawai_id'],
-                'role'              => $data['role'] ?? null,
+                'pegawai_id' => $data['pegawai_id'],
+                'role' => $data['role'] ?? null,
                 'jabatan_dalam_tim' => $data['jabatan_dalam_tim'] ?? null,
-                'is_pic'            => $data['is_pic'] ?? false,
+                'is_pic' => $data['is_pic'] ?? false,
             ]);
 
             $memberName = $team->memberable?->nama_pegawai ?? 'N/A';

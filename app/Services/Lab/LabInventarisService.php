@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Lab;
 
 use App\Models\Lab\Inventaris;
@@ -38,13 +39,13 @@ class LabInventarisService
             $kodeInventaris = LabInventaris::generateKodeInventaris($labId, $inventarisId);
 
             $labInventaris = LabInventaris::create([
-                'inventaris_id'      => $inventarisId,
-                'lab_id'             => $labId,
-                'kode_inventaris'    => $kodeInventaris,
-                'no_series'          => $data['no_series'] ?? null,
+                'inventaris_id' => $inventarisId,
+                'lab_id' => $labId,
+                'kode_inventaris' => $kodeInventaris,
+                'no_series' => $data['no_series'] ?? null,
                 'tanggal_penempatan' => $data['tanggal_penempatan'] ?? now(),
-                'keterangan'         => $data['keterangan'] ?? null,
-                'status'             => $data['status'] ?? 'active',
+                'keterangan' => $data['keterangan'] ?? null,
+                'status' => $data['status'] ?? 'active',
             ]);
 
             logActivity(
@@ -91,6 +92,7 @@ class LabInventarisService
         if (! $model) {
             throw new Exception("Data Inventaris Lab dengan ID {$id} tidak ditemukan.");
         }
+
         return $model;
     }
 }

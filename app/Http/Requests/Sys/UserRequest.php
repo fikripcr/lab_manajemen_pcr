@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Requests\Sys;
 
 use App\Http\Requests\BaseRequest;
@@ -7,7 +8,6 @@ use Illuminate\Validation\Rule;
 class UserRequest extends BaseRequest
 {
     /**
-     *
      * @return bool
      */
 
@@ -23,21 +23,21 @@ class UserRequest extends BaseRequest
         $userId = $userId ? decryptId($userId) : null;
 
         return [
-            'name'       => ['required', 'string', 'max:255'],
-            'email'      => [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
                 'required',
                 'email',
                 $userId ? Rule::unique('users')->ignore($userId) : '',
             ],
-            'role'       => ['required', 'array'],
-            'role.*'     => ['exists:sys_roles,name'],
-            'password'   => [
+            'role' => ['required', 'array'],
+            'role.*' => ['exists:sys_roles,name'],
+            'password' => [
                 $userId ? 'nullable' : 'required',
                 'string',
                 'min:8',
                 'confirmed',
             ],
-            'avatar'     => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // 2MB max
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // 2MB max
             'expired_at' => ['nullable', 'date'],
         ];
     }
@@ -45,12 +45,12 @@ class UserRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'name'       => 'Nama',
-            'email'      => 'Email',
-            'role'       => 'Role',
-            'role.*'     => 'Role',
-            'password'   => 'Password',
-            'avatar'     => 'Avatar',
+            'name' => 'Nama',
+            'email' => 'Email',
+            'role' => 'Role',
+            'role.*' => 'Role',
+            'password' => 'Password',
+            'avatar' => 'Avatar',
             'expired_at' => 'Tanggal Kedaluwarsa',
         ];
     }

@@ -4,14 +4,14 @@
 @section('header')
 <x-tabler.page-header title="Evaluasi Diri SPMI {{ $siklus['tahun'] }}" pretitle="Evaluasi">
     <x-slot:actions>
-        <div class="nav nav-pills" id="top-tabs" role="tablist">
-            <a href="#tab-akademik" class="nav-link active" data-bs-toggle="tab" role="tab">
-                <i class="ti ti-school me-2"></i>Akademik
+        <nav class="nav nav-segmented" role="tablist">
+         <a href="#tab-akademik" class="nav-link active" data-bs-toggle="tab" role="tab">
+                <i class="ti ti-school"></i>Akademik
             </a>
             <a href="#tab-non-akademik" class="nav-link" data-bs-toggle="tab" role="tab" tabindex="-1">
-                <i class="ti ti-building-community me-2"></i>Non Akademik
+                <i class="ti ti-building-community"></i>Non Akademik
             </a>
-        </div>
+        </nav>
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -37,7 +37,7 @@
                             </li>
                             <li class="nav-item" role="presentation">
                                 <a href="#tab-ptp-{{ $typeId }}" class="nav-link" data-bs-toggle="tab" role="tab" tabindex="-1">
-                                    <i class="ti ti-history me-2"></i>Pelaksanaan Perbaikan
+                                    <i class="ti ti-history me-2"></i>Pelaksanaan Tindakan Perbaikan
                                 </a>
                             </li>
                         </ul>
@@ -50,13 +50,14 @@
                                 <div class="row align-items-center">
                                     <div class="col">
                                         <h3 class="mb-1">Periode {{ $periode->jenis_periode }} {{ $periode->periode }}</h3>
-                                        <div class="text-muted small">
-                                            @if($jadwalTersedia)
+                                        <div class="text-muted small mt-1">
+                                            @php $periodeInfo = pemutuPeriodeStatus($periode->ed_awal, $periode->ed_akhir); @endphp
+                                            @if($periode->ed_awal && $periode->ed_akhir)
                                                 <i class="ti ti-calendar me-1"></i>
-                                                Jadwal: {{ $periode->ed_awal->format('d M') }} - {{ $periode->ed_akhir->format('d M Y') }}
-                                            @else
-                                                <span class="text-warning"><i class="ti ti-alert-triangle me-1"></i> Jadwal Belum Diatur</span>
+                                                Jadwal: {{ $periode->ed_awal->format('d M Y') }} s.d. {{ $periode->ed_akhir->format('d M Y') }}
                                             @endif
+                                            <span class="badge bg-{{ $periodeInfo['color'] }}-lt ms-2">{{ $periodeInfo['status_text'] }}</span>
+                                            <span class="text-{{ $periodeInfo['color'] }} ms-1 fw-bold" style="font-size: 0.85em;">{{ $periodeInfo['time_info'] }}</span>
                                         </div>
                                     </div>
                                     <div class="col-auto d-flex gap-2">
@@ -71,7 +72,7 @@
                                     <div class="row g-3">
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="unit_id" id="unit_id_{{ $typeId }}" label="Unit / Area" placeholder="">
-                                                <option value="">Semua Unit</option>
+                                                <option value="all">Semua Unit</option>
                                                 @foreach($units as $unit)
                                                     <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
                                                 @endforeach
@@ -79,7 +80,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="dok_id" id="dok_id_{{ $typeId }}" label="Standar / Dokumen" placeholder="">
-                                                <option value="">Semua Standar</option>
+                                                <option value="all">Semua Standar</option>
                                                 @foreach($rootDoks as $dok)
                                                     <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->kode ?? '' }} - {{ $dok->judul }}</option>
                                                 @endforeach
@@ -87,7 +88,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="ed_status" id="ed_status_{{ $typeId }}" label="Status Pengisian ED" placeholder="">
-                                                <option value="">Semua</option>
+                                                <option value="all">Semua</option>
                                                 <option value="filled">Sudah Isi</option>
                                                 <option value="empty">Belum Isi</option>
                                             </x-tabler.form-select>
@@ -101,7 +102,7 @@
                                     route="{{ route('pemutu.evaluasi-diri.data', $periode->encrypted_periodespmi_id) }}"
                                     :columns="[
                                         ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                                        ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator / Pernyataan Standar'],
+                                        ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator'],
                                         ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '15%','class' => 'text-left' ],
                                         ['data' => 'capaian', 'name' => 'capaian', 'title' => 'Capaian', 'width' => '15%','class' => 'text-center'  ],
                                         ['data' => 'analisis', 'name' => 'analisis', 'title' => 'Analisis', 'width' => '25%'],
@@ -131,7 +132,7 @@
                                     <div class="row g-3">
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="unit_id" id="unit_id_ptp_{{ $typeId }}" label="Unit / Area" placeholder="">
-                                                <option value="">Semua Unit</option>
+                                                <option value="all">Semua Unit</option>
                                                 @foreach($units as $unit)
                                                     <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
                                                 @endforeach
@@ -139,7 +140,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="dok_id" id="dok_id_ptp_{{ $typeId }}" label="Standar / Dokumen" placeholder="">
-                                                <option value="">Semua Standar</option>
+                                                <option value="all">Semua Standar</option>
                                                 @foreach($rootDoks as $dok)
                                                     <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->judul }}</option>
                                                 @endforeach
@@ -147,7 +148,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="ptp_status" id="ptp_status_{{ $typeId }}" label="Status Perbaikan" placeholder="">
-                                                <option value="">Semua Status</option>
+                                                <option value="all">Semua Status</option>
                                                 <option value="filled">Sudah Isi</option>
                                                 <option value="empty">Belum Isi</option>
                                             </x-tabler.form-select>
@@ -161,7 +162,7 @@
                                     route="{{ route('pemutu.evaluasi-diri.ptp-data', $periode->encrypted_periodespmi_id) }}"
                                     :columns="[
                                         ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                                        ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator / Pernyataan Standar'],
+                                        ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator'],
                                         ['data' => 'rtp_isi', 'name' => 'rtp_isi', 'title' => 'RTP (Tahun Lalu)', 'width' => '25%'],
                                         ['data' => 'ptp_isi', 'name' => 'ptp_isi', 'title' => 'Pelaksanaan (PTP)', 'width' => '25%'],
                                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],

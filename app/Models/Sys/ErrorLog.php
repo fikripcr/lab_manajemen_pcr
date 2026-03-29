@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Sys;
 
 use App\Models\User;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ErrorLog extends Model
 {
-    use SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HashidBinding, SoftDeletes;
 
     protected $table = 'sys_error_log';
 
@@ -30,10 +31,10 @@ class ErrorLog extends Model
     ];
 
     protected $casts = [
-        'context'    => 'array',
-        'trace'      => 'json', // Store as JSON for better handling
-        'user_id'    => 'integer',
-        'line'       => 'integer',
+        'context' => 'array',
+        'trace' => 'json', // Store as JSON for better handling
+        'user_id' => 'integer',
+        'line' => 'integer',
         'created_at' => 'datetime',
     ];
 

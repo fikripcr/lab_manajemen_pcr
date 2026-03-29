@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Cms;
 
 use App\Traits\Blameable;
@@ -13,9 +14,10 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Slideshow extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding, InteractsWithMedia;
+    use Blameable, HasFactory, HashidBinding, InteractsWithMedia, SoftDeletes;
 
-    protected $table   = 'cms_slideshows';
+    protected $table = 'cms_slideshows';
+
     protected $appends = ['encrypted_slideshow_id', 'has_image', 'is_external_image'];
 
     public function getEncryptedSlideshowIdAttribute()
@@ -26,12 +28,14 @@ class Slideshow extends Model implements HasMedia
     public function getHasImageAttribute()
     {
         $imageUrl = $this->attributes['image_url'] ?? null;
+
         return ($imageUrl && filter_var($imageUrl, FILTER_VALIDATE_URL)) || $this->hasMedia('slideshow_image');
     }
 
     public function getIsExternalImageAttribute()
     {
         $imageUrl = $this->attributes['image_url'] ?? null;
+
         return $imageUrl && filter_var($imageUrl, FILTER_VALIDATE_URL);
     }
 
@@ -57,7 +61,7 @@ class Slideshow extends Model implements HasMedia
             ->singleFile();
     }
 
-    public function registerMediaConversions(Media $media = null): void
+    public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumb')
             ->fit(Fit::Crop, 400, 400)
@@ -75,6 +79,7 @@ class Slideshow extends Model implements HasMedia
             return $imageUrl;
         }
         $media = $this->getFirstMedia('slideshow_image');
+
         return $media ? $media->getUrl() : 'https://via.placeholder.com/1200x600?text=No+Image';
     }
 
@@ -85,6 +90,7 @@ class Slideshow extends Model implements HasMedia
             return $imageUrl;
         }
         $media = $this->getFirstMedia('slideshow_image');
+
         return $media ? $media->getUrl('thumb') : 'https://via.placeholder.com/400x400?text=No+Image';
     }
 
@@ -95,6 +101,7 @@ class Slideshow extends Model implements HasMedia
             return $imageUrl;
         }
         $media = $this->getFirstMedia('slideshow_image');
+
         return $media ? $media->getUrl('large') : 'https://via.placeholder.com/1200x600?text=No+Image';
     }
 }

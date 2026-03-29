@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Pemutu;
 
 use App\Models\Pemutu\PeriodeKpi;
@@ -38,6 +39,7 @@ class PeriodeService
     {
         $periode = PeriodeKpi::create($data);
         logActivity('pemutu', "Menambah periode KPI baru: {$periode->nama}");
+
         return $periode;
     }
 
@@ -49,8 +51,9 @@ class PeriodeService
         $oldNama = $periode->nama;
         $updated = $periode->update($data);
         if ($updated) {
-            logActivity('pemutu', "Memperbarui periode KPI: {$oldNama}" . ($oldNama !== $periode->nama ? " menjadi {$periode->nama}" : ""));
+            logActivity('pemutu', "Memperbarui periode KPI: {$oldNama}".($oldNama !== $periode->nama ? " menjadi {$periode->nama}" : ''));
         }
+
         return $updated;
     }
 
@@ -62,11 +65,12 @@ class PeriodeService
         if ($periode->is_active) {
             throw new Exception('Tidak dapat menghapus periode yang sedang aktif.');
         }
-        $nama    = $periode->nama;
+        $nama = $periode->nama;
         $deleted = $periode->delete();
         if ($deleted) {
             logActivity('pemutu', "Menghapus periode KPI: {$nama}");
         }
+
         return $deleted;
     }
 

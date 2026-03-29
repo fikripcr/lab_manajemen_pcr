@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Pmb;
 
 use App\Models\Pmb\JenisDokumen;
@@ -21,6 +22,7 @@ class JenisDokumenService
     {
         $jenisDokumen = JenisDokumen::create($data);
         logActivity('pmb_jenis_dokumen', "Menambahkan jenis dokumen baru: {$jenisDokumen->nama_dokumen}", $jenisDokumen);
+
         return $jenisDokumen;
     }
 
@@ -28,6 +30,7 @@ class JenisDokumenService
     {
         $jenisDokumen->update($data);
         logActivity('pmb_jenis_dokumen', "Memperbarui jenis dokumen: {$jenisDokumen->nama_dokumen}", $jenisDokumen);
+
         return true;
     }
 
@@ -36,6 +39,7 @@ class JenisDokumenService
         $nama = $jenisDokumen->nama_dokumen;
         $jenisDokumen->delete();
         logActivity('pmb_jenis_dokumen', "Menghapus jenis dokumen: {$nama}");
+
         return true;
     }
 

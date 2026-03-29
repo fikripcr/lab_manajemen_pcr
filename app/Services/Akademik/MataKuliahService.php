@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Akademik;
 
 use App\Models\Akademik\MataKuliah;
@@ -58,7 +59,7 @@ class MataKuliahService
 
             logActivity(
                 'mata_kuliah_management',
-                "Memperbarui mata kuliah: {$oldName}" . ($oldName !== $mataKuliah->nama_mk ? " menjadi {$mataKuliah->nama_mk}" : "")
+                "Memperbarui mata kuliah: {$oldName}".($oldName !== $mataKuliah->nama_mk ? " menjadi {$mataKuliah->nama_mk}" : '')
             );
 
             return true;
@@ -94,6 +95,7 @@ class MataKuliahService
         if (! $model) {
             throw new Exception("Mata Kuliah dengan ID {$id} tidak ditemukan.");
         }
+
         return $model;
     }
 }

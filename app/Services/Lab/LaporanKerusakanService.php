@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Lab;
 
 use App\Models\Lab\LaporanKerusakan;
@@ -37,11 +38,11 @@ class LaporanKerusakanService
         return DB::transaction(function () use ($data) {
             $laporan = LaporanKerusakan::create([
                 // 'lab_id' ignored as it is derived from inventaris
-                'inventaris_id'       => $data['inventaris_id'],
+                'inventaris_id' => $data['inventaris_id'],
                 // pelapor is handled by Blameable trait (created_by)
                 'deskripsi_kerusakan' => $data['deskripsi_kerusakan'],
-                'status'              => 'open',
-                'foto_sebelum'        => $data['bukti_foto'] ?? null,
+                'status' => 'open',
+                'foto_sebelum' => $data['bukti_foto'] ?? null,
             ]);
 
             logActivity('laporan_kerusakan', "Melaporkan kerusakan baru: {$data['deskripsi_kerusakan']}");
@@ -54,14 +55,15 @@ class LaporanKerusakanService
     {
         return DB::transaction(function () use ($laporan, $status, $teknisiNote) {
             $updateData = [
-                'status'            => $status,
-                'teknisi_id'        => auth()->id(),
+                'status' => $status,
+                'teknisi_id' => auth()->id(),
                 'catatan_perbaikan' => $teknisiNote,
             ];
 
             $laporan->update($updateData);
 
             logActivity('laporan_kerusakan', "Update status laporan ID {$laporan->laporan_kerusakan_id} menjadi {$status}");
+
             return $laporan;
         });
     }

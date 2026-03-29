@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Lab;
 
 use App\Imports\JadwalImport;
@@ -48,7 +49,7 @@ class JadwalService
         }
 
         if (! empty($filters['dosen'])) {
-            $query->where('users.name', 'like', '%' . $filters['dosen'] . '%');
+            $query->where('users.name', 'like', '%'.$filters['dosen'].'%');
         }
 
         // Global search logic usually handled by DataTables 'filter' callback in Controller or here?
@@ -122,7 +123,8 @@ class JadwalService
     {
         return DB::transaction(function () use ($file) {
             Excel::import(new JadwalImport, $file);
-            logActivity('jadwal_management', "Import jadwal dari file.");
+            logActivity('jadwal_management', 'Import jadwal dari file.');
+
             return true;
         });
     }
@@ -133,6 +135,7 @@ class JadwalService
         if (! $model) {
             throw new \Exception("Jadwal dengan ID {$id} tidak ditemukan.");
         }
+
         return $model;
     }
 }

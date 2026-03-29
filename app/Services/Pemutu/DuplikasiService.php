@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Pemutu;
 
 use App\Models\Pemutu\DokSub;
@@ -12,24 +13,26 @@ class DuplikasiService
     /**
      * Mapping lama → baru untuk setiap entity selama proses duplikasi.
      */
-    protected array $dokMap    = [];
+    protected array $dokMap = [];
+
     protected array $doksubMap = [];
-    protected array $indikMap  = [];
+
+    protected array $indikMap = [];
 
     /**
      * Statistik hasil duplikasi.
      */
     protected array $stats = [
-        'dokumen_cloned'             => 0,
-        'dokumen_reused'             => 0,
-        'doksub_cloned'              => 0,
-        'doksub_reused'              => 0,
-        'indikator_cloned'           => 0,
+        'dokumen_cloned' => 0,
+        'dokumen_reused' => 0,
+        'doksub_cloned' => 0,
+        'doksub_reused' => 0,
+        'indikator_cloned' => 0,
         'indikator_skipped_nonaktif' => 0,
-        'indikator_skipped_kpi'      => 0,
-        'orgunit_cloned'             => 0,
-        'orgunit_skipped'            => 0,
-        'label_cloned'               => 0,
+        'indikator_skipped_kpi' => 0,
+        'orgunit_cloned' => 0,
+        'orgunit_skipped' => 0,
+        'label_cloned' => 0,
     ];
 
     /**
@@ -37,10 +40,10 @@ class DuplikasiService
      * Jika dokumen target sudah ada (matching judul+jenis), re-use dokumen tersebut
      * dan hanya duplikasi indikator-nya.
      *
-     * @param array $selectedDokIds  Daftar dok_id yang dipilih untuk diduplikasi
-     * @param int   $oldPeriode      Periode (tahun) sumber
-     * @param int   $newPeriode      Periode (tahun) tujuan
-     * @return array                 Statistik hasil duplikasi
+     * @param  array  $selectedDokIds  Daftar dok_id yang dipilih untuk diduplikasi
+     * @param  int  $oldPeriode  Periode (tahun) sumber
+     * @param  int  $newPeriode  Periode (tahun) tujuan
+     * @return array Statistik hasil duplikasi
      */
     public function duplicateSelected(array $selectedDokIds, int $oldPeriode, int $newPeriode): array
     {
@@ -59,8 +62,8 @@ class DuplikasiService
             $this->cloneIndikators($oldPeriode, $newPeriode);
 
             logActivity('pemutu', "Duplikasi standar dari periode {$oldPeriode} ke {$newPeriode}. "
-                . "Dok baru: {$this->stats['dokumen_cloned']}, Dok reuse: {$this->stats['dokumen_reused']}, "
-                . "Indikator: {$this->stats['indikator_cloned']}, OrgUnit: {$this->stats['orgunit_cloned']}");
+                ."Dok baru: {$this->stats['dokumen_cloned']}, Dok reuse: {$this->stats['dokumen_reused']}, "
+                ."Indikator: {$this->stats['indikator_cloned']}, OrgUnit: {$this->stats['orgunit_cloned']}");
 
             return $this->stats;
         });
@@ -81,7 +84,7 @@ class DuplikasiService
 
         if ($existingDok) {
             // Re-use existing dokumen, just map it
-            $newDok                        = $existingDok;
+            $newDok = $existingDok;
             $this->dokMap[$oldDok->dok_id] = $newDok->dok_id;
             $this->stats['dokumen_reused']++;
 
@@ -98,11 +101,11 @@ class DuplikasiService
                 } else {
                     // DokSub doesn't exist yet, create it
                     $newSub = DokSub::create([
-                        'dok_id'                => $newDok->dok_id,
-                        'judul'                 => $oldSub->judul,
-                        'kode'                  => $oldSub->kode,
-                        'isi'                   => $oldSub->isi,
-                        'seq'                   => $oldSub->seq,
+                        'dok_id' => $newDok->dok_id,
+                        'judul' => $oldSub->judul,
+                        'kode' => $oldSub->kode,
+                        'isi' => $oldSub->isi,
+                        'seq' => $oldSub->seq,
                         'is_hasilkan_indikator' => $oldSub->is_hasilkan_indikator,
                     ]);
                     $this->doksubMap[$oldSub->doksub_id] = $newSub->doksub_id;
@@ -118,17 +121,17 @@ class DuplikasiService
         } else {
             // Create new dokumen
             $newDok = Dokumen::create([
-                'parent_id'            => $newParentId,
-                'parent_doksub_id'     => $newParentDoksubId,
-                'jenis'                => $oldDok->jenis,
-                'level'                => $oldDok->level,
-                'seq'                  => $oldDok->seq,
-                'judul'                => $oldDok->judul,
-                'isi'                  => $oldDok->isi,
-                'kode'                 => $oldDok->kode,
-                'periode'              => $newPeriode,
-                'std_is_staging'       => false,
-                'std_amirtn_id'        => $oldDok->std_amirtn_id,
+                'parent_id' => $newParentId,
+                'parent_doksub_id' => $newParentDoksubId,
+                'jenis' => $oldDok->jenis,
+                'level' => $oldDok->level,
+                'seq' => $oldDok->seq,
+                'judul' => $oldDok->judul,
+                'isi' => $oldDok->isi,
+                'kode' => $oldDok->kode,
+                'periode' => $newPeriode,
+                'std_is_staging' => false,
+                'std_amirtn_id' => $oldDok->std_amirtn_id,
                 'std_jeniskriteria_id' => $oldDok->std_jeniskriteria_id,
             ]);
 
@@ -139,11 +142,11 @@ class DuplikasiService
             $oldDokSubs = DokSub::where('dok_id', $oldDok->dok_id)->orderBy('seq')->get();
             foreach ($oldDokSubs as $oldSub) {
                 $newSub = DokSub::create([
-                    'dok_id'                => $newDok->dok_id,
-                    'judul'                 => $oldSub->judul,
-                    'kode'                  => $oldSub->kode,
-                    'isi'                   => $oldSub->isi,
-                    'seq'                   => $oldSub->seq,
+                    'dok_id' => $newDok->dok_id,
+                    'judul' => $oldSub->judul,
+                    'kode' => $oldSub->kode,
+                    'isi' => $oldSub->isi,
+                    'seq' => $oldSub->seq,
                     'is_hasilkan_indikator' => $oldSub->is_hasilkan_indikator,
                 ]);
 
@@ -200,12 +203,14 @@ class DuplikasiService
             // Skip KPI (performa)
             if ($oldIndik->type === 'performa') {
                 $this->stats['indikator_skipped_kpi']++;
+
                 continue;
             }
 
             // Skip nonaktif
             if ($oldIndik->peningkat_nonaktif_indik == 1) {
                 $this->stats['indikator_skipped_nonaktif']++;
+
                 continue;
             }
 
@@ -219,30 +224,30 @@ class DuplikasiService
             $newNo = $oldNo;
             if ($oldNo && strlen($oldNo) == 6 && is_numeric($oldNo)) {
                 $newPrefix = substr((string) $newPeriode, -2);
-                $newNo     = $newPrefix . substr($oldNo, 2);
+                $newNo = $newPrefix.substr($oldNo, 2);
             }
 
             $newIndik = Indikator::create([
-                'type'                     => $oldIndik->type,
-                'kelompok_indikator'       => $oldIndik->kelompok_indikator,
-                'parent_id'                => null,
-                'prev_indikator_id'        => $oldIndik->indikator_id,
-                'no_indikator'             => $newNo,
-                'indikator'                => $oldIndik->indikator,
-                'target'                   => $oldIndik->target,
-                'unit_ukuran'              => $oldIndik->unit_ukuran,
-                'jenis_indikator'          => $oldIndik->jenis_indikator,
-                'jenis_data'               => $oldIndik->jenis_data,
-                'periode_jenis'            => $oldIndik->periode_jenis,
-                'periode_mulai'            => $oldIndik->periode_mulai,
-                'periode_selesai'          => $oldIndik->periode_selesai,
-                'seq'                      => $oldIndik->seq,
-                'level_risk'               => $oldIndik->level_risk,
-                'origin_from'              => 'peningkatan_' . $oldPeriode,
-                'hash'                     => $oldIndik->hash,
+                'type' => $oldIndik->type,
+                'kelompok_indikator' => $oldIndik->kelompok_indikator,
+                'parent_id' => null,
+                'prev_indikator_id' => $oldIndik->indikator_id,
+                'no_indikator' => $newNo,
+                'indikator' => $oldIndik->indikator,
+                'target' => $oldIndik->target,
+                'unit_ukuran' => $oldIndik->unit_ukuran,
+                'jenis_indikator' => $oldIndik->jenis_indikator,
+                'jenis_data' => $oldIndik->jenis_data,
+                'periode_jenis' => $oldIndik->periode_jenis,
+                'periode_mulai' => $oldIndik->periode_mulai,
+                'periode_selesai' => $oldIndik->periode_selesai,
+                'seq' => $oldIndik->seq,
+                'level_risk' => $oldIndik->level_risk,
+                'origin_from' => 'peningkatan_'.$oldPeriode,
+                'hash' => $oldIndik->hash,
                 'peningkat_nonaktif_indik' => null,
-                'skala'                    => $oldIndik->skala,
-                'keterangan'               => $oldIndik->keterangan,
+                'skala' => $oldIndik->skala,
+                'keterangan' => $oldIndik->keterangan,
             ]);
 
             $this->indikMap[$oldIndik->indikator_id] = $newIndik->indikator_id;
@@ -252,11 +257,11 @@ class DuplikasiService
             foreach ($oldIndik->dokSubs as $oldDokSub) {
                 if (isset($this->doksubMap[$oldDokSub->doksub_id])) {
                     DB::table('pemutu_indikator_doksub')->insert([
-                        'indikator_id'          => $newIndik->indikator_id,
-                        'doksub_id'             => $this->doksubMap[$oldDokSub->doksub_id],
+                        'indikator_id' => $newIndik->indikator_id,
+                        'doksub_id' => $this->doksubMap[$oldDokSub->doksub_id],
                         'is_hasilkan_indikator' => $oldDokSub->pivot->is_hasilkan_indikator ?? false,
-                        'created_at'            => now(),
-                        'updated_at'            => now(),
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ]);
                 }
             }
@@ -265,9 +270,9 @@ class DuplikasiService
             foreach ($oldIndik->labels as $label) {
                 DB::table('pemutu_indikator_label')->insert([
                     'indikator_id' => $newIndik->indikator_id,
-                    'label_id'     => $label->label_id,
-                    'created_at'   => now(),
-                    'updated_at'   => now(),
+                    'label_id' => $label->label_id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
                 $this->stats['label_cloned']++;
             }
@@ -277,27 +282,28 @@ class DuplikasiService
                 // Only duplicate indicators that are not marked as 'Nonaktif' by the superior
                 if ($oldOrgUnit->pengend_status_atsn === 'Nonaktif') {
                     $this->stats['orgunit_skipped']++;
+
                     continue;
                 }
 
                 IndikatorOrgUnit::create([
-                    'indikator_id'             => $newIndik->indikator_id,
-                    'org_unit_id'              => $oldOrgUnit->org_unit_id,
-                    'prev_indikorgunit_id'     => $oldOrgUnit->indikorgunit_id,
-                    'target'                   => $oldOrgUnit->target, // Pure 1:1 Copy
-                    'ed_capaian'               => null, 'ed_analisis'             => null,
-                    'ed_links'                => null, 'ed_skala' => null,
-                    'ami_hasil_akhir'          => null, 'ami_hasil_temuan'        => null,
-                    'ami_hasil_temuan_sebab'   => null, 'ami_hasil_temuan_akibat' => null,
-                    'ami_hasil_temuan_rekom'   => null,
-                    'pengend_status'                => null,
-                    'pengend_status_atsn'           => null,
-                    'pengend_analisis'              => null,
-                    'pengend_analisis_atsn'         => null,
-                    'pengend_important_matrix'      => null,
+                    'indikator_id' => $newIndik->indikator_id,
+                    'org_unit_id' => $oldOrgUnit->org_unit_id,
+                    'prev_indikorgunit_id' => $oldOrgUnit->indikorgunit_id,
+                    'target' => $oldOrgUnit->target, // Pure 1:1 Copy
+                    'ed_capaian' => null, 'ed_analisis' => null,
+                    'ed_links' => null, 'ed_skala' => null,
+                    'ami_hasil_akhir' => null, 'ami_hasil_temuan' => null,
+                    'ami_hasil_temuan_sebab' => null, 'ami_hasil_temuan_akibat' => null,
+                    'ami_hasil_temuan_rekom' => null,
+                    'pengend_status' => null,
+                    'pengend_status_atsn' => null,
+                    'pengend_analisis' => null,
+                    'pengend_analisis_atsn' => null,
+                    'pengend_important_matrix' => null,
                     'pengend_important_matrix_atsn' => null,
-                    'pengend_urgent_matrix'         => null,
-                    'pengend_urgent_matrix_atsn'    => null,
+                    'pengend_urgent_matrix' => null,
+                    'pengend_urgent_matrix_atsn' => null,
                 ]);
                 $this->stats['orgunit_cloned']++;
             }
@@ -317,7 +323,7 @@ class DuplikasiService
      * Hapus sebuah branch/tree dokumen hasil duplikasi beserta indikator-indikatornya.
      * Ini digunakan jika user ingin 'undo' duplikasi standar tertentu di periode target.
      *
-     * @param int $rootDokId ID Dokumen (Standar) teratas yang akan dihapus
+     * @param  int  $rootDokId  ID Dokumen (Standar) teratas yang akan dihapus
      * @return int Jumlah dokumen anak beserta parent yang berhasil dihapus
      */
     public function deleteDuplicatedTree(int $rootDokId): int
@@ -354,7 +360,7 @@ class DuplikasiService
                     if (! empty($indikatorsToDelete)) {
                         // Hapus pivot dan relasi indikator
                         DB::table('pemutu_indikator_orgunit')->whereIn('indikator_id', $indikatorsToDelete)->delete();
-                        DB::table('pemutu_indikator_doksub')->whereIn('indikator_id', $indikatorsToDelete)->delete();
+                        DB::table('pemutu_indikator_doksub')->whereIn('source_id', $indikatorsToDelete)->delete();
                         DB::table('pemutu_indikator_label')->whereIn('indikator_id', $indikatorsToDelete)->delete();
 
                         // Hapus indikatornya (force delete)
@@ -381,7 +387,7 @@ class DuplikasiService
      */
     protected function collectDokumenTreeIds(int $rootId): array
     {
-        $ids      = [$rootId];
+        $ids = [$rootId];
         $children = Dokumen::where('parent_id', $rootId)->pluck('dok_id');
 
         foreach ($children as $childId) {

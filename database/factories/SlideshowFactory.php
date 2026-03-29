@@ -20,7 +20,7 @@ class SlideshowFactory extends Factory
     public function definition(): array
     {
         return [
-            'image_url' => 'slideshows/default-' . fake()->numberBetween(1, 5) . '.jpg',
+            'image_url' => 'slideshows/default-'.fake()->numberBetween(1, 5).'.jpg',
             'title' => fake()->sentence(4),
             'caption' => fake()->sentence(8),
             'link' => fake()->optional(0.7)->url(),

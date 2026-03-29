@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Akademik;
 
 use App\Http\Controllers\Controller;
@@ -10,8 +11,7 @@ use Yajra\DataTables\DataTables;
 
 class MataKuliahController extends Controller
 {
-    public function __construct(protected MataKuliahService $mataKuliahService)
-    {}
+    public function __construct(protected MataKuliahService $mataKuliahService) {}
 
     /**
      * Display a listing of the resource.
@@ -35,19 +35,19 @@ class MataKuliahController extends Controller
                 if ($request->has('search') && $request->search['value'] != '') {
                     $searchValue = $request->search['value'];
                     $query->where(function ($q) use ($searchValue) {
-                        $q->where('kode_mk', 'like', '%' . $searchValue . '%')
-                            ->orWhere('nama_mk', 'like', '%' . $searchValue . '%');
+                        $q->where('kode_mk', 'like', '%'.$searchValue.'%')
+                            ->orWhere('nama_mk', 'like', '%'.$searchValue.'%');
                     });
                 }
             })
             ->editColumn('nama_mk', function ($mk) {
-                return '<span class="fw-medium">' . e($mk->nama_mk) . '</span>';
+                return '<span class="fw-medium">'.e($mk->nama_mk).'</span>';
             })
             ->addColumn('action', function ($mk) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('akademik.mata-kuliah.edit', $mk->encrypted_mata_kuliah_id),
+                    'editUrl' => route('akademik.mata-kuliah.edit', $mk->encrypted_mata_kuliah_id),
                     'editModal' => true,
-                    'viewUrl'   => route('akademik.mata-kuliah.show', $mk->encrypted_mata_kuliah_id),
+                    'viewUrl' => route('akademik.mata-kuliah.show', $mk->encrypted_mata_kuliah_id),
                     'deleteUrl' => route('akademik.mata-kuliah.destroy', $mk->encrypted_mata_kuliah_id),
                 ])->render();
             })
@@ -60,7 +60,8 @@ class MataKuliahController extends Controller
      */
     public function create()
     {
-        $mataKuliah = new MataKuliah();
+        $mataKuliah = new MataKuliah;
+
         return view('pages.akademik.mata-kuliah.create-edit-ajax', compact('mataKuliah'));
     }
 
@@ -70,6 +71,7 @@ class MataKuliahController extends Controller
     public function store(MataKuliahRequest $request)
     {
         $this->mataKuliahService->createMataKuliah($request->validated());
+
         return jsonSuccess('Mata Kuliah berhasil dibuat.', route('akademik.mata-kuliah.index'));
     }
 
@@ -95,6 +97,7 @@ class MataKuliahController extends Controller
     public function update(MataKuliahRequest $request, MataKuliah $mataKuliah)
     {
         $this->mataKuliahService->updateMataKuliah($mataKuliah, $request->validated());
+
         return jsonSuccess('Mata Kuliah berhasil diperbarui.', route('akademik.mata-kuliah.index'));
     }
 
@@ -104,7 +107,7 @@ class MataKuliahController extends Controller
     public function destroy(MataKuliah $mataKuliah)
     {
         $this->mataKuliahService->deleteMataKuliah($mataKuliah);
+
         return jsonSuccess('Mata Kuliah berhasil dihapus.', route('akademik.mata-kuliah.index'));
     }
-
 }

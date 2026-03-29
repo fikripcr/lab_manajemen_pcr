@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Eoffice;
 
 use App\Http\Requests\BaseRequest;
 
 class LayananStatusUpdateRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -22,9 +20,9 @@ class LayananStatusUpdateRequest extends BaseRequest
 
         return [
             'status_layanan' => 'required_unless:status,proses,batal|string',
-            'keterangan'     => 'nullable|string',
-            'disposisi_seq'  => 'nullable|integer',
-            'file_lampiran'  => 'nullable|file|mimes:pdf,docx,zip,jpg,png|max:5120',
+            'keterangan' => 'nullable|string',
+            'disposisi_seq' => 'nullable|integer',
+            'file_lampiran' => 'nullable|file|mimes:pdf,docx,zip,jpg,png|max:5120',
             // 'status' param is from route, so we can use required_unless if we merge route params or check logic.
             // A simpler approach for now is to replicate the controller logic:
             // The controller passed $status.

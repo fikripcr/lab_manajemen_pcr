@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LemburPegawai extends Model
 {
-    use SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_lembur_pegawai';
+    protected $table = 'hr_lembur_pegawai';
+
     protected $primaryKey = 'lemburpegawai_id';
 
     protected $fillable = [
@@ -49,8 +51,6 @@ class LemburPegawai extends Model
     {
         return $this->belongsTo(Pegawai::class, 'pegawai_id', 'pegawai_id');
     }
-
-
 
     /**
      * Scope untuk filter by lembur

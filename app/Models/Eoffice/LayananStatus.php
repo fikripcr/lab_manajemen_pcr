@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Eoffice;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LayananStatus extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'eoffice_layanan_status';
+    protected $table = 'eoffice_layanan_status';
+
     protected $primaryKey = 'layananstatus_id';
 
     protected $appends = ['encrypted_layananstatus_id'];
@@ -42,7 +44,7 @@ class LayananStatus extends Model
 
     protected $casts = [
         'disposisi_info' => 'json',
-        'done_at'        => 'datetime',
+        'done_at' => 'datetime',
     ];
 
     public function layanan()

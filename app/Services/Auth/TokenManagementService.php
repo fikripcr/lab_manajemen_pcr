@@ -3,7 +3,6 @@
 namespace App\Services\Auth;
 
 use App\Models\User;
-use App\Models\Sys\PersonalAccessToken;
 use Laravel\Sanctum\PersonalAccessToken as SanctumPersonalAccessToken;
 
 class TokenManagementService
@@ -17,6 +16,7 @@ class TokenManagementService
 
         if ($token && $token->tokenable_id === $userId) {
             $token->delete();
+
             return true;
         }
 
@@ -30,7 +30,7 @@ class TokenManagementService
     {
         $user = User::find($userId);
 
-        if (!$user) {
+        if (! $user) {
             throw new \Exception("User with ID {$userId} not found.");
         }
 
@@ -46,7 +46,7 @@ class TokenManagementService
     {
         $user = User::find($userId);
 
-        if (!$user) {
+        if (! $user) {
             throw new \Exception("User with ID {$userId} not found.");
         }
 
@@ -60,7 +60,7 @@ class TokenManagementService
     {
         $user = User::find($userId);
 
-        if (!$user) {
+        if (! $user) {
             throw new \Exception("User with ID {$userId} not found.");
         }
 

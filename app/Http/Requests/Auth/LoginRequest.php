@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\BaseRequest;
@@ -11,9 +12,6 @@ use Illuminate\Validation\ValidationException;
 class LoginRequest extends BaseRequest
 {
     /**
-     */
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -21,7 +19,7 @@ class LoginRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'email'    => ['required', 'string', 'email'],
+            'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
         ];
     }
@@ -38,7 +36,7 @@ class LoginRequest extends BaseRequest
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
-            $messages      = $this->messages();
+            $messages = $this->messages();
             $failedMessage = $messages['failed'] ?? trans('auth.failed');
 
             throw ValidationException::withMessages([
@@ -64,7 +62,7 @@ class LoginRequest extends BaseRequest
 
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
-        $messages        = $this->messages();
+        $messages = $this->messages();
         $throttleMessage = $messages['throttle'] ?? trans('auth.throttle', [
             'seconds' => $seconds,
             'minutes' => ceil($seconds / 60),
@@ -80,6 +78,6 @@ class LoginRequest extends BaseRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')) . '|' . $this->ip());
+        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
     }
 }

@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Models\Pmb;
 
-use App\Models\Pmb\Pendaftaran;
 use App\Models\Hr\StrukturOrganisasi;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
@@ -11,11 +11,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PilihanProdi extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'pmb_pilihan_prodi';
+    protected $table = 'pmb_pilihan_prodi';
+
     protected $primaryKey = 'pilihanprodi_id';
-    protected $appends    = ['encrypted_pilihanprodi_id'];
+
+    protected $appends = ['encrypted_pilihanprodi_id'];
 
     public function getRouteKeyName()
     {

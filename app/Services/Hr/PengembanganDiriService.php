@@ -1,20 +1,20 @@
 <?php
+
 namespace App\Services\Hr;
 
-use App\Models\Hr\PengembanganDiri;
 use App\Models\Hr\Pegawai;
+use App\Models\Hr\PengembanganDiri;
 use Illuminate\Support\Facades\DB;
 
 class PengembanganDiriService
 {
-    public function __construct(protected ApprovalService $approvalService)
-    {}
+    public function __construct(protected ApprovalService $approvalService) {}
 
     public function requestAddition(Pegawai $pegawai, array $data)
     {
         return DB::transaction(function () use ($pegawai, $data) {
             $data['pegawai_id'] = $pegawai->pegawai_id;
-            $model              = PengembanganDiri::create($data);
+            $model = PengembanganDiri::create($data);
 
             $approval = $this->approvalService->createRequest(
                 PengembanganDiri::class,
@@ -39,7 +39,7 @@ class PengembanganDiriService
             }
 
             $data['pegawai_id'] = $pegawai->pegawai_id;
-            $model              = PengembanganDiri::create($data);
+            $model = PengembanganDiri::create($data);
 
             $approval = $this->approvalService->createRequest(
                 PengembanganDiri::class,

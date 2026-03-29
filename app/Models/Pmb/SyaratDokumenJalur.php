@@ -1,8 +1,7 @@
 <?php
+
 namespace App\Models\Pmb;
 
-use App\Models\Pmb\Jalur;
-use App\Models\Pmb\JenisDokumen;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,11 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SyaratDokumenJalur extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'pmb_syarat_dokumen_jalur';
+    protected $table = 'pmb_syarat_dokumen_jalur';
+
     protected $primaryKey = 'syaratdokumenjalur_id';
-    protected $appends    = ['encrypted_syaratdokumenjalur_id'];
+
+    protected $appends = ['encrypted_syaratdokumenjalur_id'];
 
     public function getRouteKeyName()
     {

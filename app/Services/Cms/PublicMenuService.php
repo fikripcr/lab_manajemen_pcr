@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Cms;
 
 use App\Models\Cms\Menu;
@@ -19,12 +20,13 @@ class PublicMenuService
 
             // Set default sequence if not provided
             if (! isset($data['sequence'])) {
-                $maxSeq           = Menu::where('parent_id', $data['parent_id'] ?? null)->max('sequence');
+                $maxSeq = Menu::where('parent_id', $data['parent_id'] ?? null)->max('sequence');
                 $data['sequence'] = $maxSeq ? $maxSeq + 1 : 1;
             }
 
             $menu = Menu::create($data);
             logActivity('public_menu', "Membuat menu: {$menu->title}", $menu);
+
             return $menu;
         });
     }
@@ -41,6 +43,7 @@ class PublicMenuService
 
             $menu->update($data);
             logActivity('public_menu', "Update menu: {$menu->title}", $menu);
+
             return true;
         });
     }
@@ -51,6 +54,7 @@ class PublicMenuService
             $title = $menu->title;
             $menu->delete();
             logActivity('public_menu', "Hapus menu: {$title}");
+
             return true;
         });
     }
@@ -70,7 +74,7 @@ class PublicMenuService
                     if ($menu) {
                         $menu->update([
                             'parent_id' => $parentId,
-                            'sequence'  => $index + 1,
+                            'sequence' => $index + 1,
                         ]);
 
                         if (isset($item['children']) && is_array($item['children'])) {
@@ -79,6 +83,7 @@ class PublicMenuService
                     }
                 }
             }
+
             return true;
         });
     }

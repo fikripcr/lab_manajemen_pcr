@@ -1,8 +1,7 @@
 <?php
+
 namespace App\Models\Pmb;
 
-use App\Models\Pmb\Periode;
-use App\Models\Pmb\PesertaUjian;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,11 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SesiUjian extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'pmb_sesi_ujian';
+    protected $table = 'pmb_sesi_ujian';
+
     protected $primaryKey = 'sesiujian_id';
-    protected $appends    = ['encrypted_sesiujian_id'];
+
+    protected $appends = ['encrypted_sesiujian_id'];
 
     public function getRouteKeyName()
     {
@@ -37,7 +38,7 @@ class SesiUjian extends Model
     ];
 
     protected $casts = [
-        'waktu_mulai'   => 'datetime',
+        'waktu_mulai' => 'datetime',
         'waktu_selesai' => 'datetime',
     ];
 

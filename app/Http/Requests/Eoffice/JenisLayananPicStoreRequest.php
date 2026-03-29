@@ -7,9 +7,6 @@ use App\Http\Requests\BaseRequest;
 class JenisLayananPicStoreRequest extends BaseRequest
 {
     /**
-     */
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -22,7 +19,6 @@ class JenisLayananPicStoreRequest extends BaseRequest
     }
 
     /**
-     *
      * @return array<string, string>
      */
 }

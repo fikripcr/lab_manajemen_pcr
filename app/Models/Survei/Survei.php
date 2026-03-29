@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Survei;
 
 use App\Traits\Blameable;
@@ -9,10 +10,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Survei extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
     protected $table = 'survei_survei';
+
     protected $primaryKey = 'survei_id';
+
     protected $appends = ['encrypted_survei_id'];
 
     public function getRouteKeyName()
@@ -40,10 +43,10 @@ class Survei extends Model
     ];
 
     protected $casts = [
-        'is_aktif'        => 'boolean',
-        'wajib_login'     => 'boolean',
-        'bisa_isi_ulang'  => 'boolean',
-        'tanggal_mulai'   => 'datetime',
+        'is_aktif' => 'boolean',
+        'wajib_login' => 'boolean',
+        'bisa_isi_ulang' => 'boolean',
+        'tanggal_mulai' => 'datetime',
         'tanggal_selesai' => 'datetime',
     ];
 

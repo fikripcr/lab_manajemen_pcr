@@ -8,14 +8,23 @@
     'readonly' => false,
     'disabled' => false,
     'placeholder' => '',
+    'type' => 'text',
 ])
 
 @php
     $id = $attributes->get('id', $name);
     $value = old($name, $value);
+    
+    $textareaClasses = ['form-control'];
+    if ($type === 'editor') {
+        $textareaClasses[] = 'huge-editor';
+    }
+    if ($errors->has($name)) {
+        $textareaClasses[] = 'is-invalid';
+    }
 @endphp
 
-<div {{ $attributes->except(['id', 'name', 'value', 'rows', 'placeholder', 'required', 'readonly', 'disabled'])->merge(['class' => 'mb-3']) }}>
+<div {{ $attributes->except(['id', 'name', 'value', 'rows', 'placeholder', 'required', 'readonly', 'disabled', 'type'])->merge(['class' => 'mb-3']) }}>
     @if($label)
         <label for="{{ $id }}" class="form-label">
             {!! $label !!} @if($required)<span class="text-danger">*</span>@endif
@@ -23,7 +32,7 @@
     @endif
     
     <textarea 
-        class="form-control @error($name) is-invalid @enderror" 
+        class="{{ implode(' ', $textareaClasses) }}" 
         id="{{ $id }}" 
         name="{{ $name }}" 
         rows="{{ $rows }}"

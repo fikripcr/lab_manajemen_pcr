@@ -1,21 +1,22 @@
 <x-tabler.card-header class="border-bottom">
-    <div class="d-flex flex-wrap gap-2 w-100">
-        <div>
-            <x-tabler.datatable-page-length dataTableId="keluarga-table" />
-        </div>
-        <div>
-            <x-tabler.datatable-search dataTableId="keluarga-table" />
-        </div>
-        <div>
-            <x-tabler.datatable-filter dataTableId="keluarga-table">
-                <div style="min-width: 150px;">
-                    <x-tabler.form-select name="hubungan" placeholder="Semua Hubungan" class="mb-0"
-                        :options="['Suami' => 'Suami', 'Istri' => 'Istri', 'Anak' => 'Anak', 'Orang Tua' => 'Orang Tua']" />
-                </div>
-            </x-tabler.datatable-filter>
-        </div>
+    <div class="d-flex gap-2 align-items-center">
+        <x-tabler.datatable-page-length dataTableId="keluarga-table" />
+        <x-tabler.datatable-filter dataTableId="keluarga-table" type="button" target="#keluarga-filter-area" />
+        <x-tabler.datatable-search dataTableId="keluarga-table" />
     </div>
 </x-tabler.card-header>
+<div class="collapse" id="keluarga-filter-area">
+    <x-tabler.datatable-filter dataTableId="keluarga-table" type="bare">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <x-tabler.form-select name="hubungan" label="Hubungan Keluarga" placeholder="" class="mb-0"
+                    :options="['Suami' => 'Suami', 'Istri' => 'Istri', 'Anak' => 'Anak', 'Orang Tua' => 'Orang Tua']">
+                    <option value="all" selected>Semua Hubungan</option>
+                </x-tabler.form-select>
+            </div>
+        </div>
+    </x-tabler.datatable-filter>
+</div>
 <div class="table-responsive">
     <x-tabler.datatable
         id="keluarga-table"

@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Pmb;
 
 use App\Http\Requests\BaseRequest;
 
 class UpdateStatusRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -16,7 +14,7 @@ class UpdateStatusRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'status'     => 'required|string',
+            'status' => 'required|string',
             'keterangan' => 'nullable|string|max:1000',
         ];
     }
@@ -24,7 +22,7 @@ class UpdateStatusRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'status'     => 'Status',
+            'status' => 'Status',
             'keterangan' => 'Keterangan',
         ];
     }

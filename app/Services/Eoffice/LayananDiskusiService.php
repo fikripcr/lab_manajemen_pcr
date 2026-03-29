@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Eoffice;
 
 use App\Models\Eoffice\Layanan;
@@ -15,14 +16,14 @@ class LayananDiskusiService
     {
         return DB::transaction(function () use ($layananId, $data) {
             $layanan = Layanan::findOrFail($layananId);
-            $user    = Auth::user();
+            $user = Auth::user();
 
             $diskusi = LayananDiskusi::create([
-                'layanan_id'       => $layananId,
-                'user_id'          => $user->id,
-                'pesan'            => $data['pesan'],
-                'file_lampiran'    => $data['file_lampiran'] ?? null,
-                'status_pengirim'  => $data['status_pengirim'] ?? null,
+                'layanan_id' => $layananId,
+                'user_id' => $user->id,
+                'pesan' => $data['pesan'],
+                'file_lampiran' => $data['file_lampiran'] ?? null,
+                'status_pengirim' => $data['status_pengirim'] ?? null,
                 'created_by_email' => $user->email,
             ]);
 

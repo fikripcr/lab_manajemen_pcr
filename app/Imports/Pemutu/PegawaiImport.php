@@ -1,8 +1,9 @@
 <?php
+
 namespace App\Imports\Pemutu;
 
-use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Hr\Pegawai;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Models\User;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -35,7 +36,7 @@ class PegawaiImport implements ToModel, WithHeadingRow
         // However, for Pemutu context, we'll try to keep it simple or follow the existing pattern in PegawaiService.
 
         return new Pegawai([
-            'user_id'     => $user ? $user->id : null,
+            'user_id' => $user ? $user->id : null,
             'org_unit_id' => $orgUnit ? $orgUnit->orgunit_id : null,
             // These fields might not be in the 'hr_pegawai' table directly but in 'riwayat_data_diri'
             // I should check PegawaiService::createPegawai logic.

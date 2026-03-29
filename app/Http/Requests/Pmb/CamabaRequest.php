@@ -7,9 +7,6 @@ use App\Http\Requests\BaseRequest;
 class CamabaRequest extends BaseRequest
 {
     /**
-     */
-
-    /**
      * Get the validation rules that apply to the request.
      */
     public function rules(): array
@@ -17,7 +14,7 @@ class CamabaRequest extends BaseRequest
         $id = $this->route('camaba') ? $this->route('camaba')->camaba_id : null;
 
         return [
-            'nik' => 'required|unique:pmb_camaba,nik,' . ($id ?? 'NULL') . ',camaba_id',
+            'nik' => 'required|unique:pmb_camaba,nik,'.($id ?? 'NULL').',camaba_id',
             'no_hp' => 'required',
             'tempat_lahir' => 'required',
             'tanggal_lahir' => 'required|date',

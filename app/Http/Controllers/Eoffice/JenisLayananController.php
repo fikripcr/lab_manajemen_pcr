@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Eoffice;
 
 use App\Http\Controllers\Controller;
@@ -16,12 +17,12 @@ use Yajra\DataTables\Facades\DataTables;
 
 class JenisLayananController extends Controller
 {
-    public function __construct(protected JenisLayananService $jenisLayananService)
-    {}
+    public function __construct(protected JenisLayananService $jenisLayananService) {}
 
     public function index()
     {
         $pageTitle = 'Jenis Layanan E-Office';
+
         return view('pages.eoffice.jenis_layanan.index', compact('pageTitle'));
     }
 
@@ -38,9 +39,9 @@ class JenisLayananController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('eoffice.jenis-layanan.edit', $row->encrypted_jenislayanan_id),
+                    'editUrl' => route('eoffice.jenis-layanan.edit', $row->encrypted_jenislayanan_id),
                     'editModal' => true,
-                    'viewUrl'   => route('eoffice.jenis-layanan.show', $row->encrypted_jenislayanan_id),
+                    'viewUrl' => route('eoffice.jenis-layanan.show', $row->encrypted_jenislayanan_id),
                     'deleteUrl' => route('eoffice.jenis-layanan.destroy', $row->encrypted_jenislayanan_id),
                 ])->render();
             })
@@ -56,14 +57,15 @@ class JenisLayananController extends Controller
     public function store(JenisLayananRequest $request)
     {
         $this->jenisLayananService->createJenisLayanan($request->validated());
+
         return jsonSuccess('Jenis layanan berhasil ditambahkan.');
     }
 
     public function show(JenisLayanan $jenisLayanan)
     {
-        $layanan        = $jenisLayanan;
-        $pageTitle      = 'Manage Layanan: ' . $layanan->nama_layanan;
-        $users          = User::orderBy('name')->get();
+        $layanan = $jenisLayanan;
+        $pageTitle = 'Manage Layanan: '.$layanan->nama_layanan;
+        $users = User::orderBy('name')->get();
         $kategoriIsians = KategoriIsian::orderBy('nama_isian')->get();
 
         return view('pages.eoffice.jenis_layanan.show', compact('layanan', 'pageTitle', 'users', 'kategoriIsians'));
@@ -72,18 +74,21 @@ class JenisLayananController extends Controller
     public function edit(JenisLayanan $jenisLayanan)
     {
         $layanan = $jenisLayanan;
+
         return view('pages.eoffice.jenis_layanan.create-edit-ajax', compact('layanan'));
     }
 
     public function update(JenisLayananRequest $request, JenisLayanan $jenisLayanan)
     {
         $this->jenisLayananService->updateJenisLayanan($jenisLayanan->jenislayanan_id, $request->validated());
+
         return jsonSuccess('Jenis layanan berhasil diperbarui.');
     }
 
     public function destroy(JenisLayanan $jenisLayanan)
     {
         $this->jenisLayananService->updateJenisLayanan($jenisLayanan->jenislayanan_id, ['is_active' => false]);
+
         return jsonSuccess('Jenis layanan berhasil dinonaktifkan.');
     }
 
@@ -92,14 +97,16 @@ class JenisLayananController extends Controller
     public function createPic(JenisLayanan $jenisLayanan)
     {
         $layanan = $jenisLayanan;
-        $users   = User::orderBy('name')->get();
+        $users = User::orderBy('name')->get();
+
         return view('pages.eoffice.jenis_layanan.ajax.form-pic', compact('layanan', 'users'));
     }
 
     public function createIsian(JenisLayanan $jenisLayanan)
     {
-        $layanan        = $jenisLayanan;
+        $layanan = $jenisLayanan;
         $kategoriIsians = KategoriIsian::orderBy('nama_isian')->get();
+
         return view('pages.eoffice.jenis_layanan.ajax.form-isian', compact('layanan', 'kategoriIsians'));
     }
 
@@ -117,48 +124,56 @@ class JenisLayananController extends Controller
     public function storePic(JenisLayananPicStoreRequest $request, JenisLayanan $jenisLayanan)
     {
         $this->jenisLayananService->storePic($jenisLayanan->jenislayanan_id, $request->all());
+
         return jsonSuccess('PIC berhasil ditambahkan.');
     }
 
     public function destroyPic(JenisLayananPic $pic)
     {
         $this->jenisLayananService->deletePic($pic->jlpic_id);
+
         return jsonSuccess('PIC berhasil dihapus.');
     }
 
     public function storeIsian(JenisLayananIsianStoreRequest $request, JenisLayanan $jenisLayanan)
     {
         $this->jenisLayananService->storeIsian($jenisLayanan->jenislayanan_id, $request->all());
+
         return jsonSuccess('Isian berhasil ditambahkan.');
     }
 
     public function destroyIsian(JenisLayananIsian $isian)
     {
         $this->jenisLayananService->deleteIsian($isian->jlisian_id);
+
         return jsonSuccess('Isian berhasil dihapus.');
     }
 
     public function updateIsianField(\App\Http\Requests\Eoffice\UpdateIsianFieldRequest $request, JenisLayananIsian $isian)
     {
         $this->jenisLayananService->updateIsian($isian->jlisian_id, $request->validated());
+
         return jsonSuccess('Field berhasil diperbarui.');
     }
 
     public function updateIsianRule(\App\Http\Requests\Eoffice\UpdateIsianRuleRequest $request, JenisLayananIsian $isian)
     {
         $this->jenisLayananService->updateIsian($isian->jlisian_id, $request->validated());
+
         return jsonSuccess('Rule berhasil diperbarui.');
     }
 
     public function updateIsianInfo(\App\Http\Requests\Eoffice\UpdateIsianInfoRequest $request, JenisLayananIsian $isian)
     {
         $this->jenisLayananService->updateIsian($isian->jlisian_id, $request->validated());
+
         return jsonSuccess('Info tambahan berhasil diperbarui.');
     }
 
     public function updateIsianSeq(\App\Http\Requests\Hr\ReorderRequest $request)
     {
         $this->jenisLayananService->updateIsianSeq($request->validated('sequences'));
+
         return jsonSuccess('Urutan berhasil diperbarui.');
     }
 }

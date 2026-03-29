@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
@@ -13,8 +14,7 @@ use Yajra\DataTables\DataTables;
 
 class SoftwareRequestController extends Controller
 {
-    public function __construct(protected SoftwareRequestService $softwareRequestService)
-    {}
+    public function __construct(protected SoftwareRequestService $softwareRequestService) {}
 
     /**
      * Display a listing of the resource.
@@ -40,10 +40,10 @@ class SoftwareRequestController extends Controller
             // For now, let's get courses from the latest active semester if no specific software period found,
             // or just notify that no active period is open.
             return \view('pages.lab.software-requests.create-edit-ajax', [
-                'softwareRequest' => new RequestSoftware(),
-                'mataKuliahs'     => \collect(),
-                'activePeriod'    => null,
-                'error'           => 'Tidak ada periode pengajuan software yang aktif saat ini.',
+                'softwareRequest' => new RequestSoftware,
+                'mataKuliahs' => \collect(),
+                'activePeriod' => null,
+                'error' => 'Tidak ada periode pengajuan software yang aktif saat ini.',
             ]);
         }
 
@@ -52,7 +52,7 @@ class SoftwareRequestController extends Controller
             $q->where('semester_id', $activePeriod->semester_id);
         })->get();
 
-        $softwareRequest = new RequestSoftware();
+        $softwareRequest = new RequestSoftware;
 
         return \view('pages.lab.software-requests.create-edit-ajax', compact('mataKuliahs', 'activePeriod', 'softwareRequest'));
     }
@@ -74,7 +74,7 @@ class SoftwareRequestController extends Controller
         return DataTables::of($softwareRequests)
             ->addIndexColumn()
             ->editColumn('status', function ($request) {
-                $status     = $request->status;
+                $status = $request->status;
                 $badgeClass = 'secondary';
 
                 // Handle both Indonesian (legacy) and English (new) statuses
@@ -101,11 +101,12 @@ class SoftwareRequestController extends Controller
                     default:
                         $statusText = ucfirst(str_replace('_', ' ', $status));
                 }
-                return '<span class="status status-' . $badgeClass . '"><span class="status-dot"></span> ' . $statusText . '</span>';
+
+                return '<span class="status status-'.$badgeClass.'"><span class="status-dot"></span> '.$statusText.'</span>';
             })
             ->editColumn('mata_kuliah', function ($request) {
                 $mataKuliahNames = $request->mataKuliahs->map(function ($mk) {
-                    return $mk->kode_mk . ' - ' . $mk->nama_mk;
+                    return $mk->kode_mk.' - '.$mk->nama_mk;
                 })->join(', ');
 
                 return $mataKuliahNames ?: 'Tidak ada';
@@ -118,9 +119,9 @@ class SoftwareRequestController extends Controller
             })
             ->addColumn('action', function ($request) {
                 return \view('components.tabler.datatables-actions', [
-                    'editUrl'   => \route('lab.software-requests.edit', $request->id),
+                    'editUrl' => \route('lab.software-requests.edit', $request->id),
                     'editModal' => true,
-                    'viewUrl'   => \route('lab.software-requests.show', $request->id),
+                    'viewUrl' => \route('lab.software-requests.show', $request->id),
                 ])->render();
             })
             ->rawColumns(['status', 'action'])
@@ -146,6 +147,7 @@ class SoftwareRequestController extends Controller
             $q->orderBy('created_at', 'desc');
         }]);
         $requestSoftware = $id;
+
         return \view('pages.lab.software-requests.show', compact('requestSoftware'));
     }
 
@@ -166,8 +168,8 @@ class SoftwareRequestController extends Controller
 
         return \view('pages.lab.software-requests.create-edit-ajax', [
             'softwareRequest' => $requestSoftware,
-            'mataKuliahs'     => $mataKuliahs,
-            'activePeriod'    => $activePeriod,
+            'mataKuliahs' => $mataKuliahs,
+            'activePeriod' => $activePeriod,
         ]);
     }
 

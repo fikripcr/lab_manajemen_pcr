@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Pmb;
 
 use App\Models\Pmb\Camaba;
@@ -33,14 +34,14 @@ class PendaftaranService
             $profil = Camaba::updateOrCreate(
                 ['user_id' => $user->id],
                 [
-                    'nik'              => $data['nik'],
-                    'no_hp'            => $data['no_hp'],
-                    'tempat_lahir'     => $data['tempat_lahir'],
-                    'tanggal_lahir'    => $data['tanggal_lahir'],
-                    'jenis_kelamin'    => $data['jenis_kelamin'],
-                    'alamat_lengkap'   => $data['alamat_lengkap'],
-                    'asal_sekolah'     => $data['asal_sekolah'],
-                    'nisn'             => $data['nisn'] ?? null,
+                    'nik' => $data['nik'],
+                    'no_hp' => $data['no_hp'],
+                    'tempat_lahir' => $data['tempat_lahir'],
+                    'tanggal_lahir' => $data['tanggal_lahir'],
+                    'jenis_kelamin' => $data['jenis_kelamin'],
+                    'alamat_lengkap' => $data['alamat_lengkap'],
+                    'asal_sekolah' => $data['asal_sekolah'],
+                    'nisn' => $data['nisn'] ?? null,
                     'nama_ibu_kandung' => $data['nama_ibu_kandung'],
                 ]
             );
@@ -48,19 +49,19 @@ class PendaftaranService
             // 2. Create Pendaftaran
             $pendaftaran = Pendaftaran::create([
                 'no_pendaftaran' => $this->generateNoPendaftaran(),
-                'user_id'        => $user->id,
-                'periode_id'     => $data['periode_id'],
-                'jalur_id'       => $data['jalur_id'],
+                'user_id' => $user->id,
+                'periode_id' => $data['periode_id'],
+                'jalur_id' => $data['jalur_id'],
                 'status_terkini' => 'Draft',
-                'waktu_daftar'   => now(),
+                'waktu_daftar' => now(),
             ]);
 
             // 3. Create Pilihan Prodi
             foreach ($data['pilihan_prodi'] as $index => $orgUnitId) {
                 PilihanProdi::create([
                     'pendaftaran_id' => $pendaftaran->pendaftaran_id,
-                    'orgunit_id'     => $orgUnitId,
-                    'urutan'         => $index + 1,
+                    'orgunit_id' => $orgUnitId,
+                    'urutan' => $index + 1,
                 ]);
             }
 
@@ -78,7 +79,7 @@ class PendaftaranService
      */
     public function generateNoPendaftaran()
     {
-        $year   = date('Y');
+        $year = date('Y');
         $prefix = "REG-{$year}-";
 
         return sysGenerateRefNumber($prefix, Pendaftaran::class, 'no_pendaftaran');
@@ -109,12 +110,12 @@ class PendaftaranService
     {
         return DB::transaction(function () use ($pendaftaran, $orgUnitDiterimaId, $nim) {
             $pendaftaran->update([
-                'status_terkini'      => 'Lulus',
+                'status_terkini' => 'Lulus',
                 'orgunit_diterima_id' => $orgUnitDiterimaId,
-                'nim_final'           => $nim,
+                'nim_final' => $nim,
             ]);
 
-            $this->logStatusHistory($pendaftaran, 'Lulus', 'Pendaftaran telah difinalisasi dengan NIM ' . $nim, 'Siap_Ujian');
+            $this->logStatusHistory($pendaftaran, 'Lulus', 'Pendaftaran telah difinalisasi dengan NIM '.$nim, 'Siap_Ujian');
 
             logActivity('pmb_pendaftaran', "Finalisasi kelulusan pendaftaran {$pendaftaran->no_pendaftaran} dengan NIM {$nim}", $pendaftaran);
 
@@ -129,9 +130,9 @@ class PendaftaranService
     {
         return RiwayatPendaftaran::create([
             'pendaftaran_id' => $pendaftaran->pendaftaran_id,
-            'status_lama'    => $statusLama,
-            'status_baru'    => $statusBaru,
-            'keterangan'     => $keterangan,
+            'status_lama' => $statusLama,
+            'status_baru' => $statusBaru,
+            'keterangan' => $keterangan,
             'waktu_kejadian' => now(),
             'user_pelaku_id' => auth()->id() ?? 1, // System default
         ]);
@@ -175,8 +176,8 @@ class PendaftaranService
         return DB::transaction(function () use ($doc, $status, $catatan) {
             $doc->update([
                 'status_verifikasi' => $status,
-                'catatan_revisi'    => $catatan,
-                'verifikator_id'    => auth()->id(),
+                'catatan_revisi' => $catatan,
+                'verifikator_id' => auth()->id(),
             ]);
 
             logActivity('pmb_verifikasi', "Verifikasi dokumen {$doc->jenisDokumen->nama_dokumen} untuk pendaftaran {$doc->pendaftaran->no_pendaftaran}: {$status}", $doc);
@@ -191,12 +192,12 @@ class PendaftaranService
     public function getDashboardStats(): array
     {
         return [
-            'total_pendaftar'     => Pendaftaran::count(),
-            'pendaftar_hari_ini'  => Pendaftaran::whereDate('waktu_daftar', today())->count(),
+            'total_pendaftar' => Pendaftaran::count(),
+            'pendaftar_hari_ini' => Pendaftaran::whereDate('waktu_daftar', today())->count(),
             'menunggu_verifikasi' => Pendaftaran::whereIn('status_terkini', ['Menunggu_Verifikasi_Bayar', 'Menunggu_Verifikasi_Berkas'])->count(),
-            'siap_ujian'          => Pendaftaran::where('status_terkini', 'Siap_Ujian')->count(),
-            'lulus'               => Pendaftaran::where('status_terkini', 'Lulus')->count(),
-            'tidak_lulus'         => Pendaftaran::where('status_terkini', 'Tidak_Lulus')->count(),
+            'siap_ujian' => Pendaftaran::where('status_terkini', 'Siap_Ujian')->count(),
+            'lulus' => Pendaftaran::where('status_terkini', 'Lulus')->count(),
+            'tidak_lulus' => Pendaftaran::where('status_terkini', 'Tidak_Lulus')->count(),
         ];
     }
 
@@ -238,7 +239,7 @@ class PendaftaranService
         }
 
         return [
-            'pendaftaran'  => $pendaftaran,
+            'pendaftaran' => $pendaftaran,
             'periodeAktif' => $periodeAktif,
         ];
     }

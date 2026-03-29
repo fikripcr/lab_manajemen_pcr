@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Akademik;
 
 use App\Http\Requests\BaseRequest;
 
 class MataKuliahRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      */
@@ -16,8 +14,8 @@ class MataKuliahRequest extends BaseRequest
         $mataKuliahId = $this->route('mata_kuliah'); // Get the mata kuliah ID from the route for update operations
 
         return [
-            'kode_mk' => $mataKuliahId ? 'required|string|max:20|unique:mata_kuliahs,kode_mk,' . $mataKuliahId : 'required|string|max:20|unique:mata_kuliahs,kode_mk',
-            'sks'     => 'required|integer|min:1|max:6',
+            'kode_mk' => $mataKuliahId ? 'required|string|max:20|unique:mata_kuliahs,kode_mk,'.$mataKuliahId : 'required|string|max:20|unique:mata_kuliahs,kode_mk',
+            'sks' => 'required|integer|min:1|max:6',
         ];
     }
 
@@ -26,7 +24,7 @@ class MataKuliahRequest extends BaseRequest
         return [
             'kode_mk' => 'Kode Mata Kuliah',
             'nama_mk' => 'Nama Mata Kuliah',
-            'sks'     => 'SKS',
+            'sks' => 'SKS',
         ];
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Pmb;
 
 use App\Traits\Blameable;
@@ -9,11 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Periode extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'pmb_periode';
+    protected $table = 'pmb_periode';
+
     protected $primaryKey = 'periode_id';
-    protected $appends    = ['encrypted_periode_id'];
+
+    protected $appends = ['encrypted_periode_id'];
 
     public function getRouteKeyName()
     {
@@ -31,5 +34,4 @@ class Periode extends Model
         'tanggal_selesai',
         'is_aktif',
     ];
-
 }

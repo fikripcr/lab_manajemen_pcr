@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Pmb;
 
 use App\Http\Controllers\Controller;
@@ -8,8 +9,7 @@ use App\Services\Pmb\PeriodeService;
 
 class PeriodeController extends Controller
 {
-    public function __construct(protected PeriodeService $periodeService)
-    {}
+    public function __construct(protected PeriodeService $periodeService) {}
 
     public function index()
     {
@@ -20,8 +20,8 @@ class PeriodeController extends Controller
     {
         return datatables()->of($this->periodeService->getPaginateData($request->all()))
             ->addIndexColumn()
-            ->editColumn('tanggal_mulai', fn($p) => formatTanggalIndo($p->tanggal_mulai))
-            ->editColumn('tanggal_selesai', fn($p) => formatTanggalIndo($p->tanggal_selesai))
+            ->editColumn('tanggal_mulai', fn ($p) => formatTanggalIndo($p->tanggal_mulai))
+            ->editColumn('tanggal_selesai', fn ($p) => formatTanggalIndo($p->tanggal_selesai))
             ->editColumn('is_aktif', function ($p) {
                 return $p->is_aktif
                     ? '<span class="badge bg-success text-white">Aktif</span>'
@@ -29,7 +29,7 @@ class PeriodeController extends Controller
             })
             ->addColumn('action', function ($p) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('pmb.periode.edit', $p->encrypted_periode_id),
+                    'editUrl' => route('pmb.periode.edit', $p->encrypted_periode_id),
                     'editModal' => true,
                     'deleteUrl' => route('pmb.periode.destroy', $p->encrypted_periode_id),
                 ])->render();
@@ -40,12 +40,13 @@ class PeriodeController extends Controller
 
     public function create()
     {
-        return view('pages.pmb.periode.create-edit-ajax', ['periode' => new Periode()]);
+        return view('pages.pmb.periode.create-edit-ajax', ['periode' => new Periode]);
     }
 
     public function store(StorePeriodeRequest $request)
     {
         $this->periodeService->createPeriode($request->validated());
+
         return jsonSuccess('Periode berhasil ditambahkan.', route('pmb.periode.index'));
     }
 
@@ -57,12 +58,14 @@ class PeriodeController extends Controller
     public function update(StorePeriodeRequest $request, Periode $periode)
     {
         $this->periodeService->updatePeriode($periode, $request->validated());
+
         return jsonSuccess('Periode berhasil diperbarui.', route('pmb.periode.index'));
     }
 
     public function destroy(Periode $periode)
     {
         $this->periodeService->deletePeriode($periode);
+
         return jsonSuccess('Periode berhasil dihapus.');
     }
 }

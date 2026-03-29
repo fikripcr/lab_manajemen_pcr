@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Cbt;
 
 use App\Http\Controllers\Controller;
@@ -12,8 +13,7 @@ use Illuminate\Http\Request;
 
 class PaketUjianController extends Controller
 {
-    public function __construct(protected PaketUjianService $PaketUjianService)
-    {}
+    public function __construct(protected PaketUjianService $PaketUjianService) {}
 
     public function index()
     {
@@ -37,13 +37,13 @@ class PaketUjianController extends Controller
                 }
 
                 return $subjects->map(function ($count, $name) {
-                    return '<span class="badge bg-blue-lt me-1 mb-1">' . $name . ': ' . $count . '</span>';
+                    return '<span class="badge bg-blue-lt me-1 mb-1">'.$name.': '.$count.'</span>';
                 })->implode('');
             })
             ->addColumn('action', function ($p) {
                 return view('components.tabler.datatables-actions', [
-                    'viewUrl'   => route('cbt.paket.show', $p->encrypted_paket_ujian_id),
-                    'editUrl'   => route('cbt.paket.edit', $p->encrypted_paket_ujian_id),
+                    'viewUrl' => route('cbt.paket.show', $p->encrypted_paket_ujian_id),
+                    'editUrl' => route('cbt.paket.edit', $p->encrypted_paket_ujian_id),
                     'editModal' => true,
                     'editTitle' => 'Edit Paket',
                     'deleteUrl' => route('cbt.paket.destroy', $p->encrypted_paket_ujian_id),
@@ -60,10 +60,11 @@ class PaketUjianController extends Controller
 
     public function store(StorePaketRequest $request)
     {
-        $data                = $request->validated();
+        $data = $request->validated();
         $data['dibuat_oleh'] = auth()->id();
 
         $this->PaketUjianService->store($data);
+
         return jsonSuccess('Paket ujian berhasil dibuat.', route('cbt.paket.index'));
     }
 
@@ -75,6 +76,7 @@ class PaketUjianController extends Controller
     public function update(UpdatePaketRequest $request, PaketUjian $paket)
     {
         $this->PaketUjianService->update($paket, $request->validated());
+
         return jsonSuccess('Paket ujian berhasil diperbarui.', route('cbt.paket.index'));
     }
 
@@ -93,18 +95,21 @@ class PaketUjianController extends Controller
     public function addSoal(\App\Http\Requests\Cbt\AddSoalRequest $request, PaketUjian $paket)
     {
         $this->PaketUjianService->addSoal($paket, $request->input('soal_ids', []));
+
         return jsonSuccess('Soal berhasil ditambahkan ke paket.', route('cbt.paket.show', $paket->hashid));
     }
 
     public function removeSoal(PaketUjian $paket, KomposisiPaket $komposisi)
     {
         $this->PaketUjianService->removeSoal($komposisi);
+
         return jsonSuccess('Soal berhasil dihapus dari paket.', route('cbt.paket.show', $paket->hashid));
     }
 
     public function destroy(PaketUjian $paket)
     {
         $this->PaketUjianService->delete($paket);
+
         return jsonSuccess('Paket ujian berhasil dihapus.');
     }
 }

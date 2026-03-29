@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Survei;
 
 use App\Models\Survei\Survei;
@@ -13,13 +14,13 @@ class SurveiService
     public function createSurvei(array $data): Survei
     {
         return DB::transaction(function () use ($data) {
-            $data['slug'] = Str::slug($data['judul']) . '-' . Str::random(5);
-            $survei       = Survei::create($data);
+            $data['slug'] = Str::slug($data['judul']).'-'.Str::random(5);
+            $survei = Survei::create($data);
 
             // Auto-create first page
             $survei->halaman()->create([
                 'judul_halaman' => 'Halaman 1',
-                'urutan'        => 1,
+                'urutan' => 1,
             ]);
 
             logActivity('survei', "Membuat survei baru: {$survei->judul}", $survei);
@@ -35,6 +36,7 @@ class SurveiService
     {
         $result = $survei->update($data);
         logActivity('survei', "Memperbarui survei: {$survei->judul}", $survei);
+
         return $result;
     }
 
@@ -46,6 +48,7 @@ class SurveiService
         $result = $survei->update(['is_aktif' => ! $survei->is_aktif]);
         $status = $survei->is_aktif ? 'dipublikasikan' : 'di-draft-kan';
         logActivity('survei', "Survei {$survei->judul} {$status}", $survei);
+
         return $result;
     }
 
@@ -55,9 +58,9 @@ class SurveiService
     public function duplicateSurvei(Survei $survei): Survei
     {
         return DB::transaction(function () use ($survei) {
-            $newSurvei           = $survei->replicate();
-            $newSurvei->judul    = $survei->judul . ' (Copy)';
-            $newSurvei->slug     = Str::slug($newSurvei->judul) . '-' . Str::random(5);
+            $newSurvei = $survei->replicate();
+            $newSurvei->judul = $survei->judul.' (Copy)';
+            $newSurvei->slug = Str::slug($newSurvei->judul).'-'.Str::random(5);
             $newSurvei->is_aktif = false;
             $newSurvei->save();
 
@@ -65,18 +68,18 @@ class SurveiService
             $survei->load(['halaman.pertanyaan.opsi']);
 
             foreach ($survei->halaman as $halaman) {
-                $newHalaman            = $halaman->replicate();
+                $newHalaman = $halaman->replicate();
                 $newHalaman->survei_id = $newSurvei->survei_id;
                 $newHalaman->save();
 
                 foreach ($halaman->pertanyaan as $pertanyaan) {
-                    $newPertanyaan             = $pertanyaan->replicate();
-                    $newPertanyaan->survei_id  = $newSurvei->survei_id;
+                    $newPertanyaan = $pertanyaan->replicate();
+                    $newPertanyaan->survei_id = $newSurvei->survei_id;
                     $newPertanyaan->halaman_id = $newHalaman->halaman_id;
                     $newPertanyaan->save();
 
                     foreach ($pertanyaan->opsi as $opsi) {
-                        $newOpsi                = $opsi->replicate();
+                        $newOpsi = $opsi->replicate();
                         $newOpsi->pertanyaan_id = $newPertanyaan->pertanyaan_id;
                         $newOpsi->save();
                     }
@@ -97,7 +100,7 @@ class SurveiService
         return $survei->load([
             'pengisian.jawaban.pertanyaan',
             'pengisian.user',
-            'pertanyaan' => fn($q) => $q->orderBy('urutan'),
+            'pertanyaan' => fn ($q) => $q->orderBy('urutan'),
         ]);
     }
 
@@ -107,6 +110,7 @@ class SurveiService
     public function deleteSurvei(Survei $survei): bool
     {
         logActivity('survei', "Menghapus survei: {$survei->judul}", $survei);
+
         return $survei->delete();
     }
 }

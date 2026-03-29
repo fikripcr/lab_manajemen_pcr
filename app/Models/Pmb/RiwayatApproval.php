@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Pmb;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RiwayatApproval extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'pmb_riwayat_approval';
+    protected $table = 'pmb_riwayat_approval';
+
     protected $primaryKey = 'riwayatapproval_id';
 
     protected $appends = ['encrypted_riwayatapproval_id'];

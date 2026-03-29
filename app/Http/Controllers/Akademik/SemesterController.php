@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Akademik;
 
 use App\Http\Controllers\Controller;
@@ -10,8 +11,7 @@ use Yajra\DataTables\DataTables;
 
 class SemesterController extends Controller
 {
-    public function __construct(protected SemesterService $semesterService)
-    {}
+    public function __construct(protected SemesterService $semesterService) {}
 
     /**
      * Display a listing of the resource.
@@ -32,9 +32,9 @@ class SemesterController extends Controller
                 if ($request->has('search') && $request->search['value'] != '') {
                     $searchValue = $request->search['value'];
                     $query->where(function ($q) use ($searchValue) {
-                        $q->where('tahun_ajaran', 'like', '%' . $searchValue . '%')
-                            ->orWhere('semester', 'like', '%' . $searchValue . '%')
-                            ->orWhereRaw("CASE WHEN is_active = 1 THEN 'Aktif' ELSE 'Tidak Aktif' END LIKE ?", ['%' . $searchValue . '%']);
+                        $q->where('tahun_ajaran', 'like', '%'.$searchValue.'%')
+                            ->orWhere('semester', 'like', '%'.$searchValue.'%')
+                            ->orWhereRaw("CASE WHEN is_active = 1 THEN 'Aktif' ELSE 'Tidak Aktif' END LIKE ?", ['%'.$searchValue.'%']);
                     });
                 }
             })
@@ -51,9 +51,9 @@ class SemesterController extends Controller
             })
             ->addColumn('action', function ($semester) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('akademik.semesters.edit', $semester->encrypted_semester_id),
+                    'editUrl' => route('akademik.semesters.edit', $semester->encrypted_semester_id),
                     'editModal' => true,
-                    'viewUrl'   => route('akademik.semesters.show', $semester->encrypted_semester_id),
+                    'viewUrl' => route('akademik.semesters.show', $semester->encrypted_semester_id),
                     'deleteUrl' => route('akademik.semesters.destroy', $semester->encrypted_semester_id),
                 ])->render();
             })
@@ -66,7 +66,8 @@ class SemesterController extends Controller
      */
     public function create()
     {
-        $semester = new Semester();
+        $semester = new Semester;
+
         return view('pages.akademik.semesters.create-edit-ajax', compact('semester'));
     }
 
@@ -75,7 +76,8 @@ class SemesterController extends Controller
      */
     public function createModal()
     {
-        $semester = new Semester();
+        $semester = new Semester;
+
         return view('pages.akademik.semesters.create-edit-ajax', compact('semester'));
     }
 
@@ -85,6 +87,7 @@ class SemesterController extends Controller
     public function store(SemesterRequest $request)
     {
         $this->semesterService->createSemester($request->validated());
+
         return jsonSuccess('Semester berhasil dibuat.', route('akademik.semesters.index'));
     }
 
@@ -110,12 +113,14 @@ class SemesterController extends Controller
     public function update(SemesterRequest $request, Semester $semester)
     {
         $this->semesterService->updateSemester($semester, $request->validated());
+
         return jsonSuccess('Semester berhasil diperbarui.', route('akademik.semesters.index'));
     }
 
     public function destroy(Semester $semester)
     {
         $this->semesterService->deleteSemester($semester);
+
         return jsonSuccess('Semester deleted successfully.', route('akademik.semesters.index'));
     }
 }

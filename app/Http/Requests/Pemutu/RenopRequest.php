@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Pemutu;
 
 use App\Http\Requests\BaseRequest;
 
 class RenopRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -17,9 +15,9 @@ class RenopRequest extends BaseRequest
     {
         return [
             'indikator' => 'required|string',
-            'target'    => 'required|string',
+            'target' => 'required|string',
             'parent_id' => 'nullable|exists:pemutu_indikator,indikator_id',
-            'type'      => 'required|in:renop',
+            'type' => 'required|in:renop',
         ];
     }
 
@@ -27,10 +25,10 @@ class RenopRequest extends BaseRequest
     {
         return [
             'indikator' => 'Indikator',
-            'target'    => 'Target',
+            'target' => 'Target',
             'parent_id' => 'Indikator Induk',
-            'seq'       => 'Urutan',
-            'type'      => 'Tipe',
+            'seq' => 'Urutan',
+            'type' => 'Tipe',
         ];
     }
 }

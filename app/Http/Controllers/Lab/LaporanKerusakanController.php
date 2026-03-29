@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
@@ -12,8 +13,7 @@ use Yajra\DataTables\DataTables;
 
 class LaporanKerusakanController extends Controller
 {
-    public function __construct(protected LaporanKerusakanService $laporanKerusakanService)
-    {}
+    public function __construct(protected LaporanKerusakanService $laporanKerusakanService) {}
 
     public function index()
     {
@@ -40,12 +40,13 @@ class LaporanKerusakanController extends Controller
             })
             ->editColumn('status', function ($row) {
                 $badges = [
-                    'open'        => 'danger',
+                    'open' => 'danger',
                     'in_progress' => 'warning',
-                    'resolved'    => 'success',
-                    'closed'      => 'secondary',
+                    'resolved' => 'success',
+                    'closed' => 'secondary',
                 ];
                 $color = $badges[$row->status] ?? 'secondary';
+
                 return "<span class='badge bg-{$color} text-white'>{$row->status}</span>";
             })
             ->addColumn('action', function ($row) {
@@ -59,8 +60,9 @@ class LaporanKerusakanController extends Controller
 
     public function create()
     {
-        $labs    = Lab::with('labTeams')->get();
-        $laporan = new LaporanKerusakan();
+        $labs = Lab::with('labTeams')->get();
+        $laporan = new LaporanKerusakan;
+
         return view('pages.lab.laporan-kerusakan.create-edit-ajax', compact('labs', 'laporan'));
     }
 
@@ -88,7 +90,7 @@ class LaporanKerusakanController extends Controller
             }
 
             return [
-                'id'   => encryptId($item->inventaris_id),
+                'id' => encryptId($item->inventaris_id),
                 'text' => $item->inventaris->nama_alat, // . ' (' . $item->kode_inventaris . ')'
             ];
         })->filter()->values();
@@ -105,12 +107,14 @@ class LaporanKerusakanController extends Controller
         }
 
         $this->laporanKerusakanService->createLaporan($data);
+
         return jsonSuccess('Laporan berhasil dikirim', route('lab.laporan-kerusakan.index'));
     }
 
     public function show(LaporanKerusakan $laporanKerusakan)
     {
         $laporan = $laporanKerusakan->load(['inventaris.lab', 'teknisi']);
+
         return view('pages.lab.laporan-kerusakan.show', compact('laporan'));
     }
 }

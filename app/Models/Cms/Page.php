@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Cms;
 
 use App\Traits\Blameable;
@@ -11,11 +12,13 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Page extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding, InteractsWithMedia;
+    use Blameable, HasFactory, HashidBinding, InteractsWithMedia, SoftDeletes;
 
-    protected $table      = 'cms_pages';
+    protected $table = 'cms_pages';
+
     protected $primaryKey = 'page_id';
-    protected $appends    = ['encrypted_page_id'];
+
+    protected $appends = ['encrypted_page_id'];
 
     public function getEncryptedPageIdAttribute()
     {

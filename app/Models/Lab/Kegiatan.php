@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Lab;
 
 use App\Models\User;
@@ -10,9 +11,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Kegiatan extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'lab_kegiatans';
+    protected $table = 'lab_kegiatans';
+
     protected $primaryKey = 'kegiatan_id';
 
     protected $appends = ['encrypted_kegiatan_id'];
@@ -39,10 +41,10 @@ class Kegiatan extends Model
     ];
 
     protected $casts = [
-        'tanggal'     => 'date',
-        'jam_mulai'   => 'datetime',
+        'tanggal' => 'date',
+        'jam_mulai' => 'datetime',
         'jam_selesai' => 'datetime',
-        'status'      => 'string',
+        'status' => 'string',
     ];
 
     /**
@@ -92,6 +94,7 @@ class Kegiatan extends Model
     {
         return encryptId($this->penyelenggara_id);
     }
+
     /**
      * Relationship: Latest approval record
      */

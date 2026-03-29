@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -23,10 +24,10 @@ return new class extends Migration
     {
         Schema::table('pemutu_indikator_orgunit', function (Blueprint $blueprint) {
             $blueprint->dropColumn([
-                'pengend_status_atsn', 
-                'pengend_analisis_atsn', 
-                'pengend_important_matrix_atsn', 
-                'pengend_urgent_matrix_atsn'
+                'pengend_status_atsn',
+                'pengend_analisis_atsn',
+                'pengend_important_matrix_atsn',
+                'pengend_urgent_matrix_atsn',
             ]);
             $blueprint->text('pengend_target')->nullable();
             $blueprint->text('pengend_penyesuaian')->nullable();

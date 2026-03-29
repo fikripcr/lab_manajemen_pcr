@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Sys;
 
 use App\Http\Requests\BaseRequest;
 
 class BackupStoreRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *

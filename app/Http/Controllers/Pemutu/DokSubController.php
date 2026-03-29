@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
@@ -19,7 +20,7 @@ class DokSubController extends Controller
 
     public function show(DokSub $dokSub)
     {
-        $parent      = $dokSub->dokumen;
+        $parent = $dokSub->dokumen;
         $parentJenis = strtolower(trim($parent->jenis));
 
         // Determine Child Type based on Parent Dokumen Type
@@ -32,12 +33,12 @@ class DokSubController extends Controller
 
         // Prepare normalized data for unified component
         $data = [
-            'item'           => $dokSub,
-            'isDokumen'      => false, // This is a DokSub
-            'parent'         => $parent,
-            'childLabel'     => $childLabel,
+            'item' => $dokSub,
+            'isDokumen' => false, // This is a DokSub
+            'parent' => $parent,
+            'childLabel' => $childLabel,
             'showIndikators' => $showIndikators,
-            'activeSubTab'   => $activeSubTab,
+            'activeSubTab' => $activeSubTab,
         ];
 
         // Handle AJAX response
@@ -51,25 +52,26 @@ class DokSubController extends Controller
 
     public function create(Request $request)
     {
-        $dokId   = (int) decryptIdIfEncrypted($request->query('dok_id'));
+        $dokId = (int) decryptIdIfEncrypted($request->query('dok_id'));
         $dokumen = $this->dokumenService->getDokumenById($dokId);
         if (! $dokumen) {
             \abort(404);
         }
 
-        $dokSub = new DokSub(); // Empty model for create case
+        $dokSub = new DokSub; // Empty model for create case
+
         return \view('pages.pemutu.dok-subs.create-edit-ajax', compact('dokumen', 'dokSub'));
     }
 
     public function store(DokSubRequest $request)
     {
-        $data                          = $request->validated();
+        $data = $request->validated();
         $data['is_hasilkan_indikator'] = $request->boolean('is_hasilkan_indikator');
-        $dokSub                        = $this->dokSubService->createDokSub($data);
+        $dokSub = $this->dokSubService->createDokSub($data);
 
         logActivity('pemutu', "Menambah sub-dokumen baru: {$dokSub->judul}");
 
-        return jsonSuccess('Sub-Document created successfully.');
+        return jsonSuccess('Sub-Document created successfully.', url()->previous());
     }
 
     public function edit(DokSub $dokSub)
@@ -79,13 +81,13 @@ class DokSubController extends Controller
 
     public function update(DokSubRequest $request, DokSub $dokSub)
     {
-        $data                          = $request->validated();
+        $data = $request->validated();
         $data['is_hasilkan_indikator'] = $request->boolean('is_hasilkan_indikator');
         $this->dokSubService->updateDokSub($dokSub->doksub_id, $data);
 
         logActivity('pemutu', "Memperbarui sub-dokumen: {$dokSub->judul}");
 
-        return jsonSuccess('Sub-Document updated successfully.');
+        return jsonSuccess('Sub-Document updated successfully.', url()->previous());
     }
 
     public function destroy(DokSub $dokSub)
@@ -95,7 +97,7 @@ class DokSubController extends Controller
 
         logActivity('pemutu', "Menghapus sub-dokumen: {$judul}");
 
-        return jsonSuccess('Sub-Document deleted successfully.');
+        return jsonSuccess('Sub-Document deleted successfully.', url()->previous());
     }
 
     public function data(Request $request, Dokumen $dokumen)
@@ -106,21 +108,22 @@ class DokSubController extends Controller
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('seq', function ($row) {
-                    return '<span class="badge badge-outline text-muted">' . $row->seq . '</span>';
+                    return '<span class="badge badge-outline text-muted">'.$row->seq.'</span>';
                 })
                 ->addColumn('judul', function ($row) {
                     $detailUrl = route('pemutu.dok-subs.show', $row);
+
                     return '
-                        <a href="' . $detailUrl . '" class="fw-medium text-reset" title="Lihat Detail & Turunan">
-                            ' . $row->judul . '
+                        <a href="'.$detailUrl.'" class="fw-medium text-reset" title="Lihat Detail & Turunan">
+                            '.$row->judul.'
                         </a>
-                        <div class="text-muted small text-truncate" style="max-width: 300px;">' . strip_tags($row->isi) . '</div>
+                        <div class="text-muted small text-truncate" style="max-width: 300px;">'.strip_tags($row->isi).'</div>
                     ';
                 })
                 ->addColumn('action', function ($row) {
                     return view('components.tabler.datatables-actions', [
-                        'viewUrl'   => route('pemutu.dok-subs.show', $row->encrypted_doksub_id),
-                        'editUrl'   => route('pemutu.dok-subs.edit', $row->encrypted_doksub_id),
+                        'viewUrl' => route('pemutu.dok-subs.show', $row->encrypted_doksub_id),
+                        'editUrl' => route('pemutu.dok-subs.edit', $row->encrypted_doksub_id),
                         'editModal' => false,
                         'deleteUrl' => route('pemutu.dok-subs.destroy', $row->encrypted_doksub_id),
                     ])->render();

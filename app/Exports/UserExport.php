@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Exports;
 
 use App\Models\User;
@@ -9,12 +10,13 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class UserExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidths, WithStyles, WithEvents
+class UserExport implements FromQuery, WithColumnWidths, WithEvents, WithHeadings, WithMapping, WithStyles
 {
     protected $filters;
+
     protected $columns;
 
     public function __construct($filters = [], $columns = [])
@@ -60,15 +62,15 @@ class UserExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidt
     public function headings(): array
     {
         $headingMap = [
-            'id'              => 'ID',
-            'name'            => 'Name',
-            'email'           => 'Email',
-            'google_id'       => 'Google ID',
-            'avatar'          => 'Avatar',
+            'id' => 'ID',
+            'name' => 'Name',
+            'email' => 'Email',
+            'google_id' => 'Google ID',
+            'avatar' => 'Avatar',
             'email_verified_at' => 'Email Verified At',
-            'created_at'      => 'Created At',
-            'updated_at'      => 'Updated At',
-            'role_name'       => 'Role',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'role_name' => 'Role',
         ];
 
         $headings = [];
@@ -85,15 +87,15 @@ class UserExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidt
     public function map($user): array
     {
         $dataMap = [
-            'id'              => $user->id,
-            'name'            => $user->name,
-            'email'           => $user->email,
-            'google_id'       => $user->google_id ?: '-',
-            'avatar'          => $user->avatar ?: '-',
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'google_id' => $user->google_id ?: '-',
+            'avatar' => $user->avatar ?: '-',
             'email_verified_at' => $user->email_verified_at ? $user->email_verified_at->format('Y-m-d H:i:s') : '-',
-            'created_at'      => $user->created_at ? $user->created_at->format('Y-m-d H:i:s') : '',
-            'updated_at'      => $user->updated_at ? $user->updated_at->format('Y-m-d H:i:s') : '',
-            'role_name'       => $user->role_name ?: 'No Role',
+            'created_at' => $user->created_at ? $user->created_at->format('Y-m-d H:i:s') : '',
+            'updated_at' => $user->updated_at ? $user->updated_at->format('Y-m-d H:i:s') : '',
+            'role_name' => $user->role_name ?: 'No Role',
         ];
 
         $row = [];

@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Hr;
 
 use App\Http\Requests\BaseRequest;
 
 class StrukturOrganisasiRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -16,13 +14,14 @@ class StrukturOrganisasiRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'parent_id'   => [
+            'parent_id' => [
                 'nullable',
                 'exists:struktur_organisasi,orgunit_id',
                 function ($attribute, $value, $fail) {
                     $orgUnit = $this->route('hr_struktur_organisasi');
                     if ($orgUnit && $value == $orgUnit->orgunit_id) {
                         $fail('Unit tidak bisa menjadi induk bagi dirinya sendiri.');
+
                         return;
                     }
 
@@ -35,12 +34,12 @@ class StrukturOrganisasiRequest extends BaseRequest
                     }
                 },
             ],
-            'name'        => 'required|string|max:191',
-            'code'        => 'nullable|string|max:50',
-            'type'        => 'required|string',
+            'name' => 'required|string|max:191',
+            'code' => 'nullable|string|max:50',
+            'type' => 'required|string',
             'description' => 'nullable|string',
-            'is_active'   => 'sometimes|boolean',
-            'seq'         => 'nullable|integer',
+            'is_active' => 'sometimes|boolean',
+            'seq' => 'nullable|integer',
         ];
     }
 
@@ -58,21 +57,22 @@ class StrukturOrganisasiRequest extends BaseRequest
                 return true;
             }
         }
+
         return false;
     }
 
     public function attributes(): array
     {
         return [
-            'parent_id'   => 'Induk Organisasi',
-            'name'        => 'Nama Unit',
-            'code'        => 'Kode Unit',
-            'type'        => 'Tipe',
+            'parent_id' => 'Induk Organisasi',
+            'name' => 'Nama Unit',
+            'code' => 'Kode Unit',
+            'type' => 'Tipe',
             'description' => 'Deskripsi',
-            'is_active'   => 'Status Aktif',
-            'color'       => 'Warna Label',
-            'sort_order'  => 'Urutan Sortir',
-            'seq'         => 'Urutan',
+            'is_active' => 'Status Aktif',
+            'color' => 'Warna Label',
+            'sort_order' => 'Urutan Sortir',
+            'seq' => 'Urutan',
         ];
     }
 

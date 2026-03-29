@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Cms;
 
 use App\Models\User;
@@ -14,9 +15,10 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Pengumuman extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, InteractsWithMedia, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, InteractsWithMedia, SoftDeletes;
 
-    protected $table      = 'cms_pengumuman';
+    protected $table = 'cms_pengumuman';
+
     protected $primaryKey = 'pengumuman_id';
 
     protected $fillable = [
@@ -33,8 +35,8 @@ class Pengumuman extends Model implements HasMedia
     ];
 
     protected $casts = [
-        'is_published'  => 'boolean',
-        'jenis'         => 'string',
+        'is_published' => 'boolean',
+        'jenis' => 'string',
         'pengumuman_id' => 'string',
     ];
 
@@ -66,7 +68,7 @@ class Pengumuman extends Model implements HasMedia
             ]);
     }
 
-    public function registerMediaConversions(Media $media = null): void
+    public function registerMediaConversions(?Media $media = null): void
     {
         if ($media?->collection_name == 'cover') {
             $this->addMediaConversion('small')
@@ -84,12 +86,14 @@ class Pengumuman extends Model implements HasMedia
     public function getHasImageAttribute()
     {
         $imageUrl = $this->attributes['image_url'] ?? null;
+
         return ($imageUrl && filter_var($imageUrl, FILTER_VALIDATE_URL)) || $this->hasMedia('cover');
     }
 
     public function getIsExternalImageAttribute()
     {
         $imageUrl = $this->attributes['image_url'] ?? null;
+
         return $imageUrl && filter_var($imageUrl, FILTER_VALIDATE_URL);
     }
 
@@ -99,6 +103,7 @@ class Pengumuman extends Model implements HasMedia
         if ($imageUrl && filter_var($imageUrl, FILTER_VALIDATE_URL)) {
             return $imageUrl;
         }
+
         return $this->getFirstMediaUrl('cover');
     }
 
@@ -108,6 +113,7 @@ class Pengumuman extends Model implements HasMedia
         if ($imageUrl && filter_var($imageUrl, FILTER_VALIDATE_URL)) {
             return $imageUrl;
         }
+
         return $this->getFirstMediaUrl('cover', 'small');
     }
 
@@ -117,6 +123,7 @@ class Pengumuman extends Model implements HasMedia
         if ($imageUrl && filter_var($imageUrl, FILTER_VALIDATE_URL)) {
             return $imageUrl;
         }
+
         return $this->getFirstMediaUrl('cover', 'medium');
     }
 

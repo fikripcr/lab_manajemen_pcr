@@ -10,7 +10,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Diskusi extends Model implements HasMedia
 {
     use InteractsWithMedia;
-    protected $table      = 'pemutu_diskusi';
+
+    protected $table = 'pemutu_diskusi';
+
     protected $primaryKey = 'diskusi_id';
 
     protected $fillable = [
@@ -26,8 +28,8 @@ class Diskusi extends Model implements HasMedia
 
     protected $casts = [
         'attachment_link' => 'array',
-        'is_done'         => 'boolean',
-        'created_at'      => 'datetime',
+        'is_done' => 'boolean',
+        'created_at' => 'datetime',
     ];
 
     // Polymorphic owner

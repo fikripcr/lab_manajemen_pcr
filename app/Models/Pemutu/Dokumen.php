@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Pemutu;
 
 use App\Traits\Blameable;
@@ -11,9 +12,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Dokumen extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding, InteractsWithMedia;
+    use Blameable, HasFactory, HashidBinding, InteractsWithMedia, SoftDeletes;
 
-    protected $table      = 'pemutu_dokumen';
+    protected $table = 'pemutu_dokumen';
+
     protected $primaryKey = 'dok_id';
 
     protected $appends = ['encrypted_dok_id'];
@@ -22,6 +24,7 @@ class Dokumen extends Model implements HasMedia
     {
         return 'dok_id';
     }
+
     protected $fillable = [
         'parent_doksub_id', // For potential future hierarchy if needed, though migration says nullable
         'parent_id',
@@ -40,6 +43,7 @@ class Dokumen extends Model implements HasMedia
         'updated_by', 'deleted_by',
 
     ];
+
     public $timestamps = false; // Migration doesn't have timestamps
 
     public function getEncryptedDokIdAttribute()
@@ -48,7 +52,7 @@ class Dokumen extends Model implements HasMedia
     }
 
     protected $casts = [
-        'tgl_berlaku'    => 'date',
+        'tgl_berlaku' => 'date',
         'std_is_staging' => 'boolean',
     ];
 
@@ -86,16 +90,15 @@ class Dokumen extends Model implements HasMedia
         return $this->hasMany(Dokumen::class, 'parent_id', 'dok_id')->orderBy('seq');
     }
 
-    public function approvals()
+    public function sysApprovals()
     {
-        return $this->hasMany(\App\Models\Pemutu\RiwayatApproval::class, 'model_id', 'dok_id')
-            ->where('model', self::class)
-            ->orderBy('created_at', 'desc');
+        return $this->morphMany(\App\Models\Sys\SysApproval::class, 'subject', 'model', 'model_id');
     }
 
+    // Backward compatibility
     public function riwayatApprovals()
     {
-        return $this->morphMany(RiwayatApproval::class, 'subject', 'model', 'model_id');
+        return $this->sysApprovals();
     }
 
     /**

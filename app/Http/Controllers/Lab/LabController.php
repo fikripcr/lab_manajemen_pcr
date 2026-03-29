@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
@@ -10,8 +11,7 @@ use Yajra\DataTables\DataTables;
 
 class LabController extends Controller
 {
-    public function __construct(protected LabService $labService)
-    {}
+    public function __construct(protected LabService $labService) {}
 
     /**
      * Display a listing of the resource.
@@ -33,16 +33,17 @@ class LabController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function ($lab) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'       => route('lab.labs.edit', $lab->encrypted_lab_id),
-                    'editModal'     => true,
+                    'editUrl' => route('lab.labs.edit', $lab->encrypted_lab_id),
+                    'editModal' => true,
                     'editModalSize' => 'modal-xl',
-                    'viewUrl'       => route('lab.labs.show', $lab->encrypted_lab_id),
-                    'deleteUrl'     => route('lab.labs.destroy', $lab->encrypted_lab_id),
+                    'viewUrl' => route('lab.labs.show', $lab->encrypted_lab_id),
+                    'deleteUrl' => route('lab.labs.destroy', $lab->encrypted_lab_id),
                 ])->render();
             })
             ->editColumn('description', function ($lab) {
                 $description = strip_tags($lab->description);
-                return strlen($description) > 50 ? substr($description, 0, 50) . '...' : $description;
+
+                return strlen($description) > 50 ? substr($description, 0, 50).'...' : $description;
             })
             ->rawColumns(['action', 'description'])
             ->make(true);
@@ -53,7 +54,8 @@ class LabController extends Controller
      */
     public function create()
     {
-        $lab = new Lab();
+        $lab = new Lab;
+
         return view('pages.lab.labs.create-edit-ajax', compact('lab'));
     }
 
@@ -71,6 +73,7 @@ class LabController extends Controller
         }
 
         $this->labService->createLab($data);
+
         return jsonSuccess('Lab berhasil ditambahkan.', route('lab.labs.index'));
     }
 
@@ -80,6 +83,7 @@ class LabController extends Controller
     public function show(Lab $lab)
     {
         $lab->load(['labTeams.user', 'labInventaris.inventaris', 'media']);
+
         return view('pages.lab.labs.show', compact('lab'));
     }
 
@@ -105,6 +109,7 @@ class LabController extends Controller
         }
 
         $this->labService->updateLab($lab, $data);
+
         return jsonSuccess('Lab berhasil diperbarui.', route('lab.labs.index'));
     }
 
@@ -114,6 +119,7 @@ class LabController extends Controller
     public function destroy(Lab $lab)
     {
         $this->labService->deleteLab($lab);
+
         return jsonSuccess('Lab berhasil dihapus.', route('lab.labs.index'));
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
@@ -21,7 +22,7 @@ class JenisIndisiplinerController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('hr.jenis-indisipliner.edit', ['jenis_indisipliner' => $row->hashid]),
+                    'editUrl' => route('hr.jenis-indisipliner.edit', ['jenis_indisipliner' => $row->hashid]),
                     'editModal' => true,
                     'deleteUrl' => route('hr.jenis-indisipliner.destroy', ['jenis_indisipliner' => $row->hashid]),
                 ])->render();
@@ -32,7 +33,8 @@ class JenisIndisiplinerController extends Controller
 
     public function create()
     {
-        $jenisIndisipliner = new JenisIndisipliner();
+        $jenisIndisipliner = new JenisIndisipliner;
+
         return view('pages.hr.jenis-indisipliner.create-edit-ajax', compact('jenisIndisipliner'));
     }
 
@@ -40,6 +42,7 @@ class JenisIndisiplinerController extends Controller
     {
         $validated = $request->validated();
         JenisIndisipliner::create($validated);
+
         return jsonSuccess('Jenis indisipliner berhasil dibuat.');
     }
 
@@ -52,6 +55,7 @@ class JenisIndisiplinerController extends Controller
     {
         $validated = $request->validated();
         $jenisIndisipliner->update($validated);
+
         return jsonSuccess('Jenis Indisipliner berhasil diperbarui.');
     }
 
@@ -63,6 +67,7 @@ class JenisIndisiplinerController extends Controller
         }
 
         $jenisIndisipliner->delete();
+
         return jsonSuccess('Jenis Indisipliner berhasil dihapus.');
     }
 }

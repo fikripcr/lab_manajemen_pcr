@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Pemutu;
 
 use App\Models\Hr\StrukturOrganisasi;
@@ -11,9 +12,11 @@ class IndikatorOrgUnit extends Model implements HasMedia
 {
     use HashidBinding, InteractsWithMedia;
 
-    protected $table      = 'pemutu_indikator_orgunit';
+    protected $table = 'pemutu_indikator_orgunit';
+
     protected $primaryKey = 'indikorgunit_id';
-    protected $appends    = ['encrypted_indorgunit_id'];
+
+    protected $appends = ['encrypted_indorgunit_id'];
 
     protected $fillable = [
         'indikator_id',
@@ -44,8 +47,8 @@ class IndikatorOrgUnit extends Model implements HasMedia
     ];
 
     protected $casts = [
-        'ed_links'        => 'array',
-        'ed_skala'        => 'integer',
+        'ed_links' => 'array',
+        'ed_skala' => 'integer',
         'ami_hasil_akhir' => 'integer',
     ];
 

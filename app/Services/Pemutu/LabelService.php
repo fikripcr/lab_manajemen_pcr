@@ -1,8 +1,8 @@
 <?php
+
 namespace App\Services\Pemutu;
 
 use App\Models\Pemutu\Label;
-use App\Models\Pemutu\LabelType;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -55,7 +55,7 @@ class LabelService
     public function updateLabel(int $id, array $data): bool
     {
         return DB::transaction(function () use ($id, $data) {
-            $label   = $this->findLabelOrFail($id);
+            $label = $this->findLabelOrFail($id);
             $oldName = $label->name;
 
             if (empty($data['slug'])) {
@@ -66,7 +66,7 @@ class LabelService
 
             logActivity(
                 'label_management',
-                "Memperbarui label: {$oldName}" . ($oldName !== $label->name ? " menjadi {$label->name}" : "")
+                "Memperbarui label: {$oldName}".($oldName !== $label->name ? " menjadi {$label->name}" : '')
             );
 
             return true;
@@ -77,7 +77,7 @@ class LabelService
     {
         return DB::transaction(function () use ($id) {
             $label = $this->findLabelOrFail($id);
-            $name  = $label->name;
+            $name = $label->name;
 
             $label->delete();
 
@@ -96,6 +96,7 @@ class LabelService
         if (! $model) {
             throw new \Exception("Label dengan ID {$id} tidak ditemukan.");
         }
+
         return $model;
     }
 
@@ -103,7 +104,7 @@ class LabelService
 
     public function getParentLabels()
     {
-        return Label::with(['children' => function($q) {
+        return Label::with(['children' => function ($q) {
             $q->orderBy('name');
         }])->whereNull('parent_id')->orderBy('name')->get();
     }

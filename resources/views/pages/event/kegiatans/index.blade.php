@@ -15,7 +15,7 @@
                     <div>
                         <x-tabler.datatable-page-length :dataTableId="'table-Kegiatans'" />
                     </div>
-                    <div class="ms-auto">
+                    <div>
                         <x-tabler.datatable-search :dataTableId="'table-Kegiatans'" />
                     </div>
                 </div>

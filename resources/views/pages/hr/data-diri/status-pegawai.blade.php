@@ -1,20 +1,21 @@
 <x-tabler.card-header class="border-bottom">
-    <div class="d-flex flex-wrap gap-2 w-100">
-        <div>
-            <x-tabler.datatable-page-length dataTableId="status-pegawai-table" />
-        </div>
-        <div>
-            <x-tabler.datatable-search dataTableId="status-pegawai-table" />
-        </div>
-        <div>
-            <x-tabler.datatable-filter dataTableId="status-pegawai-table">
-                <div style="min-width: 150px;">
-                    <x-tabler.form-select name="status_pegawai_id" placeholder="Semua Status" class="mb-0" :options="[]" />
-                </div>
-            </x-tabler.datatable-filter>
-        </div>
+    <div class="d-flex gap-2 align-items-center">
+        <x-tabler.datatable-page-length dataTableId="status-pegawai-table" />
+        <x-tabler.datatable-filter dataTableId="status-pegawai-table" type="button" target="#status-pegawai-filter-area" />
+        <x-tabler.datatable-search dataTableId="status-pegawai-table" />
     </div>
 </x-tabler.card-header>
+<div class="collapse" id="status-pegawai-filter-area">
+    <x-tabler.datatable-filter dataTableId="status-pegawai-table" type="bare">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <x-tabler.form-select name="status_pegawai_id" label="Status Pegawai" placeholder="" class="mb-0" :options="[]">
+                    <option value="all" selected>Semua Status Pegawai</option>
+                </x-tabler.form-select>
+            </div>
+        </div>
+    </x-tabler.datatable-filter>
+</div>
 <div class="table-responsive">
     <x-tabler.datatable
         id="status-pegawai-table"

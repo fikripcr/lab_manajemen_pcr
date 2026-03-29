@@ -145,9 +145,15 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         // Documentation Routes - accessible via /sys/documentation
         Route::prefix('documentation')->name('sys.documentation.')->group(function () {
             Route::get('/', [DocumentationController::class, 'index'])->name('index');
-            Route::get('/{page?}', [DocumentationController::class, 'show'])->name('show');
-            Route::get('/edit/{page?}', [DocumentationController::class, 'edit'])->name('edit');
-            Route::put('/update/{page?}', [DocumentationController::class, 'update'])->name('update');
+            Route::get('/category/{category}', [DocumentationController::class, 'category'])->name('category');
+            Route::get('/search', [DocumentationController::class, 'search'])->name('search');
+            
+            // IMPORTANT: Specific routes MUST come before catch-all {path} routes
+            Route::get('/edit/{path}', [DocumentationController::class, 'edit'])->name('edit')->where('path', '.*');
+            Route::put('/update/{path}', [DocumentationController::class, 'update'])->name('update')->where('path', '.*');
+            
+            // Catch-all route for show (must be last)
+            Route::get('/{path}', [DocumentationController::class, 'show'])->name('show')->where('path', '.*');
         });
 
         // Get current server time

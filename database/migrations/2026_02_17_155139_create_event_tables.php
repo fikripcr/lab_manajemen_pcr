@@ -168,9 +168,9 @@ return new class extends Migration
             // But if the FK is named 'pemutu_rapat_author_user_id_foreign' it might be lingering.
             Schema::table('event_rapat', function (Blueprint $table) {
                 $table->dropForeign(['author_user_id']); // or use the exact name if known
-                                                         // Since exact name was in error: pemutu_rapat_author_user_id_foreign
-                                                         // Let's try to drop it by name to be safe if we are keeping the table.
-                                                         // But we want to DROP the table.
+                // Since exact name was in error: pemutu_rapat_author_user_id_foreign
+                // Let's try to drop it by name to be safe if we are keeping the table.
+                // But we want to DROP the table.
             });
             Schema::dropIfExists('event_rapat');
         }

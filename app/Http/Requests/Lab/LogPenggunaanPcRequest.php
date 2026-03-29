@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Lab;
 
 use App\Http\Requests\BaseRequest;
 
 class LogPenggunaanPcRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -16,10 +14,10 @@ class LogPenggunaanPcRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'status_pc'    => 'required|in:Baik,Rusak',
+            'status_pc' => 'required|in:Baik,Rusak',
             'catatan_umum' => 'nullable|string',
-            'jadwal_id'    => 'required',
-            'lab_id'       => 'required',
+            'jadwal_id' => 'required',
+            'lab_id' => 'required',
         ];
     }
 
@@ -30,17 +28,17 @@ class LogPenggunaanPcRequest extends BaseRequest
     {
         $this->merge([
             'jadwal_id' => decryptIdIfEncrypted($this->jadwal_id),
-            'lab_id'    => decryptIdIfEncrypted($this->lab_id),
+            'lab_id' => decryptIdIfEncrypted($this->lab_id),
         ]);
     }
 
     public function attributes(): array
     {
         return [
-            'status_pc'    => 'Status PC',
+            'status_pc' => 'Status PC',
             'catatan_umum' => 'Catatan Umum',
-            'jadwal_id'    => 'Jadwal',
-            'lab_id'       => 'Lab',
+            'jadwal_id' => 'Jadwal',
+            'lab_id' => 'Lab',
         ];
     }
 }

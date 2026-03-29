@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Event;
 
 use App\Models\User;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class RapatPeserta extends Model
 {
-    use HasFactory, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding;
 
-    protected $table      = 'event_rapat_peserta';
+    protected $table = 'event_rapat_peserta';
+
     protected $primaryKey = 'rapatpeserta_id';
 
     protected $appends = ['encrypted_rapatpeserta_id'];
@@ -52,8 +54,8 @@ class RapatPeserta extends Model
     }
 
     protected $casts = [
-        'waktu_hadir'        => 'datetime',
-        'is_invited'         => 'boolean',
+        'waktu_hadir' => 'datetime',
+        'is_invited' => 'boolean',
         'invitation_sent_at' => 'datetime',
     ];
 

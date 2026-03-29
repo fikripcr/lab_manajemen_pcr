@@ -22,6 +22,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
 
         // Berita
         Route::prefix('berita')->name('berita.')->controller(PengumumanController::class)->group(function () {
+            Route::get('/data', 'data')->name('data');
             Route::get('/', 'beritaIndex')->name('index');
             Route::get('/create', 'create')->defaults('type', 'berita')->name('create');
             Route::post('/', 'store')->name('store');
@@ -29,7 +30,6 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::get('/{pengumuman}/edit', 'edit')->name('edit');
             Route::put('/{pengumuman}', 'update')->name('update');
             Route::delete('/{pengumuman}', 'destroy')->name('destroy');
-            Route::get('/data', 'data')->name('data');
         });
 
         // Slideshow

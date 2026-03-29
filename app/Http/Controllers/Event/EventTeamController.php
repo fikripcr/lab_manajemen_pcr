@@ -11,8 +11,7 @@ use App\Services\Event\EventTeamService;
 
 class EventTeamController extends Controller
 {
-    public function __construct(protected EventTeamService $eventTeamService)
-    {}
+    public function __construct(protected EventTeamService $eventTeamService) {}
 
     /**
      * Show create form for team member
@@ -23,7 +22,7 @@ class EventTeamController extends Controller
         $pegawais = Pegawai::where('is_active', 1)
             ->orderBy('nama_pegawai')
             ->get(['pegawai_id', 'nama_pegawai', 'nip', 'jabatan']);
-        
+
         return view('pages.event.teams.create-edit-ajax', compact('pageTitle', 'event', 'pegawais'));
     }
 
@@ -49,7 +48,7 @@ class EventTeamController extends Controller
         $pegawais = Pegawai::where('is_active', 1)
             ->orderBy('nama_pegawai')
             ->get(['pegawai_id', 'nama_pegawai', 'nip', 'jabatan']);
-        
+
         return view('pages.event.teams.create-edit-ajax', compact('pageTitle', 'event', 'team', 'pegawais'));
     }
 

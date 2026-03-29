@@ -3,9 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use Laravel\Sanctum\PersonalAccessToken;
 
 class ApiAuthService
 {
@@ -14,10 +12,10 @@ class ApiAuthService
      */
     public function createApiToken(string $email, string $password, string $deviceName = 'api-token'): ?array
     {
-        $authService = new AuthService();
+        $authService = new AuthService;
         $user = $authService->verifyCredentials(['email' => $email, 'password' => $password]);
 
-        if (!$user) {
+        if (! $user) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -28,7 +26,7 @@ class ApiAuthService
 
         return [
             'user' => $user,
-            'token' => $token
+            'token' => $token,
         ];
     }
 
@@ -37,10 +35,10 @@ class ApiAuthService
      */
     public function loginAndCreateToken(array $credentials, string $deviceName = 'api-token'): ?array
     {
-        $authService = new AuthService();
+        $authService = new AuthService;
         $user = $authService->verifyCredentials($credentials);
 
-        if (!$user) {
+        if (! $user) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -51,7 +49,7 @@ class ApiAuthService
 
         return [
             'user' => $user,
-            'token' => $token
+            'token' => $token,
         ];
     }
 
@@ -60,7 +58,8 @@ class ApiAuthService
      */
     public function authenticateApiUser(array $credentials): ?User
     {
-        $authService = new AuthService();
+        $authService = new AuthService;
+
         return $authService->verifyCredentials($credentials);
     }
 

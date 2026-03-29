@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Models\Cms\FAQ;
@@ -12,29 +13,29 @@ class FAQSeeder extends Seeder
     public function run(): void
     {
         FAQ::create([
-            'question'   => 'Bagaimana cara mendaftar sebagai mahasiswa baru?',
-            'answer'     => 'Pendaftaran dapat dilakukan secara online melalui portal PMB di pmb.pcr.ac.id.',
-            'category'   => 'Pendaftaran',
-            'seq'        => 1,
-            'is_active'  => true,
+            'question' => 'Bagaimana cara mendaftar sebagai mahasiswa baru?',
+            'answer' => 'Pendaftaran dapat dilakukan secara online melalui portal PMB di pmb.pcr.ac.id.',
+            'category' => 'Pendaftaran',
+            'seq' => 1,
+            'is_active' => true,
             'created_by' => 1,
         ]);
 
         FAQ::create([
-            'question'   => 'Program studi apa saja yang tersedia?',
-            'answer'     => 'Kami memiliki berbagai program studi di bidang Teknik Elektro, Teknik Komputer, Akuntansi, dan lainnya.',
-            'category'   => 'Akademik',
-            'seq'        => 2,
-            'is_active'  => true,
+            'question' => 'Program studi apa saja yang tersedia?',
+            'answer' => 'Kami memiliki berbagai program studi di bidang Teknik Elektro, Teknik Komputer, Akuntansi, dan lainnya.',
+            'category' => 'Akademik',
+            'seq' => 2,
+            'is_active' => true,
             'created_by' => 1,
         ]);
 
         FAQ::create([
-            'question'   => 'Kapan batas waktu pengajuan software lab?',
-            'answer'     => 'Pengajuan software lab biasanya dibuka di awal setiap semester. Pantau portal Lab untuk info lebih lanjut.',
-            'category'   => 'Fasilitas Lab',
-            'seq'        => 3,
-            'is_active'  => true,
+            'question' => 'Kapan batas waktu pengajuan software lab?',
+            'answer' => 'Pengajuan software lab biasanya dibuka di awal setiap semester. Pantau portal Lab untuk info lebih lanjut.',
+            'category' => 'Fasilitas Lab',
+            'seq' => 3,
+            'is_active' => true,
             'created_by' => 1,
         ]);
     }

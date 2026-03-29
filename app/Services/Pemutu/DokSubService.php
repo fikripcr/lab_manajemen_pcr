@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Pemutu;
 
 use App\Models\Pemutu\DokSub;
@@ -27,7 +28,7 @@ class DokSubService
         return DB::transaction(function () use ($data) {
             // Auto Sequence
             if (! isset($data['seq'])) {
-                $lastSeq     = DokSub::where('dok_id', $data['dok_id'])->max('seq');
+                $lastSeq = DokSub::where('dok_id', $data['dok_id'])->max('seq');
                 $data['seq'] = $lastSeq ? $lastSeq + 1 : 1;
             }
 
@@ -45,14 +46,14 @@ class DokSubService
     public function updateDokSub(int $id, array $data): bool
     {
         return DB::transaction(function () use ($id, $data) {
-            $dokSub   = $this->findOrFail($id);
+            $dokSub = $this->findOrFail($id);
             $oldJudul = $dokSub->judul;
 
             $dokSub->update($data);
 
             logActivity(
                 'pemutu',
-                "Memperbarui sub-dokumen: {$oldJudul}" . ($oldJudul !== $dokSub->judul ? " menjadi {$dokSub->judul}" : "")
+                "Memperbarui sub-dokumen: {$oldJudul}".($oldJudul !== $dokSub->judul ? " menjadi {$dokSub->judul}" : '')
             );
 
             return true;
@@ -63,7 +64,7 @@ class DokSubService
     {
         return DB::transaction(function () use ($id) {
             $dokSub = $this->findOrFail($id);
-            $judul  = $dokSub->judul;
+            $judul = $dokSub->judul;
 
             $dokSub->delete();
 
@@ -82,6 +83,7 @@ class DokSubService
         if (! $model) {
             throw new \Exception("Sub-Dokumen dengan ID {$id} tidak ditemukan.");
         }
+
         return $model;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JenisIzin extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_jenis_izin';
+    protected $table = 'hr_jenis_izin';
+
     protected $primaryKey = 'jenisizin_id';
 
     protected $appends = ['encrypted_jenisizin_id'];

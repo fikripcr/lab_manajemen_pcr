@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Cms;
 
 use App\Models\Cms\Page;
@@ -35,6 +36,7 @@ class PublicPageService
             }
 
             logActivity('public_page', "Membuat halaman: {$page->title}", $page);
+
             return $page;
         });
     }
@@ -61,6 +63,7 @@ class PublicPageService
             }
 
             logActivity('public_page', "Update halaman: {$page->title}", $page);
+
             return true;
         });
     }
@@ -75,6 +78,7 @@ class PublicPageService
 
             $page->delete();
             logActivity('public_page', "Hapus halaman: {$title}");
+
             return true;
         });
     }

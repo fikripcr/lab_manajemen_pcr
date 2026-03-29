@@ -4,22 +4,22 @@ if (! function_exists('labConditionBadge')) {
     /**
      * Get badge HTML for Lab item conditions
      *
-     * @param string $condition
+     * @param  string  $condition
      * @return string
      */
     function labConditionBadge($condition)
     {
         $condition = trim($condition);
         $badges = [
-            'Baik'                  => 'bg-success-lt',
-            'Rusak Ringan'          => 'bg-warning-lt',
-            'Rusak Berat'           => 'bg-danger-lt',
+            'Baik' => 'bg-success-lt',
+            'Rusak Ringan' => 'bg-warning-lt',
+            'Rusak Berat' => 'bg-danger-lt',
             'Tidak Dapat Digunakan' => 'bg-dark-lt',
         ];
-        
+
         $color = $badges[$condition] ?? 'bg-secondary-lt';
-        
-        return '<span class="badge ' . $color . '">' . $condition . '</span>';
+
+        return '<span class="badge '.$color.'">'.$condition.'</span>';
     }
 }
 
@@ -27,7 +27,7 @@ if (! function_exists('labStatusBadge')) {
     /**
      * Get badge HTML for Lab request statuses
      *
-     * @param string $status
+     * @param  string  $status
      * @return string
      */
     function labStatusBadge($status)
@@ -36,12 +36,12 @@ if (! function_exists('labStatusBadge')) {
         $badges = [
             'diajukan' => 'bg-warning-lt',
             'disetujui' => 'bg-success-lt',
-            'ditolak'   => 'bg-danger-lt',
-            'selesai'   => 'bg-primary-lt',
+            'ditolak' => 'bg-danger-lt',
+            'selesai' => 'bg-primary-lt',
         ];
-        
+
         $color = $badges[$status] ?? 'bg-secondary-lt';
-        
-        return '<span class="badge ' . $color . '">' . ucfirst($status) . '</span>';
+
+        return '<span class="badge '.$color.'">'.ucfirst($status).'</span>';
     }
 }

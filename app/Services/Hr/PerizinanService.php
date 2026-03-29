@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Hr;
 
 use App\Models\Hr\Perizinan;
@@ -7,8 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class PerizinanService
 {
-    public function __construct(protected ApprovalService $approvalService)
-    {}
+    public function __construct(protected ApprovalService $approvalService) {}
 
     /**
      * Simpan pengajuan perizinan baru.
@@ -19,16 +19,16 @@ class PerizinanService
         return DB::transaction(function () use ($data) {
             // 1. Insert Perizinan — latest_riwayatapproval_id = null dulu
             $perizinan = Perizinan::create([
-                'jenisizin_id'           => $data['jenisizin_id'],
-                'pengusul'               => $data['pengusul'],
+                'jenisizin_id' => $data['jenisizin_id'],
+                'pengusul' => $data['pengusul'],
                 'pekerjaan_ditinggalkan' => $data['pekerjaan_ditinggalkan'] ?? null,
-                'keterangan'             => $data['keterangan'] ?? null,
-                'alamat_izin'            => $data['alamat_izin'] ?? null,
-                'tgl_awal'               => $data['tgl_awal'],
-                'tgl_akhir'              => $data['tgl_akhir'],
-                'jam_awal'               => $data['jam_awal'] ?? null,
-                'jam_akhir'              => $data['jam_akhir'] ?? null,
-                'periode'                => date('Y'),
+                'keterangan' => $data['keterangan'] ?? null,
+                'alamat_izin' => $data['alamat_izin'] ?? null,
+                'tgl_awal' => $data['tgl_awal'],
+                'tgl_akhir' => $data['tgl_akhir'],
+                'jam_awal' => $data['jam_awal'] ?? null,
+                'jam_akhir' => $data['jam_akhir'] ?? null,
+                'periode' => date('Y'),
             ]);
 
             // 2. ApprovalService buat approval record, return approval dengan riwayatapproval_id
@@ -41,7 +41,7 @@ class PerizinanService
             // 3. Update perizinan agar tunjuk ke approval yang baru
             $perizinan->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
 
-            logActivity('hr', 'Mengajukan perizinan: ' . ($perizinan->jenisIzin?->nama ?? 'N/A'), $perizinan);
+            logActivity('hr', 'Mengajukan perizinan: '.($perizinan->jenisIzin?->nama ?? 'N/A'), $perizinan);
 
             return $perizinan;
         });
@@ -55,7 +55,7 @@ class PerizinanService
         return DB::transaction(function () use ($perizinan, $data) {
             $perizinan->update($data);
 
-            logActivity('hr', 'Mengupdate perizinan: ' . ($perizinan->jenisIzin?->nama ?? 'N/A'), $perizinan);
+            logActivity('hr', 'Mengupdate perizinan: '.($perizinan->jenisIzin?->nama ?? 'N/A'), $perizinan);
 
             return $perizinan;
         });
@@ -74,7 +74,7 @@ class PerizinanService
             $perizinan = Perizinan::findOrFail($approval->model_id);
             // latest_riwayatapproval_id is already updated during store() or previous actions
 
-            logActivity('hr', "Memproses approval perizinan ({$status}): " . ($perizinan->jenisIzin?->nama ?? 'N/A'), $perizinan);
+            logActivity('hr', "Memproses approval perizinan ({$status}): ".($perizinan->jenisIzin?->nama ?? 'N/A'), $perizinan);
 
             return $approval;
         });

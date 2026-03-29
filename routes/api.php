@@ -53,8 +53,9 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
     Route::get('/users/search', function (Request $request) {
         $query = User::query();
         if ($request->filled('q')) {
-            $query->where('name', 'like', '%' . $request->q . '%');
+            $query->where('name', 'like', '%'.$request->q.'%');
         }
+
         return $query->select('id', 'name')->orderBy('name')->limit(50)->get();
     })->name('api.users.search');
 });

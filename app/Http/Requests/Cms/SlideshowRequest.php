@@ -1,18 +1,18 @@
 <?php
+
 namespace App\Http\Requests\Cms;
 
 use App\Http\Requests\BaseRequest;
 
 class SlideshowRequest extends BaseRequest
 {
-
     public function rules(): array
     {
         $rules = [
-            'title'     => 'nullable|string|max:191',
-            'caption'   => 'nullable|string',
-            'link'      => 'nullable|url',
-            'seq'       => 'nullable|integer',
+            'title' => 'nullable|string|max:191',
+            'caption' => 'nullable|string',
+            'link' => 'nullable|url',
+            'seq' => 'nullable|integer',
             'image_url' => 'nullable|url',
             'is_active' => 'nullable',
         ];
@@ -30,10 +30,10 @@ class SlideshowRequest extends BaseRequest
     {
         return [
             'slideshow_image' => 'Gambar Slideshow',
-            'title'           => 'Judul',
-            'caption'         => 'Caption',
-            'link'            => 'URL Link',
-            'seq'             => 'Urutan',
+            'title' => 'Judul',
+            'caption' => 'Caption',
+            'link' => 'URL Link',
+            'seq' => 'Urutan',
         ];
     }
 }

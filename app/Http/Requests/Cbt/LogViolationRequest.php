@@ -1,16 +1,15 @@
 <?php
+
 namespace App\Http\Requests\Cbt;
 
 use App\Http\Requests\BaseRequest;
 
 class LogViolationRequest extends BaseRequest
 {
-    
-
     public function rules()
     {
         return [
-            'type'       => 'required|string',
+            'type' => 'required|string',
             'keterangan' => 'nullable|string',
         ];
     }
@@ -18,7 +17,7 @@ class LogViolationRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'type'       => 'Tipe Pelanggaran',
+            'type' => 'Tipe Pelanggaran',
             'keterangan' => 'Keterangan',
         ];
     }

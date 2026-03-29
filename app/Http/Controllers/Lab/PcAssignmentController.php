@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
@@ -11,8 +12,7 @@ use Yajra\DataTables\DataTables;
 
 class PcAssignmentController extends Controller
 {
-    public function __construct(protected PcAssignmentService $pcAssignmentService)
-    {}
+    public function __construct(protected PcAssignmentService $pcAssignmentService) {}
 
     /**
      * Display a listing of the resource.
@@ -61,13 +61,14 @@ class PcAssignmentController extends Controller
             $q->where('name', 'akademik_mahasiswa');
         })->orderBy('name')->get();
 
-        $totalPc     = 40;
+        $totalPc = 40;
         $assignedPcs = PcAssignment::where('jadwal_id', $jadwal->jadwal_kuliah_id)
             ->where('is_active', true)
             ->pluck('nomor_pc')
             ->toArray();
 
-        $assignment = new PcAssignment();
+        $assignment = new PcAssignment;
+
         return view('pages.lab.pc-assignments.create-edit-ajax', compact('jadwal', 'mahasiswas', 'totalPc', 'assignedPcs', 'assignment'));
     }
 
@@ -77,6 +78,7 @@ class PcAssignmentController extends Controller
     public function store(PcAssignmentRequest $request, JadwalKuliah $jadwal)
     {
         $this->pcAssignmentService->createAssignment($jadwal, $request->validated());
+
         return jsonSuccess('Assignment berhasil dibuat.', route('lab.jadwal.assignments.index', $jadwal->encrypted_jadwal_kuliah_id));
     }
 
@@ -86,6 +88,7 @@ class PcAssignmentController extends Controller
     public function destroy(JadwalKuliah $jadwal, PcAssignment $assignment)
     {
         $this->pcAssignmentService->deleteAssignment($assignment);
+
         return jsonSuccess('Assignment berhasil dihapus.', route('lab.jadwal.assignments.index', $jadwal->encrypted_jadwal_kuliah_id));
     }
 }

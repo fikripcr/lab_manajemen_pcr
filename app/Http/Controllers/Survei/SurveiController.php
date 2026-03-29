@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Survei;
 
 use App\Http\Controllers\Controller;
@@ -9,8 +10,7 @@ use Illuminate\Support\Str;
 
 class SurveiController extends Controller
 {
-    public function __construct(protected SurveiService $surveiService)
-    {}
+    public function __construct(protected SurveiService $surveiService) {}
 
     public function index()
     {
@@ -20,6 +20,7 @@ class SurveiController extends Controller
     public function data()
     {
         $query = Survei::latest();
+
         return datatables()->of($query)
             ->addIndexColumn()
             ->editColumn('status', function ($s) {
@@ -28,55 +29,56 @@ class SurveiController extends Controller
                     : '<span class="badge bg-secondary text-white">Draft</span>';
             })
             ->addColumn('pelaksanaan', function ($s) {
-                $mulai   = $s->tanggal_mulai ? $s->tanggal_mulai->format('d/m/Y') : '-';
+                $mulai = $s->tanggal_mulai ? $s->tanggal_mulai->format('d/m/Y') : '-';
                 $selesai = $s->tanggal_selesai ? $s->tanggal_selesai->format('d/m/Y') : '-';
+
                 return "<div class='small text-muted'>$mulai s/d $selesai</div>";
             })
             ->addColumn('action', function ($s) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'       => route('survei.edit', $s->encrypted_survei_id),
-                    'editModal'     => true,
-                    'editTitle'     => 'Edit Pengaturan Survei',
-                    'deleteUrl'     => route('survei.destroy', $s->encrypted_survei_id),
-                    'deleteTitle'   => 'Hapus Survei?',
+                    'editUrl' => route('survei.edit', $s->encrypted_survei_id),
+                    'editModal' => true,
+                    'editTitle' => 'Edit Pengaturan Survei',
+                    'deleteUrl' => route('survei.destroy', $s->encrypted_survei_id),
+                    'deleteTitle' => 'Hapus Survei?',
                     'customActions' => [
                         [
                             'label' => 'Form Builder',
-                            'url'   => route('survei.builder', $s->encrypted_survei_id),
-                            'icon'  => 'tool',
+                            'url' => route('survei.builder', $s->encrypted_survei_id),
+                            'icon' => 'tool',
                             'class' => '',
                         ],
                         [
                             'label' => 'Lihat Jawaban',
-                            'url'   => route('survei.responses', $s->encrypted_survei_id),
-                            'icon'  => 'chart-bar',
+                            'url' => route('survei.responses', $s->encrypted_survei_id),
+                            'icon' => 'chart-bar',
                             'class' => '',
                         ],
                         [
-                            'label'      => $s->is_aktif ? 'Jadikan Draft' : 'Publish Survei',
-                            'url'        => '#',
-                            'icon'       => $s->is_aktif ? 'eye-off' : 'eye',
-                            'class'      => 'btn-toggle-status',
-                            'attributes' => 'data-url="' . route('survei.toggle-status', $s->encrypted_survei_id) . '" data-title="' . ($s->is_aktif ? 'Jadikan Draft?' : 'Publish Survei?') . '"',
+                            'label' => $s->is_aktif ? 'Jadikan Draft' : 'Publish Survei',
+                            'url' => '#',
+                            'icon' => $s->is_aktif ? 'eye-off' : 'eye',
+                            'class' => 'btn-toggle-status',
+                            'attributes' => 'data-url="'.route('survei.toggle-status', $s->encrypted_survei_id).'" data-title="'.($s->is_aktif ? 'Jadikan Draft?' : 'Publish Survei?').'"',
                         ],
                         [
-                            'label'      => 'Salin Link',
-                            'url'        => '#',
-                            'icon'       => 'link',
-                            'class'      => 'btn-copy-link',
-                            'attributes' => 'data-link="' . route('survei.public.show', $s->slug) . '"',
+                            'label' => 'Salin Link',
+                            'url' => '#',
+                            'icon' => 'link',
+                            'class' => 'btn-copy-link',
+                            'attributes' => 'data-link="'.route('survei.public.show', $s->slug).'"',
                         ],
                         [
-                            'label'      => 'Duplikasi',
-                            'url'        => '#',
-                            'icon'       => 'copy',
-                            'class'      => 'btn-duplicate-single',
-                            'attributes' => 'data-url="' . route('survei.duplicate', $s->encrypted_survei_id) . '"',
+                            'label' => 'Duplikasi',
+                            'url' => '#',
+                            'icon' => 'copy',
+                            'class' => 'btn-duplicate-single',
+                            'attributes' => 'data-url="'.route('survei.duplicate', $s->encrypted_survei_id).'"',
                         ],
                         [
                             'label' => 'Export CSV',
-                            'url'   => route('survei.export', $s->encrypted_survei_id),
-                            'icon'  => 'download',
+                            'url' => route('survei.export', $s->encrypted_survei_id),
+                            'icon' => 'download',
                             'class' => '',
                         ],
                     ],
@@ -88,13 +90,15 @@ class SurveiController extends Controller
 
     public function create()
     {
-        $survei = new Survei();
+        $survei = new Survei;
+
         return view('pages.survei.admin.create-edit-ajax', compact('survei'));
     }
 
     public function store(SurveiRequest $request)
     {
         $survei = $this->surveiService->createSurvei($request->validated());
+
         return jsonSuccess('Survei berhasil dibuat.', route('survei.builder', $survei->encrypted_survei_id));
     }
 
@@ -106,6 +110,7 @@ class SurveiController extends Controller
     public function update(SurveiRequest $request, Survei $survei)
     {
         $this->surveiService->updateSurvei($survei, $request->validated());
+
         return jsonSuccess('Survei berhasil diperbarui.');
     }
 
@@ -114,6 +119,7 @@ class SurveiController extends Controller
         $survei->load(['halaman.pertanyaan', 'pengisian' => function ($q) {
             $q->with(['user', 'jawaban.pertanyaan', 'jawaban.opsi'])->latest();
         }]);
+
         return view('pages.survei.admin.responses', compact('survei'));
     }
 
@@ -121,12 +127,14 @@ class SurveiController extends Controller
     {
         $this->surveiService->toggleStatus($survei);
         $status = $survei->is_aktif ? 'dipublikasikan' : 'di-unpublish';
+
         return jsonSuccess("Survei berhasil {$status}.");
     }
 
     public function duplicate(Survei $survei)
     {
         $this->surveiService->duplicateSurvei($survei);
+
         return jsonSuccess('Survei berhasil diduplikasi.');
     }
 
@@ -134,18 +142,18 @@ class SurveiController extends Controller
     {
         $survei = $this->surveiService->getResponsesForExport($survei);
 
-        $filename = "responses_" . Str::slug($survei->judul) . "_" . date('Ymd_His') . ".csv";
-        $handle   = fopen('php://output', 'w');
+        $filename = 'responses_'.Str::slug($survei->judul).'_'.date('Ymd_His').'.csv';
+        $handle = fopen('php://output', 'w');
 
         // Prepare headers (using pre-eager-loaded relation)
         $questions = $survei->pertanyaan;
-        $headers   = ['Timestamp', 'Nama', 'Username', 'Email'];
+        $headers = ['Timestamp', 'Nama', 'Username', 'Email'];
         foreach ($questions as $q) {
             $headers[] = $q->teks_pertanyaan;
         }
 
         header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Content-Disposition: attachment; filename="'.$filename.'"');
 
         fputcsv($handle, $headers);
 
@@ -164,7 +172,7 @@ class SurveiController extends Controller
                         $row[] = $jawaban->opsi->label ?? '-';
                     } elseif ($jawaban->jawaban_multiple) {
                         $labels = \App\Models\Survei\Opsi::whereIn('id', $jawaban->jawaban_multiple)->pluck('label')->toArray();
-                        $row[]  = implode(', ', $labels);
+                        $row[] = implode(', ', $labels);
                     } else {
                         $row[] = $jawaban->jawaban_teks ?? '-';
                     }
@@ -182,6 +190,7 @@ class SurveiController extends Controller
     public function destroy(Survei $survei)
     {
         $this->surveiService->deleteSurvei($survei);
+
         return jsonSuccess('Survei berhasil dihapus.');
     }
 }

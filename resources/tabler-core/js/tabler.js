@@ -289,18 +289,38 @@ window.loadFilePond = async function () {
  * Initialize Toast UI Editor
  * @param {string} selector - CSS selector for the editor container
  * @param {object} config - Additional configuration options
+ * @returns {Promise} - Promise that resolves with editor instance
  */
-window.initToastEditor = function (selector, config = {}) {
-    import('@toast-ui/editor')
-        .then(({ Editor }) => {
-            new Editor({
-                el: document.querySelector(selector),
-                ...config
-            });
-        })
-        .catch((error) => {
-            console.error('Failed to load Toast Editor:', error);
+window.initToastEditor = async function (selector, config = {}) {
+    try {
+        // Load CSS first
+        await import('@toast-ui/editor/dist/toastui-editor.css');
+
+        // Load dark theme CSS if dark mode
+        const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+        if (isDark) {
+            await import('@toast-ui/editor/dist/theme/toastui-editor-dark.css');
+        }
+
+        // Load editor module
+        const { Editor } = await import('@toast-ui/editor');
+
+        const editor = new Editor({
+            el: document.querySelector(selector),
+            ...config
         });
+
+        // Expose editor instance on the wrapper element
+        const wrapper = document.querySelector(selector);
+        if (wrapper) {
+            wrapper.editorInstance = editor;
+        }
+
+        return editor;
+    } catch (error) {
+        console.error('Failed to load Toast Editor:', error);
+        throw error;
+    }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -406,9 +426,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    window.initHugeRTE = function () {
+        const elements = document.querySelectorAll('.huge-editor');
+        if (elements.length > 0) {
+            elements.forEach(el => {
+                const id = el.id || 'editor-' + Math.random().toString(36).substr(2, 9);
+                if (!el.id) el.id = id;
+
+                window.loadHugeRTE('#' + id, {
+                    height: el.rows * 20 || 400,
+                    setup: function (editor) {
+                        editor.on('change', function () {
+                            editor.save();
+                        });
+                    }
+                });
+            });
+        }
+    };
+
     window.initOfflineSelect2();
     window.initFlatpickr();
     window.initFilePond();
+    window.initHugeRTE();
 
     if (document.querySelector('#global-search-input') || document.getElementById('globalSearchModal')) {
         window.loadGlobalSearch().then((GlobalSearch) => {

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -9,11 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PengembanganDiri extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_pengembangan_diri';
+    protected $table = 'hr_pengembangan_diri';
+
     protected $primaryKey = 'pengembangandiri_id';
-    protected $guarded    = ['pengembangandiri_id'];
+
+    protected $guarded = ['pengembangandiri_id'];
 
     protected $appends = ['encrypted_pengembangandiri_id'];
 
@@ -45,8 +48,8 @@ class PengembanganDiri extends Model
     ];
 
     protected $casts = [
-        'tgl_mulai'      => 'date',
-        'tgl_selesai'    => 'date',
+        'tgl_mulai' => 'date',
+        'tgl_selesai' => 'date',
         'berlaku_hingga' => 'date',
     ];
 

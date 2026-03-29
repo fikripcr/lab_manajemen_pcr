@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -8,8 +9,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TanggalLibur extends Model
 {
-    use SoftDeletes, Blameable, HashidBinding;
-    protected $table      = 'hr_tanggal_libur';
+    use Blameable, HashidBinding, SoftDeletes;
+
+    protected $table = 'hr_tanggal_libur';
+
     protected $primaryKey = 'tanggallibur_id';
 
     protected $appends = ['encrypted_tanggallibur_id'];

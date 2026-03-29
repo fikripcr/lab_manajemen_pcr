@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Pmb;
 
 use App\Models\Pmb\SesiUjian;
@@ -14,6 +15,7 @@ class SesiUjianService
     {
         $sesi = SesiUjian::create($data);
         logActivity('pmb_sesi_ujian', "Menambahkan sesi ujian baru: {$sesi->nama_sesi}", $sesi);
+
         return $sesi;
     }
 
@@ -21,6 +23,7 @@ class SesiUjianService
     {
         $sesi->update($data);
         logActivity('pmb_sesi_ujian', "Memperbarui sesi ujian: {$sesi->nama_sesi}", $sesi);
+
         return true;
     }
 
@@ -29,6 +32,7 @@ class SesiUjianService
         $nama = $sesi->nama_sesi;
         $sesi->delete();
         logActivity('pmb_sesi_ujian', "Menghapus sesi ujian: {$nama}");
+
         return true;
     }
 }

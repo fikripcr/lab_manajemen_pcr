@@ -15,8 +15,8 @@
 @import '@tabler/icons-webfont/dist/tabler-icons.min.css';
 
 /* Shared Theme Customization (fonts, cards, selects, etc.) */
-/* @import './custom/ThemeTabler.css'; */
-
+@import '../tabler-core/css/core-theme.css';
+@import '../tabler-core/css/core-advanced.css';
 
 /* --- Auth Layout Background (Dark Mode Support) --- */
 
@@ -32,15 +32,15 @@
 
 /* Auth Cover Layout: Full background coverage */
 .page-cover {
-    background-color: var(--tblr-body-bg, #ffffff);
+    background-color: transparent;
 }
 
 /* Auth Illustration Layout: Full background coverage */
 .page-illustration {
-    background-color: var(--tblr-body-bg, #ffffff);
+    background-color: transparent;
 }
 
 /* Basic Layout: Full background coverage */
 .page-center {
-    background-color: var(--tblr-body-bg, #ffffff);
+    background-color: transparent;
 }

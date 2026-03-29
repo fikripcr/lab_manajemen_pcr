@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Pmb;
 
 use App\Http\Controllers\Controller;
@@ -39,9 +40,9 @@ class CamabaController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('pmb.camaba.edit', $row->encrypted_camaba_id),
+                    'editUrl' => route('pmb.camaba.edit', $row->encrypted_camaba_id),
                     'editModal' => true,
-                    'viewUrl'   => route('pmb.camaba.show', $row->encrypted_camaba_id),
+                    'viewUrl' => route('pmb.camaba.show', $row->encrypted_camaba_id),
                     'deleteUrl' => route('pmb.camaba.destroy', $row->encrypted_camaba_id),
                 ])->render();
             })
@@ -89,6 +90,7 @@ class CamabaController extends Controller
     public function store(CamabaRequest $request)
     {
         Camaba::create($request->validated());
+
         return jsonSuccess('Data Camaba berhasil ditambahkan.', route('pmb.camaba.index'));
     }
 
@@ -98,6 +100,7 @@ class CamabaController extends Controller
     public function update(CamabaRequest $request, Camaba $camaba)
     {
         $camaba->update($request->validated());
+
         return jsonSuccess('Data Camaba berhasil diperbarui.', route('pmb.camaba.index'));
     }
 
@@ -107,6 +110,7 @@ class CamabaController extends Controller
     public function destroy(Camaba $camaba)
     {
         $camaba->delete();
+
         return jsonSuccess('Data Camaba berhasil dihapus.');
     }
 }

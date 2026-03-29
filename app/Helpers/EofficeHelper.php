@@ -7,14 +7,14 @@ if (! function_exists('statusLayananColor')) {
     function statusLayananColor($status)
     {
         $data = [
-            'Diajukan'     => ['color' => 'primary', 'text' => 'Diajukan'],
-            'Diproses'     => ['color' => 'warning', 'text' => 'Diproses'],
-            'Disposisi'    => ['color' => 'info', 'text' => 'Disposisi'],
-            'Direvisi'     => ['color' => 'danger', 'text' => 'Butuh Revisi'],
+            'Diajukan' => ['color' => 'primary', 'text' => 'Diajukan'],
+            'Diproses' => ['color' => 'warning', 'text' => 'Diproses'],
+            'Disposisi' => ['color' => 'info', 'text' => 'Disposisi'],
+            'Direvisi' => ['color' => 'danger', 'text' => 'Butuh Revisi'],
             'Ditangguhkan' => ['color' => 'danger', 'text' => 'Ditangguhkan'],
-            'Selesai'      => ['color' => 'success', 'text' => 'Selesai'],
-            'Ditolak'      => ['color' => 'danger', 'text' => 'Ditolak'],
-            'Dibatalkan'   => ['color' => 'secondary', 'text' => 'Dibatalkan'],
+            'Selesai' => ['color' => 'success', 'text' => 'Selesai'],
+            'Ditolak' => ['color' => 'danger', 'text' => 'Ditolak'],
+            'Dibatalkan' => ['color' => 'secondary', 'text' => 'Dibatalkan'],
         ];
 
         return $data[$status] ?? ['color' => 'secondary', 'text' => $status];
@@ -42,18 +42,18 @@ if (! function_exists('secondsToTimeFormat')) {
     function secondsToTimeFormat($seconds)
     {
         if ($seconds < 60) {
-            return $seconds . " dtk";
+            return $seconds.' dtk';
         }
 
         if ($seconds < 3600) {
-            return round($seconds / 60) . " mnt";
+            return round($seconds / 60).' mnt';
         }
 
         if ($seconds < 86400) {
-            return round($seconds / 3600, 1) . " jam";
+            return round($seconds / 3600, 1).' jam';
         }
 
-        return round($seconds / 86400, 1) . " hari";
+        return round($seconds / 86400, 1).' hari';
     }
 }
 
@@ -64,13 +64,14 @@ if (! function_exists('jenisIsian')) {
     function jenisIsian($type)
     {
         $types = [
-            'text'     => 'Text',
+            'text' => 'Text',
             'textarea' => 'Textarea',
-            'number'   => 'Angka',
-            'date'     => 'Tanggal',
-            'file'     => 'File/Lampiran',
-            'select'   => 'Pilihan (Select)',
+            'number' => 'Angka',
+            'date' => 'Tanggal',
+            'file' => 'File/Lampiran',
+            'select' => 'Pilihan (Select)',
         ];
+
         return $types[$type] ?? $type;
     }
 }
@@ -84,10 +85,10 @@ if (! function_exists('eofficeStatusBadge')) {
         $info = statusLayananColor($status);
         $color = $info['color'];
         $display = $info['text'];
-        
+
         // Use -lt (light) if color is not secondary or info for better contrast in Tabler
         $class = in_array($color, ['secondary', 'info', 'primary', 'warning', 'danger', 'success']) ? "bg-{$color}-lt" : "bg-{$color}-lt";
-        
-        return '<span class="badge ' . $class . '">' . $display . '</span>';
+
+        return '<span class="badge '.$class.'">'.$display.'</span>';
     }
 }

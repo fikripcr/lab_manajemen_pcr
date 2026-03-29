@@ -1,9 +1,7 @@
 <?php
+
 namespace App\Models\Pmb;
 
-use App\Models\Pmb\JenisDokumen;
-use App\Models\Pmb\Pendaftaran;
-use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,11 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DokumenUpload extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'pmb_dokumen_upload';
+    protected $table = 'pmb_dokumen_upload';
+
     protected $primaryKey = 'dokumenupload_id';
-    protected $appends    = ['encrypted_dokumenupload_id', 'is_verified'];
+
+    protected $appends = ['encrypted_dokumenupload_id', 'is_verified'];
 
     public function getRouteKeyName()
     {

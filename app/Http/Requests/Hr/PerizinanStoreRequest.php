@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Hr;
 
 use App\Http\Requests\BaseRequest;
 
 class PerizinanStoreRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -16,24 +14,24 @@ class PerizinanStoreRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'jenisizin_id'           => 'required|exists:hr_jenis_izin,jenisizin_id',
-            'pengusul'               => 'required|exists:hr_pegawai,pegawai_id',
+            'jenisizin_id' => 'required|exists:hr_jenis_izin,jenisizin_id',
+            'pengusul' => 'required|exists:hr_pegawai,pegawai_id',
             'pekerjaan_ditinggalkan' => 'nullable|string|max:500',
-            'tgl_mulai'              => 'required|date',
-            'tgl_selesai'            => 'required|date|after_or_equal:tgl_mulai',
-            'keterangan'             => 'nullable|string|max:1000',
+            'tgl_mulai' => 'required|date',
+            'tgl_selesai' => 'required|date|after_or_equal:tgl_mulai',
+            'keterangan' => 'nullable|string|max:1000',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'jenisizin_id'           => 'Jenis Izin',
-            'pengusul'               => 'Pengusul',
+            'jenisizin_id' => 'Jenis Izin',
+            'pengusul' => 'Pengusul',
             'pekerjaan_ditinggalkan' => 'Pekerjaan Ditinggalkan',
-            'tgl_mulai'              => 'Tanggal Mulai',
-            'tgl_selesai'            => 'Tanggal Selesai',
-            'keterangan'             => 'Keterangan',
+            'tgl_mulai' => 'Tanggal Mulai',
+            'tgl_selesai' => 'Tanggal Selesai',
+            'keterangan' => 'Keterangan',
         ];
     }
 }

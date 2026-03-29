@@ -30,7 +30,8 @@
                                 <x-tabler.button href="{{ route('Kegiatan.rapat.generate-pdf', $rapat->encrypted_rapat_id) }}" 
                                     class="btn-ghost-danger btn-sm" icon="ti ti-file-type-pdf" text="PDF" />
                                 <x-tabler.button type="button" class="btn-outline-primary btn-sm ajax-modal-btn"
-                                    data-url="{{ route('pemutu.peningkatan.rtm.edit', [$periode->encrypted_periodespmi_id, $rapat->encrypted_rapat_id]) }}"
+                                    data-url="{{ route('Kegiatan.rapat.edit', $rapat->encrypted_rapat_id) }}"
+                                    data-modal-size="modal-xl"
                                     icon="ti ti-edit" text="Edit" />
                             </div>
                         </div>

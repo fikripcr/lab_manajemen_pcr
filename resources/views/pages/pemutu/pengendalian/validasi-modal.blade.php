@@ -24,11 +24,13 @@
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
     </div>
 @else
+@php $isReadonly = request('readonly') == 1; @endphp
     <x-tabler.form-modal 
-        :title="'Validasi Pengendalian — ' . ($indOrg->indikator->no_indikator ?? '')" 
+        :title="($isReadonly ? 'Detail Validasi Pengendalian — ' : 'Validasi Pengendalian — ') . ($indOrg->indikator->no_indikator ?? '')" 
         :route="route('pemutu.pengendalian.validasi', $indOrg->encrypted_indorgunit_id)" 
-        method="POST" 
+        :method="$isReadonly ? 'none' : 'POST'" 
         data-redirect="false">
+        <fieldset {{ $isReadonly ? 'disabled' : '' }}>
 
         {{-- Info Singkat Indikator --}}
         <div class="alert alert-info p-2 mb-3">
@@ -60,14 +62,12 @@
                     <span class="badge bg-{{ $s['color'] }}-lt text-{{ $s['color'] }}">{{ $s['label'] }}</span>
                 @endif
 
-                <span class="text-muted small ms-2">Important:</span>
                 @if($indOrg->pengend_important_matrix === 'important')
                     <span class="badge bg-red-lt text-red">Important</span>
                 @else
                     <span class="badge bg-secondary-lt">Not Important</span>
                 @endif
 
-                <span class="text-muted small ms-2">Urgent:</span>
                 @if($indOrg->pengend_urgent_matrix === 'urgent')
                     <span class="badge bg-orange-lt text-orange">Urgent</span>
                 @else
@@ -76,7 +76,7 @@
             </div>
             @if($indOrg->pengend_analisis)
                 <div class="mt-2 small text-muted" style="max-height: 80px; overflow-y: auto;">
-                    <em>Analisis: {{ $indOrg->pengend_analisis }}</em>
+                    <em><b>Analisis:<b> {{ $indOrg->pengend_analisis }}</em>
                 </div>
             @endif
         </div>
@@ -156,5 +156,6 @@
             <i class="ti ti-info-circle me-1"></i>
             Data di atas sudah terisi sesuai isian auditee. Silakan sesuaikan jika ada yang perlu diubah.
         </div>
+        </fieldset>
     </x-tabler.form-modal>
 @endif

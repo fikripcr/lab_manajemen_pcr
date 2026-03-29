@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
@@ -24,8 +25,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ApprovalController extends Controller
 {
-    public function __construct(protected ApprovalService $approvalService)
-    {}
+    public function __construct(protected ApprovalService $approvalService) {}
 
     /**
      * Map model class → service yang punya processApproval().
@@ -34,14 +34,14 @@ class ApprovalController extends Controller
     protected function resolveService(string $modelClass): ?object
     {
         $map = [
-            RiwayatDataDiri::class          => app(RiwayatDataDiriService::class),
-            RiwayatStatPegawai::class       => app(RiwayatStatPegawaiService::class),
-            RiwayatStatAktifitas::class     => app(RiwayatStatAktifitasService::class),
-            RiwayatJabFungsional::class     => app(RiwayatJabFungsionalService::class),
-            RiwayatPendidikan::class        => app(RiwayatPendidikanService::class),
-            RiwayatJabStruktural::class     => app(RiwayatStrukturalService::class),
+            RiwayatDataDiri::class => app(RiwayatDataDiriService::class),
+            RiwayatStatPegawai::class => app(RiwayatStatPegawaiService::class),
+            RiwayatStatAktifitas::class => app(RiwayatStatAktifitasService::class),
+            RiwayatJabFungsional::class => app(RiwayatJabFungsionalService::class),
+            RiwayatPendidikan::class => app(RiwayatPendidikanService::class),
+            RiwayatJabStruktural::class => app(RiwayatStrukturalService::class),
             \App\Models\Hr\Perizinan::class => app(\App\Services\Hr\PerizinanService::class),
-            \App\Models\Hr\Lembur::class    => app(\App\Services\Hr\LemburService::class),
+            \App\Models\Hr\Lembur::class => app(\App\Services\Hr\LemburService::class),
         ];
 
         return $map[$modelClass] ?? null;
@@ -68,15 +68,15 @@ class ApprovalController extends Controller
 
             $query = RiwayatApproval::with('subject')
                 ->whereIn('model', $pegawaiModels)
-                ->when(! empty($status), fn($q) => $q->where('status', $status))
+                ->when(! empty($status), fn ($q) => $q->where('status', $status))
                 ->latest();
 
             return DataTables::of($query)
-                ->addColumn('pegawai_nama', fn($row) => $row->pegawai?->nama ?? '-')
-                ->addColumn('tipe_request', fn($row) => hrModelLabel($row->model))
-                ->editColumn('created_at', fn($row) => $row->created_at?->format('d M Y H:i') ?? '-')
-                ->addColumn('status', fn($row) => getApprovalStatus($row->status))
-                ->addColumn('action', fn($row) => view('pages.hr.approval._action', compact('row'))->render())
+                ->addColumn('pegawai_nama', fn ($row) => $row->pegawai?->nama ?? '-')
+                ->addColumn('tipe_request', fn ($row) => hrModelLabel($row->model))
+                ->editColumn('created_at', fn ($row) => $row->created_at?->format('d M Y H:i') ?? '-')
+                ->addColumn('status', fn ($row) => getApprovalStatus($row->status))
+                ->addColumn('action', fn ($row) => view('pages.hr.approval._action', compact('row'))->render())
                 ->rawColumns(['status', 'action'])
                 ->make(true);
         }
@@ -87,8 +87,8 @@ class ApprovalController extends Controller
     public function show($id)
     {
         $approval = RiwayatApproval::with('subject')->findOrFail($id);
-        $subject  = $approval->subject;
-        $pegawai  = $approval->pegawai;
+        $subject = $approval->subject;
+        $pegawai = $approval->pegawai;
 
         $before = null;
         if ($subject && isset($subject->before_id) && $subject->before_id) {
@@ -110,7 +110,7 @@ class ApprovalController extends Controller
         $reason = $request->input('reason');
 
         $approval = RiwayatApproval::findOrFail($id);
-        $service  = $this->resolveService($approval->model);
+        $service = $this->resolveService($approval->model);
 
         if ($service && method_exists($service, 'processApproval')) {
             $service->processApproval($id, $status, $reason);
@@ -120,8 +120,8 @@ class ApprovalController extends Controller
         }
 
         $messages = [
-            'Approved'   => 'Pengajuan berhasil disetujui.',
-            'Rejected'   => 'Pengajuan berhasil ditolak.',
+            'Approved' => 'Pengajuan berhasil disetujui.',
+            'Rejected' => 'Pengajuan berhasil ditolak.',
             'Tangguhkan' => 'Pengajuan berhasil ditangguhkan.',
         ];
 

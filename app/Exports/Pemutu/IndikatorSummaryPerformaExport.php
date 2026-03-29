@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Exports\Pemutu;
 
 use App\Services\Pemutu\IndikatorSummaryPerformaService;
@@ -10,7 +11,7 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class IndikatorSummaryPerformaExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles
+class IndikatorSummaryPerformaExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
     protected $request;
 
@@ -21,7 +22,8 @@ class IndikatorSummaryPerformaExport implements FromCollection, WithHeadings, Wi
 
     public function collection()
     {
-        $service = new IndikatorSummaryPerformaService();
+        $service = new IndikatorSummaryPerformaService;
+
         return $service->getQuery($this->request)
             ->with(['indikator.parent', 'indikator.labels.label'])
             ->get()
@@ -53,8 +55,8 @@ class IndikatorSummaryPerformaExport implements FromCollection, WithHeadings, Wi
     public function map($row): array
     {
         $pegawaiName = $row->pegawai?->nama ?? '-';
-        $pegawaiNip  = $row->pegawai?->nip ?? '-';
-        $unitName    = $row->pegawai?->orgUnit?->name ?? '-';
+        $pegawaiNip = $row->pegawai?->nip ?? '-';
+        $unitName = $row->pegawai?->orgUnit?->name ?? '-';
 
         return [
             $row->indikator?->no_indikator ?? '-',
@@ -68,7 +70,7 @@ class IndikatorSummaryPerformaExport implements FromCollection, WithHeadings, Wi
             $row->target_value ?? '-',
             $row->realization ?? '-',
             strip_tags($row->kpi_analisis ?? '-'),
-            $row->weight !== null ? $row->weight . '%' : '-',
+            $row->weight !== null ? $row->weight.'%' : '-',
             $row->score !== null ? number_format($row->score, 2) : '-',
             ucfirst($row->status ?? 'Draft'),
         ];

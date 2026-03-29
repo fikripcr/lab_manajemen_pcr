@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Perizinan extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_perizinan';
+    protected $table = 'hr_perizinan';
+
     protected $primaryKey = 'perizinan_id';
 
     protected $appends = ['encrypted_perizinan_id'];
@@ -47,7 +49,7 @@ class Perizinan extends Model
     ];
 
     protected $casts = [
-        'tgl_awal'  => 'date',
+        'tgl_awal' => 'date',
         'tgl_akhir' => 'date',
     ];
 

@@ -127,7 +127,7 @@ return new class extends Migration
             $table->foreignId('survei_id')->references('survei_id')->on('survei_survei')->onDelete('cascade');
             $table->foreignId('pertanyaan_id')->nullable()->references('pertanyaan_id')->on('survei_pertanyaan')->onDelete('cascade');
 
-                                          // Polymorphic Relation
+            // Polymorphic Relation
             $table->string('model_type'); // Ex: 'App\Models\SpmiIndikator'
             $table->unsignedBigInteger('model_id');
             $table->index(['model_type', 'model_id']);
@@ -146,7 +146,7 @@ return new class extends Migration
             $table->foreignId('survei_id')->references('survei_id')->on('survei_survei')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->references('id')->on('users')->onDelete('set null'); // Null jika anonim
 
-                                                      // Konteks Runtime
+            // Konteks Runtime
             $table->nullableMorphs('entitas_target'); // Creates entitas_target_type & entitas_target_id
 
             $table->enum('status', ['Draft', 'Selesai'])->default('Draft');
@@ -166,7 +166,7 @@ return new class extends Migration
             $table->foreignId('pengisian_id')->references('pengisian_id')->on('survei_pengisian')->onDelete('cascade');
             $table->foreignId('pertanyaan_id')->references('pertanyaan_id')->on('survei_pertanyaan')->onDelete('cascade');
 
-                                                        // Penyimpanan Data Fleksibel
+            // Penyimpanan Data Fleksibel
             $table->text('nilai_teks')->nullable();     // Untuk Esai/Teks Singkat
             $table->integer('nilai_angka')->nullable(); // Untuk Skala (1-5), Rating, Angka
             $table->date('nilai_tanggal')->nullable();

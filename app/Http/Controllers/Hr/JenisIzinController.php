@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
@@ -9,8 +10,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class JenisIzinController extends Controller
 {
-    public function __construct(protected JenisIzinService $jenisIzinService)
-    {}
+    public function __construct(protected JenisIzinService $jenisIzinService) {}
 
     public function index()
     {
@@ -25,8 +25,9 @@ class JenisIzinController extends Controller
             ->addIndexColumn()
             ->addColumn('status', function ($row) {
                 $badge = $row->is_active ? 'bg-green-lt' : 'bg-red-lt';
-                $text  = $row->is_active ? 'Aktif' : 'Nonaktif';
-                return '<span class="badge ' . $badge . '">' . $text . '</span>';
+                $text = $row->is_active ? 'Aktif' : 'Nonaktif';
+
+                return '<span class="badge '.$badge.'">'.$text.'</span>';
             })
             ->addColumn('action', function ($row) {
                 return view('pages.hr.jenis_izin._action', compact('row'))->render();
@@ -37,13 +38,15 @@ class JenisIzinController extends Controller
 
     public function create()
     {
-        $jenis_izin = new JenisIzin();
+        $jenis_izin = new JenisIzin;
+
         return view('pages.hr.jenis-izin.create-edit-ajax', compact('jenis_izin'));
     }
 
     public function store(JenisIzinStoreRequest $request)
     {
         $this->jenisIzinService->store($request->validated());
+
         return jsonSuccess('Jenis izin berhasil dibuat.');
     }
 
@@ -55,12 +58,14 @@ class JenisIzinController extends Controller
     public function update(JenisIzinStoreRequest $request, JenisIzin $jenisIzin)
     {
         $this->jenisIzinService->update($jenisIzin, $request->validated());
+
         return jsonSuccess('Jenis Izin berhasil diperbarui.');
     }
 
     public function destroy(JenisIzin $jenisIzin)
     {
         $this->jenisIzinService->delete($jenisIzin);
+
         return jsonSuccess('Jenis Izin berhasil dihapus.');
     }
 }

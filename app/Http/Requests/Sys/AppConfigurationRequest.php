@@ -7,16 +7,13 @@ use App\Http\Requests\BaseRequest;
 class AppConfigurationRequest extends BaseRequest
 {
     /**
-     */
-
-    /**
      * Get the validation rules that apply to the request.
      */
     public function rules(): array
     {
         $configSection = $this->input('config_section', 'app');
 
-        switch($configSection) {
+        switch ($configSection) {
             case 'app':
                 return [
                     'app_name' => 'nullable|string|max:255',
@@ -49,8 +46,6 @@ class AppConfigurationRequest extends BaseRequest
         }
     }
 
-    /**
-     */
     public function attributes(): array
     {
         return [

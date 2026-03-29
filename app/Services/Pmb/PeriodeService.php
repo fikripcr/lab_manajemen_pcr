@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Pmb;
 
 use App\Models\Pmb\Periode;
@@ -21,6 +22,7 @@ class PeriodeService
     {
         $periode = Periode::create($data);
         logActivity('pmb_periode', "Menambahkan periode baru: {$periode->nama_periode}", $periode);
+
         return $periode;
     }
 
@@ -28,6 +30,7 @@ class PeriodeService
     {
         $periode->update($data);
         logActivity('pmb_periode', "Memperbarui periode: {$periode->nama_periode}", $periode);
+
         return true;
     }
 
@@ -36,6 +39,7 @@ class PeriodeService
         $nama = $periode->nama_periode;
         $periode->delete();
         logActivity('pmb_periode', "Menghapus periode: {$nama}");
+
         return true;
     }
 

@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Services\Eoffice;
 
+use App\Models\Akademik\Mahasiswa;
 use App\Models\Eoffice\JenisLayanan;
 use App\Models\Eoffice\Layanan;
-use App\Models\Akademik\Mahasiswa;
 use App\Models\Hr\Pegawai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,8 +53,8 @@ class LayananService
             [$start, $end] = sysParseDateRange($request->date_range);
             if ($start && $end) {
                 $query->whereBetween('created_at', [
-                    $start . ' 00:00:00',
-                    $end . ' 23:59:59',
+                    $start.' 00:00:00',
+                    $end.' 23:59:59',
                 ]);
             }
         }
@@ -70,7 +71,7 @@ class LayananService
             $jenisLayanan = JenisLayanan::findOrFail($data['jenislayanan_id']);
 
             // 1. Create Main Record
-            $layanan = new Layanan();
+            $layanan = new Layanan;
             $layanan->fill($data);
             $layanan->no_layanan = $this->generateNoLayanan($jenisLayanan);
 
@@ -82,7 +83,7 @@ class LayananService
             // 2. Initial Status
             $status = $layanan->statuses()->create([
                 'status_layanan' => 'Diajukan',
-                'keterangan'     => 'Permohonan berhasil dikirim.',
+                'keterangan' => 'Permohonan berhasil dikirim.',
             ]);
 
             $layanan->update(['latest_layananstatus_id' => $status->layananstatus_id]);
@@ -91,7 +92,7 @@ class LayananService
             foreach ($dynamicFields as $nama_isian => $isi) {
                 $layanan->isians()->create([
                     'nama_isian' => $nama_isian,
-                    'isi'        => is_array($isi) ? json_encode($isi) : $isi,
+                    'isi' => is_array($isi) ? json_encode($isi) : $isi,
                 ]);
             }
 
@@ -111,9 +112,9 @@ class LayananService
 
             $status = $layanan->statuses()->create([
                 'status_layanan' => $data['status_layanan'],
-                'keterangan'     => $data['keterangan'] ?? null,
-                'file_lampiran'  => $data['file_lampiran'] ?? null,
-                'user_id'        => Auth::id(), // Ensure user_id is set
+                'keterangan' => $data['keterangan'] ?? null,
+                'file_lampiran' => $data['file_lampiran'] ?? null,
+                'user_id' => Auth::id(), // Ensure user_id is set
             ]);
 
             $layanan->update(['latest_layananstatus_id' => $status->layananstatus_id]);
@@ -129,7 +130,8 @@ class LayananService
      */
     private function generateNoLayanan(JenisLayanan $jl)
     {
-        $prefix = strtoupper(substr($jl->kategori, 0, 3)) . '-' . date('Ymd') . '-';
+        $prefix = strtoupper(substr($jl->kategori, 0, 3)).'-'.date('Ymd').'-';
+
         return sysGenerateRefNumber($prefix, Layanan::class, 'no_layanan');
     }
 
@@ -143,18 +145,20 @@ class LayananService
         // Try to get from Pegawai or Mahasiswa tables
         $pegawai = $user->pegawai;
         if ($pegawai) {
-            $layanan->pengusul_nama    = $pegawai->nama;
-            $layanan->pengusul_nim     = $pegawai->nip;
-            $layanan->pengusul_prodi   = $pegawai->departemen;
+            $layanan->pengusul_nama = $pegawai->nama;
+            $layanan->pengusul_nim = $pegawai->nip;
+            $layanan->pengusul_prodi = $pegawai->departemen;
             $layanan->pengusul_inisial = $pegawai->inisial;
+
             return;
         }
 
         $mhs = Mahasiswa::where('user_id', $user->id)->first();
         if ($mhs) {
-            $layanan->pengusul_nama  = $mhs->nama;
-            $layanan->pengusul_nim   = $mhs->nim;
+            $layanan->pengusul_nama = $mhs->nama;
+            $layanan->pengusul_nim = $mhs->nim;
             $layanan->pengusul_prodi = $mhs->prodi->nama_prodi ?? null;
+
             return;
         }
 

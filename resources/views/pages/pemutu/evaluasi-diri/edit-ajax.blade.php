@@ -1,10 +1,12 @@
+@php $isReadonly = request('readonly') == 1; @endphp
 <x-tabler.form-modal
-    :title="'Isi Evaluasi Diri'"
+    :title="$isReadonly ? 'Detail Evaluasi Diri' : 'Isi Evaluasi Diri'"
     :route="route('pemutu.evaluasi-diri.update', $indikator->encrypted_indikator_id)"
     size="modal-xl"
-    method="POST"
+    :method="$isReadonly ? 'none' : 'POST'"
     data-redirect="false"
 >
+<fieldset {{ $isReadonly ? 'disabled' : '' }}>
     <div class="row">
         {{-- Kiri: Detail Indikator & Info --}}
         <div class="col-md-4 border-end pe-4" style="max-height: 70vh; overflow-y: auto;">
@@ -203,6 +205,7 @@
             </div>
         </div>
     </div>
+</fieldset>
 </x-tabler.form-modal>
 
 

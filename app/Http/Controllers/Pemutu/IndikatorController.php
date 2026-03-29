@@ -3,11 +3,11 @@ namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\IndikatorRequest;
+use App\Models\Hr\Pegawai;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Pemutu\DokSub;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
-use App\Models\Hr\StrukturOrganisasi;
-use App\Models\Hr\Pegawai;
 use App\Services\Pemutu\DokumenService;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\PelaksanaanService;
@@ -36,8 +36,8 @@ class IndikatorController extends Controller
         $siklus = $this->PeriodeSpmiService->getSiklusData();
 
         // Filters data
-        $siklusData = $this->PeriodeSpmiService->getSiklusData();
-        $dokumens   = $this->dokumenService->getStandardDocumentsByYear($siklusData['tahun']);
+        $siklusData   = $this->PeriodeSpmiService->getSiklusData();
+        $dokumens     = $this->dokumenService->getStandardDocumentsByYear($siklusData['tahun']);
         $labelOptions = \App\Models\Pemutu\Label::with('children')->whereNull('parent_id')->orderBy('name')->get();
         $labelParents = [];
         foreach ($labelOptions as $label) {
@@ -62,12 +62,12 @@ class IndikatorController extends Controller
     {
         // SIMPLE LOGIC: If not 'all', add to filters
         $filters = [];
-        foreach ($request->only(['dokumen_id', 'renstra_poin_id', 'label_ids', 'kelompok_indikator', 'jenis_data']) as $key => $value) {
-            if ($value !== 'all' && $value !== null && $value !== '') {
+        foreach ($request->only(['dokumen_id', 'renstra_poin_id', 'label_ids', 'kelompok_indikator', 'jenis_data', 'type', 'periode']) as $key => $value) {
+            if (!empty($value) && $value !== 'all') {
                 $filters[$key] = $value;
             }
         }
-        
+
         $query = $this->indikatorService->getFilteredQuery($filters);
 
         return DataTables::of($query)
@@ -81,7 +81,7 @@ class IndikatorController extends Controller
                 $html = '';
                 foreach ($row->dokSubs as $ds) {
                     if ($ds->dokumen) {
-                        $url = route('pemutu.dokumen.index', [
+                        $url  = route('pemutu.dokumen.index', [
                             'jenis' => $ds->dokumen->jenis,
                             'id'    => $ds->dokumen->encrypted_dok_id,
                             'type'  => $ds->dokumen->jenis,
@@ -89,6 +89,7 @@ class IndikatorController extends Controller
                         $html .= '<a href="' . $url . '" class="d-block mb-1 text-inherit">' . e($ds->dokumen->judul) . '</a>';
                     }
                 }
+
                 return $html ?: '-';
             })
             ->addColumn('doksub_judul', function ($row) {
@@ -96,10 +97,12 @@ class IndikatorController extends Controller
             })
             ->addColumn('kelompok_indikator', function ($row) {
                 $color = $row->kelompok_indikator == 'Akademik' ? 'green' : 'orange';
+
                 return '<span class="badge bg-' . $color . '-lt text-' . $color . '">' . e($row->kelompok_indikator) . '</span>';
             })
             ->addColumn('jenis_data', function ($row) {
                 $color = $row->jenis_data == 'Kualitatif' ? 'blue' : 'purple';
+
                 return '<span class="badge bg-' . $color . '-lt text-' . $color . '">' . e($row->jenis_data) . '</span>';
             })
             ->addColumn('renstra_poin', function ($row) {
@@ -110,8 +113,10 @@ class IndikatorController extends Controller
                         'type'  => 'doksub',
                     ]);
                     $text = ($row->renstraPoin->dokumen?->judul ?? 'Renstra') . ': ' . $row->renstraPoin->judul;
+
                     return '<a href="' . $url . '" class="text-inherit">' . e($text) . '</a>';
                 }
+
                 return '-';
             })
             ->addColumn('labels', function ($row) {
@@ -146,7 +151,7 @@ class IndikatorController extends Controller
         $selectedDokSubs = [];
 
         $siklus = $this->PeriodeSpmiService->getSiklusData();
-        $tahun = $siklus['tahun'];
+        $tahun  = $siklus['tahun'];
 
         $standardOptions = DokSub::whereHas('dokumen', function ($q) use ($tahun) {
             $q->where('jenis', 'standar')->where('periode', 'like', '%' . $tahun . '%');
@@ -200,7 +205,8 @@ class IndikatorController extends Controller
             }
         })->with('dokumen')->get();
 
-        $indikator = new Indikator(); // Empty for create
+        $indikator = new Indikator; // Empty for create
+
         return view('pages.pemutu.indikator.create-edit', compact(
             'labelParents', 'orgUnits', 'parents', 'pegawais',
             'parentDok', 'selectedDokSubs', 'indikator', 'renstraOptions', 'standardOptions'
@@ -246,7 +252,7 @@ class IndikatorController extends Controller
         }
 
         if (isset($data['doksub_ids'])) {
-            $ids = is_array($data['doksub_ids']) ? $data['doksub_ids'] : [$data['doksub_ids']];
+            $ids                = is_array($data['doksub_ids']) ? $data['doksub_ids'] : [$data['doksub_ids']];
             $data['doksub_ids'] = array_filter(array_map('decryptIdIfEncrypted', $ids));
         }
         if (isset($data['labels'])) {
@@ -312,7 +318,7 @@ class IndikatorController extends Controller
         }
 
         $siklus = $this->PeriodeSpmiService->getSiklusData();
-        $tahun = $siklus['tahun'];
+        $tahun  = $siklus['tahun'];
 
         $standardOptions = DokSub::whereHas('dokumen', function ($q) use ($tahun) {
             $q->where('jenis', 'standar')->where('periode', 'like', '%' . $tahun . '%');
@@ -321,6 +327,7 @@ class IndikatorController extends Controller
         $renstraOptions = DokSub::whereHas('dokumen', function ($q) use ($tahun) {
             $q->where('jenis', 'renstra')->where('periode', 'like', '%' . $tahun . '%');
         })->with('dokumen')->get();
+
         return view('pages.pemutu.indikator.create-edit', compact('indikator', 'labelParents', 'orgUnits', 'parents', 'pegawais', 'renstraOptions', 'selectedDokSubs', 'standardOptions'));
     }
 
@@ -362,7 +369,7 @@ class IndikatorController extends Controller
         }
 
         if (isset($data['doksub_ids'])) {
-            $ids = is_array($data['doksub_ids']) ? $data['doksub_ids'] : [$data['doksub_ids']];
+            $ids                = is_array($data['doksub_ids']) ? $data['doksub_ids'] : [$data['doksub_ids']];
             $data['doksub_ids'] = array_filter(array_map('decryptIdIfEncrypted', $ids));
         }
         if (isset($data['labels'])) {

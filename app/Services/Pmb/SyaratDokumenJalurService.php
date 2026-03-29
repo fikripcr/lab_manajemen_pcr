@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Pmb;
 
 use App\Models\Pmb\SyaratDokumenJalur;
@@ -26,6 +27,7 @@ class SyaratDokumenJalurService
     {
         $syarat->delete();
         logActivity('pmb_syarat_jalur', "Menghapus syarat dokumen ID: {$syarat->syarat_id}");
+
         return true;
     }
 }

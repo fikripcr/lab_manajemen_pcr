@@ -9,11 +9,15 @@ class IndikatorSummary extends Model
 {
     use HashidBinding;
 
-    protected $table      = 'vw_pemutu_summary_indikator';
+    protected $table = 'vw_pemutu_summary_indikator';
+
     protected $primaryKey = 'indikator_id';
-    protected $keyType    = 'bigint';
-    public $incrementing  = true;
-    public $timestamps    = false;
+
+    protected $keyType = 'bigint';
+
+    public $incrementing = true;
+
+    public $timestamps = false;
 
     protected $appends = ['encrypted_indikator_id'];
 
@@ -34,7 +38,7 @@ class IndikatorSummary extends Model
             return [];
         }
 
-        $names  = explode(', ', $this->all_labels ?? '');
+        $names = explode(', ', $this->all_labels ?? '');
         $colors = explode(', ', $this->all_label_colors ?? '');
 
         return array_map(function ($name, $color) {
@@ -52,7 +56,7 @@ class IndikatorSummary extends Model
         }
 
         $judul = explode(' || ', $this->all_doksub_judul ?? '');
-        $kode  = explode(' || ', $this->all_doksub_kode ?? '');
+        $kode = explode(' || ', $this->all_doksub_kode ?? '');
 
         return array_map(function ($j, $k) {
             return ['judul' => $j, 'kode' => $k];
@@ -69,12 +73,12 @@ class IndikatorSummary extends Model
         }
 
         $result = [];
-        $items  = explode(' || ', $this->ed_capaian_all_units);
+        $items = explode(' || ', $this->ed_capaian_all_units);
 
         foreach ($items as $item) {
             if (strpos($item, ': ') !== false) {
                 [$unit, $capaian] = explode(': ', $item, 2);
-                $result[$unit]    = $capaian;
+                $result[$unit] = $capaian;
             }
         }
 
@@ -88,9 +92,9 @@ class IndikatorSummary extends Model
     {
         return [
             'total_assessed' => $this->ami_assessed_units ?? 0,
-            'kts'            => $this->ami_kts_units ?? 0,
-            'terpenuhi'      => $this->ami_terpenuhi_units ?? 0,
-            'terlampaui'     => $this->ami_terlampaui_units ?? 0,
+            'kts' => $this->ami_kts_units ?? 0,
+            'terpenuhi' => $this->ami_terpenuhi_units ?? 0,
+            'terlampaui' => $this->ami_terlampaui_units ?? 0,
         ];
     }
 
@@ -101,9 +105,9 @@ class IndikatorSummary extends Model
     {
         return [
             'total_pegawai' => $this->total_pegawai_with_kpi ?? 0,
-            'avg_score'     => round($this->kpi_avg_score ?? 0, 2),
-            'min_score'     => $this->kpi_min_score ?? 0,
-            'max_score'     => $this->kpi_max_score ?? 0,
+            'avg_score' => round($this->kpi_avg_score ?? 0, 2),
+            'min_score' => $this->kpi_min_score ?? 0,
+            'max_score' => $this->kpi_max_score ?? 0,
         ];
     }
 

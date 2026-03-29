@@ -14,7 +14,7 @@
                 </div>
                 <!-- /Logo -->
                 <h4 class="mb-2">Reset Password 🔒</h4>
-                <p class="mb-4">Create a new password for your account</p>
+                <p class="mb-4">Buat password baru untuk akun Anda</p>
 
                 <form method="POST" action="{{ route('password.store') }}" class="mb-3">
                     @csrf
@@ -27,13 +27,13 @@
                         label="Email" 
                         type="email" 
                         value="{{ old('email', $request->email) }}" 
-                        placeholder="Enter your email" 
+                        placeholder="Masukkan alamat email" 
                         required="true" 
                         autofocus
                     />
 
                     <div class="mb-3 form-password-toggle">
-                        <label class="form-label" for="password">New Password</label>
+                        <label class="form-label" for="password">Password Baru</label>
                         <div class="input-group input-group-merge">
                             <input type="password" id="password" class="form-control" name="password"
                                    placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
@@ -48,7 +48,7 @@
                     </div>
 
                     <div class="mb-3 form-password-toggle">
-                        <label class="form-label" for="password_confirmation">Confirm New Password</label>
+                        <label class="form-label" for="password_confirmation">Konfirmasi Password Baru</label>
                         <div class="input-group input-group-merge">
                             <input type="password" id="password_confirmation" class="form-control" name="password_confirmation"
                                    placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
@@ -57,7 +57,7 @@
                         </div>
                     </div>
 
-                    <x-tabler.button type="submit" class="w-100" text="Reset Password" />
+                    <x-tabler.button type="submit" class="w-100" text="Reset Password" icon="" />
                 </form>
             </x-tabler.card-body>
         </x-tabler.card>
@@ -65,4 +65,3 @@
     </div>
 </div>
 @endsection
-

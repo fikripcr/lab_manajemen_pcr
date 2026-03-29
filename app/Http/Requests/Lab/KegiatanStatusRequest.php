@@ -6,7 +6,6 @@ use App\Http\Requests\BaseRequest;
 
 class KegiatanStatusRequest extends BaseRequest
 {
-
     public function rules(): array
     {
         return [
@@ -17,7 +16,7 @@ class KegiatanStatusRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'status'  => 'Status',
+            'status' => 'Status',
             'catatan' => 'Catatan',
         ];
     }

@@ -22,12 +22,12 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        
+
         // HR Approval Events
         ApprovalRequested::class => [
             NotifyApprovalRequested::class,
         ],
-        
+
         ApprovalProcessed::class => [
             NotifyApprovalProcessed::class,
         ],

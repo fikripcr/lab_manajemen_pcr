@@ -1,4 +1,5 @@
 <?php
+
 namespace App\View\Components\Hr;
 
 use App\Models\Hr\RiwayatApproval;
@@ -8,6 +9,7 @@ use Illuminate\View\View;
 class PendingApprovalWidget extends Component
 {
     public $pendingCount;
+
     public $recentApprovals;
 
     /**
@@ -21,7 +23,7 @@ class PendingApprovalWidget extends Component
     /**
      * Get the view / contents that represent the component.
      */
-    public function render(): View | string
+    public function render(): View|string
     {
         return view('components.hr.pending-approval-widget');
     }

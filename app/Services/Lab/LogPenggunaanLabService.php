@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Lab;
 
 use App\Models\Lab\LogPenggunaanLab;
@@ -32,15 +33,15 @@ class LogPenggunaanLabService
     {
         return DB::transaction(function () use ($data) {
             $log = LogPenggunaanLab::create([
-                'kegiatan_id'   => $data['kegiatan_id'] ?? null,
-                'lab_id'        => $data['lab_id'],
-                'nama_peserta'  => $data['nama_peserta'],
+                'kegiatan_id' => $data['kegiatan_id'] ?? null,
+                'lab_id' => $data['lab_id'],
+                'nama_peserta' => $data['nama_peserta'],
                 'email_peserta' => $data['email_peserta'] ?? null,
-                'npm_peserta'   => $data['npm_peserta'] ?? null,
-                'waktu_isi'     => now(),
-                'nomor_pc'      => $data['nomor_pc'] ?? null,
-                'kondisi'       => $data['kondisi'] ?? 'Baik',
-                'catatan_umum'  => $data['catatan_umum'] ?? null,
+                'npm_peserta' => $data['npm_peserta'] ?? null,
+                'waktu_isi' => now(),
+                'nomor_pc' => $data['nomor_pc'] ?? null,
+                'kondisi' => $data['kondisi'] ?? 'Baik',
+                'catatan_umum' => $data['catatan_umum'] ?? null,
             ]);
 
             logActivity('log_penggunaan_lab', "Peserta {$data['nama_peserta']} mengisi log penggunaan lab ID {$data['lab_id']}");

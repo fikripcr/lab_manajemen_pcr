@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Hr;
 
 use App\Http\Requests\BaseRequest;
 
 class PegawaiRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -23,28 +21,29 @@ class PegawaiRequest extends BaseRequest
         // On update, we ignore rows where pegawai_id = $id.
 
         $rules = [
-            'nama'                  => 'required|string|max:255',
-            'email'                 => 'nullable|email|max:255', // Validating unique email across latest records is tricky in SQL validation rule
-            'nip'                   => 'nullable|string|max:20',
-            'inisial'               => 'nullable|string|max:10',
+            'nama' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255', // Validating unique email across latest records is tricky in SQL validation rule
+            'nip' => 'nullable|string|max:20',
+            'inisial' => 'nullable|string|max:10',
 
-            'orgunit_posisi_id'     => 'nullable|exists:struktur_organisasi,orgunit_id',
+            'orgunit_posisi_id' => 'nullable|exists:struktur_organisasi,orgunit_id',
             'orgunit_departemen_id' => 'nullable|exists:struktur_organisasi,orgunit_id',
 
             // 'statuspegawai_id' => 'required|exists:hr_status_pegawai,statuspegawai_id',
             // 'statusaktifitas_id' => 'required|exists:hr_status_aktifitas,statusaktifitas_id',
         ];
+
         return $rules;
     }
 
     public function attributes(): array
     {
         return [
-            'nama'                  => 'Nama',
-            'email'                 => 'Email',
-            'nip'                   => 'NIP',
-            'inisial'               => 'Inisial',
-            'orgunit_posisi_id'     => 'Posisi',
+            'nama' => 'Nama',
+            'email' => 'Email',
+            'nip' => 'NIP',
+            'inisial' => 'Inisial',
+            'orgunit_posisi_id' => 'Posisi',
             'orgunit_departemen_id' => 'Departemen',
         ];
     }

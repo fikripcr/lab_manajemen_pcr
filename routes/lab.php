@@ -48,8 +48,6 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
     });
     Route::resource('inventaris', InventarisController::class);
 
-
-
     // Jadwal
     Route::prefix('jadwal')->name('jadwal.')->group(function () {
         Route::get('import/form', [JadwalController::class, 'showImport'])->name('import.form');
@@ -67,8 +65,6 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
     });
     Route::resource('jadwal', JadwalController::class);
 
-
-
     // Software Requests
     Route::prefix('software-requests')->name('software-requests.')->controller(SoftwareRequestController::class)->group(function () {
         Route::get('/', 'index')->name('index');
@@ -81,8 +77,6 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
         Route::post('/{id}/approve', 'approve')->name('approve');
     });
 
-
-
     // Log Penggunaan PC
     Route::prefix('log-pc')->name('log-pc.')->controller(LogPenggunaanPcController::class)->group(function () {
         Route::get('/', 'index')->name('index');
@@ -91,7 +85,7 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
         Route::post('/', 'store')->name('store');
     });
 
-// Laporan Kerusakan
+    // Laporan Kerusakan
     Route::prefix('laporan-kerusakan')->name('laporan-kerusakan.')->controller(LaporanKerusakanController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/data', 'data')->name('data');
@@ -101,7 +95,7 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
         Route::get('/ajax/inventaris', 'getInventaris')->name('inventaris');
     });
 
-// Peminjaman Lab (Kegiatan)
+    // Peminjaman Lab (Kegiatan)
     Route::prefix('kegiatan')->name('kegiatan.')->controller(KegiatanController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/data', 'data')->name('data');
@@ -111,7 +105,7 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
         Route::post('/{id}/status', 'updateStatus')->name('status');
     });
 
-// Log Penggunaan Lab (Guest/Event)
+    // Log Penggunaan Lab (Guest/Event)
     Route::prefix('log-lab')->name('log-lab.')->controller(LogPenggunaanLabController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/data', 'data')->name('data');
@@ -119,7 +113,7 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
         Route::post('/', 'store')->name('store');
     });
 
-// Surat Bebas Lab
+    // Surat Bebas Lab
     Route::prefix('surat-bebas')->name('surat-bebas.')->controller(SuratBebasLabController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/data', 'data')->name('data');
@@ -129,10 +123,8 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
         Route::post('/{id}/status', 'updateStatus')->name('status');
     });
 
-// Period Requests
+    // Period Requests
     Route::get('api/periode-request', [PeriodSoftRequestController::class, 'data'])->name('periode-request.data');
     Route::resource('periode-request', PeriodSoftRequestController::class);
-
-
 
 });

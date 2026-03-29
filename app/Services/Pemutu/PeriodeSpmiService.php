@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Pemutu;
 
 use App\Models\Pemutu\PeriodeSpmi;
@@ -39,8 +40,8 @@ class PeriodeSpmiService
     public function getAvailableYears()
     {
         $startYear = (int) env('SPMI_START_YEAR', 2021);
-        $endYear   = (int) date('Y') + 1;
-        
+        $endYear = (int) date('Y') + 1;
+
         $years = [];
         for ($y = $endYear; $y >= $startYear; $y--) {
             $years[] = $y;
@@ -64,6 +65,7 @@ class PeriodeSpmiService
         return DB::transaction(function () use ($data) {
             $periode = PeriodeSpmi::create($data);
             logActivity('pemutu', "Menambah periode SPMI: {$periode->periode}", $periode);
+
             return $periode;
         });
     }
@@ -73,6 +75,7 @@ class PeriodeSpmiService
         return DB::transaction(function () use ($periode, $data) {
             $periode->update($data);
             logActivity('pemutu', "Mengupdate periode SPMI: {$periode->periode}", $periode);
+
             return $periode;
         });
     }
@@ -97,9 +100,9 @@ class PeriodeSpmiService
 
         if ($years->isEmpty()) {
             return [
-                'tahun'        => (int) date('Y'),
-                'years'        => collect(),
-                'akademik'     => null,
+                'tahun' => (int) date('Y'),
+                'years' => collect(),
+                'akademik' => null,
                 'non_akademik' => null,
             ];
         }
@@ -115,11 +118,10 @@ class PeriodeSpmiService
         $periodes = PeriodeSpmi::where('periode', $tahun)->get();
 
         return [
-            'tahun'        => $tahun,
-            'years'        => $years,
-            'akademik'     => $periodes->firstWhere('jenis_periode', 'Akademik'),
+            'tahun' => $tahun,
+            'years' => $years,
+            'akademik' => $periodes->firstWhere('jenis_periode', 'Akademik'),
             'non_akademik' => $periodes->firstWhere('jenis_periode', 'Non Akademik'),
         ];
     }
 }
-

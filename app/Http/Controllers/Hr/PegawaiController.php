@@ -1,13 +1,14 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\PegawaiRequest;
 use App\Http\Requests\Hr\SearchRequest;
-use App\Models\Hr\StrukturOrganisasi;
+use App\Models\Hr\Pegawai;
 use App\Models\Hr\StatusAktifitas;
 use App\Models\Hr\StatusPegawai;
-use App\Models\Hr\Pegawai;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Services\Hr\PegawaiService;
 use App\Services\Hr\RiwayatDataDiriService;
 use App\Services\Hr\StrukturOrganisasiService;
@@ -28,7 +29,7 @@ class PegawaiController extends Controller
     public function select2Search(SearchRequest $request)
     {
         $search = $request->validated('q', '');
-        $query  = Pegawai::with('latestDataDiri')
+        $query = Pegawai::with('latestDataDiri')
             ->whereHas('latestDataDiri', function ($q) use ($search) {
                 $q->where('nama', 'like', "%{$search}%")
                     ->orWhere('nip', 'like', "%{$search}%");
@@ -38,8 +39,8 @@ class PegawaiController extends Controller
 
         $results = $query->map(function ($p) {
             return [
-                'id'   => $p->pegawai_id,
-                'text' => $p->nama . ' (' . ($p->nip ?? 'No NIP') . ')',
+                'id' => $p->pegawai_id,
+                'text' => $p->nama.' ('.($p->nip ?? 'No NIP').')',
             ];
         });
 
@@ -52,26 +53,28 @@ class PegawaiController extends Controller
     public function index(Request $request)
     {
         $posisi = $this->strukturOrganisasiService->getHierarchicalList(types: ['posisi']);
-        $units  = $this->strukturOrganisasiService->getHierarchicalList(types: ['bagian', 'jurusan', 'prodi', 'unit']);
+        $units = $this->strukturOrganisasiService->getHierarchicalList(types: ['bagian', 'jurusan', 'prodi', 'unit']);
+
         return view('pages.hr.data-diri.index', compact('posisi', 'units'));
     }
 
     public function data(Request $request)
     {
         $query = $this->pegawaiService->getFilteredQuery($request);
+
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'viewUrl'      => route('hr.pegawai.show', $row->hashid),
-                    'editUrl'      => route('hr.pegawai.edit', $row->hashid),
-                    'deleteUrl'    => route('hr.pegawai.destroy', $row->hashid),
-                    'deleteName'   => $row->nama,
+                    'viewUrl' => route('hr.pegawai.show', $row->hashid),
+                    'editUrl' => route('hr.pegawai.edit', $row->hashid),
+                    'deleteUrl' => route('hr.pegawai.destroy', $row->hashid),
+                    'deleteName' => $row->nama,
                     'extraActions' => ! $row->user_id ? [
                         [
-                            'icon'    => 'ti ti-user-plus',
-                            'text'    => 'Generate Data User',
-                            'class'   => 'dropdown-item generate-user',
+                            'icon' => 'ti ti-user-plus',
+                            'text' => 'Generate Data User',
+                            'class' => 'dropdown-item generate-user',
                             'dataUrl' => route('hr.pegawai.generate-user', $row->hashid),
                         ],
                     ] : [],
@@ -102,11 +105,11 @@ class PegawaiController extends Controller
 
                 $html = '';
                 if ($atasan1) {
-                    $html .= '<div><small class="text-muted">1:</small> ' . $atasan1 . '</div>';
+                    $html .= '<div><small class="text-muted">1:</small> '.$atasan1.'</div>';
                 }
 
                 if ($atasan2) {
-                    $html .= '<div><small class="text-muted">2:</small> ' . $atasan2 . '</div>';
+                    $html .= '<div><small class="text-muted">2:</small> '.$atasan2.'</div>';
                 }
 
                 return $html;
@@ -120,7 +123,7 @@ class PegawaiController extends Controller
      */
     public function create()
     {
-        $statusPegawai   = StatusPegawai::where('is_active', 1)->get();
+        $statusPegawai = StatusPegawai::where('is_active', 1)->get();
         $statusAktifitas = StatusAktifitas::where('is_active', 1)->get();
 
         return view('pages.hr.pegawai.create-edit', compact('statusPegawai', 'statusAktifitas'));
@@ -132,6 +135,7 @@ class PegawaiController extends Controller
     public function store(PegawaiRequest $request)
     {
         $this->pegawaiService->createPegawai($request->validated());
+
         return jsonSuccess('Pegawai berhasil ditambahkan', route('hr.pegawai.index'));
     }
 
@@ -171,7 +175,7 @@ class PegawaiController extends Controller
             ->where('approval.status', 'Pending')
             ->first();
 
-        return view('pages.hr.pegawai.show', compact('hr_pegawai', 'pendingChange'));
+        return view('pages.hr.pegawai.show', compact('pegawai', 'pendingChange'));
     }
 
     /**
@@ -181,11 +185,11 @@ class PegawaiController extends Controller
     {
         $pegawai->load('latestDataDiri');
 
-        $posisi     = StrukturOrganisasi::where('type', 'posisi')->select('orgunit_id', 'name')->get();
+        $posisi = StrukturOrganisasi::where('type', 'posisi')->select('orgunit_id', 'name')->get();
         $departemen = StrukturOrganisasi::whereIn('type', ['Bagian', 'Jurusan', 'Prodi', 'Unit'])->select('orgunit_id', 'name')->get();
-        $prodi      = StrukturOrganisasi::where('type', 'Prodi')->select('orgunit_id', 'name')->get();
+        $prodi = StrukturOrganisasi::where('type', 'Prodi')->select('orgunit_id', 'name')->get();
 
-        return view('pages.hr.pegawai.create-edit', compact('hr_pegawai', 'posisi', 'departemen', 'prodi'));
+        return view('pages.hr.pegawai.create-edit', compact('pegawai', 'posisi', 'departemen', 'prodi'));
     }
 
     /**
@@ -195,6 +199,7 @@ class PegawaiController extends Controller
     public function update(PegawaiRequest $request, Pegawai $pegawai)
     {
         $this->dataDiriService->requestChange($pegawai, $request->validated());
+
         return jsonSuccess('Permintaan perubahan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
     }
 
@@ -204,6 +209,7 @@ class PegawaiController extends Controller
     public function destroy(Pegawai $pegawai)
     {
         $this->pegawaiService->delete($pegawai->pegawai_id);
+
         return jsonSuccess('Pegawai berhasil dihapus');
     }
 
@@ -233,11 +239,11 @@ class PegawaiController extends Controller
 
         // Create user
         $user = \App\Models\User::create([
-            'name'              => $pegawai->nama,
-            'email'             => $email,
-            'password'          => \Illuminate\Support\Facades\Hash::make($password),
+            'name' => $pegawai->nama,
+            'email' => $email,
+            'password' => \Illuminate\Support\Facades\Hash::make($password),
             'email_verified_at' => now(),
-            'created_by'        => auth()->id() ?? 'system',
+            'created_by' => auth()->id() ?? 'system',
         ]);
 
         // Link pegawai to user

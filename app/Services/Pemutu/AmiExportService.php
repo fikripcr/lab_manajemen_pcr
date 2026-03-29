@@ -1,15 +1,12 @@
 <?php
+
 namespace App\Services\Pemutu;
 
-use App\Models\Pemutu\Indikator;
-use App\Models\Pemutu\IndikatorOrgUnit;
-use App\Models\Pemutu\PeriodeSpmi;
 use App\Models\Hr\StrukturOrganisasi;
-use Illuminate\Support\Facades\DB;
+use App\Models\Pemutu\PeriodeSpmi;
 use Illuminate\Support\Str;
-use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
-use PhpOffice\PhpWord\SimpleType\Jc;
+use PhpOffice\PhpWord\PhpWord;
 
 class AmiExportService
 {
@@ -24,8 +21,8 @@ class AmiExportService
     public function exportPtk(PeriodeSpmi $periode, ?int $unitId = null, ?int $dokId = null, ?string $edStatus = null)
     {
         $filters = [
-            'dok_id'          => $dokId ? encryptId($dokId) : null,
-            'ed_status'       => $edStatus,
+            'dok_id' => $dokId ? encryptId($dokId) : null,
+            'ed_status' => $edStatus,
             'ami_hasil_akhir' => 0, // KTS
         ];
 
@@ -43,15 +40,15 @@ class AmiExportService
         $dokumenName = $dokId ? \App\Models\Pemutu\Dokumen::find($dokId)?->judul : 'Semua Dokumen';
 
         // Create PhpWord document
-        $phpWord = new PhpWord();
+        $phpWord = new PhpWord;
 
         // Add styles
-        $phpWord->addTitleStyle(1, 
-            ['size' => 16, 'bold' => true, 'color' => '000000'], 
+        $phpWord->addTitleStyle(1,
+            ['size' => 16, 'bold' => true, 'color' => '000000'],
             ['spaceAfter' => 200, 'alignment' => 'center']
         );
-        $phpWord->addTitleStyle(2, 
-            ['size' => 14, 'bold' => true, 'color' => '000000'], 
+        $phpWord->addTitleStyle(2,
+            ['size' => 14, 'bold' => true, 'color' => '000000'],
             ['spaceAfter' => 150]
         );
         $phpWord->addFontStyle('normalText', ['size' => 11]);
@@ -67,19 +64,19 @@ class AmiExportService
         ]);
 
         // Header - Title
-        $section->addText('PENEMUAN TEMUAN DAN KETIDAKSESUAIAN (PTK)', 
-            ['size' => 16, 'bold' => true], 
+        $section->addText('PENEMUAN TEMUAN DAN KETIDAKSESUAIAN (PTK)',
+            ['size' => 16, 'bold' => true],
             ['alignment' => 'center', 'spaceAfter' => 200]
         );
         $section->addTextBreak(1);
 
         // Info block
-        $section->addText('Periode: ' . ($periode->nama_periode ?? 'Periode ' . $periode->periode), 'normalText', 'normalText');
-        $section->addText('Jenis: ' . ucfirst($periode->jenis_periode ?? 'SPMI'), 'normalText', 'normalText');
-        $section->addText('Unit: ' . $unitName, 'normalText', 'normalText');
-        $section->addText('Dokumen: ' . $dokumenName, 'normalText', 'normalText');
-        $section->addText('Tanggal Cetak: ' . formatTanggalIndo(now()), 'normalText', 'normalText');
-        $section->addText('Total Temuan: ' . count($ktsIndicators), 'normalText', 'normalText');
+        $section->addText('Periode: '.($periode->nama_periode ?? 'Periode '.$periode->periode), 'normalText', 'normalText');
+        $section->addText('Jenis: '.ucfirst($periode->jenis_periode ?? 'SPMI'), 'normalText', 'normalText');
+        $section->addText('Unit: '.$unitName, 'normalText', 'normalText');
+        $section->addText('Dokumen: '.$dokumenName, 'normalText', 'normalText');
+        $section->addText('Tanggal Cetak: '.formatTanggalIndo(now()), 'normalText', 'normalText');
+        $section->addText('Total Temuan: '.count($ktsIndicators), 'normalText', 'normalText');
         $section->addTextBreak(2);
 
         // Table header
@@ -116,32 +113,25 @@ class AmiExportService
 
             $row->addCell(500, ['valign' => 'center'])
                 ->addText($index + 1, 'normalText', ['alignment' => 'center']);
-            
+
             $row->addCell(1000, ['valign' => 'center'])
                 ->addText($indikator->no_indikator ?? '-', 'normalText', ['alignment' => 'center']);
-            
+
             $row->addCell(3000, ['valign' => 'center'])
                 ->addText($indikator->indikator ?? '-', 'normalText');
-            
+
             $row->addCell(2000, ['valign' => 'center'])
                 ->addText($indOrg->orgUnit->name ?? '-', 'normalText');
-            
-            $row->addCell(3000, ['valign' => 'center'])
-                ->addText(strip_tags($indOrg->ami_hasil_temuan ?? '-'), 'normalText');
-            
-            $row->addCell(3000, ['valign' => 'center'])
-                ->addText(strip_tags($indOrg->ami_hasil_temuan_sebab ?? '-'), 'normalText');
-            
-            $row->addCell(3000, ['valign' => 'center'])
-                ->addText(strip_tags($indOrg->ami_hasil_temuan_akibat ?? '-'), 'normalText');
-            
-            $row->addCell(3000, ['valign' => 'center'])
-                ->addText(strip_tags($indOrg->ami_rtp_isi ?? '-'), 'normalText');
-            
+
+            $this->addHtmlToCell($row->addCell(3000, ['valign' => 'center']), $indOrg->ami_hasil_temuan);
+            $this->addHtmlToCell($row->addCell(3000, ['valign' => 'center']), $indOrg->ami_hasil_temuan_sebab);
+            $this->addHtmlToCell($row->addCell(3000, ['valign' => 'center']), $indOrg->ami_hasil_temuan_akibat);
+            $this->addHtmlToCell($row->addCell(3000, ['valign' => 'center']), $indOrg->ami_rtp_isi);
+
             $row->addCell(1500, ['valign' => 'center'])
                 ->addText(
-                    $indOrg->ami_rtp_tgl_pelaksanaan 
-                        ? formatTanggalIndo($indOrg->ami_rtp_tgl_pelaksanaan) 
+                    $indOrg->ami_rtp_tgl_pelaksanaan
+                        ? formatTanggalIndo($indOrg->ami_rtp_tgl_pelaksanaan)
                         : '-',
                     'normalText',
                     ['alignment' => 'center']
@@ -151,21 +141,21 @@ class AmiExportService
         // Footer
         $section->addTextBreak(2);
         $section->addText('Dokumen ini dibuat secara otomatis oleh sistem AMI.', 'normalText', ['alignment' => 'center', 'italic' => true]);
-        $section->addText('Dicetak pada: ' . now()->format('d M Y H:i:s'), 'normalText', ['alignment' => 'center', 'italic' => true]);
+        $section->addText('Dicetak pada: '.now()->format('d M Y H:i:s'), 'normalText', ['alignment' => 'center', 'italic' => true]);
 
         // Save and download
-        $fileName = 'PTK_' . Str::slug($periode->nama_periode ?? 'AMI') . '_' . date('Ymd_His') . '.docx';
-        $filePath = storage_path('app/' . $fileName);
+        $fileName = 'PTK_'.Str::slug($periode->nama_periode ?? 'AMI').'_'.date('Ymd_His').'.docx';
+        $filePath = storage_path('app/'.$fileName);
 
         // Ensure directory exists
-        if (!file_exists(dirname($filePath))) {
+        if (! file_exists(dirname($filePath))) {
             mkdir(dirname($filePath), 0755, true);
         }
 
         $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
         $objWriter->save($filePath);
 
-        logActivity('pemutu', "Export PTK AMI: {$fileName} oleh " . auth()->user()->name, $periode);
+        logActivity('pemutu', "Export PTK AMI: {$fileName} oleh ".auth()->user()->name, $periode);
 
         return response()->download($filePath, $fileName)->deleteFileAfterSend(true);
     }
@@ -176,8 +166,8 @@ class AmiExportService
     public function exportTemuanAudit(PeriodeSpmi $periode, ?int $unitId = null, ?int $dokId = null, ?string $edStatus = null)
     {
         $filters = [
-            'dok_id'          => $dokId ? encryptId($dokId) : null,
-            'ed_status'       => $edStatus,
+            'dok_id' => $dokId ? encryptId($dokId) : null,
+            'ed_status' => $edStatus,
             'ami_hasil_akhir' => 0, // KTS
         ];
 
@@ -199,8 +189,8 @@ class AmiExportService
     public function exportTemuanPositif(PeriodeSpmi $periode, ?int $unitId = null, ?int $dokId = null, ?string $edStatus = null)
     {
         $filters = [
-            'dok_id'          => $dokId ? encryptId($dokId) : null,
-            'ed_status'       => $edStatus,
+            'dok_id' => $dokId ? encryptId($dokId) : null,
+            'ed_status' => $edStatus,
             'ami_hasil_akhir' => [1, 2], // Terpenuhi & Terlampaui
         ];
 
@@ -215,5 +205,30 @@ class AmiExportService
         }
 
         return new \App\Exports\Pemutu\TemuanPositifExport($positiveIndicators, $periode);
+    }
+
+    /**
+     * Safely add HTML to a PhpWord Cell, fallback to plain text if parser fails
+     */
+    private function addHtmlToCell($cell, $htmlContent)
+    {
+        if (empty(trim(strip_tags($htmlContent ?? '')))) {
+            $cell->addText('-', 'normalText');
+
+            return;
+        }
+
+        try {
+            // Bersihkan sedikit entity HTML agar parser tidak bingung
+            $html = str_replace(
+                ['&nbsp;', '&amp;', '<br>'],
+                [' ', '&', '<br/>'],
+                $htmlContent
+            );
+            \PhpOffice\PhpWord\Shared\Html::addHtml($cell, $html, false, false);
+        } catch (\Exception $e) {
+            // Fallback ke strip_tags jika struktur HTML tidak bisa diparsing PhpWord
+            $cell->addText(strip_tags($htmlContent), 'normalText');
+        }
     }
 }

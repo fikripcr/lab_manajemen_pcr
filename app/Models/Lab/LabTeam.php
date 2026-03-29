@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Lab;
 
 use App\Models\User;
@@ -10,9 +11,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LabTeam extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'lab_teams';
+    protected $table = 'lab_teams';
+
     protected $primaryKey = 'lab_team_id';
 
     protected $appends = ['encrypted_lab_team_id'];
@@ -38,8 +40,8 @@ class LabTeam extends Model
     ];
 
     protected $casts = [
-        'is_active'       => 'boolean',
-        'tanggal_mulai'   => 'datetime',
+        'is_active' => 'boolean',
+        'tanggal_mulai' => 'datetime',
         'tanggal_selesai' => 'datetime',
     ];
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
@@ -12,12 +13,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class StrukturOrganisasiController extends Controller
 {
-    public function __construct(protected StrukturOrganisasiService $strukturOrganisasiService)
-    {}
+    public function __construct(protected StrukturOrganisasiService $strukturOrganisasiService) {}
 
     public function index(Request $request)
     {
-        $types     = $this->strukturOrganisasiService->getTypes();
+        $types = $this->strukturOrganisasiService->getTypes();
         $treeUnits = $this->strukturOrganisasiService->getRootUnits();
 
         return view('pages.hr.struktur-organisasi.index', compact('types', 'treeUnits'));
@@ -26,7 +26,7 @@ class StrukturOrganisasiController extends Controller
     public function data(Request $request)
     {
         $filters = $request->only(['type', 'status']);
-        $query   = $this->strukturOrganisasiService->getFilteredQuery($filters);
+        $query = $this->strukturOrganisasiService->getFilteredQuery($filters);
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -38,9 +38,9 @@ class StrukturOrganisasiController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('hr.struktur-organisasi.edit', $row->encrypted_org_unit_id),
+                    'editUrl' => route('hr.struktur-organisasi.edit', $row->encrypted_org_unit_id),
                     'deleteUrl' => route('hr.struktur-organisasi.destroy', $row->encrypted_org_unit_id),
-                    'showUrl'   => route('hr.struktur-organisasi.show', $row->encrypted_org_unit_id),
+                    'showUrl' => route('hr.struktur-organisasi.show', $row->encrypted_org_unit_id),
                     'editModal' => true,
                 ])->render();
             })
@@ -48,22 +48,48 @@ class StrukturOrganisasiController extends Controller
             ->make(true);
     }
 
+    public function chartData()
+    {
+        $orgUnits = $this->strukturOrganisasiService->getAllUnits();
+        
+        $data = $orgUnits->map(function($unit) {
+            return [
+                'id' => $unit->orgunit_id,
+                'parentId' => $unit->parent_id,
+                'name' => $unit->name,
+                'code' => $unit->code,
+                'type' => ucfirst(str_replace('_', ' ', $unit->type)),
+                'level' => $unit->level,
+                'avatar' => $unit->auditee->avatar_url ?? null,
+                'pic' => $unit->auditee->name ?? null,
+                'url' => route('hr.struktur-organisasi.show', $unit),
+                'encryptedId' => $unit->encrypted_org_unit_id,
+                'coordination_id' => $unit->coordination_id ?? null // Prepare for future use
+            ];
+        });
+
+        return response()->json($data);
+    }
+
     public function tree()
     {
         $orgUnits = $this->strukturOrganisasiService->getActiveHierarchicalUnits();
+
         return view('pages.hr.struktur-organisasi.tree', compact('orgUnits'));
     }
 
     public function create()
     {
         $parents = $this->strukturOrganisasiService->getHierarchicalList();
-        $types   = $this->strukturOrganisasiService->getTypes();
+        $types = $this->strukturOrganisasiService->getTypes();
+
         return view('pages.hr.struktur-organisasi.create-edit-ajax', compact('parents', 'types'));
     }
 
     public function store(StrukturOrganisasiRequest $request)
     {
         $this->strukturOrganisasiService->createOrgUnit($request->validated());
+
         return jsonSuccess('Unit Organisasi berhasil ditambahkan.', route('hr.struktur-organisasi.index'));
     }
 
@@ -77,7 +103,7 @@ class StrukturOrganisasiController extends Controller
     public function edit(StrukturOrganisasi $struktur_organisasi)
     {
         $parents = $this->strukturOrganisasiService->getHierarchicalList(excludeId: $struktur_organisasi->orgunit_id);
-        $types   = $this->strukturOrganisasiService->getTypes();
+        $types = $this->strukturOrganisasiService->getTypes();
 
         return view('pages.hr.struktur-organisasi.create-edit-ajax', ['orgUnit' => $struktur_organisasi, 'parents' => $parents, 'types' => $types]);
     }
@@ -85,12 +111,14 @@ class StrukturOrganisasiController extends Controller
     public function update(StrukturOrganisasiRequest $request, StrukturOrganisasi $struktur_organisasi)
     {
         $this->strukturOrganisasiService->updateOrgUnit($struktur_organisasi, $request->validated());
+
         return jsonSuccess('Unit Organisasi berhasil diperbarui.', route('hr.struktur-organisasi.index'));
     }
 
     public function destroy(StrukturOrganisasi $struktur_organisasi)
     {
         $this->strukturOrganisasiService->deleteOrgUnit($struktur_organisasi);
+
         return jsonSuccess('Unit Organisasi berhasil dihapus.', route('hr.struktur-organisasi.index'));
     }
 
@@ -99,14 +127,17 @@ class StrukturOrganisasiController extends Controller
         $hierarchy = $request->validated()['hierarchy'] ?? [];
         if ($hierarchy) {
             $this->strukturOrganisasiService->reorderUnits($hierarchy);
+
             return jsonSuccess('Urutan unit organisasi berhasil diperbarui.');
         }
+
         return jsonError('Data urutan tidak valid.');
     }
 
     public function toggleStatus(StrukturOrganisasi $struktur_organisasi)
     {
         $unit = $this->strukturOrganisasiService->toggleStatus($struktur_organisasi);
+
         return jsonSuccess('Status berhasil diubah.', null, ['is_active' => $unit->is_active]);
     }
 
@@ -114,6 +145,7 @@ class StrukturOrganisasiController extends Controller
     {
         $validated = $request->validated();
         $this->strukturOrganisasiService->setAuditee($struktur_organisasi, $validated['auditee_user_id']);
+
         return jsonSuccess('Auditee berhasil diset.');
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Lab;
 
 use App\Models\Lab\Lab;
@@ -54,7 +55,7 @@ class LabService
 
             logActivity(
                 'lab_management',
-                "Memperbarui lab: {$oldName}" . ($oldName !== $lab->name ? " menjadi {$lab->name}" : ""),
+                "Memperbarui lab: {$oldName}".($oldName !== $lab->name ? " menjadi {$lab->name}" : ''),
                 $lab
             );
 
@@ -111,6 +112,7 @@ class LabService
         if (! $model) {
             throw new \Exception("Lab dengan ID {$id} tidak ditemukan.");
         }
+
         return $model;
     }
 }

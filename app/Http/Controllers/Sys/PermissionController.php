@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
@@ -10,8 +11,7 @@ use Yajra\DataTables\DataTables;
 
 class PermissionController extends Controller
 {
-    public function __construct(protected PermissionService $permissionService)
-    {}
+    public function __construct(protected PermissionService $permissionService) {}
 
     /**
      * Display a listing of the resource.
@@ -19,7 +19,7 @@ class PermissionController extends Controller
     public function index()
     {
         // Get unique categories for the filter
-        $categories    = $this->permissionService->getUniqueCategories();
+        $categories = $this->permissionService->getUniqueCategories();
         $subCategories = $this->permissionService->getUniqueSubCategories();
 
         return view('pages.sys.permissions.index', compact('categories', 'subCategories'));
@@ -52,7 +52,7 @@ class PermissionController extends Controller
             })
             ->addColumn('action', function ($permission) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('sys.permissions.edit', $permission->encryptedId),
+                    'editUrl' => route('sys.permissions.edit', $permission->encryptedId),
                     'deleteUrl' => route('sys.permissions.destroy', $permission->encryptedId),
                 ])->render();
             })
@@ -65,7 +65,8 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        $permission = new Permission();
+        $permission = new Permission;
+
         return view('pages.sys.permissions.create-edit-ajax', compact('permission'));
     }
 
@@ -74,7 +75,7 @@ class PermissionController extends Controller
      */
     public function store(PermissionRequest $request)
     {
-        $data  = $request->validated();
+        $data = $request->validated();
         $names = preg_split('/[,\n\r]+/', $data['name']);
         $count = 0;
 
@@ -85,11 +86,11 @@ class PermissionController extends Controller
             }
 
             // Check if permission already exists
-            if (Permission::where('name', $name)->exists()) {
+            if ($this->permissionService->permissionExists($name)) {
                 continue;
             }
 
-            $singleData         = $data;
+            $singleData = $data;
             $singleData['name'] = $name;
             $this->permissionService->createPermission($singleData);
             $count++;
@@ -99,7 +100,7 @@ class PermissionController extends Controller
             return jsonError('Tidak ada izin baru yang dibuat (kemungkinan sudah ada).');
         }
 
-        return jsonSuccess($count . ' izin berhasil dibuat.');
+        return jsonSuccess($count.' izin berhasil dibuat.');
     }
 
     /**

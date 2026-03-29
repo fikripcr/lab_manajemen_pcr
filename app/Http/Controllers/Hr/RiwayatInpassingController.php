@@ -1,56 +1,62 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\RiwayatInpassingRequest;
 use App\Models\Hr\GolonganInpassing;
-use App\Models\Hr\RiwayatInpassing;
 use App\Models\Hr\Pegawai;
+use App\Models\Hr\RiwayatInpassing;
 use App\Services\Hr\RiwayatInpassingService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class RiwayatInpassingController extends Controller
 {
-    public function __construct(protected RiwayatInpassingService $inpassingService)
-    {}
+    public function __construct(protected RiwayatInpassingService $inpassingService) {}
 
-    public function index(Pegawai $pegawai = null)
+    public function index(?Pegawai $pegawai = null)
     {
         if ($pegawai) {
-            return view('pages.hr.data-diri.tabs.inpassing', compact('hr_pegawai'));
+            return view('pages.hr.data-diri.tabs.inpassing', compact('pegawai'));
         }
+
         return view('pages.hr.data-diri.tabs.inpassing'); // Global view if needed
     }
 
     public function create(Pegawai $pegawai)
     {
-        $golongan  = GolonganInpassing::all();
-        $inpassing = new RiwayatInpassing();
-        return view('pages.hr.pegawai.inpassing.create-edit-ajax', compact('hr_pegawai', 'golongan', 'inpassing'));
+        $golongan = GolonganInpassing::all();
+        $inpassing = new RiwayatInpassing;
+
+        return view('pages.hr.pegawai.inpassing.create-edit-ajax', compact('pegawai', 'golongan', 'inpassing'));
     }
 
     public function store(RiwayatInpassingRequest $request, Pegawai $pegawai)
     {
         $this->inpassingService->requestChange($pegawai, $request->validated());
-        return jsonSuccess('Perubahan Inpassing berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id) . '#section-inpassing');
+
+        return jsonSuccess('Perubahan Inpassing berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id).'#section-inpassing');
     }
 
     public function edit(Pegawai $pegawai, RiwayatInpassing $inpassing)
     {
         $golongan = GolonganInpassing::all();
-        return view('pages.hr.pegawai.inpassing.create-edit-ajax', compact('hr_pegawai', 'inpassing', 'golongan'));
+
+        return view('pages.hr.pegawai.inpassing.create-edit-ajax', compact('pegawai', 'inpassing', 'golongan'));
     }
 
     public function update(RiwayatInpassingRequest $request, Pegawai $pegawai, RiwayatInpassing $inpassing)
     {
         $this->inpassingService->requestChange($pegawai, $request->validated(), $inpassing);
-        return jsonSuccess('Perubahan Inpassing berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id) . '#section-inpassing');
+
+        return jsonSuccess('Perubahan Inpassing berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id).'#section-inpassing');
     }
 
     public function destroy(Pegawai $pegawai, RiwayatInpassing $inpassing)
     {
         $inpassing->delete();
+
         return jsonSuccess('Riwayat Inpassing berhasil dihapus.');
     }
 
@@ -80,20 +86,21 @@ class RiwayatInpassingController extends Controller
                 if ($row->approval) {
                     return getApprovalStatus($row->approval->status);
                 }
+
                 return '<span class="status status-success"><span class="status-dot"></span> Aktif</span>';
             })
             ->addColumn('action', function ($row) {
-                $pegawaiId   = encryptId($row->pegawai_id);
+                $pegawaiId = encryptId($row->pegawai_id);
                 $inpassingId = $row->encrypted_riwayatinpassing_id;
 
                 return '<div class="btn-list justify-content-end">
                             <button type="button" class="btn btn-sm btn-icon btn-ghost-primary ajax-modal-btn"
-                                data-url="' . route('hr.pegawai.inpassing.edit', [$pegawaiId, $inpassingId]) . '"
+                                data-url="'.route('hr.pegawai.inpassing.edit', [$pegawaiId, $inpassingId]).'"
                                 data-modal-title="Edit Inpassing" title="Edit">
                                 <i class="ti ti-edit"></i>
                             </button>
                             <button type="button" class="btn btn-sm btn-icon btn-ghost-danger ajax-delete"
-                                data-url="' . route('hr.pegawai.inpassing.destroy', [$pegawaiId, $inpassingId]) . '"
+                                data-url="'.route('hr.pegawai.inpassing.destroy', [$pegawaiId, $inpassingId]).'"
                                 title="Hapus">
                                 <i class="ti ti-trash"></i>
                             </button>

@@ -1,13 +1,13 @@
 <?php
+
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\IndikatorStandarRequest;
+use App\Models\Hr\Personil;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\IndikatorPersonil;
-use App\Models\Hr\Personil;
-
 use Illuminate\Support\Facades\DB;
 
 class IndikatorStandarController extends Controller
@@ -26,6 +26,7 @@ class IndikatorStandarController extends Controller
     {
         // Get Standard Documents only
         $dokumens = Dokumen::where('jenis', 'standar')->get();
+
         return view('pages.pemutu.standar.create', compact('dokumens'));
     }
 
@@ -39,8 +40,8 @@ class IndikatorStandarController extends Controller
         DB::transaction(function () use ($request) {
             $indikator = Indikator::create([
                 'indikator' => $request->indikator,
-                'target'    => $request->target,
-                'type'      => $request->type,
+                'target' => $request->target,
+                'type' => $request->type,
                 'parent_id' => $request->parent_id,
             ]);
 
@@ -56,7 +57,7 @@ class IndikatorStandarController extends Controller
     public function assign(Indikator $indikator)
     {
         $personils = Personil::orderBy('nama')->get();
-        $assigned  = IndikatorPersonil::where('indikator_id', $indikator->indikator_id)
+        $assigned = IndikatorPersonil::where('indikator_id', $indikator->indikator_id)
             ->with('hr_personil')
             ->get();
 
@@ -68,12 +69,12 @@ class IndikatorStandarController extends Controller
         IndikatorPersonil::updateOrCreate(
             [
                 'indikator_id' => $indikator->indikator_id,
-                'personil_id'  => $request->personil_id,
-                'year'         => $request->year,
+                'personil_id' => $request->personil_id,
+                'year' => $request->year,
             ],
             [
                 'target_value' => $request->target_value ?? $indikator->target,
-                'weight'       => $request->weight ?? 0,
+                'weight' => $request->weight ?? 0,
             ]
         );
 
@@ -84,7 +85,7 @@ class IndikatorStandarController extends Controller
 
     public function destroyAssignment($id)
     {
-        $assignment  = IndikatorPersonil::findOrFail($id);
+        $assignment = IndikatorPersonil::findOrFail($id);
         $indikatorId = $assignment->indikator_id;
         $assignment->delete();
 

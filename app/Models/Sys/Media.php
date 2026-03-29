@@ -2,13 +2,14 @@
 
 namespace App\Models\Sys;
 
-use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 class Media extends SpatieMedia
 {
-    use SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HashidBinding, SoftDeletes;
+
     protected $table = 'sys_media';
 }

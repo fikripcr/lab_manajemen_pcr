@@ -11,27 +11,26 @@
 @section('content')
     <x-tabler.card>
         <x-tabler.card-header class="border-bottom py-3">
-            <div class="d-flex flex-wrap gap-2 align-items-center">
-                <div>
-                    <x-tabler.datatable-page-length :dataTableId="'table-personil'" />
-                </div>
-                <div>
-                    <x-tabler.datatable-search :dataTableId="'table-personil'" />
-                </div>
-                <div>
-                    <x-tabler.datatable-filter :dataTableId="'table-personil'">
-                        <div class="col-12">
-                            <x-tabler.form-select id="filter-unit" name="org_unit_id" label="Filter Unit" placeholder="Semua Unit" class="mb-0">
-                                <option value="">Semua Unit</option>
-                                @foreach($units as $unit)
-                                    <option value="{{ $unit->orgunit_id }}">{{ $unit->name_display ?? $unit->name }}</option>
-                                @endforeach
-                            </x-tabler.form-select>
-                        </div>
-                    </x-tabler.datatable-filter>
-                </div>
+            <div class="d-flex gap-2 align-items-center">
+                <x-tabler.datatable-page-length :dataTableId="'table-personil'" />
+                <x-tabler.datatable-filter :dataTableId="'table-personil'" type="button" target="#personil-filter-area" />
+                <x-tabler.datatable-search :dataTableId="'table-personil'" />
             </div>
         </x-tabler.card-header>
+        <div class="collapse" id="personil-filter-area">
+            <x-tabler.datatable-filter :dataTableId="'table-personil'" type="bare">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <x-tabler.form-select id="filter-unit" name="org_unit_id" label="Filter Unit" placeholder="" class="mb-0">
+                            <option value="all" selected>Semua Unit</option>
+                            @foreach($units as $unit)
+                                <option value="{{ $unit->orgunit_id }}">{{ $unit->name_display ?? $unit->name }}</option>
+                            @endforeach
+                        </x-tabler.form-select>
+                    </div>
+                </div>
+            </x-tabler.datatable-filter>
+        </div>
         <x-tabler.card-body class="p-0">
             <x-tabler.datatable
                 id="table-personil"

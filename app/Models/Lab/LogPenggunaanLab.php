@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Lab;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LogPenggunaanLab extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'lab_log_penggunaan_labs';
+    protected $table = 'lab_log_penggunaan_labs';
+
     protected $primaryKey = 'log_penggunaan_labs_id';
 
     protected $appends = ['encrypted_log_penggunaan_labs_id'];
@@ -36,7 +38,7 @@ class LogPenggunaanLab extends Model
 
     protected $casts = [
         'waktu_isi' => 'datetime',
-        'nomor_pc'  => 'integer',
+        'nomor_pc' => 'integer',
     ];
 
     /**

@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Lab;
 
 use App\Http\Requests\BaseRequest;
 
 class LaporanKerusakanRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -16,10 +14,10 @@ class LaporanKerusakanRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'lab_id'              => 'required',
-            'inventaris_id'       => 'required',
+            'lab_id' => 'required',
+            'inventaris_id' => 'required',
             'deskripsi_kerusakan' => 'required|string',
-            'bukti_foto'          => 'nullable|image|max:2048',
+            'bukti_foto' => 'nullable|image|max:2048',
         ];
     }
 
@@ -38,10 +36,10 @@ class LaporanKerusakanRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'lab_id'              => 'Lab',
-            'inventaris_id'       => 'Inventaris',
+            'lab_id' => 'Lab',
+            'inventaris_id' => 'Inventaris',
             'deskripsi_kerusakan' => 'Deskripsi Kerusakan',
-            'bukti_foto'          => 'Bukti Foto',
+            'bukti_foto' => 'Bukti Foto',
         ];
     }
 }

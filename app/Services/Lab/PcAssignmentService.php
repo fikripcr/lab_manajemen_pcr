@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Lab;
 
 use App\Models\Lab\PcAssignment;
@@ -30,7 +31,7 @@ class PcAssignmentService
      */
     public function createAssignment(JadwalKuliah $jadwal, array $data): PcAssignment
     {
-        $userId  = $data['user_id'];
+        $userId = $data['user_id'];
         $nomorPc = $data['nomor_pc'];
 
         // Cek apakah mahasiswa sudah punya PC di jadwal ini
@@ -55,13 +56,13 @@ class PcAssignmentService
 
         return DB::transaction(function () use ($jadwal, $data) {
             $assignment = PcAssignment::create([
-                'jadwal_id'     => $jadwal->jadwal_kuliah_id,
-                'lab_id'        => $jadwal->lab_id,
-                'user_id'       => $data['user_id'],
-                'nomor_pc'      => $data['nomor_pc'],
-                'nomor_loker'   => $data['nomor_loker'] ?? null,
+                'jadwal_id' => $jadwal->jadwal_kuliah_id,
+                'lab_id' => $jadwal->lab_id,
+                'user_id' => $data['user_id'],
+                'nomor_pc' => $data['nomor_pc'],
+                'nomor_loker' => $data['nomor_loker'] ?? null,
                 'assigned_date' => now(),
-                'is_active'     => true,
+                'is_active' => true,
             ]);
 
             logActivity('lab_assignment', "Assign User ID: {$data['user_id']} to PC {$data['nomor_pc']} in Schedule {$jadwal->jadwal_kuliah_id}");
@@ -78,6 +79,7 @@ class PcAssignmentService
         return DB::transaction(function () use ($assignment) {
             $assignment->delete();
             logActivity('lab_assignment', "Menghapus data assignment PC ID {$assignment->pc_assignment_id}");
+
             return true;
         });
     }
@@ -88,6 +90,7 @@ class PcAssignmentService
         if (! $model) {
             throw new Exception("Data Assignment dengan ID {$id} tidak ditemukan.");
         }
+
         return $model;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Config;
 
 /**
@@ -23,14 +24,14 @@ class PemutuDokumenConfig
         // POLICY CHAIN (Kebijakan → Standar → Manual → Formulir)
         // ───────────────────────────────────────────────────────
 
-        'kebijakan'       => [
-            'label'                  => 'Kebijakan',
-            'label_full'             => 'Kebijakan Mutu',
-            'category'               => 'kebijakan', // Tab category
-            'tree_based'             => true,
-            'has_poin'               => true,
-            'has_default_poin'       => true,
-            'default_poin'           => [
+        'kebijakan' => [
+            'label' => 'Kebijakan',
+            'label_full' => 'Kebijakan Mutu',
+            'category' => 'kebijakan', // Tab category
+            'tree_based' => true,
+            'has_poin' => true,
+            'has_default_poin' => true,
+            'default_poin' => [
                 'Rasional / Tujuan',
                 'Ruang Lingkup',
                 'Istilah / Definisi',
@@ -38,21 +39,21 @@ class PemutuDokumenConfig
                 'Pernyataan Isi Kebijakan',
             ],
             'can_generate_indikator' => false,
-            'mappable_to'            => ['standar'],
-            'parent_types'           => [], // No parent (top-level)
-            'child_types'            => ['standar'],
-            'show_approval'          => true,
-            'icon'                   => 'ti ti-file-text',
+            'mappable_to' => ['standar'],
+            'parent_types' => [], // No parent (top-level)
+            'child_types' => ['standar'],
+            'show_approval' => true,
+            'icon' => 'ti ti-file-text',
         ],
 
-        'standar'         => [
-            'label'                  => 'Standar',
-            'label_full'             => 'Standar Mutu',
-            'category'               => 'standar',
-            'tree_based'             => true,
-            'has_poin'               => true,
-            'has_default_poin'       => true,
-            'default_poin'           => [
+        'standar' => [
+            'label' => 'Standar',
+            'label_full' => 'Standar Mutu',
+            'category' => 'standar',
+            'tree_based' => true,
+            'has_poin' => true,
+            'has_default_poin' => true,
+            'default_poin' => [
                 'Rasional / Tujuan',
                 'Ruang Lingkup',
                 'Istilah / Definisi',
@@ -60,130 +61,130 @@ class PemutuDokumenConfig
                 'Pernyataan Isi Standar / Indikator Capaian', // ← Generates Indikator
             ],
             'can_generate_indikator' => true,
-            'indikator_poin_index'   => 4, // 0-based index (5th poin)
-            'mappable_to'            => ['kebijakan'],
-            'parent_types'           => ['kebijakan'],
-            'child_types'            => ['manual_prosedur'],
-            'show_approval'          => true,
-            'icon'                   => 'ti ti-book',
+            'indikator_poin_index' => 4, // 0-based index (5th poin)
+            'mappable_to' => ['kebijakan'],
+            'parent_types' => ['kebijakan'],
+            'child_types' => ['manual_prosedur'],
+            'show_approval' => true,
+            'icon' => 'ti ti-book',
         ],
 
         'manual_prosedur' => [
-            'label'                  => 'Manual Prosedur',
-            'label_full'             => 'Manual Prosedur / SOP',
-            'category'               => 'standar', // Same tab as standar
-            'tree_based'             => true,
-            'has_poin'               => true,
-            'has_default_poin'       => false,
-            'default_poin'           => [],
+            'label' => 'Manual Prosedur',
+            'label_full' => 'Manual Prosedur / SOP',
+            'category' => 'standar', // Same tab as standar
+            'tree_based' => true,
+            'has_poin' => true,
+            'has_default_poin' => false,
+            'default_poin' => [],
             'can_generate_indikator' => false,
-            'mappable_to'            => ['standar'],
-            'parent_types'           => ['standar'],
-            'child_types'            => ['formulir'],
-            'show_approval'          => true,
-            'icon'                   => 'ti ti-file-description',
+            'mappable_to' => ['standar'],
+            'parent_types' => ['standar'],
+            'child_types' => ['formulir'],
+            'show_approval' => true,
+            'icon' => 'ti ti-file-description',
         ],
 
-        'formulir'        => [
-            'label'                  => 'Formulir',
-            'label_full'             => 'Formulir / Template',
-            'category'               => 'standar',
-            'tree_based'             => true,
-            'has_poin'               => true,
-            'has_default_poin'       => false,
-            'default_poin'           => [],
+        'formulir' => [
+            'label' => 'Formulir',
+            'label_full' => 'Formulir / Template',
+            'category' => 'standar',
+            'tree_based' => true,
+            'has_poin' => true,
+            'has_default_poin' => false,
+            'default_poin' => [],
             'can_generate_indikator' => false,
-            'mappable_to'            => ['standar', 'manual_prosedur'],
-            'parent_types'           => ['standar', 'manual_prosedur'],
-            'child_types'            => [],
-            'show_approval'          => true,
-            'icon'                   => 'ti ti-forms',
+            'mappable_to' => ['standar', 'manual_prosedur'],
+            'parent_types' => ['standar', 'manual_prosedur'],
+            'child_types' => [],
+            'show_approval' => true,
+            'icon' => 'ti ti-forms',
         ],
 
         // ───────────────────────────────────────────────────────
         // PLANNING CHAIN (Visi → Misi → RJP → Renstra → Renop)
         // ───────────────────────────────────────────────────────
 
-        'visi'            => [
-            'label'                  => 'Visi',
-            'label_full'             => 'Visi Universitas',
-            'category'               => 'kebijakan',
-            'tree_based'             => false, // Single document view
-            'has_poin'               => true,
-            'has_default_poin'       => false,
-            'default_poin'           => [],
+        'visi' => [
+            'label' => 'Visi',
+            'label_full' => 'Visi Universitas',
+            'category' => 'kebijakan',
+            'tree_based' => false, // Single document view
+            'has_poin' => true,
+            'has_default_poin' => false,
+            'default_poin' => [],
             'can_generate_indikator' => false,
-            'mappable_to'            => [], // Top-level, no mapping needed
-            'parent_types'           => [],
-            'child_types'            => [],
-            'show_approval'          => true,
-            'icon'                   => 'ti ti-eye',
+            'mappable_to' => [], // Top-level, no mapping needed
+            'parent_types' => [],
+            'child_types' => [],
+            'show_approval' => true,
+            'icon' => 'ti ti-eye',
         ],
 
-        'misi'            => [
-            'label'                  => 'Misi',
-            'label_full'             => 'Misi Universitas',
-            'category'               => 'kebijakan',
-            'tree_based'             => false,
-            'has_poin'               => true,
-            'has_default_poin'       => false,
-            'default_poin'           => [],
+        'misi' => [
+            'label' => 'Misi',
+            'label_full' => 'Misi Universitas',
+            'category' => 'kebijakan',
+            'tree_based' => false,
+            'has_poin' => true,
+            'has_default_poin' => false,
+            'default_poin' => [],
             'can_generate_indikator' => false,
-            'mappable_to'            => ['visi'],
-            'parent_types'           => [],
-            'child_types'            => [],
-            'show_approval'          => true,
-            'icon'                   => 'ti ti-bullseye',
+            'mappable_to' => ['visi'],
+            'parent_types' => [],
+            'child_types' => [],
+            'show_approval' => true,
+            'icon' => 'ti ti-bullseye',
         ],
 
-        'rjp'             => [
-            'label'                  => 'RJP',
-            'label_full'             => 'Rencana Jangka Panjang',
-            'category'               => 'kebijakan',
-            'tree_based'             => false,
-            'has_poin'               => true,
-            'has_default_poin'       => false,
-            'default_poin'           => [],
+        'rjp' => [
+            'label' => 'RJP',
+            'label_full' => 'Rencana Jangka Panjang',
+            'category' => 'kebijakan',
+            'tree_based' => false,
+            'has_poin' => true,
+            'has_default_poin' => false,
+            'default_poin' => [],
             'can_generate_indikator' => false,
-            'mappable_to'            => ['misi'],
-            'parent_types'           => [],
-            'child_types'            => [],
-            'show_approval'          => true,
-            'icon'                   => 'ti ti-calendar',
+            'mappable_to' => ['misi'],
+            'parent_types' => [],
+            'child_types' => [],
+            'show_approval' => true,
+            'icon' => 'ti ti-calendar',
         ],
 
-        'renstra'         => [
-            'label'                  => 'Renstra',
-            'label_full'             => 'Rencana Strategis',
-            'category'               => 'kebijakan',
-            'tree_based'             => false,
-            'has_poin'               => true,
-            'has_default_poin'       => false,
-            'default_poin'           => [],
+        'renstra' => [
+            'label' => 'Renstra',
+            'label_full' => 'Rencana Strategis',
+            'category' => 'kebijakan',
+            'tree_based' => false,
+            'has_poin' => true,
+            'has_default_poin' => false,
+            'default_poin' => [],
             'can_generate_indikator' => false,
-            'mappable_to'            => ['rjp'],
-            'parent_types'           => [],
-            'child_types'            => [],
-            'show_approval'          => true,
-            'icon'                   => 'ti ti-chart-bar',
+            'mappable_to' => ['rjp'],
+            'parent_types' => [],
+            'child_types' => [],
+            'show_approval' => true,
+            'icon' => 'ti ti-chart-bar',
         ],
 
-        'renop'           => [
-            'label'                  => 'Renop',
-            'label_full'             => 'Rencana Operasional',
-            'category'               => 'kebijakan',
-            'tree_based'             => false,
-            'has_poin'               => true,
-            'has_default_poin'       => false,
-            'default_poin'           => [],
+        'renop' => [
+            'label' => 'Renop',
+            'label_full' => 'Rencana Operasional',
+            'category' => 'kebijakan',
+            'tree_based' => false,
+            'has_poin' => true,
+            'has_default_poin' => false,
+            'default_poin' => [],
             'can_generate_indikator' => true,
-            'indikator_via_label'    => true, // Uses label 'renop' instead of poin
-            'mappable_to'            => ['renstra'],
-            'parent_types'           => [],
-            'child_types'            => [],
-            'show_approval'          => true,
-            'icon'                   => 'ti ti-calendar-event',
-            'tabs'                   => ['overview', 'indikator-renop', 'approval'],
+            'indikator_via_label' => true, // Uses label 'renop' instead of poin
+            'mappable_to' => ['renstra'],
+            'parent_types' => [],
+            'child_types' => [],
+            'show_approval' => true,
+            'icon' => 'ti ti-calendar-event',
+            'tabs' => ['overview', 'indikator-renop', 'approval'],
         ],
     ];
 
@@ -217,7 +218,7 @@ class PemutuDokumenConfig
     {
         return array_filter(
             self::$config,
-            fn($config) => $config['category'] === $category
+            fn ($config) => $config['category'] === $category
         );
     }
 
@@ -228,7 +229,7 @@ class PemutuDokumenConfig
     {
         return array_keys(array_filter(
             self::$config,
-            fn($config) => $config['tree_based'] === true
+            fn ($config) => $config['tree_based'] === true
         ));
     }
 
@@ -239,7 +240,7 @@ class PemutuDokumenConfig
     {
         return array_keys(array_filter(
             self::$config,
-            fn($config) => $config['can_generate_indikator'] === true
+            fn ($config) => $config['can_generate_indikator'] === true
         ));
     }
 
@@ -354,6 +355,7 @@ class PemutuDokumenConfig
     public function hasTab(string $tabName): bool
     {
         $tabs = $this->tabs();
+
         return in_array($tabName, $tabs);
     }
 

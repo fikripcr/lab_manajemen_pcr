@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
@@ -9,8 +10,7 @@ use Illuminate\Http\Request;
 
 class TanggalLiburController extends Controller
 {
-    public function __construct(protected TanggalLiburService $tanggalLiburService)
-    {}
+    public function __construct(protected TanggalLiburService $tanggalLiburService) {}
 
     public function index(Request $request)
     {
@@ -43,12 +43,14 @@ class TanggalLiburController extends Controller
     public function store(TanggalLiburRequest $request)
     {
         $count = $this->tanggalLiburService->createBatch($request->validated());
+
         return jsonSuccess("Berhasil menambahkan $count tanggal libur.", route('hr.tanggal-libur.index'));
     }
 
     public function destroy($id)
     {
         $this->tanggalLiburService->delete($id);
+
         return jsonSuccess('Data berhasil dihapus');
     }
 }

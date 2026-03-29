@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Sys;
 
 use App\Models\Sys\ErrorLog;
@@ -7,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class ErrorLogService
 {
-
     /**
      * Get a specific error log by ID
      */
@@ -20,8 +20,9 @@ class ErrorLogService
     {
         $model = $this->getErrorLogById($id);
         if (! $model) {
-            throw new Exception("Data tidak ditemukan.");
+            throw new Exception('Data tidak ditemukan.');
         }
+
         return $model;
     }
 
@@ -41,7 +42,7 @@ class ErrorLogService
         if (! empty($filters['start_date']) && ! empty($filters['end_date'])) {
             $query->whereBetween('created_at', [
                 $filters['start_date'],
-                $filters['end_date'] . ' 23:59:59',
+                $filters['end_date'].' 23:59:59',
             ]);
         } elseif (! empty($filters['start_date'])) {
             $query->whereDate('created_at', '>=', $filters['start_date']);
@@ -59,8 +60,8 @@ class ErrorLogService
     {
         return DB::transaction(function () {
             ErrorLog::truncate();
+
             return true;
         });
     }
-
 }

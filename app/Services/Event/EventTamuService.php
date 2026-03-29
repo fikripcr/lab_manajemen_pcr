@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Event;
 
 use App\Models\Event\EventTamu;
@@ -62,13 +63,13 @@ class EventTamuService
 
             if (! empty($data['foto'])) {
                 $tamu->addMediaFromBase64($data['foto'])
-                    ->usingFileName('guest_photo_' . time() . '.jpg')
+                    ->usingFileName('guest_photo_'.time().'.jpg')
                     ->toMediaCollection('guest_photo');
             }
 
             if (! empty($data['ttd'])) {
                 $tamu->addMediaFromBase64($data['ttd'])
-                    ->usingFileName('guest_signature_' . time() . '.png')
+                    ->usingFileName('guest_signature_'.time().'.png')
                     ->toMediaCollection('guest_signature');
             }
 

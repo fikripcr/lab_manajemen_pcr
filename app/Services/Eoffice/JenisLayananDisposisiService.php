@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Eoffice;
 
 use App\Models\Eoffice\JenisLayananDisposisi;
@@ -24,7 +25,7 @@ class JenisLayananDisposisiService
         $latestSeq = JenisLayananDisposisi::where('jenislayanan_id', $jenislayananId)
             ->max('seq') ?? 0;
 
-        $data['seq']             = $latestSeq + 1;
+        $data['seq'] = $latestSeq + 1;
         $data['jenislayanan_id'] = $jenislayananId;
         $data['is_notify_email'] = $data['is_notify_email'] ?? true;
 
@@ -38,6 +39,7 @@ class JenisLayananDisposisiService
     {
         $item = JenisLayananDisposisi::findOrFail($id);
         $item->update(['seq' => $newSeq]);
+
         return $item;
     }
 
@@ -48,6 +50,7 @@ class JenisLayananDisposisiService
     {
         $item = JenisLayananDisposisi::findOrFail($id);
         $item->update(['is_notify_email' => $isNotify]);
+
         return $item;
     }
 
@@ -58,10 +61,11 @@ class JenisLayananDisposisiService
     {
         $item = JenisLayananDisposisi::findOrFail($id);
         $item->update([
-            'text'             => $data['text'] ?? $item->text,
-            'keterangan'       => $data['keterangan'] ?? $item->keterangan,
+            'text' => $data['text'] ?? $item->text,
+            'keterangan' => $data['keterangan'] ?? $item->keterangan,
             'batas_pengerjaan' => $data['batas_pengerjaan'] ?? $item->batas_pengerjaan,
         ]);
+
         return $item;
     }
 
@@ -70,7 +74,7 @@ class JenisLayananDisposisiService
      */
     public function destroy($id)
     {
-        $item           = JenisLayananDisposisi::findOrFail($id);
+        $item = JenisLayananDisposisi::findOrFail($id);
         $jenislayananId = $item->jenislayanan_id;
         $item->delete();
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Eoffice;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class KategoriIsian extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'eoffice_kategori_isian';
+    protected $table = 'eoffice_kategori_isian';
+
     protected $primaryKey = 'kategoriisian_id';
 
     protected $appends = ['encrypted_kategoriisian_id'];
@@ -20,6 +22,7 @@ class KategoriIsian extends Model
     {
         return encryptId($this->kategoriisian_id);
     }
+
     protected $fillable = [
         'nama_isian',
         'type',

@@ -6,11 +6,10 @@ use App\Http\Requests\BaseRequest;
 
 class UpdateMatrixRequest extends BaseRequest
 {
-
     public function rules(): array
     {
         return [
-            'pengend_urgent_matrix'    => ['nullable', 'string', 'in:urgent,not_urgent'],
+            'pengend_urgent_matrix' => ['nullable', 'string', 'in:urgent,not_urgent'],
         ];
     }
 
@@ -18,7 +17,7 @@ class UpdateMatrixRequest extends BaseRequest
     {
         return [
             'pengend_important_matrix' => 'Matrix Important',
-            'pengend_urgent_matrix'    => 'Matrix Urgent',
+            'pengend_urgent_matrix' => 'Matrix Urgent',
         ];
     }
 }

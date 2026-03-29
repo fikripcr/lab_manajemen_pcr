@@ -92,9 +92,10 @@
             </div>
         </div>
 
-        <div class="row row-cards mt-1">
-            <div class="col-12">
+        <x-tabler.card class="mt-3">
+            <x-tabler.card-header title="Riwayat Approval" />
+            <x-tabler.card-body>
                 <x-tabler.approval-history :approvals="$surat->approvals" />
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
 @endsection

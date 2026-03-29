@@ -1,22 +1,21 @@
 <?php
+
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\PengendalianRequest;
-use App\Http\Requests\Pemutu\ValidasiPengendalianRequest;
 use App\Http\Requests\Pemutu\RtmRequest;
 use App\Http\Requests\Pemutu\UpdateMatrixRequest;
-use App\Models\Hr\StrukturOrganisasi;
-use App\Services\Hr\StrukturOrganisasiService;
+use App\Http\Requests\Pemutu\ValidasiPengendalianRequest;
 use App\Models\Event\Rapat;
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
+use App\Services\Hr\StrukturOrganisasiService;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\PelaksanaanService;
 use App\Services\Pemutu\PengendalianService;
 use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\DataTables;
 
 class PengendalianController extends Controller
 {
@@ -38,8 +37,8 @@ class PengendalianController extends Controller
 
         $data = [
             'pageTitle' => 'Pengendalian',
-            'siklus'    => $siklus,
-            'units'     => $this->StrukturOrganisasiService->getHierarchicalList(),
+            'siklus' => $siklus,
+            'units' => $this->StrukturOrganisasiService->getHierarchicalList(),
         ];
 
         $users = $this->PelaksanaanService->getUsersForSelect();
@@ -47,8 +46,8 @@ class PengendalianController extends Controller
         // Fetch rapat for both periods
         foreach (['akademik', 'non_akademik'] as $type) {
             $periode = $siklus[$type];
-            $rapat   = null;
-            
+            $rapat = null;
+
             if ($periode) {
                 // Load the latest RTM rapat
                 $rapat = $periode->latest_rtm_pengendalian;
@@ -56,9 +55,9 @@ class PengendalianController extends Controller
                     $rapat->load(['agendas', 'pesertas.user', 'ketua_user', 'notulen_user', 'author_user']);
                 }
             }
-            
-            $data[$type . 'Rapat'] = $rapat;
-            $data[$type . 'RootDoks'] = \App\Models\Pemutu\Dokumen::whereNull('parent_id')
+
+            $data[$type.'Rapat'] = $rapat;
+            $data[$type.'RootDoks'] = \App\Models\Pemutu\Dokumen::whereNull('parent_id')
                 ->where('periode', $siklus['tahun'])
                 ->orderBy('seq')
                 ->get();
@@ -69,27 +68,19 @@ class PengendalianController extends Controller
         return view('pages.pemutu.pengendalian.index', $data);
     }
 
-
     /**
      * DataTable AJAX: daftar Indikator untuk satu periode.
      */
     public function data(PeriodeSpmi $periode, Request $request)
     {
-        $unitId  = null;
-        if ($request->input('unit_id')) {
-            // decryptIdIfEncrypted returns int|null, cast to ensure type safety
-            $unitId = (int) decryptIdIfEncrypted($request->input('unit_id'));
-        }
-
-        // SIMPLE LOGIC: If not 'all', add to filters
         $filters = [];
-        foreach ($request->only(['pengend_status', 'pengend_important_matrix', 'pengend_urgent_matrix', 'dok_id']) as $key => $value) {
-            if ($value !== null && $value !== '') {
-                $filters[$key] = $value;
+        foreach ($request->only(['unit_id', 'pengend_status', 'pengend_important_matrix', 'pengend_urgent_matrix', 'dok_id']) as $key => $value) {
+            if ($value !== null && $value !== '' && $value !== 'all') {
+                $filters[$key] = ($key === 'unit_id' || $key === 'dok_id') ? decryptIdIfEncrypted($value) : $value;
             }
         }
 
-        $query   = $this->IndikatorService->getUnifiedSpmiQuery($periode, $unitId, $filters);
+        $query = $this->IndikatorService->getUnifiedSpmiQuery($periode, $filters);
 
         return datatables()->of($query)
             ->addColumn('no', function ($row) {
@@ -104,11 +95,11 @@ class PengendalianController extends Controller
             ->addColumn('status_ami', function ($row) {
                 $pivot = $row->orgUnits->first()?->pivot;
                 if ($pivot?->ami_hasil_akhir !== null) {
-                    $map   = IndikatorOrgUnit::$hasilAkhirLabels;
+                    $map = IndikatorOrgUnit::$hasilAkhirLabels;
                     $hasil = $map[$pivot->ami_hasil_akhir] ?? null;
 
                     return $hasil
-                        ? '<span class="badge bg-' . $hasil['color'] . '-lt text-' . $hasil['color'] . '">' . $hasil['label'] . '</span>'
+                        ? '<span class="badge bg-'.$hasil['color'].'-lt text-'.$hasil['color'].'">'.$hasil['label'].'</span>'
                         : '-';
                 }
 
@@ -123,22 +114,30 @@ class PengendalianController extends Controller
             ->addColumn('analisis', function ($row) {
                 return pemutuDtColAnalisisPengend($row);
             })
-            ->addColumn('action', function ($row) {
-                $pivot        = $row->orgUnits->first()?->pivot;
+            ->addColumn('action', function ($row) use ($periode) {
+                $pivot = $row->orgUnits->first()?->pivot;
                 $indikorgunit = $pivot?->indikorgunit_id;
 
-                if (!$indikorgunit) {
+                if (! $indikorgunit) {
                     return '<span class="text-muted small">-</span>';
                 }
 
-                $encId       = encryptId($indikorgunit);
-                $urlIsi      = route('pemutu.pengendalian.edit-modal', $encId);
+                $encId = encryptId($indikorgunit);
+                $urlIsi = route('pemutu.pengendalian.edit-modal', $encId);
                 $urlValidasi = route('pemutu.pengendalian.validasi-modal', $encId);
+                $periodeInfo = pemutuPeriodeStatus($periode->pengendalian_awal, $periode->pengendalian_akhir);
 
-                return '<div class="d-flex flex-column gap-1">'
-                    . '<button class="btn btn-sm btn-primary ajax-modal-btn" data-modal-size="modal-lg" data-url="' . $urlIsi . '"><i class="ti ti-pencil me-1"></i>Isi</button>'
-                    . '<button class="btn btn-sm btn-outline-purple ajax-modal-btn" data-modal-size="modal-lg" data-url="' . $urlValidasi . '"><i class="ti ti-crown me-1"></i>Validasi</button>'
-                    . '</div>';
+                if ($periodeInfo['is_active']) {
+                    return '<div class="d-flex flex-column gap-1">'
+                        .'<button class="btn btn-sm btn-primary ajax-modal-btn" data-modal-size="modal-lg" data-url="'.$urlIsi.'"><i class="ti ti-pencil me-1"></i>Isi</button>'
+                        .'<button class="btn btn-sm btn-outline-purple ajax-modal-btn" data-modal-size="modal-lg" data-url="'.$urlValidasi.'"><i class="ti ti-crown me-1"></i>Validasi</button>'
+                        .'</div>';
+                } else {
+                    return '<div class="d-flex flex-column gap-1">'
+                        .'<button class="btn btn-sm btn-outline-secondary ajax-modal-btn" data-modal-size="modal-lg" data-url="'.$urlIsi.'?readonly=1"><i class="ti ti-eye me-1"></i>Detail</button>'
+                        .'<button class="btn btn-sm btn-outline-secondary ajax-modal-btn" data-modal-size="modal-lg" data-url="'.$urlValidasi.'?readonly=1"><i class="ti ti-eye me-1"></i>Detail Validasi</button>'
+                        .'</div>';
+                }
             })
             ->filterColumn('indikator_info', function ($query, $keyword) {
                 $query->where(function ($q) use ($keyword) {
@@ -167,6 +166,7 @@ class PengendalianController extends Controller
     public function update(PengendalianRequest $request, IndikatorOrgUnit $indOrg)
     {
         $this->PengendalianService->submitPengendalian($indOrg, $request->validated());
+
         return jsonSuccess('Data pengendalian berhasil disimpan.');
     }
 
@@ -178,10 +178,10 @@ class PengendalianController extends Controller
         $indOrg->load(['indikator.labels', 'orgUnit']);
         $hasilMap = IndikatorOrgUnit::$hasilAkhirLabels;
         $statusMap = [
-            'tetap'        => ['label' => 'Dipertahankan', 'color' => 'success'],
-            'penyesuaian'  => ['label' => 'Disesuaikan', 'color' => 'warning'],
+            'tetap' => ['label' => 'Dipertahankan', 'color' => 'success'],
+            'penyesuaian' => ['label' => 'Disesuaikan', 'color' => 'warning'],
             'ditingkatkan' => ['label' => 'Ditingkatkan', 'color' => 'blue'],
-            'nonaktif'     => ['label' => 'Di-nonaktifkan', 'color' => 'danger'],
+            'nonaktif' => ['label' => 'Di-nonaktifkan', 'color' => 'danger'],
         ];
 
         return view('pages.pemutu.pengendalian.validasi-modal', compact('indOrg', 'hasilMap', 'statusMap'));
@@ -193,6 +193,7 @@ class PengendalianController extends Controller
     public function validasi(ValidasiPengendalianRequest $request, IndikatorOrgUnit $indOrg)
     {
         $this->PengendalianService->submitValidasi($indOrg, $request->validated());
+
         return jsonSuccess('Validasi pengendalian berhasil disimpan.');
     }
 

@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Pemutu;
 
 use App\Http\Requests\BaseRequest;
 
 class EvaluasiDiriRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -16,27 +14,27 @@ class EvaluasiDiriRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'ed_capaian'      => 'required|string',
-            'ed_analisis'     => 'required|string',
-            'ed_attachment'   => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png,xls,xlsx|max:5120',
-            'target_unit_id'  => 'nullable|integer',
-            'ed_links_name'   => 'nullable|array',
+            'ed_capaian' => 'required|string',
+            'ed_analisis' => 'required|string',
+            'ed_attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png,xls,xlsx|max:5120',
+            'target_unit_id' => 'nullable|integer',
+            'ed_links_name' => 'nullable|array',
             'ed_links_name.*' => 'nullable|string',
-            'ed_links_url.*'  => 'nullable|url',
+            'ed_links_url.*' => 'nullable|url',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'ed_capaian'      => 'Capaian Evaluasi Diri',
-            'ed_analisis'     => 'Analisis Evaluasi Diri',
-            'ed_attachment'   => 'Lampiran Evaluasi Diri',
-            'target_unit_id'  => 'Target Unit',
-            'ed_links_name'   => 'Nama Link',
+            'ed_capaian' => 'Capaian Evaluasi Diri',
+            'ed_analisis' => 'Analisis Evaluasi Diri',
+            'ed_attachment' => 'Lampiran Evaluasi Diri',
+            'target_unit_id' => 'Target Unit',
+            'ed_links_name' => 'Nama Link',
             'ed_links_name.*' => 'Nama Link',
-            'ed_links_url'    => 'URL Link',
-            'ed_links_url.*'  => 'URL Link',
+            'ed_links_url' => 'URL Link',
+            'ed_links_url.*' => 'URL Link',
         ];
     }
 }

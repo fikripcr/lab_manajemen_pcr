@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Lab;
 
 use App\Models\Lab\Kegiatan;
@@ -46,27 +47,27 @@ class KegiatanService
                 ->exists();
 
             if ($exists) {
-                throw new Exception("Lab tidak tersedia pada jam tersebut.");
+                throw new Exception('Lab tidak tersedia pada jam tersebut.');
             }
 
             $kegiatan = Kegiatan::create([
-                'lab_id'           => $data['lab_id'],
+                'lab_id' => $data['lab_id'],
                 'penyelenggara_id' => auth()->id(),
-                'nama_kegiatan'    => $data['nama_kegiatan'],
-                'deskripsi'        => $data['deskripsi'],
-                'tanggal'          => $data['tanggal'],
-                'jam_mulai'        => $data['jam_mulai'],
-                'jam_selesai'      => $data['jam_selesai'],
-                'status'           => 'pending',
+                'nama_kegiatan' => $data['nama_kegiatan'],
+                'deskripsi' => $data['deskripsi'],
+                'tanggal' => $data['tanggal'],
+                'jam_mulai' => $data['jam_mulai'],
+                'jam_selesai' => $data['jam_selesai'],
+                'status' => 'pending',
                 'dokumentasi_path' => $data['dokumentasi_path'] ?? null,
             ]);
 
             // Create Initial Approval (Pending)
             $approval = \App\Models\Lab\RiwayatApproval::create([
-                'model'    => Kegiatan::class,
+                'model' => Kegiatan::class,
                 'model_id' => $kegiatan->kegiatan_id,
-                'status'   => 'pending',
-                'catatan'  => 'Menunggu persetujuan',
+                'status' => 'Pending',  // ✅ Uppercase untuk konsistensi
+                'catatan' => 'Menunggu persetujuan',
             ]);
 
             $kegiatan->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
@@ -82,20 +83,21 @@ class KegiatanService
         return DB::transaction(function () use ($kegiatan, $status, $catatan) {
             // Create New Approval Record
             $approval = \App\Models\Lab\RiwayatApproval::create([
-                'model'    => Kegiatan::class,
+                'model' => Kegiatan::class,
                 'model_id' => $kegiatan->kegiatan_id,
-                'status'   => $status,
-                'pejabat'  => auth()->user()->name,
-                'catatan'  => $catatan,
+                'status' => ucfirst(strtolower($status)),  // ✅ Normalize ke format Capitalized
+                'pejabat' => auth()->user()->name,
+                'catatan' => $catatan,
             ]);
 
             $kegiatan->update([
-                'status'                    => $status,
-                'catatan_pic'               => $catatan, // Maintain legacy column for quick access if needed, or remove? Better keep for now.
+                'status' => $status,
+                'catatan_pic' => $catatan, // Maintain legacy column for quick access if needed, or remove? Better keep for now.
                 'latest_riwayatapproval_id' => $approval->riwayatapproval_id,
             ]);
 
             logActivity('peminjaman_lab', "Update status booking ID {$kegiatan->kegiatan_id} menjadi {$status}");
+
             return $kegiatan;
         });
     }

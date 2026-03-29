@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Sys;
 
 use App\Models\Sys\ErrorLog;
@@ -16,11 +17,12 @@ class DashboardService
     public function getDashboardStats(): array
     {
         $data = SysDashboardView::first();
+
         return [
-            'totalUsers'       => $data->total_users,
-            'totalRoles'       => $data->total_roles,
+            'totalUsers' => $data->total_users,
+            'totalRoles' => $data->total_roles,
             'totalPermissions' => $data->total_permissions,
-            'todayActivities'  => $data->today_activities,
+            'todayActivities' => $data->today_activities,
         ];
     }
 
@@ -52,11 +54,11 @@ class DashboardService
     public function getUserRoleDistribution(): array
     {
         $roleUserCounts = [];
-        $roles          = Role::all();
+        $roles = Role::all();
 
         foreach ($roles as $role) {
             $roleUserCounts[] = [
-                'name'  => $role->name,
+                'name' => $role->name,
                 'count' => $role->users()->count(),
             ];
         }
@@ -70,18 +72,18 @@ class DashboardService
     public function getActivitiesByDate(): array
     {
         $activityByDate = [];
-        $dates          = [];
+        $dates = [];
 
         for ($i = 13; $i >= 0; $i--) {
-            $date  = now()->subDays($i);
+            $date = now()->subDays($i);
             $count = Activity::whereDate('created_at', $date)->count();
 
             $activityByDate[] = $count;
-            $dates[]          = $date->format('M d');
+            $dates[] = $date->format('M d');
         }
 
         return [
-            'data'       => $activityByDate,
+            'data' => $activityByDate,
             'categories' => $dates,
         ];
     }
@@ -92,18 +94,18 @@ class DashboardService
     public function getErrorLogsByDate(): array
     {
         $errorByDate = [];
-        $errorDates  = [];
+        $errorDates = [];
 
         for ($i = 13; $i >= 0; $i--) {
-            $date  = now()->subDays($i);
+            $date = now()->subDays($i);
             $count = ErrorLog::whereDate('created_at', $date)->count();
 
             $errorByDate[] = $count;
-            $errorDates[]  = $date->format('M d');
+            $errorDates[] = $date->format('M d');
         }
 
         return [
-            'data'       => $errorByDate,
+            'data' => $errorByDate,
             'categories' => $errorDates,
         ];
     }
@@ -150,31 +152,31 @@ class DashboardService
 
         $diskSpaceCheck = ServerMonitorCheck::where('type', 'diskspace')->latest()->first();
         if ($diskSpaceCheck) {
-            $diskSpaceData                      = json_decode($diskSpaceCheck->last_run_output, true);
+            $diskSpaceData = json_decode($diskSpaceCheck->last_run_output, true);
             $serverMonitoringData['disk_space'] = [
                 'last_check' => $diskSpaceCheck->last_ran_at,
-                'data'       => $diskSpaceData,
-                'message'    => $diskSpaceCheck->last_run_message,
+                'data' => $diskSpaceData,
+                'message' => $diskSpaceCheck->last_run_message,
             ];
         }
 
         $databaseSizeCheck = ServerMonitorCheck::where('type', 'databasesize')->latest()->first();
         if ($databaseSizeCheck) {
-            $databaseSizeData                      = json_decode($databaseSizeCheck->last_run_output, true);
+            $databaseSizeData = json_decode($databaseSizeCheck->last_run_output, true);
             $serverMonitoringData['database_size'] = [
                 'last_check' => $databaseSizeCheck->last_ran_at,
-                'data'       => $databaseSizeData,
-                'message'    => $databaseSizeCheck->last_run_message,
+                'data' => $databaseSizeData,
+                'message' => $databaseSizeCheck->last_run_message,
             ];
         }
 
         $projectSizeCheck = ServerMonitorCheck::where('type', 'projectsize')->latest()->first();
         if ($projectSizeCheck) {
-            $projectSizeData                      = json_decode($projectSizeCheck->last_run_output, true);
+            $projectSizeData = json_decode($projectSizeCheck->last_run_output, true);
             $serverMonitoringData['project_size'] = [
                 'last_check' => $projectSizeCheck->last_ran_at,
-                'data'       => $projectSizeData,
-                'message'    => $projectSizeCheck->last_run_message,
+                'data' => $projectSizeData,
+                'message' => $projectSizeCheck->last_run_message,
             ];
         }
 

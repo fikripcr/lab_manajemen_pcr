@@ -1,17 +1,17 @@
 <?php
+
 namespace App\Http\Requests\Hr;
 
 use App\Http\Requests\BaseRequest;
 
 class RiwayatStatAktifitasRequest extends BaseRequest
 {
-
     public function rules()
     {
         return [
             'statusaktifitas_id' => 'required|exists:hr_status_aktifitas,statusaktifitas_id',
-            'tmt'                => 'required|date',
-            'keterangan'         => 'nullable|string',
+            'tmt' => 'required|date',
+            'keterangan' => 'nullable|string',
         ];
     }
 
@@ -19,9 +19,9 @@ class RiwayatStatAktifitasRequest extends BaseRequest
     {
         return [
             'statusaktifitas_id' => 'Status Aktifitas',
-            'tmt'                => 'TMT',
-            'no_sk'              => 'Nomor SK',
-            'keterangan'         => 'Keterangan',
+            'tmt' => 'TMT',
+            'no_sk' => 'Nomor SK',
+            'keterangan' => 'Keterangan',
         ];
     }
 }

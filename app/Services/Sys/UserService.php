@@ -1,9 +1,11 @@
 <?php
+
 namespace App\Services\Sys;
 
 use App\Models\User;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -12,12 +14,22 @@ use Spatie\Permission\Models\Role;
 class UserService
 {
     /**
+     * Get base query for DataTables (with eager loading).
+     * This method is required for server-side DataTables processing.
+     */
+    public function getBaseQuery(): Builder
+    {
+        return User::with(['roles', 'media'])->whereNull('deleted_at');
+    }
+
+    /**
      * Get paginated list of users with optional filters
      */
     public function getUserList(array $filters = []): LengthAwarePaginator
     {
-        $query   = $this->getFilteredQuery($filters);
+        $query = $this->getFilteredQuery($filters);
         $perPage = $filters['per_page'] ?? 10;
+
         return $query->paginate($perPage);
     }
 
@@ -36,11 +48,11 @@ class UserService
     {
         return DB::transaction(function () use ($data) {
             $user = User::create([
-                'name'              => $data['name'],
-                'email'             => $data['email'],
-                'password'          => Hash::make($data['password']),
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
                 'email_verified_at' => now(),
-                'expired_at'        => $data['expired_at'] ?? null,
+                'expired_at' => $data['expired_at'] ?? null,
             ]);
 
             // Assign roles
@@ -56,7 +68,7 @@ class UserService
                 $user->addMedia($avatar)->toMediaCollection('avatar');
             }
 
-            logActivity('user', 'Membuat pengguna baru: ' . $user->name, $user);
+            logActivity('user', 'Membuat pengguna baru: '.$user->name, $user);
 
             return $user;
         });
@@ -65,16 +77,16 @@ class UserService
     /**
      * Update an existing user
      */
-    public function updateUser(int $userId, array $data): bool
+    public function updateUser(int $userId, array $data): User
     {
         return DB::transaction(function () use ($userId, $data) {
-            $user          = User::findOrFail($userId);
+            $user = User::findOrFail($userId);
             $oldAttributes = $user->getAttributes();
-            $oldName       = $user->name;
+            $oldName = $user->name;
 
             // Update basic fields
             $updateData = [
-                'name'  => $data['name'],
+                'name' => $data['name'],
                 'email' => $data['email'],
             ];
 
@@ -89,7 +101,7 @@ class UserService
 
             $user->update($updateData);
 
-                                             // Sync roles
+            // Sync roles
             if (class_exists(Role::class)) { // Safety check
                 if (isset($data['roles'])) {
                     $user->syncRoles($data['roles']);
@@ -105,12 +117,12 @@ class UserService
                 $user->addMedia($avatar)->toMediaCollection('avatar');
             }
 
-            logActivity('user', 'Memperbarui pengguna ' . $user->name, $user, [
-                'old'        => $oldAttributes,
+            logActivity('user', 'Memperbarui pengguna '.$user->name, $user, [
+                'old' => $oldAttributes,
                 'attributes' => $user->getAttributes(),
             ]);
 
-            return true;
+            return $user;
         });
     }
 
@@ -131,7 +143,7 @@ class UserService
                 // We use GD to re-save the image, which strips problematic metadata
                 $image = @imagecreatefrompng($file->getRealPath());
                 if ($image) {
-                    $tempPath  = tempnam(sys_get_temp_dir(), 'avatar_');
+                    $tempPath = tempnam(sys_get_temp_dir(), 'avatar_');
                     rename($tempPath, $tempPath .= '.png'); // Ensure .png extension
 
                     imagealphablending($image, false);
@@ -173,7 +185,7 @@ class UserService
 
             $user->delete();
 
-            logActivity('user', 'Menghapus pengguna: ' . $name);
+            logActivity('user', 'Menghapus pengguna: '.$name);
 
             return true;
         });
@@ -196,18 +208,18 @@ class UserService
         // Search (Name or Email)
         if (! empty($searchValue)) {
             $query->where(function ($q) use ($searchValue) {
-                $q->where('name', 'like', '%' . $searchValue . '%')
-                    ->orWhere('email', 'like', '%' . $searchValue . '%');
+                $q->where('name', 'like', '%'.$searchValue.'%')
+                    ->orWhere('email', 'like', '%'.$searchValue.'%');
             });
         }
 
         // Exact filters
         if (! empty($filters['name'])) {
-            $query->where('name', 'like', '%' . $filters['name'] . '%');
+            $query->where('name', 'like', '%'.$filters['name'].'%');
         }
 
         if (! empty($filters['email'])) {
-            $query->where('email', 'like', '%' . $filters['email'] . '%');
+            $query->where('email', 'like', '%'.$filters['email'].'%');
         }
 
         if (! empty($filters['role'])) {

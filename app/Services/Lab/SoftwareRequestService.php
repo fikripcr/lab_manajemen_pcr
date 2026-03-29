@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Lab;
 
 use App\Models\Lab\RequestSoftware;
@@ -67,13 +68,13 @@ class SoftwareRequestService
     {
         return DB::transaction(function () use ($data) {
             $request = RequestSoftware::create([
-                'dosen_id'         => auth()->id(),
+                'dosen_id' => auth()->id(),
                 'periodsoftreq_id' => $data['periodsoftreq_id'],
-                'nama_software'    => $data['nama_software'],
-                'versi'            => $data['versi'] ?? null,
-                'url_download'     => $data['url_download'] ?? null,
-                'deskripsi'        => $data['deskripsi'],
-                'status'           => 'pending',
+                'nama_software' => $data['nama_software'],
+                'versi' => $data['versi'] ?? null,
+                'url_download' => $data['url_download'] ?? null,
+                'deskripsi' => $data['deskripsi'],
+                'status' => 'pending',
             ]);
 
             // Sync Mata Kuliah
@@ -83,10 +84,10 @@ class SoftwareRequestService
 
             // Create Initial Approval (Pending)
             $approval = \App\Models\Lab\RiwayatApproval::create([
-                'model'    => RequestSoftware::class,
+                'model' => RequestSoftware::class,
                 'model_id' => $request->request_software_id,
-                'status'   => 'pending',
-                'catatan'  => 'Menunggu persetujuan',
+                'status' => 'Pending',  // ✅ Uppercase untuk konsistensi
+                'catatan' => 'Menunggu persetujuan',
             ]);
 
             $request->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
@@ -105,17 +106,17 @@ class SoftwareRequestService
         DB::transaction(function () use ($request, $data) {
             // Create new approval record
             $approval = \App\Models\Lab\RiwayatApproval::create([
-                'model'    => RequestSoftware::class,
+                'model' => RequestSoftware::class,
                 'model_id' => $request->request_software_id,
-                'status'   => $data['status'],
-                'pejabat'  => $data['pejabat'] ?? auth()->user()->name,
-                'catatan'  => $data['keterangan'] ?? null,
+                'status' => ucfirst(strtolower($data['status'])),  // ✅ Normalize ke format Capitalized
+                'pejabat' => $data['pejabat'] ?? auth()->user()->name,
+                'catatan' => $data['keterangan'] ?? null,
             ]);
 
             // Update latest approval pointer and sync status
             $request->update([
                 'latest_riwayatapproval_id' => $approval->riwayatapproval_id,
-                'status'                    => $data['status'],
+                'status' => $data['status'],
             ]);
 
             logActivity(
@@ -131,6 +132,7 @@ class SoftwareRequestService
         if (! $model) {
             throw new Exception("Request Software dengan ID {$id} tidak ditemukan.");
         }
+
         return $model;
     }
 }

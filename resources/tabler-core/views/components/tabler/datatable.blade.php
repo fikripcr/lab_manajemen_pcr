@@ -39,8 +39,8 @@
                     });
                 }
             };
-            
-            // If checking readyState in inline script might be redundant if inserted via jQuery, 
+
+            // If checking readyState in inline script might be redundant if inserted via jQuery,
             // but safe to keep. jQuery executes scripts immediately.
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', initTable);

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Cbt;
 
 use App\Http\Controllers\Controller;
@@ -10,8 +11,7 @@ use Illuminate\Http\Request;
 
 class JadwalUjianController extends Controller
 {
-    public function __construct(protected JadwalUjianService $JadwalUjianService)
-    {}
+    public function __construct(protected JadwalUjianService $JadwalUjianService) {}
 
     public function index()
     {
@@ -21,26 +21,28 @@ class JadwalUjianController extends Controller
     public function data(Request $request)
     {
         $query = $this->JadwalUjianService->getFilteredQuery($request->all());
+
         return datatables()->of($query)
             ->addIndexColumn()
             ->addColumn('kegiatan_paket', function ($j) {
                 return '<div class="d-flex flex-column gap-1">
-                    <div class="fw-bold ">' . e($j->nama_kegiatan) . '</div>
-                    <div class="text-muted small"><i class="ti ti-package me-1"></i>' . e($j->paket->nama_paket ?? '-') . '</div>
+                    <div class="fw-bold ">'.e($j->nama_kegiatan).'</div>
+                    <div class="text-muted small"><i class="ti ti-package me-1"></i>'.e($j->paket->nama_paket ?? '-').'</div>
                 </div>';
             })
             ->addColumn('token_info', function ($j) {
                 $statusColor = $j->is_token_aktif ? 'success' : 'secondary';
-                $icon        = $j->is_token_aktif ? 'ti-circle-check' : 'ti-circle-x';
+                $icon = $j->is_token_aktif ? 'ti-circle-check' : 'ti-circle-x';
+
                 return '<div class="d-flex flex-column gap-1">
-                    <div class="fw-bold font-monospace fs-3">' . e($j->token_ujian ?? '-') . '</div>
-                    <div><i class="ti ' . $icon . ' text-' . $statusColor . ' fs-2" title="' . ($j->is_token_aktif ? 'Aktif' : 'Nonaktif') . '"></i></div>
+                    <div class="fw-bold font-monospace fs-3">'.e($j->token_ujian ?? '-').'</div>
+                    <div><i class="ti '.$icon.' text-'.$statusColor.' fs-2" title="'.($j->is_token_aktif ? 'Aktif' : 'Nonaktif').'"></i></div>
                 </div>';
             })
             ->addColumn('waktu_status', function ($j) {
-                $now       = now();
+                $now = now();
                 $isStarted = $now->gte($j->waktu_mulai);
-                $isEnded   = $now->gte($j->waktu_selesai);
+                $isEnded = $now->gte($j->waktu_selesai);
 
                 if ($isEnded) {
                     $statusBadge = '<span class="badge bg-secondary-lt text-secondary badge-sm">Selesai</span>';
@@ -51,62 +53,62 @@ class JadwalUjianController extends Controller
                 }
 
                 return '<div class="d-flex flex-column">
-                    <div class="small fw-bold">' . $j->waktu_mulai->format('d M Y') . ' (' . $j->waktu_mulai->format('H:i') . ' - ' . $j->waktu_selesai->format('H:i') . ')</div>
-                    <div class="mt-1">' . $statusBadge . '</div>
+                    <div class="small fw-bold">'.$j->waktu_mulai->format('d M Y').' ('.$j->waktu_mulai->format('H:i').' - '.$j->waktu_selesai->format('H:i').')</div>
+                    <div class="mt-1">'.$statusBadge.'</div>
                 </div>';
             })
             ->addColumn('peserta', function ($j) {
-                $jumlahPeserta     = $j->pesertaBerhak->count();
+                $jumlahPeserta = $j->pesertaBerhak->count();
                 $jumlahPelanggaran = $j->riwayatSiswa->sum(function ($r) {
                     return $r->pelanggaran_count;
                 });
 
                 return '<div class="d-flex flex-column gap-1">
-                    <div class="fw-bold"><i class="ti ti-users me-1"></i>' . $jumlahPeserta . '</div>
-                    ' . ($jumlahPelanggaran > 0 ? '<div class="text-danger small"><i class="ti ti-alert-triangle me-1"></i>' . $jumlahPelanggaran . ' pelanggaran</div>' : '') . '
+                    <div class="fw-bold"><i class="ti ti-users me-1"></i>'.$jumlahPeserta.'</div>
+                    '.($jumlahPelanggaran > 0 ? '<div class="text-danger small"><i class="ti ti-alert-triangle me-1"></i>'.$jumlahPelanggaran.' pelanggaran</div>' : '').'
                 </div>';
             })
-            ->editColumn('waktu_mulai', fn($j) => formatTanggalIndo($j->waktu_mulai))
-            ->editColumn('waktu_selesai', fn($j) => formatTanggalIndo($j->waktu_selesai))
+            ->editColumn('waktu_mulai', fn ($j) => formatTanggalIndo($j->waktu_mulai))
+            ->editColumn('waktu_selesai', fn ($j) => formatTanggalIndo($j->waktu_selesai))
             ->addColumn('action', function ($j) {
                 $customActions = [
                     [
-                        'url'        => route('cbt.execute.monitor', $j->encrypted_jadwal_ujian_id),
-                        'label'      => 'Monitoring Ujian',
-                        'icon'       => 'chart-bar',
-                        'class'      => '',
+                        'url' => route('cbt.execute.monitor', $j->encrypted_jadwal_ujian_id),
+                        'label' => 'Monitoring Ujian',
+                        'icon' => 'chart-bar',
+                        'class' => '',
                         'attributes' => '',
                     ],
                     [
-                        'url'        => 'javascript:void(0)',
-                        'label'      => 'Generate Token',
-                        'icon'       => 'rotate',
-                        'class'      => 'btn-jadwal-action',
-                        'attributes' => 'data-url="' . route('cbt.jadwal.generate-token', $j) . '"',
+                        'url' => 'javascript:void(0)',
+                        'label' => 'Generate Token',
+                        'icon' => 'rotate',
+                        'class' => 'btn-jadwal-action',
+                        'attributes' => 'data-url="'.route('cbt.jadwal.generate-token', $j).'"',
                     ],
                     [
-                        'url'        => 'javascript:void(0)',
-                        'label'      => $j->is_token_aktif ? 'Nonaktifkan' : 'Aktifkan',
-                        'icon'       => $j->is_token_aktif ? 'eye-off' : 'eye',
-                        'class'      => 'btn-jadwal-action',
-                        'attributes' => 'data-url="' . route('cbt.jadwal.toggle-token', $j) . '"',
+                        'url' => 'javascript:void(0)',
+                        'label' => $j->is_token_aktif ? 'Nonaktifkan' : 'Aktifkan',
+                        'icon' => $j->is_token_aktif ? 'eye-off' : 'eye',
+                        'class' => 'btn-jadwal-action',
+                        'attributes' => 'data-url="'.route('cbt.jadwal.toggle-token', $j).'"',
                     ],
                 ];
 
                 if (auth()->user()->hasRole('admin')) {
                     $customActions[] = [
-                        'url'   => route('cbt.execute.test', $j->encrypted_jadwal_ujian_id),
+                        'url' => route('cbt.execute.test', $j->encrypted_jadwal_ujian_id),
                         'label' => 'Test Ujian',
-                        'icon'  => 'player-play',
+                        'icon' => 'player-play',
                         'class' => '',
                     ];
                 }
 
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'       => route('cbt.jadwal.edit', $j->encrypted_jadwal_ujian_id),
-                    'editModal'     => true,
-                    'editTitle'     => 'Edit Jadwal Ujian',
-                    'deleteUrl'     => route('cbt.jadwal.destroy', $j->encrypted_jadwal_ujian_id),
+                    'editUrl' => route('cbt.jadwal.edit', $j->encrypted_jadwal_ujian_id),
+                    'editModal' => true,
+                    'editTitle' => 'Edit Jadwal Ujian',
+                    'deleteUrl' => route('cbt.jadwal.destroy', $j->encrypted_jadwal_ujian_id),
                     'customActions' => $customActions,
                 ])->render();
             })
@@ -117,18 +119,21 @@ class JadwalUjianController extends Controller
     public function create()
     {
         $paket = PaketUjian::all();
+
         return view('pages.cbt.jadwal.create-edit-ajax', compact('paket'));
     }
 
     public function store(StoreJadwalRequest $request)
     {
         $this->JadwalUjianService->store($request->validated());
+
         return jsonSuccess('Jadwal ujian berhasil dibuat.');
     }
 
     public function edit(JadwalUjian $jadwal)
     {
         $paket = PaketUjian::all();
+
         return view('pages.cbt.jadwal.create-edit-ajax', compact('jadwal', 'paket'));
     }
 
@@ -136,24 +141,28 @@ class JadwalUjianController extends Controller
     {
         $jadwal->update($request->validated());
         logActivity('cbt', "Memperbarui jadwal ujian: {$jadwal->nama_kegiatan}", $jadwal);
+
         return jsonSuccess('Jadwal ujian berhasil diperbarui.');
     }
 
     public function generateToken(JadwalUjian $jadwal)
     {
         $this->JadwalUjianService->generateToken($jadwal);
-        return jsonSuccess('Token baru berhasil digenerate: ' . $jadwal->token_ujian);
+
+        return jsonSuccess('Token baru berhasil digenerate: '.$jadwal->token_ujian);
     }
 
     public function toggleToken(JadwalUjian $jadwal)
     {
         $this->JadwalUjianService->toggleToken($jadwal);
+
         return jsonSuccess('Status token berhasil diubah.');
     }
 
     public function destroy(JadwalUjian $jadwal)
     {
         $this->JadwalUjianService->delete($jadwal);
+
         return jsonSuccess('Jadwal ujian berhasil dihapus.');
     }
 }

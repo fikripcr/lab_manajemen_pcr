@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Pemutu;
 
 use App\Http\Requests\BaseRequest;
 
 class DokumenApprovalRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Prepare the data for validation.
      */
@@ -36,18 +34,19 @@ class DokumenApprovalRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'approvers'              => 'required|array|min:1',
+            'approvers' => 'required|array|min:1',
+            'approvers.*.id' => 'nullable|exists:pemutu_riwayat_approval,riwayatapproval_id',
             'approvers.*.pegawai_id' => 'required|exists:hr_pegawai,pegawai_id',
-            'approvers.*.jabatan'    => 'required|string|max:191',
+            'approvers.*.jabatan' => 'required|string|max:191',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'approvers'              => 'Daftar Approver',
+            'approvers' => 'Daftar Approver',
             'approvers.*.pegawai_id' => 'Pegawai Approver',
-            'approvers.*.jabatan'    => 'Jabatan Approver',
+            'approvers.*.jabatan' => 'Jabatan Approver',
         ];
     }
 }

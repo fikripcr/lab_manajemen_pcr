@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Models\Sys\Role;
@@ -53,9 +54,9 @@ class MainSysSeeder extends Seeder
         $adminEmail = 'admin@admin.com';
         if (! User::where('email', $adminEmail)->exists()) {
             $admin = User::create([
-                'name'              => 'Administrator',
-                'email'             => $adminEmail,
-                'password'          => Hash::make('password'),
+                'name' => 'Administrator',
+                'email' => $adminEmail,
+                'password' => Hash::make('password'),
                 'email_verified_at' => now(),
             ]);
             $admin->assignRole('Administrator');
@@ -65,7 +66,7 @@ class MainSysSeeder extends Seeder
         $faker = \Faker\Factory::create('id_ID');
 
         for ($i = 1; $i <= 20; $i++) {
-            $email = 'user' . $i . '@contoh-lab.ac.id';
+            $email = 'user'.$i.'@contoh-lab.ac.id';
 
             if (User::where('email', $email)->exists()) {
                 continue;
@@ -75,9 +76,9 @@ class MainSysSeeder extends Seeder
                 $randomRole = $roleNames[array_rand($roleNames)];
 
                 $user = User::create([
-                    'name'              => $faker->firstName . ' ' . $faker->lastName,
-                    'email'             => $email,
-                    'password'          => Hash::make('password'),
+                    'name' => $faker->firstName.' '.$faker->lastName,
+                    'email' => $email,
+                    'password' => Hash::make('password'),
                     'email_verified_at' => now(),
                 ]);
 

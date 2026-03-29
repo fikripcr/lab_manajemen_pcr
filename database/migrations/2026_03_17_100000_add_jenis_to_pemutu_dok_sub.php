@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::table('pemutu_dok_sub', function (Blueprint $table) {
             // Add jenis column to store poin type
             $table->string('jenis', 50)->nullable()->after('dok_id')
-                  ->comment('poin_visi, poin_misi, poin_rjp, poin_renstra, poin_renop, standar, manual_prosedur, formulir');
-            
+                ->comment('poin_visi, poin_misi, poin_rjp, poin_renstra, poin_renop, standar, manual_prosedur, formulir');
+
             // Add index for better query performance
             $table->index('jenis', 'idx_doksub_jenis');
         });

@@ -50,22 +50,22 @@
                     {{-- Auth Layout Mode --}}
                     <div class="col-12">
                         <x-tabler.form-select name="auth-layout" label="Auth Layout">
-                            <option value="basic">Basic (Centered)</option>
-                            <option value="cover">Cover (With Image)</option>
-                            <option value="illustration">Illustration (With SVG)</option>
+                            <option value="basic" {{ ($themeData['authLayout'] ?? 'basic') === 'basic' ? 'selected' : '' }}>Basic (Centered)</option>
+                            <option value="cover" {{ ($themeData['authLayout'] ?? 'basic') === 'cover' ? 'selected' : '' }}>Cover (With Image)</option>
+                            <option value="illustration" {{ ($themeData['authLayout'] ?? 'basic') === 'illustration' ? 'selected' : '' }}>Illustration (With SVG)</option>
                         </x-tabler.form-select>
                     </div>
 
                     {{-- Form Position --}}
-                    <div class="col-12">
+                    <div class="col-12" id="auth-form-position-wrapper">
                         <label class="form-label">Form Position</label>
                         <div class="form-selectgroup">
                             <label class="form-selectgroup-item">
-                                <input type="radio" name="auth-form-position" value="left" class="form-selectgroup-input">
+                                <input type="radio" name="auth-form-position" value="left" class="form-selectgroup-input" {{ ($themeData['authFormPosition'] ?? 'left') === 'left' ? 'checked' : '' }}>
                                 <span class="form-selectgroup-label">Left</span>
                             </label>
                             <label class="form-selectgroup-item">
-                                <input type="radio" name="auth-form-position" value="right" class="form-selectgroup-input">
+                                <input type="radio" name="auth-form-position" value="right" class="form-selectgroup-input" {{ ($themeData['authFormPosition'] ?? 'left') === 'right' ? 'checked' : '' }}>
                                 <span class="form-selectgroup-label">Right</span>
                             </label>
                         </div>
@@ -118,18 +118,7 @@
                         </x-tabler.form-select>
                     </div>
 
-                    {{-- UI Density --}}
-                    <div class="col-12">
-                        @php
-                            $densityLabel = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-layout-grid me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 4h6v6h-6z" /><path d="M14 4h6v6h-6z" /><path d="M4 14h6v6h-6z" /><path d="M14 14h6v6h-6z" /></svg> UI Density';
-                        @endphp
-                        <x-tabler.form-select name="theme-density" :label="$densityLabel" help="Controls spacing and padding throughout the UI">
-                            <option value="compact" {{ ($themeData['themeDensity'] ?? 'standard') === 'compact' ? 'selected' : '' }}>Compact (High Density)</option>
-                            <option value="standard" {{ ($themeData['themeDensity'] ?? 'standard') === 'standard' ? 'selected' : '' }}>Standard (Default)</option>
-                            <option value="spacious" {{ ($themeData['themeDensity'] ?? 'standard') === 'spacious' ? 'selected' : '' }}>Spacious (Low Density)</option>
-                            <option value="ultra-spacious" {{ ($themeData['themeDensity'] ?? 'standard') === 'ultra-spacious' ? 'selected' : '' }}>Ultra Spacious</option>
-                        </x-tabler.form-select>
-                    </div>
+
 
                     {{-- Base Font Size --}}
                     <div class="col-12">
@@ -159,19 +148,7 @@
                         </div>
                     </div>
 
-                    {{-- Icon Stroke Weight --}}
-                    <div class="col-12">
-                        @php
-                            $iconWeightLabel = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-palette me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-6a3 3 0 0 1 -3 -3v-12a3 3 0 0 1 3 -3h6z" /><path d="M12 9m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M9 15m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M15 15m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /></svg> Icon Weight';
-                        @endphp
-                        <x-tabler.form-select name="theme-icon-weight" :label="$iconWeightLabel" help="Stroke width for all icons">
-                            <option value="1" {{ ($themeData['themeIconWeight'] ?? '1.5') === '1' ? 'selected' : '' }}>Light (1.0)</option>
-                            <option value="1.25" {{ ($themeData['themeIconWeight'] ?? '1.5') === '1.25' ? 'selected' : '' }}>Medium Light (1.25)</option>
-                            <option value="1.5" {{ ($themeData['themeIconWeight'] ?? '1.5') === '1.5' ? 'selected' : '' }}>Regular (1.5 - Default)</option>
-                            <option value="1.75" {{ ($themeData['themeIconWeight'] ?? '1.5') === '1.75' ? 'selected' : '' }}>Medium Bold (1.75)</option>
-                            <option value="2" {{ ($themeData['themeIconWeight'] ?? '1.5') === '2' ? 'selected' : '' }}>Bold (2.0)</option>
-                        </x-tabler.form-select>
-                    </div>
+
 
                     {{-- Background Texture --}}
                     <div class="col-12">

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Sys;
 
 use App\Models\Sys\Role;
@@ -9,13 +10,13 @@ use Illuminate\Support\Facades\DB;
 
 class RoleService
 {
-
     protected function findRoleOrFail(int $roleId): Role
     {
         $role = Role::find($roleId);
         if (! $role) {
             throw new Exception("Role dengan ID {$roleId} tidak ditemukan.");
         }
+
         return $role;
     }
 
@@ -29,6 +30,7 @@ class RoleService
             ->withCount('users');
 
         $perPage = $filters['per_page'] ?? 10;
+
         return $query->latest()->paginate($perPage);
     }
 
@@ -53,6 +55,7 @@ class RoleService
             }
 
             logActivity('role_management', "Membuat role baru: {$role->name}");
+
             return $role;
         });
     }
@@ -98,6 +101,7 @@ class RoleService
             $role->delete();
 
             logActivity('role_management', "Menghapus role: {$roleName}");
+
             return true;
         });
     }
@@ -110,10 +114,11 @@ class RoleService
         return DB::transaction(function () use ($roleId, $permissions) {
             $role = $this->findRoleOrFail($roleId);
 
-            $permissions = array_values(array_filter($permissions, fn($p) => ! empty($p)));
+            $permissions = array_values(array_filter($permissions, fn ($p) => ! empty($p)));
             $role->syncPermissions($permissions);
 
             logActivity('role_management', "Memperbarui hak akses role: {$role->name}");
+
             return true;
         });
     }
@@ -146,12 +151,28 @@ class RoleService
     }
 
     /**
+     * Get roles with their loaded permissions
+     */
+    public function getRolesWithPermissions(): Collection
+    {
+        return Role::with('permissions')->get();
+    }
+
+    /**
+     * Check if role exists by name
+     */
+    public function roleExists(string $name): bool
+    {
+        return Role::where('name', $name)->exists();
+    }
+
+    /**
      * 🔑 SINGLE SOURCE OF TRUTH for filtering roles
      */
     protected function applyFilters($query, array $filters): Builder
     {
         if (! empty($filters['name'])) {
-            $query->where('name', 'like', '%' . $filters['name'] . '%');
+            $query->where('name', 'like', '%'.$filters['name'].'%');
         }
 
         // Tambahkan filter lain di sini jika perlu

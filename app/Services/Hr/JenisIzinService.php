@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Hr;
 
 use App\Models\Hr\JenisIzin;
@@ -14,6 +15,7 @@ class JenisIzinService
         return DB::transaction(function () use ($data) {
             $jenisIzin = JenisIzin::create($data);
             logActivity('hr', "Menambahkan jenis izin: {$jenisIzin->nama}", $jenisIzin);
+
             return $jenisIzin;
         });
     }
@@ -26,6 +28,7 @@ class JenisIzinService
         return DB::transaction(function () use ($jenisIzin, $data) {
             $updated = $jenisIzin->update($data);
             logActivity('hr', "Memperbarui jenis izin: {$jenisIzin->nama}", $jenisIzin);
+
             return $updated;
         });
     }
@@ -37,6 +40,7 @@ class JenisIzinService
     {
         return DB::transaction(function () use ($jenisIzin) {
             logActivity('hr', "Menghapus jenis izin: {$jenisIzin->nama}", $jenisIzin);
+
             return $jenisIzin->delete();
         });
     }

@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Lab;
 
 use App\Http\Requests\BaseRequest;
 
 class MahasiswaRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -18,9 +16,9 @@ class MahasiswaRequest extends BaseRequest
         $id = $this->route('akademik_mahasiswa') ? $this->route('akademik_mahasiswa')->mahasiswa_id : null;
 
         return [
-            'nim'        => 'required|string|max:50|unique:mahasiswa,nim,' . $id . ',mahasiswa_id',
-            'nama'       => 'required|string|max:255',
-            'email'      => 'required|email|max:255|unique:mahasiswa,email,' . $id . ',mahasiswa_id',
+            'nim' => 'required|string|max:50|unique:mahasiswa,nim,'.$id.',mahasiswa_id',
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:mahasiswa,email,'.$id.',mahasiswa_id',
             'orgunit_id' => 'required|exists:struktur_organisasi,orgunit_id',
         ];
     }
@@ -28,9 +26,9 @@ class MahasiswaRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'nim'        => 'NIM',
-            'nama'       => 'Nama',
-            'email'      => 'Email',
+            'nim' => 'NIM',
+            'nama' => 'Nama',
+            'email' => 'Email',
             'orgunit_id' => 'Unit Organisasi',
         ];
     }

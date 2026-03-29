@@ -1,8 +1,9 @@
 <?php
+
 namespace App\Models\Lab;
 
-use App\Models\Akademik\Semester;
 use App\Models\Akademik\MataKuliah;
+use App\Models\Akademik\Semester;
 use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
@@ -12,9 +13,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JadwalKuliah extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'lab_jadwal_kuliah';
+    protected $table = 'lab_jadwal_kuliah';
+
     protected $primaryKey = 'jadwal_kuliah_id';
 
     protected $appends = ['encrypted_jadwal_kuliah_id'];

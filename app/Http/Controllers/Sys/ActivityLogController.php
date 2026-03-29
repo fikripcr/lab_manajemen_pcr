@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
@@ -46,12 +47,13 @@ class ActivityLogController extends Controller
             })
             ->editColumn('description', function ($activity) {
                 $description = htmlspecialchars($activity->description, ENT_QUOTES, 'UTF-8');
-                return '<span title="' . $description . '">' . substr($description, 0, 100) . (strlen($description) > 100 ? '...' : '') . '</span>';
+
+                return '<span title="'.$description.'">'.substr($description, 0, 100).(strlen($description) > 100 ? '...' : '').'</span>';
             })
             ->addColumn('action', function ($activity) {
                 return '
                     <div class="d-flex align-items-center">
-                        <a class="text-success me-2 ajax-modal-btn" href="javascript:void(0)" data-url="' . route('sys.activity-log.show', $activity->id) . '" title="View Details">
+                        <a class="text-success me-2 ajax-modal-btn" href="javascript:void(0)" data-url="'.route('sys.activity-log.show', $activity->id).'" title="View Details">
                             <i class="bx bx-show"></i>
                         </a>
                     </div>';

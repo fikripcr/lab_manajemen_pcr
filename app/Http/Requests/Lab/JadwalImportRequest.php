@@ -6,7 +6,6 @@ use App\Http\Requests\BaseRequest;
 
 class JadwalImportRequest extends BaseRequest
 {
-
     public function rules(): array
     {
         return [

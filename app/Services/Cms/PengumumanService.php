@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Cms;
 
 use App\Models\Cms\Pengumuman;
@@ -34,12 +35,12 @@ class PengumumanService
             $isPublished = $data['is_published'] ?? false;
 
             $pengumuman = Pengumuman::create([
-                'judul'        => $data['judul'],
-                'isi'          => $data['isi'],
-                'jenis'        => $data['jenis'],
-                'penulis_id'   => Auth::id(),
+                'judul' => $data['judul'],
+                'isi' => $data['isi'],
+                'jenis' => $data['jenis'],
+                'penulis_id' => Auth::id(),
                 'is_published' => $isPublished,
-                'image_url'    => $data['image_url'] ?? null,
+                'image_url' => $data['image_url'] ?? null,
                 'published_at' => $isPublished ? now() : null,
             ]);
 
@@ -66,10 +67,10 @@ class PengumumanService
             $isPublished = $data['is_published'] ?? false;
 
             $pengumuman->update([
-                'judul'        => $data['judul'],
-                'isi'          => $data['isi'],
+                'judul' => $data['judul'],
+                'isi' => $data['isi'],
                 'is_published' => $isPublished,
-                'image_url'    => $data['image_url'] ?? $pengumuman->image_url,
+                'image_url' => $data['image_url'] ?? $pengumuman->image_url,
                 'published_at' => $isPublished ? now() : $pengumuman->published_at,
             ]);
 
@@ -78,7 +79,7 @@ class PengumumanService
 
             logActivity(
                 'pengumuman_management',
-                "Memperbarui {$pengumuman->jenis}: {$oldTitle}" . ($oldTitle !== $pengumuman->judul ? " menjadi {$pengumuman->judul}" : "")
+                "Memperbarui {$pengumuman->jenis}: {$oldTitle}".($oldTitle !== $pengumuman->judul ? " menjadi {$pengumuman->judul}" : '')
             );
 
             return true;
@@ -150,8 +151,9 @@ class PengumumanService
     {
         $model = Pengumuman::find($id);
         if (! $model) {
-            throw new Exception("Data tidak ditemukan.");
+            throw new Exception('Data tidak ditemukan.');
         }
+
         return $model;
     }
 }

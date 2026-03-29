@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Eoffice;
 
 use App\Models\Eoffice\JenisLayananPeriode;
@@ -26,6 +27,7 @@ class JenisLayananPeriodeService
         }
 
         $data['jenislayanan_id'] = $jenislayananId;
+
         return JenisLayananPeriode::create($data);
     }
 
@@ -41,6 +43,7 @@ class JenisLayananPeriodeService
         }
 
         $periode->update($data);
+
         return $periode;
     }
 

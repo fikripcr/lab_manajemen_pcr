@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class IndisiplinerPegawai extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_indisipliner_pegawai';
+    protected $table = 'hr_indisipliner_pegawai';
+
     protected $primaryKey = 'indispegawai_id';
 
     protected $appends = ['encrypted_indispegawai_id'];
@@ -37,7 +39,7 @@ class IndisiplinerPegawai extends Model
     protected $casts = [
         'indispegawai_id' => 'integer',
         'indisipliner_id' => 'integer',
-        'pegawai_id'      => 'integer',
+        'pegawai_id' => 'integer',
     ];
 
     /**

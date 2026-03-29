@@ -1,9 +1,7 @@
 <?php
+
 namespace App\Models\Cbt;
 
-use App\Models\Cbt\JadwalUjian;
-use App\Models\Cbt\KomposisiPaket;
-use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,11 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PaketUjian extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'cbt_paket_ujian';
+    protected $table = 'cbt_paket_ujian';
+
     protected $primaryKey = 'paket_ujian_id';
-    protected $appends    = ['encrypted_paket_ujian_id'];
+
+    protected $appends = ['encrypted_paket_ujian_id'];
 
     protected $fillable = [
         'nama_paket',

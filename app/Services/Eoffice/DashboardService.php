@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Eoffice;
 
 use App\Models\Eoffice\JenisLayanan;
@@ -10,20 +11,20 @@ class DashboardService
     public function getDashboardData($period)
     {
         $startDate = $this->getStartDate($period);
-        $endDate   = now();
+        $endDate = now();
 
         return [
-            'stats'            => $this->getMainStats($startDate, $endDate),
+            'stats' => $this->getMainStats($startDate, $endDate),
             'recentActivities' => $this->getRecentActivities(),
-            'topPerformers'    => $this->getTopPerformers($startDate),
-            'chartData'        => $this->getChartData($period),
+            'topPerformers' => $this->getTopPerformers($startDate),
+            'chartData' => $this->getChartData($period),
         ];
     }
 
     public function getMainStats($startDate, $endDate)
     {
         $totalLayanan = Layanan::whereBetween('created_at', [$startDate, $endDate])->count();
-        $completed    = Layanan::whereHas('latestStatus', function ($query) {
+        $completed = Layanan::whereHas('latestStatus', function ($query) {
             $query->where('status_layanan', 'Selesai');
         })->whereBetween('created_at', [$startDate, $endDate])->count();
 
@@ -37,19 +38,19 @@ class DashboardService
             ->value('avg_time') ?? 0;
 
         $previousPeriod = $this->getPreviousPeriod($startDate, $endDate);
-        $previousTotal  = Layanan::whereBetween('created_at', [$previousPeriod['start'], $previousPeriod['end']])->count();
+        $previousTotal = Layanan::whereBetween('created_at', [$previousPeriod['start'], $previousPeriod['end']])->count();
 
         $changePercentage = $previousTotal > 0 ? (($totalLayanan - $previousTotal) / $previousTotal) * 100 : 0;
 
         return [
-            'total_layanan'        => $totalLayanan,
-            'completed'            => $completed,
-            'pending'              => $pending,
+            'total_layanan' => $totalLayanan,
+            'completed' => $completed,
+            'pending' => $pending,
             'completed_percentage' => $totalLayanan > 0 ? round(($completed / $totalLayanan) * 100, 1) : 0,
-            'pending_percentage'   => $totalLayanan > 0 ? round(($pending / $totalLayanan) * 100, 1) : 0,
-            'avg_response_time'    => round($avgResponseTime, 1),
-            'change_percentage'    => round($changePercentage, 1),
-            'pegawai_change'       => '+12', // Placeholder
+            'pending_percentage' => $totalLayanan > 0 ? round(($pending / $totalLayanan) * 100, 1) : 0,
+            'avg_response_time' => round($avgResponseTime, 1),
+            'change_percentage' => round($changePercentage, 1),
+            'pegawai_change' => '+12', // Placeholder
         ];
     }
 
@@ -73,9 +74,9 @@ class DashboardService
             ->get()
             ->map(function ($item) {
                 return (object) [
-                    'name'            => $item->user->name ?? 'Unknown',
+                    'name' => $item->user->name ?? 'Unknown',
                     'processed_count' => $item->processed_count,
-                    'avatar'          => $item->user->profile_photo_url ?? null,
+                    'avatar' => $item->user->profile_photo_url ?? null,
                 ];
             });
     }
@@ -83,10 +84,10 @@ class DashboardService
     public function getChartData($period)
     {
         $monthlyData = [];
-        $labels      = [];
+        $labels = [];
 
         for ($i = 5; $i >= 0; $i--) {
-            $month    = now()->subMonths($i);
+            $month = now()->subMonths($i);
             $labels[] = $month->format('M');
 
             $total = Layanan::whereMonth('created_at', $month->month)
@@ -106,9 +107,9 @@ class DashboardService
                 ->count();
 
             $monthlyData[] = [
-                'total'     => $total,
+                'total' => $total,
                 'completed' => $completed,
-                'pending'   => $pending,
+                'pending' => $pending,
             ];
         }
 
@@ -130,11 +131,11 @@ class DashboardService
             ->get();
 
         return [
-            'monthly_trend'       => [
+            'monthly_trend' => [
                 'labels' => $labels,
-                'data'   => $monthlyData,
+                'data' => $monthlyData,
             ],
-            'jenis_distribution'  => $jenisDistribution,
+            'jenis_distribution' => $jenisDistribution,
             'status_distribution' => $statusDistribution,
         ];
     }
@@ -161,7 +162,7 @@ class DashboardService
 
         return [
             'start' => $startDate->copy()->subDays($duration),
-            'end'   => $startDate->copy()->subDay(),
+            'end' => $startDate->copy()->subDay(),
         ];
     }
 }

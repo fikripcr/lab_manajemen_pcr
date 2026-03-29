@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Pemutu;
 
 use App\Http\Requests\BaseRequest;
 
 class IndikatorStandarRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -17,18 +15,18 @@ class IndikatorStandarRequest extends BaseRequest
     {
         if ($this->route('indikator')) {
             return [
-                'personil_id'  => 'required|exists:hr_pegawai,pegawai_id',
-                'year'         => 'required|integer',
-                'semester'     => 'required|integer',
+                'personil_id' => 'required|exists:hr_pegawai,pegawai_id',
+                'year' => 'required|integer',
+                'semester' => 'required|integer',
                 'target_value' => 'nullable|string',
-                'weight'       => 'nullable|numeric|min:0',
+                'weight' => 'nullable|numeric|min:0',
             ];
         }
 
         return [
             'doksub_id' => 'required|exists:pemutu_dok_sub,doksub_id',
             'indikator' => 'required|string',
-            'target'    => 'required|string',
+            'target' => 'required|string',
             'parent_id' => 'nullable|exists:pemutu_indikator,indikator_id',
         ];
     }
@@ -36,16 +34,16 @@ class IndikatorStandarRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'personil_id'  => 'Pegawai',
-            'year'         => 'Tahun',
-            'semester'     => 'Semester',
+            'personil_id' => 'Pegawai',
+            'year' => 'Tahun',
+            'semester' => 'Semester',
             'target_value' => 'Target Value',
-            'weight'       => 'Bobot',
-            'doksub_id'    => 'Sub-Dokumen',
-            'indikator'    => 'Indikator',
-            'target'       => 'Target',
-            'type'         => 'Tipe',
-            'parent_id'    => 'Indikator Induk',
+            'weight' => 'Bobot',
+            'doksub_id' => 'Sub-Dokumen',
+            'indikator' => 'Indikator',
+            'target' => 'Target',
+            'type' => 'Tipe',
+            'parent_id' => 'Indikator Induk',
         ];
     }
 }

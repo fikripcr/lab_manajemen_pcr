@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\Event\EventController;
 use App\Http\Controllers\Event\EventTamuController;
 use App\Http\Controllers\Event\EventTeamController;
@@ -35,9 +36,9 @@ Route::middleware(['auth', 'check.expired'])->prefix('event')->name('Kegiatan.')
     Route::resource('rapat/agenda', RapatAgendaController::class)
         ->only(['edit', 'store', 'update', 'destroy'])
         ->names([
-            'edit'    => 'rapat.agenda.edit',
-            'store'   => 'rapat.agenda.store',
-            'update'  => 'rapat.agenda.update',
+            'edit' => 'rapat.agenda.edit',
+            'store' => 'rapat.agenda.store',
+            'update' => 'rapat.agenda.update',
             'destroy' => 'rapat.agenda.destroy',
         ]);
 

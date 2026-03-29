@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Lab;
 
 use App\Models\Lab\Lab;
@@ -15,6 +16,7 @@ class LabTeamService
     public function getLabTeamsQuery(string $labId)
     {
         $lab = Lab::findOrFail($labId);
+
         return $lab->labTeams()->with(['user']);
     }
 
@@ -42,7 +44,7 @@ class LabTeamService
     {
         return DB::transaction(function () use ($labId, $data) {
             $user = User::findOrFail($data['user_id']); // ID should be decrypted by Controller before passing or handled here if raw
-                                                        // Assuming Controller passes Decrypted User ID or Raw ID if from Select2 (Select2 usually sends value as is)
+            // Assuming Controller passes Decrypted User ID or Raw ID if from Select2 (Select2 usually sends value as is)
 
             // Check if user is already assigned
             $existingAssignment = LabTeam::where('user_id', $user->id)
@@ -54,11 +56,11 @@ class LabTeamService
             }
 
             $labTeam = LabTeam::create([
-                'user_id'       => $user->id,
-                'lab_id'        => $labId,
-                'jabatan'       => $data['jabatan'] ?? null,
+                'user_id' => $user->id,
+                'lab_id' => $labId,
+                'jabatan' => $data['jabatan'] ?? null,
                 'tanggal_mulai' => $data['tanggal_mulai'] ?? now(),
-                'is_active'     => true,
+                'is_active' => true,
             ]);
 
             logActivity('lab_team_management', "Menambahkan user {$user->name} ke Lab ID {$labId}");
@@ -92,7 +94,7 @@ class LabTeamService
             }
 
             $labTeam->update([
-                'is_active'       => false,
+                'is_active' => false,
                 'tanggal_selesai' => now(),
             ]);
 

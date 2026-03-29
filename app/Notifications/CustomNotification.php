@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -12,15 +11,17 @@ class CustomNotification extends Notification
     use Queueable;
 
     protected $title;
+
     protected $message;
+
     protected $type;
 
     /**
      * Create a new notification instance.
      *
-     * @param string $title
-     * @param string $message
-     * @param string $type
+     * @param  string  $title
+     * @param  string  $message
+     * @param  string  $type
      */
     public function __construct($title, $message, $type = 'info')
     {

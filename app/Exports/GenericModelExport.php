@@ -2,23 +2,26 @@
 
 namespace App\Exports;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class GenericModelExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidths, WithStyles, WithEvents
+class GenericModelExport implements FromQuery, WithColumnWidths, WithEvents, WithHeadings, WithMapping, WithStyles
 {
     protected $modelClass;
+
     protected $columns;
+
     protected $filters;
+
     protected $joins;
+
     protected $withRelationships;
 
     public function __construct(string $modelClass, array $columns = [], array $filters = [], array $joins = [], array $withRelationships = [])
@@ -51,7 +54,7 @@ class GenericModelExport implements FromQuery, WithHeadings, WithMapping, WithCo
         foreach ($this->columns as $column) {
             if (strpos($column, '.') !== false) {
                 // If it's a joined table field, use raw SQL
-                $selectFields[] = DB::raw("$column AS " . str_replace('.', '_', $column));
+                $selectFields[] = DB::raw("$column AS ".str_replace('.', '_', $column));
             } else {
                 $selectFields[] = $column;
             }
@@ -66,13 +69,13 @@ class GenericModelExport implements FromQuery, WithHeadings, WithMapping, WithCo
      */
     protected function applyFilters($query)
     {
-        if (!empty($this->filters['search'])) {
+        if (! empty($this->filters['search'])) {
             $search = $this->filters['search'];
             $query->where(function ($q) use ($search) {
                 $columnsToSearch = array_filter($this->columns, function ($column) {
                     return strpos($column, '.') === false; // Only search non-joined fields
                 });
-                
+
                 foreach ($columnsToSearch as $column) {
                     $q->orWhere($column, 'LIKE', "%{$search}%");
                 }
@@ -80,13 +83,13 @@ class GenericModelExport implements FromQuery, WithHeadings, WithMapping, WithCo
         }
 
         // Add any specific filters if provided
-        if (!empty($this->filters['where'])) {
+        if (! empty($this->filters['where'])) {
             foreach ($this->filters['where'] as $field => $value) {
                 $query->where($field, $value);
             }
         }
 
-        if (!empty($this->filters['whereIn'])) {
+        if (! empty($this->filters['whereIn'])) {
             foreach ($this->filters['whereIn'] as $field => $values) {
                 $query->whereIn($field, $values);
             }
@@ -136,6 +139,7 @@ class GenericModelExport implements FromQuery, WithHeadings, WithMapping, WithCo
         foreach (range('A', chr(ord('A') + count($this->columns) - 1)) as $index => $column) {
             $widths[$column] = 20; // Default width for all columns
         }
+
         return $widths;
     }
 
@@ -155,7 +159,7 @@ class GenericModelExport implements FromQuery, WithHeadings, WithMapping, WithCo
     public function registerEvents(): array
     {
         return [
-            AfterSheet::class => function(AfterSheet $event) {
+            AfterSheet::class => function (AfterSheet $event) {
                 // Freeze the header row
                 $event->sheet->getDelegate()->freezePane('A2');
             },

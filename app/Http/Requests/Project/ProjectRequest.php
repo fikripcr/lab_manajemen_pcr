@@ -7,9 +7,6 @@ use App\Http\Requests\BaseRequest;
 class ProjectRequest extends BaseRequest
 {
     /**
-     */
-
-    /**
      * Get the validation rules that apply to the request.
      */
     public function rules(): array
@@ -17,10 +14,10 @@ class ProjectRequest extends BaseRequest
         $rules = [
             'project_name' => 'required|string|max:200',
             'project_desc' => 'nullable|string',
-            'is_agile'     => 'boolean',
-            'start_date'   => 'required|date',
-            'end_date'     => 'required|date|after_or_equal:start_date',
-            'status'       => 'required|in:planning,active,completed,on_hold',
+            'is_agile' => 'boolean',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'status' => 'required|in:planning,active,completed,on_hold',
         ];
 
         // Add project_id for update
@@ -31,6 +28,4 @@ class ProjectRequest extends BaseRequest
         return $rules;
     }
 
-    /**
-     */
 }

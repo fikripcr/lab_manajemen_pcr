@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Pemutu;
 
 use App\Http\Requests\BaseRequest;
 
 class RapatPesertaRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -17,7 +15,7 @@ class RapatPesertaRequest extends BaseRequest
     {
         return [
             'rapat_id' => 'required|exists:rapats,rapat_id',
-            'jabatan'  => 'required|string|max:100',
+            'jabatan' => 'required|string|max:100',
         ];
     }
 
@@ -25,8 +23,8 @@ class RapatPesertaRequest extends BaseRequest
     {
         return [
             'rapat_id' => 'Rapat',
-            'user_id'  => 'Peserta Rapat',
-            'jabatan'  => 'Jabatan',
+            'user_id' => 'Peserta Rapat',
+            'jabatan' => 'Jabatan',
         ];
     }
 }

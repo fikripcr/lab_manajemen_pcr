@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Models\Hr;
 
-use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,11 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RiwayatStruktural extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_riwayat_jabstruktural';
+    protected $table = 'hr_riwayat_jabstruktural';
+
     protected $primaryKey = 'riwayatjabstruktural_id';
-    protected $guarded    = ['riwayatjabstruktural_id'];
+
+    protected $guarded = ['riwayatjabstruktural_id'];
 
     protected $appends = ['encrypted_riwayatstruktural_id'];
 
@@ -29,9 +31,9 @@ class RiwayatStruktural extends Model
     }
 
     protected $casts = [
-        'tgl_mulai'   => 'date',
+        'tgl_mulai' => 'date',
         'tgl_selesai' => 'date',
-        'tgl_sk'      => 'date',
+        'tgl_sk' => 'date',
         'approved_at' => 'datetime',
     ];
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Hr;
 
 use App\Models\Hr\JabatanFungsional;
@@ -11,6 +12,7 @@ class JabatanFungsionalService
         return DB::transaction(function () use ($data) {
             $jabatanFungsional = JabatanFungsional::create($data);
             logActivity('hr', "Menambahkan jabatan fungsional: {$jabatanFungsional->nama_jabatan}", $jabatanFungsional);
+
             return $jabatanFungsional;
         });
     }
@@ -20,6 +22,7 @@ class JabatanFungsionalService
         return DB::transaction(function () use ($jabatanFungsional, $data) {
             $jabatanFungsional->update($data);
             logActivity('hr', "Memperbarui jabatan fungsional: {$jabatanFungsional->nama_jabatan}", $jabatanFungsional);
+
             return $jabatanFungsional;
         });
     }

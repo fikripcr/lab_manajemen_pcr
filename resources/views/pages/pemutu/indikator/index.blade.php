@@ -42,7 +42,7 @@
                         </ul>
                     </x-tabler.card-body>
                     <x-tabler.card-header>
-                        <div class="ms-auto d-flex gap-2 align-items-center">
+                        <div class="d-flex gap-2 align-items-center">
                             <x-tabler.datatable-page-length :dataTableId="'indikator-table-' . $typeId" />
                             <x-tabler.datatable-filter :dataTableId="'indikator-table-' . $typeId" type="button" :target="'#indikator-table-' . $typeId . '-filter-area'" />
                             <x-tabler.datatable-search :dataTableId="'indikator-table-' . $typeId" />
@@ -52,18 +52,17 @@
                         <x-tabler.datatable-filter :dataTableId="'indikator-table-' . $typeId" type="bare">
                             <div class="row g-3">
                                 <div class="col-md-4">
-                                    <x-tabler.form-select name="dokumen_id" id="dokumen_id_{{ $typeId }}" label="Standar / Dokumen" type="select2" placeholder="" :options="$dokumens">
+                                    <x-tabler.form-select name="dokumen_id" id="dokumen_id" label="Standar / Dokumen" type="select2" placeholder="" :options="$dokumens">
                                         <option value="all">Semua Standar</option>
                                     </x-tabler.form-select>
                                 </div>
                                 <div class="col-md-4">
-                                    <x-tabler.form-select name="renstra_poin_id" id="renstra_poin_id_{{ $typeId }}" label="Poin Renstra" type="select2" placeholder="" :options="$renstraOptions">
+                                    <x-tabler.form-select name="renstra_poin_id" id="renstra_poin_id" label="Poin Renstra" type="select2" placeholder="" :options="$renstraOptions">
                                         <option value="all">Semua Poin Renstra</option>
                                     </x-tabler.form-select>
                                 </div>
                                 <div class="col-md-4">
-                                    <x-tabler.form-select name="label_ids[]" id="label_ids_{{ $typeId }}" label="Label Indikator" type="select2" placeholder="" :options="$labelParents" multiple="true">
-                                    </x-tabler.form-select>
+                                    <x-tabler.form-select name="label_ids[]" id="label_ids" label="Label Indikator" type="select2" placeholder="" :options="$labelParents" multiple="true"/>
                                 </div>
                             </div>
                         </x-tabler.datatable-filter>
@@ -71,7 +70,7 @@
                     <x-tabler.card-body class="p-0">
                         <x-tabler.datatable
                             id="indikator-table-{{ $typeId }}"
-                            route="{{ route('pemutu.indikator.data', ['type' => $activeType, 'periode' => $periode->periode]) }}"
+                            route="{{ route('pemutu.indikator.data', ['type' => $activeType, 'periode' => $periode->periode, 'kelompok_indikator' => str_replace('_', ' ', ucwords($type, '_'))]) }}"
                             :columns="[
                                 ['data' => 'no', 'name' => 'no', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '5%'],
                                 ['data' => 'dokumen_judul', 'name' => 'dokumen_judul', 'title' => 'Dokumen Induk', 'searchable' => false, 'orderable' => false],

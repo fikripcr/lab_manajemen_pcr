@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RiwayatDataDiri extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_riwayat_datadiri';
+    protected $table = 'hr_riwayat_datadiri';
+
     protected $primaryKey = 'riwayatdatadiri_id';
 
     protected $appends = ['encrypted_riwayatdatadiri_id'];
@@ -62,6 +64,10 @@ class RiwayatDataDiri extends Model
         'created_by',
         'updated_by',
         'deleted_by',
+    ];
+
+    protected $casts = [
+        'tgl_lahir' => 'date',
     ];
 
     public function pegawai()

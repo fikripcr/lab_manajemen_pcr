@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Presensi extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_presensi';
+    protected $table = 'hr_presensi';
+
     protected $primaryKey = 'presensi_id';
 
     protected $appends = ['encrypted_presensi_id'];
@@ -52,21 +54,21 @@ class Presensi extends Model
     ];
 
     protected $casts = [
-        'tanggal'                 => 'date',
-        'check_in_time'           => 'datetime',
-        'check_out_time'          => 'datetime',
-        'check_in_latitude'       => 'decimal:8',
-        'check_in_longitude'      => 'decimal:8',
-        'check_out_latitude'      => 'decimal:8',
-        'check_out_longitude'     => 'decimal:8',
-        'check_in_distance'       => 'decimal:2',
-        'check_out_distance'      => 'decimal:2',
-        'check_in_face_verified'  => 'boolean',
+        'tanggal' => 'date',
+        'check_in_time' => 'datetime',
+        'check_out_time' => 'datetime',
+        'check_in_latitude' => 'decimal:8',
+        'check_in_longitude' => 'decimal:8',
+        'check_out_latitude' => 'decimal:8',
+        'check_out_longitude' => 'decimal:8',
+        'check_in_distance' => 'decimal:2',
+        'check_out_distance' => 'decimal:2',
+        'check_in_face_verified' => 'boolean',
         'check_out_face_verified' => 'boolean',
-        'duration_minutes'        => 'integer',
-        'overtime_minutes'        => 'integer',
-        'late_minutes'            => 'integer',
-        'is_active'               => 'boolean',
+        'duration_minutes' => 'integer',
+        'overtime_minutes' => 'integer',
+        'late_minutes' => 'integer',
+        'is_active' => 'boolean',
     ];
 
     // Relationships
@@ -102,7 +104,7 @@ class Presensi extends Model
             return '-';
         }
 
-        $hours   = floor($this->duration_minutes / 60);
+        $hours = floor($this->duration_minutes / 60);
         $minutes = $this->duration_minutes % 60;
 
         if ($hours > 0) {
@@ -115,9 +117,9 @@ class Presensi extends Model
     public function getStatusBadgeAttribute()
     {
         $badges = [
-            'on_time'        => '<span class="badge bg-success text-white">Tepat Waktu</span>',
-            'late'           => '<span class="badge bg-warning text-white">Terlambat</span>',
-            'absent'         => '<span class="badge bg-danger">Tidak Hadir</span>',
+            'on_time' => '<span class="badge bg-success text-white">Tepat Waktu</span>',
+            'late' => '<span class="badge bg-warning text-white">Terlambat</span>',
+            'absent' => '<span class="badge bg-danger">Tidak Hadir</span>',
             'early_checkout' => '<span class="badge bg-info">Pulang Awal</span>',
         ];
 
@@ -186,7 +188,7 @@ class Presensi extends Model
     public function calculateDuration()
     {
         if ($this->check_in_time && $this->check_out_time) {
-            $duration               = $this->check_in_time->diffInMinutes($this->check_out_time);
+            $duration = $this->check_in_time->diffInMinutes($this->check_out_time);
             $this->duration_minutes = $duration;
             $this->save();
         }
@@ -195,9 +197,9 @@ class Presensi extends Model
     public function getStatusText()
     {
         $statuses = [
-            'on_time'        => 'Tepat Waktu',
-            'late'           => 'Terlambat',
-            'absent'         => 'Tidak Hadir',
+            'on_time' => 'Tepat Waktu',
+            'late' => 'Terlambat',
+            'absent' => 'Tidak Hadir',
             'early_checkout' => 'Pulang Awal',
         ];
 

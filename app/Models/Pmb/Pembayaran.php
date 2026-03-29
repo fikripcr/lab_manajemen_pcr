@@ -1,8 +1,7 @@
 <?php
+
 namespace App\Models\Pmb;
 
-use App\Models\Pmb\Pendaftaran;
-use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,11 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pembayaran extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'pmb_pembayaran';
+    protected $table = 'pmb_pembayaran';
+
     protected $primaryKey = 'pembayaran_id';
-    protected $appends    = ['encrypted_pembayaran_id'];
+
+    protected $appends = ['encrypted_pembayaran_id'];
 
     public function getRouteKeyName()
     {

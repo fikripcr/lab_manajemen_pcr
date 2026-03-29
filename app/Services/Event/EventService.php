@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Event;
 
 use App\Models\Event\Event;
@@ -11,6 +12,7 @@ class EventService
         return DB::transaction(function () use ($data) {
             $event = Event::create($data);
             logActivity('event', "Menambah kegiatan baru: {$event->nama_event}");
+
             return $event;
         });
     }
@@ -20,6 +22,7 @@ class EventService
         return DB::transaction(function () use ($event, $data) {
             $event->update($data);
             logActivity('event', "Memperbarui kegiatan: {$event->nama_event}");
+
             return $event;
         });
     }

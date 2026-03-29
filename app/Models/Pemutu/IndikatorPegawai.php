@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Pemutu;
 
 use App\Models\Hr\Pegawai;
@@ -12,9 +13,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class IndikatorPegawai extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding, InteractsWithMedia;
+    use Blameable, HasFactory, HashidBinding, InteractsWithMedia, SoftDeletes;
 
-    protected $table      = 'pemutu_indikator_pegawai';
+    protected $table = 'pemutu_indikator_pegawai';
+
     protected $primaryKey = 'indikator_pegawai_id';
 
     protected $appends = ['encrypted_indikator_pegawai_id'];
@@ -28,6 +30,7 @@ class IndikatorPegawai extends Model implements HasMedia
     {
         return encryptId($this->indikator_pegawai_id);
     }
+
     protected $fillable = [
         'pegawai_id',
         'indikator_id',

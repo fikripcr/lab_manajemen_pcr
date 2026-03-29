@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Event;
 
 use App\Traits\Blameable;
@@ -8,9 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class RapatEntitas extends Model
 {
-    use HasFactory, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding;
 
-    protected $table      = 'event_rapat_entitas';
+    protected $table = 'event_rapat_entitas';
+
     protected $primaryKey = 'rapatentitas_id';
 
     protected $appends = ['encrypted_rapatentitas_id'];

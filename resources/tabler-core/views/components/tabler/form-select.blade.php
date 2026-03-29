@@ -38,6 +38,8 @@
             <option value="" disabled>{{ $placeholder }}</option>
         @endif
 
+        {{ $slot }}
+
         @foreach($options as $key => $value)
             @php
                 $val = is_object($value) ? ($value->id ?? $key) : $key;
@@ -48,8 +50,6 @@
                 {{ $text }}
             </option>
         @endforeach
-
-        {{ $slot }}
     </select>
     
     @if($help)

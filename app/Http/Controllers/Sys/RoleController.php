@@ -1,9 +1,9 @@
 <?php
+
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sys\RoleRequest;
-use App\Models\Sys\Permission;
 use App\Models\Sys\Role;
 use App\Services\Sys\PermissionService;
 use App\Services\Sys\RoleService;
@@ -29,13 +29,11 @@ class RoleController extends Controller
      */
     public function matrix(Request $request)
     {
-        $roles          = Role::with('permissions')->get();
-        $allCategories  = Permission::distinct()->pluck('category');
+        $roles = $this->roleService->getRolesWithPermissions();
+        $allCategories = collect($this->permissionService->getUniqueCategories());
         $activeCategory = $request->query('system', $allCategories->first());
 
-        $permissions = Permission::where('category', $activeCategory)
-            ->get()
-            ->groupBy(['sub_category']);
+        $permissions = $this->permissionService->getPermissionsByCategory($activeCategory);
 
         return view('pages.sys.roles.matrix', compact('roles', 'permissions', 'allCategories', 'activeCategory'));
     }
@@ -59,7 +57,8 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $role = new Role();
+        $role = new Role;
+
         return view('pages.sys.roles.create-edit-ajax', compact('role'));
     }
 
@@ -68,7 +67,7 @@ class RoleController extends Controller
      */
     public function store(RoleRequest $request)
     {
-        $data  = $request->validated();
+        $data = $request->validated();
         $names = preg_split('/[,\n\r]+/', $data['name']);
         $count = 0;
 
@@ -79,11 +78,11 @@ class RoleController extends Controller
             }
 
             // Check if role already exists
-            if (Role::where('name', $name)->exists()) {
+            if ($this->roleService->roleExists($name)) {
                 continue;
             }
 
-            $singleData         = $data;
+            $singleData = $data;
             $singleData['name'] = $name;
             $this->roleService->createRole($singleData);
             $count++;
@@ -93,7 +92,7 @@ class RoleController extends Controller
             return jsonError('Tidak ada peran baru yang dibuat (kemungkinan sudah ada).');
         }
 
-        return jsonSuccess($count . ' peran berhasil dibuat.', route('sys.roles.index'));
+        return jsonSuccess($count.' peran berhasil dibuat.', route('sys.roles.index'));
     }
 
     /**

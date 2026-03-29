@@ -1,14 +1,16 @@
 <?php
+
 namespace App\Models\Cbt;
 
-use App\Models\Cbt\RiwayatUjianSiswa;
 use Illuminate\Database\Eloquent\Model;
 
 class LogPelanggaran extends Model
 {
-    protected $table      = 'cbt_log_pelanggaran';
+    protected $table = 'cbt_log_pelanggaran';
+
     protected $primaryKey = 'log_pelanggaran_id';
-    protected $appends    = ['encrypted_log_pelanggaran_id'];
+
+    protected $appends = ['encrypted_log_pelanggaran_id'];
 
     protected $fillable = [
         'riwayat_id',

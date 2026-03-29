@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
@@ -9,8 +10,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class StatusAktifitasController extends Controller
 {
-    public function __construct(protected StatusAktifitasService $statusAktifitasService)
-    {}
+    public function __construct(protected StatusAktifitasService $statusAktifitasService) {}
 
     public function index()
     {
@@ -34,7 +34,7 @@ class StatusAktifitasController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('hr.status-aktifitas.edit', ['status_aktifita' => $row->hashid]),
+                    'editUrl' => route('hr.status-aktifitas.edit', ['status_aktifita' => $row->hashid]),
                     'editModal' => true,
                     'deleteUrl' => route('hr.status-aktifitas.destroy', ['status_aktifita' => $row->hashid]),
                 ])->render();
@@ -51,6 +51,7 @@ class StatusAktifitasController extends Controller
     public function store(StatusAktifitasRequest $request)
     {
         $this->statusAktifitasService->create($request->validated());
+
         return jsonSuccess('Status Aktifitas created successfully.');
     }
 
@@ -62,12 +63,14 @@ class StatusAktifitasController extends Controller
     public function update(StatusAktifitasRequest $request, StatusAktifitas $statusAktifitas)
     {
         $this->statusAktifitasService->update($statusAktifitas, $request->validated());
+
         return jsonSuccess('Status Aktifitas updated successfully.');
     }
 
     public function destroy(StatusAktifitas $statusAktifitas)
     {
         $statusAktifitas->delete();
+
         return jsonSuccess('Status Aktifitas deleted successfully.');
     }
 }

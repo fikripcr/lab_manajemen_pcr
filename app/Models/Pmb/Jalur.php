@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Pmb;
 
 use App\Traits\Blameable;
@@ -9,11 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Jalur extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'pmb_jalur';
+    protected $table = 'pmb_jalur';
+
     protected $primaryKey = 'jalur_id';
-    protected $appends    = ['encrypted_jalur_id'];
+
+    protected $appends = ['encrypted_jalur_id'];
 
     public function getRouteKeyName()
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Eoffice;
 
 use App\Models\Eoffice\Feedback;
@@ -23,7 +24,7 @@ class FeedbackService
         if ($request->filled('f_tgl_start') && $request->filled('f_tgl_end')) {
             $query->whereBetween('created_at', [
                 $request->f_tgl_start,
-                $request->f_tgl_end . ' 23:59:59',
+                $request->f_tgl_end.' 23:59:59',
             ]);
         }
 

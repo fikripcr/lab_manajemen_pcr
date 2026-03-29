@@ -5,15 +5,13 @@ namespace App\Exports;
 use App\Models\Pemutu\IndikatorSummary;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use PhpOffice\PhpSpreadsheet\Style\Number;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class IndikatorSummaryExport implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
+class IndikatorSummaryExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
     protected $filters;
 
@@ -30,19 +28,19 @@ class IndikatorSummaryExport implements FromCollection, WithHeadings, WithMappin
         $query = IndikatorSummary::query();
 
         // Apply filters
-        if (!empty($this->filters['type']) && in_array($this->filters['type'], ['standar', 'performa'])) {
+        if (! empty($this->filters['type']) && in_array($this->filters['type'], ['standar', 'performa'])) {
             $query->where('type', $this->filters['type']);
         }
 
-        if (!empty($this->filters['kelompok_indikator'])) {
+        if (! empty($this->filters['kelompok_indikator'])) {
             $query->where('kelompok_indikator', $this->filters['kelompok_indikator']);
         }
 
-        if (!empty($this->filters['year'])) {
+        if (! empty($this->filters['year'])) {
             $query->whereYear('periode_mulai', $this->filters['year']);
         }
 
-        if (!empty($this->filters['search'])) {
+        if (! empty($this->filters['search'])) {
             $search = $this->filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('no_indikator', 'LIKE', "%{$search}%")
@@ -56,12 +54,9 @@ class IndikatorSummaryExport implements FromCollection, WithHeadings, WithMappin
         return $query->orderBy('seq')->get();
     }
 
-    /**
-     * @return array
-     */
     public function headings(): array
     {
-        $isPerforma = !empty($this->filters['type']) && $this->filters['type'] === 'performa';
+        $isPerforma = ! empty($this->filters['type']) && $this->filters['type'] === 'performa';
 
         if ($isPerforma) {
             return [
@@ -104,12 +99,11 @@ class IndikatorSummaryExport implements FromCollection, WithHeadings, WithMappin
     }
 
     /**
-     * @param mixed $row
-     * @return array
+     * @param  mixed  $row
      */
     public function map($row): array
     {
-        $isPerforma = !empty($this->filters['type']) && $this->filters['type'] === 'performa';
+        $isPerforma = ! empty($this->filters['type']) && $this->filters['type'] === 'performa';
 
         if ($isPerforma) {
             return [
@@ -159,9 +153,6 @@ class IndikatorSummaryExport implements FromCollection, WithHeadings, WithMappin
         ];
     }
 
-    /**
-     * @param Worksheet $sheet
-     */
     public function styles(Worksheet $sheet)
     {
         return [

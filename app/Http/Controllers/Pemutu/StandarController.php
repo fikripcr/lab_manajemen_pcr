@@ -1,13 +1,14 @@
 <?php
+
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\IndikatorRequest;
 use App\Http\Requests\Pemutu\StandarAssignmentRequest;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\LabelType;
-use App\Models\Hr\StrukturOrganisasi;
 use App\Services\Pemutu\IndikatorService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -17,8 +18,7 @@ class StandarController extends Controller
     public function __construct(
         protected IndikatorService $indikatorService,
         protected \App\Services\Hr\StrukturOrganisasiService $StrukturOrganisasiService
-    )
-    {}
+    ) {}
 
     public function index()
     {
@@ -38,7 +38,7 @@ class StandarController extends Controller
         // SIMPLE LOGIC: If not 'all', add to filters
         $filters = [];
         foreach ($request->only(['dokumen_id', 'kelompok_indikator', 'label_ids']) as $key => $value) {
-            if ($value !== 'all' && $value !== null && $value !== '') {
+            if (!empty($value) && $value !== 'all') {
                 $filters[$key] = $value;
             }
         }
@@ -63,13 +63,13 @@ class StandarController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'       => route('pemutu.indikator.edit', $row->encrypted_indikator_id),
-                    'editModal'     => false,
-                    'deleteUrl'     => route('pemutu.standar.destroy', $row->encrypted_indikator_id),
+                    'editUrl' => route('pemutu.indikator.edit', $row->encrypted_indikator_id),
+                    'editModal' => false,
+                    'deleteUrl' => route('pemutu.standar.destroy', $row->encrypted_indikator_id),
                     'customActions' => [
                         [
-                            'url'   => route('pemutu.standar.assign', $row->encrypted_indikator_id),
-                            'icon'  => 'ti ti-users',
+                            'url' => route('pemutu.standar.assign', $row->encrypted_indikator_id),
+                            'icon' => 'ti ti-users',
                             'title' => 'Assign Unit',
                             'class' => 'btn-ghost-purple',
                         ],
@@ -97,20 +97,20 @@ class StandarController extends Controller
         // Pass 'isStandarMode' to hide/show specific fields in the generic view if we reuse it
         // Or create a dedicated view.
         return view('pages.pemutu.standar.create-edit-ajax', [
-            'labelTypes'      => $labelTypes,
-            'orgUnits'        => $orgUnits,
-            'dokumens'        => $dokumens,
-            'parents'         => [], // Standar usually doesn't have parent standar, but self-reference is possible (ignored for now)
-            'personils'       => [],
+            'labelTypes' => $labelTypes,
+            'orgUnits' => $orgUnits,
+            'dokumens' => $dokumens,
+            'parents' => [], // Standar usually doesn't have parent standar, but self-reference is possible (ignored for now)
+            'personils' => [],
             'selectedDokSubs' => [],
-            'parentDok'       => null,
-            'indikator'       => new Indikator(),
+            'parentDok' => null,
+            'indikator' => new Indikator,
         ])->with('type', 'standar');
     }
 
     public function store(IndikatorRequest $request)
     {
-        $data         = $request->validated();
+        $data = $request->validated();
         $data['type'] = 'standar'; // Force type
 
         // Handle Assignments Parsing (Org Units)
@@ -149,7 +149,7 @@ class StandarController extends Controller
 
         // Get currently assigned units ids
         $assignedUnitIds = $indikator->orgUnits->pluck('orgunit_id')->toArray();
-        $assignments     = $indikator->orgUnits->keyBy('orgunit_id');
+        $assignments = $indikator->orgUnits->keyBy('orgunit_id');
 
         return view('pages.pemutu.standar.assign', compact('indikator', 'orgUnits', 'assignedUnitIds', 'assignments'));
     }
@@ -157,7 +157,7 @@ class StandarController extends Controller
     public function storeAssignment(StandarAssignmentRequest $request, Indikator $indikator)
     {
         $validated = $request->validated();
-        $syncData  = [];
+        $syncData = [];
         if (isset($validated['assignments'])) {
             foreach ($validated['assignments'] as $unitId => $val) {
                 if (isset($val['selected']) && $val['selected'] == 1) {

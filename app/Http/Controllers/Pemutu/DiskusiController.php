@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Pemutu\DiskusiRequest;
 use App\Models\Pemutu\Diskusi;
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Services\Pemutu\DiskusiService;
-use App\Http\Requests\Pemutu\DiskusiRequest;
 
 class DiskusiController extends Controller
 {
@@ -28,5 +28,4 @@ class DiskusiController extends Controller
 
         return jsonSuccess('Pesan diskusi berhasil dikirim.', route('pemutu.ami.detail', $indOrg->encrypted_indorgunit_id));
     }
-
 }

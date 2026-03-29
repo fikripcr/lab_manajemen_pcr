@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Indisipliner extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_indisipliner';
+    protected $table = 'hr_indisipliner';
+
     protected $primaryKey = 'indisipliner_id';
 
     protected $appends = ['encrypted_indisipliner_id'];
@@ -27,9 +29,9 @@ class Indisipliner extends Model
     ];
 
     protected $casts = [
-        'indisipliner_id'      => 'integer',
+        'indisipliner_id' => 'integer',
         'jenisindisipliner_id' => 'integer',
-        'tgl_indisipliner'     => 'date',
+        'tgl_indisipliner' => 'date',
     ];
 
     /**
@@ -84,6 +86,7 @@ class Indisipliner extends Model
         if ($year && $year !== 'all') {
             return $query->whereYear('tgl_indisipliner', $year);
         }
+
         return $query;
     }
 }

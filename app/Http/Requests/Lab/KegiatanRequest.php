@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Lab;
 
 use App\Http\Requests\BaseRequest;
 
 class KegiatanRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -16,12 +14,12 @@ class KegiatanRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'lab_id'           => 'required',
-            'nama_kegiatan'    => 'required|string',
-            'deskripsi'        => 'required|string',
-            'tanggal'          => 'required|date',
-            'jam_mulai'        => 'required',
-            'jam_selesai'      => 'required|after:jam_mulai',
+            'lab_id' => 'required',
+            'nama_kegiatan' => 'required|string',
+            'deskripsi' => 'required|string',
+            'tanggal' => 'required|date',
+            'jam_mulai' => 'required',
+            'jam_selesai' => 'required|after:jam_mulai',
             'dokumentasi_path' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ];
     }
@@ -41,12 +39,12 @@ class KegiatanRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'lab_id'           => 'Lab',
-            'nama_kegiatan'    => 'Nama Kegiatan',
-            'deskripsi'        => 'Deskripsi',
-            'tanggal'          => 'Tanggal',
-            'jam_mulai'        => 'Jam Mulai',
-            'jam_selesai'      => 'Jam Selesai',
+            'lab_id' => 'Lab',
+            'nama_kegiatan' => 'Nama Kegiatan',
+            'deskripsi' => 'Deskripsi',
+            'tanggal' => 'Tanggal',
+            'jam_mulai' => 'Jam Mulai',
+            'jam_selesai' => 'Jam Selesai',
             'dokumentasi_path' => 'Dokumentasi',
         ];
     }

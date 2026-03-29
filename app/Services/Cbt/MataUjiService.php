@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Cbt;
 
 use App\Models\Cbt\MataUji;
@@ -14,6 +15,7 @@ class MataUjiService
     {
         $mu = MataUji::create($data);
         logActivity('cbt', "Membuat mata uji: {$mu->nama_mata_uji}", $mu);
+
         return $mu;
     }
 
@@ -21,12 +23,14 @@ class MataUjiService
     {
         $mu->update($data);
         logActivity('cbt', "Memperbarui mata uji: {$mu->nama_mata_uji}", $mu);
+
         return $mu;
     }
 
     public function delete(MataUji $mu)
     {
         logActivity('cbt', "Menghapus mata uji: {$mu->nama_mata_uji}", $mu);
+
         return $mu->delete();
     }
 }

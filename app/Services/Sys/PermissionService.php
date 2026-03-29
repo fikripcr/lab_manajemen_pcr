@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Sys;
 
 use App\Models\Sys\Permission;
@@ -19,6 +20,7 @@ class PermissionService
             ->with('roles');
 
         $perPage = $filters['per_page'] ?? 10;
+
         return $query->latest()->paginate($perPage);
     }
 
@@ -37,15 +39,15 @@ class PermissionService
     {
         return DB::transaction(function () use ($data) {
             $permission = Permission::create([
-                'name'         => $data['name'],
-                'category'     => $data['category'] ?? null,
+                'name' => $data['name'],
+                'category' => $data['category'] ?? null,
                 'sub_category' => $data['sub_category'] ?? null,
             ]);
 
             logActivity(
                 'permission_management',
-                "Membuat izin baru: {$permission->name}" .
-                ($permission->category ? " (kategori: {$permission->category})" : "")
+                "Membuat izin baru: {$permission->name}".
+                ($permission->category ? " (kategori: {$permission->category})" : '')
             );
 
             return $permission;
@@ -60,12 +62,12 @@ class PermissionService
         return DB::transaction(function () use ($permissionId, $data) {
             $permission = $this->findOrFail($permissionId);
 
-            $oldName     = $permission->name;
+            $oldName = $permission->name;
             $oldCategory = $permission->category;
 
             $permission->update([
-                'name'         => $data['name'],
-                'category'     => $data['category'] ?? $permission->category,
+                'name' => $data['name'],
+                'category' => $data['category'] ?? $permission->category,
                 'sub_category' => $data['sub_category'] ?? $permission->sub_category,
             ]);
 
@@ -81,7 +83,7 @@ class PermissionService
             if (! empty($changes)) {
                 logActivity(
                     'permission_management',
-                    "Memperbarui izin '{$oldName}': " . implode(', ', $changes)
+                    "Memperbarui izin '{$oldName}': ".implode(', ', $changes)
                 );
             } else {
                 logActivity(
@@ -150,7 +152,7 @@ class PermissionService
     protected function applyFilters($query, array $filters): Builder
     {
         if (! empty($filters['name'])) {
-            $query->where('name', 'like', '%' . $filters['name'] . '%');
+            $query->where('name', 'like', '%'.$filters['name'].'%');
         }
 
         if (! empty($filters['category'])) {
@@ -186,6 +188,24 @@ class PermissionService
     }
 
     /**
+     * Get permissions grouped by sub_category for a given category
+     */
+    public function getPermissionsByCategory(?string $category): Collection
+    {
+        return Permission::where('category', $category)
+            ->get()
+            ->groupBy(['sub_category']);
+    }
+
+    /**
+     * Check if permission exists by name
+     */
+    public function permissionExists(string $name): bool
+    {
+        return Permission::where('name', $name)->exists();
+    }
+
+    /**
      * Find model by ID or throw exception
      */
     protected function findOrFail(int $id): Permission
@@ -194,6 +214,7 @@ class PermissionService
         if (! $model) {
             throw new Exception("Izin dengan ID {$id} tidak ditemukan.");
         }
+
         return $model;
     }
 }

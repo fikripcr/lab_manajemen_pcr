@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class SysDashboardView extends Model
 {
     protected $table = 'vw_sys_dashboard';
+
     public $timestamps = false;
+
     protected $fillable = [];
 
     // All attributes are read-only since this is a view

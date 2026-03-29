@@ -190,7 +190,7 @@
                                 <div class="tab-pane active show" id="tabs-activity">
                                     <div class="d-flex flex-wrap gap-2 mb-3">
                                         <div><x-tabler.datatable-page-length dataTableId="dt-activity" /></div>
-                                        <div class="ms-auto"><x-tabler.datatable-search dataTableId="dt-activity" /></div>
+                                        <div><x-tabler.datatable-search dataTableId="dt-activity" /></div>
                                     </div>
                                     <x-tabler.datatable
                                         id="dt-activity" 
@@ -211,7 +211,7 @@
                                 <div class="tab-pane" id="tabs-notification">
                                     <div class="d-flex flex-wrap gap-2 mb-3">
                                         <div><x-tabler.datatable-page-length dataTableId="dt-notification" /></div>
-                                        <div class="ms-auto"><x-tabler.datatable-search dataTableId="dt-notification" /></div>
+                                        <div><x-tabler.datatable-search dataTableId="dt-notification" /></div>
                                     </div>
                                     <x-tabler.datatable
                                         id="dt-notification" 
@@ -231,7 +231,7 @@
                                 <div class="tab-pane" id="tabs-error">
                                     <div class="d-flex flex-wrap gap-2 mb-3">
                                         <div><x-tabler.datatable-page-length dataTableId="dt-error" /></div>
-                                        <div class="ms-auto"><x-tabler.datatable-search dataTableId="dt-error" /></div>
+                                        <div><x-tabler.datatable-search dataTableId="dt-error" /></div>
                                     </div>
                                     <x-tabler.datatable
                                         id="dt-error" 

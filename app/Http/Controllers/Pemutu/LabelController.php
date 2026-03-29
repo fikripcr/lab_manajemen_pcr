@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
@@ -9,13 +10,12 @@ use Yajra\DataTables\DataTables;
 
 class LabelController extends Controller
 {
-    public function __construct(protected LabelService $labelService)
-    {}
+    public function __construct(protected LabelService $labelService) {}
 
     public function index()
     {
-        $parents       = $this->labelService->getParentLabels();
-        $totalLabels   = $this->labelService->getTotalLabels();
+        $parents = $this->labelService->getParentLabels();
+        $totalLabels = $this->labelService->getTotalLabels();
 
         return view('pages.pemutu.label.index', compact('parents', 'totalLabels'));
     }
@@ -28,7 +28,8 @@ class LabelController extends Controller
             ->addIndexColumn()
             ->editColumn('name', function ($row) {
                 $color = $row->color ?? 'blue';
-                return '<span class="badge bg-' . $color . '-lt text-' . $color . '">' . e($row->name) . '</span>';
+
+                return '<span class="badge bg-'.$color.'-lt text-'.$color.'">'.e($row->name).'</span>';
             })
             ->editColumn('description', function ($row) {
                 return $row->description ?: '-';
@@ -38,7 +39,7 @@ class LabelController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('pemutu.label.edit', $row->encrypted_label_id),
+                    'editUrl' => route('pemutu.label.edit', $row->encrypted_label_id),
                     'editModal' => true,
                     'deleteUrl' => route('pemutu.label.destroy', $row->encrypted_label_id),
                 ])->render();
@@ -50,6 +51,7 @@ class LabelController extends Controller
     public function create()
     {
         $parents = $this->labelService->getParentLabels();
+
         return view('pages.pemutu.label.create-edit-ajax', compact('parents'));
     }
 
@@ -57,7 +59,7 @@ class LabelController extends Controller
     {
         $this->labelService->createLabel($request->validated());
 
-        logActivity('pemutu', "Menambah label baru: " . ($request->name ?? ''));
+        logActivity('pemutu', 'Menambah label baru: '.($request->name ?? ''));
 
         return jsonSuccess('Label created successfully.', route('pemutu.label.index'));
     }

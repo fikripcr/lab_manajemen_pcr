@@ -1,21 +1,22 @@
 <x-tabler.card-header class="border-bottom">
-    <div class="d-flex flex-wrap gap-2 w-100">
-        <div>
-            <x-tabler.datatable-page-length dataTableId="pendidikan-table" />
-        </div>
-        <div>
-            <x-tabler.datatable-search dataTableId="pendidikan-table" />
-        </div>
-        <div>
-            <x-tabler.datatable-filter dataTableId="pendidikan-table">
-                <div style="min-width: 150px;">
-                    <x-tabler.form-select name="jenjang" placeholder="Semua Jenjang" class="mb-0"
-                        :options="['D3' => 'D3', 'D4' => 'D4', 'S1' => 'S1', 'S2' => 'S2', 'S3' => 'S3']" />
-                </div>
-            </x-tabler.datatable-filter>
-        </div>
+    <div class="d-flex gap-2 align-items-center">
+        <x-tabler.datatable-page-length dataTableId="pendidikan-table" />
+        <x-tabler.datatable-filter dataTableId="pendidikan-table" type="button" target="#pendidikan-filter-area" />
+        <x-tabler.datatable-search dataTableId="pendidikan-table" />
     </div>
 </x-tabler.card-header>
+<div class="collapse" id="pendidikan-filter-area">
+    <x-tabler.datatable-filter dataTableId="pendidikan-table" type="bare">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <x-tabler.form-select name="jenjang" label="Jenjang" placeholder="" class="mb-0"
+                    :options="['D3' => 'D3', 'D4' => 'D4', 'S1' => 'S1', 'S2' => 'S2', 'S3' => 'S3']">
+                    <option value="all" selected>Semua Jenjang</option>
+                </x-tabler.form-select>
+            </div>
+        </div>
+    </x-tabler.datatable-filter>
+</div>
 <div class="table-responsive">
     <x-tabler.datatable
         id="pendidikan-table"

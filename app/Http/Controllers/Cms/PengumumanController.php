@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Cms;
 
 use App\Http\Controllers\Controller;
@@ -11,8 +12,7 @@ use Yajra\DataTables\DataTables;
 
 class PengumumanController extends Controller
 {
-    public function __construct(protected PengumumanService $pengumumanService)
-    {}
+    public function __construct(protected PengumumanService $pengumumanService) {}
 
     /**
      * Display a listing of the resource.
@@ -34,7 +34,8 @@ class PengumumanController extends Controller
     {
         $penulisOptions = User::all();
         // Pass a new instance for the view to handle checks like $pengumuman->exists
-        $pengumuman = new Pengumuman();
+        $pengumuman = new Pengumuman;
+
         return view('pages.cms.pengumuman.create-edit', compact('type', 'penulisOptions', 'pengumuman'));
     }
 
@@ -51,10 +52,10 @@ class PengumumanController extends Controller
             $data['attachments'] = $request->file('attachments');
         }
 
-        $pengumuman    = $this->pengumumanService->createPengumuman($data);
+        $pengumuman = $this->pengumumanService->createPengumuman($data);
         $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'cms.pengumuman.index' : 'cms.berita.index';
 
-        return redirect()->route($redirectRoute)->with('success', ucfirst($pengumuman->jenis) . ' berhasil ditambahkan.');
+        return redirect()->route($redirectRoute)->with('success', ucfirst($pengumuman->jenis).' berhasil ditambahkan.');
     }
 
     public function show(Pengumuman $pengumuman)
@@ -65,7 +66,8 @@ class PengumumanController extends Controller
     public function edit(Pengumuman $pengumuman)
     {
         $penulisOptions = User::all();
-        $type           = $pengumuman->jenis;
+        $type = $pengumuman->jenis;
+
         return view('pages.cms.pengumuman.create-edit', compact('pengumuman', 'type', 'penulisOptions'));
     }
 
@@ -85,7 +87,7 @@ class PengumumanController extends Controller
         $this->pengumumanService->updatePengumuman($pengumuman, $data);
         $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'cms.pengumuman.index' : 'cms.berita.index';
 
-        return redirect()->route($redirectRoute)->with('success', ucfirst($pengumuman->jenis) . ' berhasil diperbarui.');
+        return redirect()->route($redirectRoute)->with('success', ucfirst($pengumuman->jenis).' berhasil diperbarui.');
     }
 
     /**
@@ -96,7 +98,8 @@ class PengumumanController extends Controller
         $jenis = $pengumuman->jenis;
         $this->pengumumanService->deletePengumuman($pengumuman);
         $redirectRoute = $jenis === 'pengumuman' ? 'cms.pengumuman.index' : 'cms.berita.index';
-        return jsonSuccess(ucfirst($jenis) . ' deleted successfully.', route($redirectRoute));
+
+        return jsonSuccess(ucfirst($jenis).' deleted successfully.', route($redirectRoute));
     }
 
     /**
@@ -120,6 +123,7 @@ class PengumumanController extends Controller
             ->editColumn('judul', function ($item) {
                 $encryptedId = encryptId($item->pengumuman_id);
                 $routePrefix = $item->jenis === 'berita' ? 'cms.berita' : 'cms.pengumuman';
+
                 return $item->judul;
             })
             ->addColumn('cover', function ($item) {
@@ -129,15 +133,16 @@ class PengumumanController extends Controller
                     return '';
                 }
 
-                return '<img src="' . $url . '" class="rounded" style="width: 40px; height: 40px; object-fit: cover;">';
+                return '<img src="'.$url.'" class="rounded" style="width: 40px; height: 40px; object-fit: cover;">';
             })
             ->addColumn('author', function ($item) {
                 return $item->penulis ? $item->penulis->name : '-';
             })
             ->editColumn('is_published', function ($item) {
                 $status = $item->is_published ? 'Published' : 'Draft';
-                $class  = $item->is_published ? 'bg-label-success' : 'bg-label-warning';
-                return '<span class="badge ' . $class . '">' . $status . '</span>';
+                $class = $item->is_published ? 'bg-label-success' : 'bg-label-warning';
+
+                return '<span class="badge '.$class.'">'.$status.'</span>';
             })
             ->editColumn('created_at', function ($item) {
                 return formatTanggalIndo($item->created_at);
@@ -147,10 +152,10 @@ class PengumumanController extends Controller
                 $routePrefix = $item->jenis === 'berita' ? 'cms.berita' : 'cms.pengumuman';
 
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route($routePrefix . '.edit', $encryptedId),
+                    'editUrl' => route($routePrefix.'.edit', $encryptedId),
                     'editModal' => false,
-                    'viewUrl'   => route($routePrefix . '.show', $encryptedId),
-                    'deleteUrl' => route($routePrefix . '.destroy', $encryptedId),
+                    'viewUrl' => route($routePrefix.'.show', $encryptedId),
+                    'deleteUrl' => route($routePrefix.'.destroy', $encryptedId),
                 ])->render();
             })
             ->rawColumns(['judul', 'is_published', 'cover', 'action'])

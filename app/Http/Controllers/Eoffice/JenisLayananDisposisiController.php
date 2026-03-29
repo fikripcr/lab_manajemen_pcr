@@ -1,16 +1,15 @@
 <?php
+
 namespace App\Http\Controllers\Eoffice;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Eoffice\JenisLayananDisposisiRequest;
 use App\Models\Eoffice\JenisLayanan;
 use App\Models\Eoffice\JenisLayananDisposisi;
-use App\Services\Eoffice\JenisLayananDisposisiService;
 
 class JenisLayananDisposisiController extends Controller
 {
-    public function __construct(protected \App\Services\Eoffice\JenisLayananDisposisiService $JenisLayananDisposisiService)
-    {}
+    public function __construct(protected \App\Services\Eoffice\JenisLayananDisposisiService $JenisLayananDisposisiService) {}
 
     public function create(JenisLayanan $jenisLayanan)
     {
@@ -28,6 +27,7 @@ class JenisLayananDisposisiController extends Controller
     public function store(JenisLayananDisposisiRequest $request, JenisLayanan $jenisLayanan)
     {
         $this->JenisLayananDisposisiService->store($jenisLayanan->jenislayanan_id, $request->validated());
+
         return jsonSuccess('Disposisi berhasil ditambahkan.');
     }
 
@@ -44,6 +44,7 @@ class JenisLayananDisposisiController extends Controller
         } else {
             $this->JenisLayananDisposisiService->updateTextKet($id, $request->validated());
         }
+
         return jsonSuccess('Disposisi berhasil diperbarui.');
     }
 
@@ -53,6 +54,7 @@ class JenisLayananDisposisiController extends Controller
     public function destroy(JenisLayananDisposisi $disposisi)
     {
         $this->JenisLayananDisposisiService->destroy($disposisi->jldisposisi_id);
+
         return jsonSuccess('Disposisi berhasil dihapus.');
     }
 
@@ -62,6 +64,7 @@ class JenisLayananDisposisiController extends Controller
     public function data(JenisLayanan $jenisLayanan)
     {
         $data = $this->JenisLayananDisposisiService->getByJenisLayanan($jenisLayanan->jenislayanan_id);
+
         return jsonSuccess('Data retrieved', null, $data);
     }
 
@@ -79,6 +82,7 @@ class JenisLayananDisposisiController extends Controller
     public function updateSeq(\App\Http\Requests\Hr\ReorderRequest $request, $id)
     {
         $this->JenisLayananDisposisiService->updateSeq($id, $request->validated('seq'));
+
         return jsonSuccess('Urutan berhasil diperbarui.');
     }
 }

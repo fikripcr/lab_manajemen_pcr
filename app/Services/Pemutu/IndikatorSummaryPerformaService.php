@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Pemutu;
 
 use App\Models\Pemutu\IndikatorPegawai;
@@ -50,7 +51,7 @@ class IndikatorSummaryPerformaService
 
         // Search
         $searchValue = $request->input('search.value') ?? $request->input('search');
-        $search      = is_array($searchValue) ? ($searchValue['value'] ?? '') : (string) $searchValue;
+        $search = is_array($searchValue) ? ($searchValue['value'] ?? '') : (string) $searchValue;
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -73,13 +74,13 @@ class IndikatorSummaryPerformaService
      */
     public function getSummaryCounts(Request $request): array
     {
-        $query   = $this->getQuery($request);
+        $query = $this->getQuery($request);
         $allData = $query->get();
 
         return [
             'totalIndikatorActive' => $allData->unique('indikator_id')->count(),
-            'kpiTotalPegawai'      => $allData->unique('pegawai_id')->count(),
-            'kpiAvgScore'          => $allData->avg('score') ?? 0,
+            'kpiTotalPegawai' => $allData->unique('pegawai_id')->count(),
+            'kpiAvgScore' => $allData->avg('score') ?? 0,
         ];
     }
 }

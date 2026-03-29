@@ -21,11 +21,10 @@ $columns = [
         ['data' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false],
     ],
     'indikator' => [
-        ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
-        ['data' => 'no_indikator', 'title' => 'No / Kode'],
-        ['data' => 'indikator', 'title' => 'Nama Indikator'],
-        ['data' => 'unit_target', 'title' => 'Unit & Target', 'orderable' => false, 'searchable' => false],
-        ['data' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false],
+        ['data' => 'no', 'name' => 'no', 'title' => '#', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '5%'],
+        ['data' => 'indikator', 'name' => 'indikator', 'title' => 'Indikator'],
+        ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'class' => 'text-center'],
+        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '10%']
     ],
     'mapping' => [
         ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
@@ -44,7 +43,7 @@ $columns = [
 
 <x-tabler.card>
     <x-tabler.card-body>
-        <div class="d-flex justify-content-between align-items-start mb-1">
+        <div class="d-flex justify-content-between align-items-start">
             <div>
                 <span class="badge bg-{{ $type === 'dokumen' ? 'primary' : 'secondary' }}-lt">
                     {{ $type === 'dokumen' ? 'DOKUMEN' : 'POIN' }} {{ strtoupper($config->label()) }}
@@ -127,7 +126,7 @@ $columns = [
                 </div>
             </div>
         </div>
-        <h2>{{ ($item->kode ?? '') . ' ' . $item->judul }} <span class="text-muted small">(Tahun {{ $item->periode ?? ($item->dokumen->periode ?? '') }})</span></h2>
+        <h2>{{ ($item->kode ?? '') . ' ' . $item->judul }}</h2>
         <div class="p-2">
             <ul class="nav nav-tabs card-header-tabs my-2" id="workspace-tabs-{{ $item->encrypted_doksub_id ?? ($item->encrypted_dok_id ?? 'root') }}" role="tablist">
                 {{-- Overview Tab (Always shown) --}}
@@ -167,13 +166,8 @@ $columns = [
                     </li>
                     
                 @elseif($type === 'poin')
-                    {{-- POIN TYPE TABS - Simplified with jenis column --}}
-                    @php
-                        $poinJenis = $item->jenis; // Always exists, auto-filled on create
-                    @endphp
-                    
                     {{-- Tab Indikator - For Renop & Standar poin --}}
-                    @if(in_array($poinJenis, ['poin_renop', 'poin_standar']) && $item->is_hasilkan_indikator)
+                    @if(in_array($item->jenis, ['poin_renop', 'poin_standar']) && $item->is_hasilkan_indikator)
                         <li class="nav-item" role="presentation">
                             <a href="#tab-subdokumen" class="nav-link" data-bs-toggle="tab" role="tab">
                                 <i class="ti ti-target icon me-1"></i> Daftar Indikator
@@ -182,7 +176,7 @@ $columns = [
                     @endif
 
                     {{-- Tab Mapping - Only for specific poin types --}}
-                    @if(in_array($poinJenis, ['poin_misi', 'poin_rjp', 'poin_renstra', 'poin_renop']))
+                    @if(in_array($item->jenis, ['poin_misi', 'poin_rjp', 'poin_renstra', 'poin_renop']))
                         <li class="nav-item" role="presentation">
                             <a href="#tab-mapping" class="nav-link" data-bs-toggle="tab" role="tab">
                                 <i class="ti ti-link icon me-1"></i> Mapping
@@ -274,14 +268,18 @@ $columns = [
                 @if($type === 'dokumen')
                     @if($item->jenis === 'renop')
                         <div class="tab-pane" id="tab-indikator-renop" role="tabpanel">
+                            <div class="alert alert-info alert-important bg-primary-lt mt-3 mb-3 mx-3 rounded border-primary">
+                                <div class="d-flex">
+                                    <div>
+                                        <i class="ti ti-info-circle me-2 icon text-primary"></i>
+                                    </div>
+                                    <div class="text-secondary">
+                                        Indikator yang ditampilkan merupakan indikator <strong>Standar</strong> yang berlabel <span class="status status-secondary">RENOP</span> pada tahun <strong>{{ $item->periode ?? date('Y') }}</strong>.
+                                    </div>
+                                </div>
+                            </div>
                             <x-tabler.card>
-                                <x-tabler.card-header title="Daftar Indikator RENOP">
-                                    <x-slot:actions>
-                                        <x-tabler.button type="create" class="btn-success"
-                                            href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'type' => 'renop', 'is_renop_context' => 1, 'redirect_to' => url()->current()]) }}"
-                                            text="Tambah Indikator" size="sm" />
-                                    </x-slot:actions>
-                                </x-tabler.card-header>
+                                <x-tabler.card-header title="Daftar Indikator RENOP"/>
                                 <x-tabler.datatable
                                     id="indikator-renop-table"
                                     :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'renop_indikator', 'id' => $item->encrypted_dok_id])"
@@ -289,27 +287,22 @@ $columns = [
                                     ajax-load />
                             </x-tabler.card>
                         </div>
-                    @elseif($item->jenis === 'formulir')
-                        {{-- Mapping content is handled in the unified mapping section below --}}
                     @else
                         <div class="tab-pane" id="tab-subdokumen" role="tabpanel">
-                            <x-tabler.card>
-                                <x-tabler.card-header title="Daftar {{ $childLabel ?? 'Turunan' }}">
-                                    <x-slot:actions>
-                                        <x-tabler.button type="create" class="ajax-modal-btn"
-                                            text="Tambah {{ $childLabel ?? 'Turunan' }}"
-                                            data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => $isDokSubBased ? 'poin' : 'dokumen', 'parent_id' => $item->encrypted_dok_id]) }}"
-                                            data-modal-title="Tambah {{ $childLabel ?? 'Turunan' }}"
-                                            data-modal-size="{{ $isDokSubBased ? 'modal-lg' : 'modal-md' }}"
-                                            size="sm" />
-                                    </x-slot:actions>
-                                </x-tabler.card-header>
-                                <x-tabler.datatable
-                                    id="children-table"
-                                    :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id])"
-                                    :columns="$columns['children']"
-                                    ajax-load />
-                            </x-tabler.card>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h4 class="m-0 text-muted fw-medium">Daftar {{ $childLabel ?? 'Turunan' }}</h4>
+                                <x-tabler.button type="create" class="ajax-modal-btn"
+                                        text="Tambah {{ $childLabel ?? 'Turunan' }}"
+                                        data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => $isDokSubBased ? 'poin' : 'dokumen', 'parent_id' => $item->encrypted_dok_id]) }}"
+                                        data-modal-title="Tambah {{ $childLabel ?? 'Turunan' }}"
+                                        data-modal-size="{{ $isDokSubBased ? 'modal-lg' : 'modal-md' }}"
+                                        size="sm" />
+                            </div>
+                            <x-tabler.datatable
+                                id="children-table"
+                                :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id])"
+                                :columns="$columns['children']"
+                                ajax-load />
                         </div>
                     @endif
                 @elseif($type === 'poin')
@@ -438,7 +431,7 @@ $columns = [
 
                 <div class="tab-pane" id="tab-informasi" role="tabpanel">
                     @if($type === 'dokumen')
-                        <x-tabler.approval-history :approvals="$item->approvals" />
+                        <x-tabler.approval-history :approvals="$item->riwayatApprovals" />
                     @else
                         <x-tabler.empty-state
                             icon="ti ti-info-circle"
@@ -516,9 +509,7 @@ $columns = [
                 const modal = bootstrap.Modal.getInstance(uploadModal);
                 if (modal) modal.hide();
                 if(typeof showSuccessMessage === 'function') showSuccessMessage(response.data.message || 'File berhasil diunggah');
-                // Reload content
-                const activeLink = document.querySelector('.tree-item-link.active');
-                if (activeLink) activeLink.click();
+                // Redirect akan di-handle oleh response jsonSuccess dengan parameter redirect
             } else {
                 if(typeof showErrorMessage === 'function') showErrorMessage('Gagal', response.data.message || 'Gagal mengunggah file.');
                 else alert(response.data.message || 'Gagal mengunggah file.');

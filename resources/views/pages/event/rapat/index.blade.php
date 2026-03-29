@@ -3,7 +3,7 @@
 @section('header')
     <x-tabler.page-header title="Manajemen Rapat" pretitle="Kegiatan / Rapat">
         <x-slot:actions>
-            <x-tabler.button type="create" href="{{ route('Kegiatan.rapat.create') }}" text="Jadwalkan" />
+            <x-tabler.button type="button" class="ajax-modal-btn" data-url="{{ route('Kegiatan.rapat.create') }}" data-modal-size="modal-xl" data-modal-title="Jadwalkan Rapat" icon="ti ti-plus" text="Jadwalkan" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection

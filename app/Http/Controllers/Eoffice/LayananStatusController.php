@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Eoffice;
 
 use App\Http\Controllers\Controller;
@@ -8,8 +9,7 @@ use App\Services\Eoffice\LayananStatusService;
 
 class LayananStatusController extends Controller
 {
-    public function __construct(protected LayananStatusService $LayananStatusService)
-    {}
+    public function __construct(protected LayananStatusService $LayananStatusService) {}
 
     /**
      * Update the status of a layanan (disposition workflow).
@@ -20,7 +20,7 @@ class LayananStatusController extends Controller
 
         if ($request->hasFile('file_lampiran')) {
             $data['file_lampiran'] = $request->file('file_lampiran')
-                ->store('eoffice/status_attachments/' . date('Y/m'), 'public');
+                ->store('eoffice/status_attachments/'.date('Y/m'), 'public');
         }
 
         $this->LayananStatusService->update($layanan->layanan_id, $status, $data);

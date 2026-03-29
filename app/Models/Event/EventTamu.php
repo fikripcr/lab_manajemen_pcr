@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Event;
 
 use App\Traits\Blameable;
@@ -11,9 +12,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class EventTamu extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding, InteractsWithMedia;
+    use Blameable, HasFactory, HashidBinding, InteractsWithMedia, SoftDeletes;
 
-    protected $table      = 'event_tamus';
+    protected $table = 'event_tamus';
+
     protected $primaryKey = 'eventtamu_id';
 
     protected $appends = ['encrypted_eventtamu_id'];

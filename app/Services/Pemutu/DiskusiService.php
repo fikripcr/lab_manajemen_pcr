@@ -4,7 +4,6 @@ namespace App\Services\Pemutu;
 
 use App\Models\Pemutu\Diskusi;
 use App\Models\Pemutu\IndikatorOrgUnit;
-use Illuminate\Support\Facades\Storage;
 
 class DiskusiService
 {
@@ -26,11 +25,11 @@ class DiskusiService
 
         $payload = [
             'pengirim_user_id' => auth()->id(),
-            'jenis_pengirim'   => $data['jenis_pengirim'] ?? 'auditor',
-            'jenis_diskusi'    => $data['jenis_diskusi'] ?? 'ami',
-            'isi'              => $data['isi'],
-            'attachment_link'  => ! empty($linksArray) ? $linksArray : null,
-            'is_done'          => false,
+            'jenis_pengirim' => $data['jenis_pengirim'] ?? 'auditor',
+            'jenis_diskusi' => $data['jenis_diskusi'] ?? 'ami',
+            'isi' => $data['isi'],
+            'attachment_link' => ! empty($linksArray) ? $linksArray : null,
+            'is_done' => false,
         ];
 
         $diskusi = $indOrg->diskusi()->create($payload);
@@ -48,6 +47,7 @@ class DiskusiService
     public function toggleDone(Diskusi $diskusi): Diskusi
     {
         $diskusi->update(['is_done' => ! $diskusi->is_done]);
+
         return $diskusi;
     }
 }

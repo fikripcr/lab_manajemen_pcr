@@ -21,7 +21,7 @@
                 <div class="row g-2">
                     <div class="col-12">
                         <x-tabler.form-select name="jenislayanan_id" label="Jenis Layanan" id="f_jenislayanan">
-                            <option value="">Semua Jenis Layanan</option>
+                            <option value="all">Semua Jenis Layanan</option>
                             @foreach($jenisLayananList as $jl)
                                 <option value="{{ encryptId($jl->jenislayanan_id) }}">{{ $jl->nama_layanan }}</option>
                             @endforeach

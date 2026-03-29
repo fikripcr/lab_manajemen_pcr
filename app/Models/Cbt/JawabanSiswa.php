@@ -1,16 +1,16 @@
 <?php
+
 namespace App\Models\Cbt;
 
-use App\Models\Cbt\OpsiJawaban;
-use App\Models\Cbt\RiwayatUjianSiswa;
-use App\Models\Cbt\Soal;
 use Illuminate\Database\Eloquent\Model;
 
 class JawabanSiswa extends Model
 {
-    protected $table      = 'cbt_jawaban_siswa';
+    protected $table = 'cbt_jawaban_siswa';
+
     protected $primaryKey = 'jawaban_siswa_id';
-    protected $appends    = ['encrypted_jawaban_siswa_id'];
+
+    protected $appends = ['encrypted_jawaban_siswa_id'];
 
     protected $fillable = [
         'riwayat_id',
@@ -22,7 +22,7 @@ class JawabanSiswa extends Model
     ];
 
     protected $casts = [
-        'is_ragu'       => 'boolean',
+        'is_ragu' => 'boolean',
         'nilai_didapat' => 'decimal:2',
     ];
 

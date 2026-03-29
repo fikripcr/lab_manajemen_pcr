@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Cbt;
 
 use App\Http\Controllers\Controller;
@@ -16,8 +17,7 @@ use Log;
 
 class ExamExecutionController extends Controller
 {
-    public function __construct(protected ExamExecutionService $examExecutionService)
-    {}
+    public function __construct(protected ExamExecutionService $examExecutionService) {}
 
     /**
      * Unified Dashboard (Admin & Camaba)
@@ -28,11 +28,12 @@ class ExamExecutionController extends Controller
 
         if ($user->hasRole('camaba')) {
             $data = $this->examExecutionService->getExamInterfaceData($user->id);
+
             return view('pages.cbt.dashboard.index', $data);
         }
 
-        $stats            = $this->examExecutionService->getMonitoringStats();
-        $activeExams      = $this->examExecutionService->getActiveExams();
+        $stats = $this->examExecutionService->getMonitoringStats();
+        $activeExams = $this->examExecutionService->getActiveExams();
         $recentViolations = $this->examExecutionService->getRecentViolations(10);
 
         return view('pages.cbt.dashboard.index', compact('stats', 'activeExams', 'recentViolations'));
@@ -43,7 +44,7 @@ class ExamExecutionController extends Controller
      */
     public function saveAnswerApi(SaveAnswerRequest $request)
     {
-        $user    = auth()->user();
+        $user = auth()->user();
         $riwayat = RiwayatUjianSiswa::where('user_id', $user->id)
             ->where('status', 'Sedang_Mengerjakan')
             ->firstOrFail();
@@ -58,7 +59,7 @@ class ExamExecutionController extends Controller
      */
     public function submitExamApi(SubmitExamRequest $request)
     {
-        $user    = auth()->user();
+        $user = auth()->user();
         $riwayat = RiwayatUjianSiswa::where('user_id', $user->id)
             ->where('status', 'Sedang_Mengerjakan')
             ->firstOrFail();
@@ -87,7 +88,7 @@ class ExamExecutionController extends Controller
             $jadwalId = $request->input('jadwal_id');
             if ($jadwalId) {
                 $decryptedJadwalId = decryptIdIfEncrypted($jadwalId);
-                $riwayat           = RiwayatUjianSiswa::where('user_id', $user->id)
+                $riwayat = RiwayatUjianSiswa::where('user_id', $user->id)
                     ->where('jadwal_id', $decryptedJadwalId)
                     ->first();
             }
@@ -103,10 +104,10 @@ class ExamExecutionController extends Controller
 
         if ($riwayat) {
             LogPelanggaran::create([
-                'riwayat_id'        => $riwayat->getKey(),
+                'riwayat_id' => $riwayat->getKey(),
                 'jenis_pelanggaran' => $request->validated('type'),
-                'keterangan'        => $request->validated('keterangan') ?? $request->validated('type'),
-                'waktu_kejadian'    => now(),
+                'keterangan' => $request->validated('keterangan') ?? $request->validated('type'),
+                'waktu_kejadian' => now(),
             ]);
 
             return jsonSuccess();
@@ -115,7 +116,7 @@ class ExamExecutionController extends Controller
         // No riwayat found - log error but return success to avoid client errors
         Log::warning('Violation logged without valid riwayat', [
             'user_id' => $user->id,
-            'type'    => $request->validated('type'),
+            'type' => $request->validated('type'),
         ]);
 
         return jsonSuccess(['warning' => 'No active exam found']);
@@ -155,7 +156,7 @@ class ExamExecutionController extends Controller
         }
 
         // Set session flag to allow access to start exam
-        session(['cbt_token_validated_' . $jadwal->jadwal_ujian_id => true]);
+        session(['cbt_token_validated_'.$jadwal->jadwal_ujian_id => true]);
 
         return jsonSuccess('Token valid.', route('cbt.execute.start', $jadwal->hashid));
     }
@@ -179,7 +180,7 @@ class ExamExecutionController extends Controller
         }
 
         $totalSoal = $jadwal->paket->komposisi->count();
-        $durasi    = $jadwal->waktu_mulai->diffInMinutes($jadwal->waktu_selesai);
+        $durasi = $jadwal->waktu_mulai->diffInMinutes($jadwal->waktu_selesai);
 
         return view('pages.cbt.execution.welcome', compact('jadwal', 'totalSoal', 'durasi', 'existing'));
     }
@@ -192,7 +193,7 @@ class ExamExecutionController extends Controller
         $user = auth()->user();
         $jadwal->load(['paket.komposisi.soal.opsiJawaban', 'paket.komposisi.soal.mataUji']);
         $riwayat = $this->examExecutionService->startExam($jadwal, $user, [
-            'ip'         => $request->ip(),
+            'ip' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
 
@@ -204,7 +205,7 @@ class ExamExecutionController extends Controller
         // Build flat ordered soal collection from komposisi
         $paketSoal = $jadwal->paket->komposisi
             ->sortBy('urutan_tampil')
-            ->map(fn($komp) => $komp->soal)
+            ->map(fn ($komp) => $komp->soal)
             ->filter()
             ->values();
 
@@ -221,6 +222,7 @@ class ExamExecutionController extends Controller
     public function saveAnswer(SaveAnswerRequest $request, RiwayatUjianSiswa $riwayat)
     {
         $this->examExecutionService->saveAnswer($riwayat, $request->validated());
+
         return jsonSuccess('Jawaban disimpan.');
     }
 
@@ -232,6 +234,7 @@ class ExamExecutionController extends Controller
         $this->examExecutionService->submitExam($riwayat);
 
         $redirect = auth()->user()->hasRole('admin') ? route('cbt.dashboard') : route('cbt.execute.finished', $riwayat->jadwal->hashid);
+
         return jsonSuccess('Ujian berhasil diserahkan. Terima kasih.', $redirect);
     }
 
@@ -240,7 +243,7 @@ class ExamExecutionController extends Controller
      */
     public function finished(JadwalUjian $jadwal)
     {
-        $user    = auth()->user();
+        $user = auth()->user();
         $riwayat = RiwayatUjianSiswa::where('jadwal_id', $jadwal->jadwal_ujian_id)
             ->where('user_id', $user->id)
             ->firstOrFail();
@@ -257,7 +260,7 @@ class ExamExecutionController extends Controller
             return jsonError('Hanya admin yang dapat mereset data ujian testing.');
         }
 
-        $user    = auth()->user();
+        $user = auth()->user();
         $riwayat = RiwayatUjianSiswa::where('jadwal_id', $jadwal->jadwal_ujian_id)
             ->where('user_id', $user->id)
             ->first();
@@ -279,7 +282,7 @@ class ExamExecutionController extends Controller
      */
     public function testExam(JadwalUjian $jadwal)
     {
-        $user    = auth()->user();
+        $user = auth()->user();
         $riwayat = RiwayatUjianSiswa::where('jadwal_id', $jadwal->jadwal_ujian_id)
             ->where('user_id', $user->id)
             ->first();
@@ -299,8 +302,10 @@ class ExamExecutionController extends Controller
      */
     public function monitor(JadwalUjian $jadwal)
     {
-        $jadwal->load(['riwayatSiswa.user', 'riwayatSiswa.jawaban']);
-        return view('pages.cbt.execution.monitor', compact('jadwal'));
+        $jadwal->load(['riwayatSiswa.user', 'riwayatSiswa.jawaban', 'riwayatSiswa.pelanggaran']);
+        $totalPelanggaran = $jadwal->riwayatSiswa->sum(fn ($r) => $r->pelanggaran->count());
+
+        return view('pages.cbt.execution.monitor', compact('jadwal', 'totalPelanggaran'));
     }
 
     /**

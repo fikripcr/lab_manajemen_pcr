@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Lab;
 
 use App\Http\Requests\BaseRequest;
 
 class SuratBebasLabRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -29,7 +27,7 @@ class SuratBebasLabRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'status'  => 'Status',
+            'status' => 'Status',
             'catatan' => 'Catatan',
         ];
     }

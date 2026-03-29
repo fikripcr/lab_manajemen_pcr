@@ -45,7 +45,7 @@ if (isset($fixedJenis)) {
     :method="$method"
     :submitText="$isEdit ? 'Simpan Perubahan' : 'Simpan'"
     :submitIcon="$isEdit ? 'ti-device-floppy' : 'ti-plus'"
-    :size="($mode === 'title' || (!$isEdit && $type === 'poin')) ? 'modal-lg' : 'modal-xl'"
+    :size="($mode === 'title' || (!$isEdit && $type === 'poin')) ? 'modal-lg' : ''"
 >
     {{-- A. DOKUMEN FORM --}}
     @if($type === 'dokumen')
@@ -53,25 +53,11 @@ if (isset($fixedJenis)) {
         <input type="hidden" name="periode" value="{{ $isEdit ? $dokumen->periode : ($currentPeriode ? $currentPeriode->periode : '') }}">
         <input type="hidden" name="parent_id" value="{{ $isEdit ? $dokumen->parent_id : (isset($parent) ? $parent->encrypted_dok_id : '') }}">
 
-        @if(!$isEdit && $currentPeriode)
-            <div class="mb-3">
-                <label class="form-label">Tahun Siklus</label>
-                <div class="form-control-plaintext fw-bold">
-                    <span class="badge bg-blue-lt">{{ $currentPeriode->periode }} ({{ $currentPeriode->jenis_periode }})</span>
-                </div>
-            </div>
-        @endif
-
         @if(!$isEdit)
             @if(isset($parentDokSub))
                 <input type="hidden" name="parent_doksub_id" value="{{ $parentDokSub->encrypted_doksub_id }}">
             @endif
-            @if(isset($fixedJenis))
-                <div class="mb-3">
-                    <label class="form-label">Jenis Dokumen</label>
-                    <div class="form-control-plaintext fw-bold">{{ ucfirst($fixedJenis) }}</div>
-                </div>
-            @else
+            @if(!isset($fixedJenis))
                 <div class="mb-3">
                     <x-tabler.form-select
                         id="jenis"

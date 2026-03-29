@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Requests\Lab;
 
 use App\Http\Requests\BaseRequest;
@@ -6,15 +7,12 @@ use App\Http\Requests\BaseRequest;
 class LabTeamRequest extends BaseRequest
 {
     /**
-     */
-
-    /**
      * Get the validation rules that apply to the request.
      */
     public function rules(): array
     {
         return [
-            'user_id'       => 'required', // ID is encrypted string
+            'user_id' => 'required', // ID is encrypted string
             'tanggal_mulai' => 'nullable|date',
         ];
     }
@@ -22,8 +20,8 @@ class LabTeamRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'user_id'       => 'User',
-            'jabatan'       => 'Jabatan',
+            'user_id' => 'User',
+            'jabatan' => 'Jabatan',
             'tanggal_mulai' => 'Tanggal Mulai',
         ];
     }

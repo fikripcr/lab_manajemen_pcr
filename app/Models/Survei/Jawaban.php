@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Survei;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,7 +23,7 @@ class Jawaban extends Model
 
     protected $casts = [
         'nilai_tanggal' => 'date',
-        'nilai_json'    => 'array',
+        'nilai_json' => 'array',
     ];
 
     public function pengisian()

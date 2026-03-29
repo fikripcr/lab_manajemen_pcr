@@ -1,15 +1,16 @@
 <?php
+
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Pemutu\StoreTimMutuRequest;
 use App\Http\Requests\Hr\SearchRequest;
+use App\Http\Requests\Pemutu\StoreTimMutuRequest;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Models\Pemutu\TimMutu;
-use App\Models\Hr\StrukturOrganisasi;
+use App\Services\Hr\StrukturOrganisasiService;
 use App\Services\Pemutu\PeriodeSpmiService;
 use App\Services\Pemutu\TimMutuService;
-use App\Services\Hr\StrukturOrganisasiService;
 
 class TimMutuController extends Controller
 {
@@ -28,16 +29,16 @@ class TimMutuController extends Controller
     public function index()
     {
         $siklus = $this->PeriodeSpmiService->getSiklusData();
-        
+
         $data = [
             'pageTitle' => 'Tim Mutu',
-            'siklus'    => $siklus,
-            'units'     => $this->strukturOrganisasiService->getHierarchicalList(),
+            'siklus' => $siklus,
+            'units' => $this->strukturOrganisasiService->getHierarchicalList(),
         ];
 
         $assignmentMap = [];
         $units = $this->strukturOrganisasiService->getHierarchicalList();
-        
+
         foreach (['akademik', 'non_akademik'] as $type) {
             $periode = $siklus[$type];
             if ($periode) {
@@ -45,11 +46,11 @@ class TimMutuController extends Controller
                 foreach ($assignments as $unitId => $items) {
                     $encryptedId = encryptId($unitId);
                     $assignmentMap[$encryptedId] = [
-                        'periode_id'    => $periode->encrypted_periodespmi_id,
-                        'auditee'       => $items->where('role', 'auditee')->first(),
+                        'periode_id' => $periode->encrypted_periodespmi_id,
+                        'auditee' => $items->where('role', 'auditee')->first(),
                         'ketua_auditor' => $items->where('role', 'ketua_auditor')->first(),
-                        'auditor'       => $items->where('role', 'auditor')->values(),
-                        'anggota'       => $items->where('role', 'anggota')->values(),
+                        'auditor' => $items->where('role', 'auditor')->values(),
+                        'anggota' => $items->where('role', 'anggota')->values(),
                     ];
                 }
             }
@@ -62,20 +63,20 @@ class TimMutuController extends Controller
                 $periode = $this->getBestPeriodeForUnit($unit, $siklus);
                 if ($periode) {
                     $assignmentMap[$encUnitId] = [
-                        'periode_id'    => $periode->encrypted_periodespmi_id,
-                        'auditee'       => null,
+                        'periode_id' => $periode->encrypted_periodespmi_id,
+                        'auditee' => null,
                         'ketua_auditor' => null,
-                        'auditor'       => collect(),
-                        'anggota'       => collect(),
+                        'auditor' => collect(),
+                        'anggota' => collect(),
                     ];
                 }
             }
         }
-        
+
         $data = [
-            'pageTitle'     => 'Tim Mutu',
-            'siklus'        => $siklus,
-            'units'         => $units,
+            'pageTitle' => 'Tim Mutu',
+            'siklus' => $siklus,
+            'units' => $units,
             'assignmentMap' => $assignmentMap,
         ];
 
@@ -87,7 +88,7 @@ class TimMutuController extends Controller
      */
     private function getBestPeriodeForUnit($unit, $siklus)
     {
-        $pAkademik    = $siklus['akademik'] ?? null;
+        $pAkademik = $siklus['akademik'] ?? null;
         $pNonAkademik = $siklus['non_akademik'] ?? null;
 
         // Common academic unit types
@@ -106,7 +107,7 @@ class TimMutuController extends Controller
     public function editAuditee(PeriodeSpmi $periode, StrukturOrganisasi $unit)
     {
         $periodeId = $periode->periodespmi_id;
-        $unitId    = $unit->orgunit_id;
+        $unitId = $unit->orgunit_id;
 
         $assignments = TimMutu::forPeriode($periodeId)
             ->forUnit($unitId)
@@ -126,10 +127,10 @@ class TimMutuController extends Controller
     {
         $validated = $request->validated();
         $periodeId = $periode->periodespmi_id;
-        $unitId    = $unit->orgunit_id;
+        $unitId = $unit->orgunit_id;
 
-        $auditeeId  = isset($validated['auditee_id']) ? decryptId($validated['auditee_id']) : null;
-        $anggotaIds = collect($validated['anggota_ids'] ?? [])->filter()->map(fn($id) => decryptId($id))->toArray();
+        $auditeeId = isset($validated['auditee_id']) ? decryptId($validated['auditee_id']) : null;
+        $anggotaIds = collect($validated['anggota_ids'] ?? [])->filter()->map(fn ($id) => decryptId($id))->toArray();
 
         // Pass nulls for auditor side to a theoretical updateUnitTimMutuPart
         // or just use existing updateUnitTimMutu if it supports partial updates.
@@ -137,6 +138,7 @@ class TimMutuController extends Controller
         $this->timMutuService->updateAuditee($periodeId, $unitId, $auditeeId, $anggotaIds);
 
         logActivity('pemutu', "Memperbarui Tim Auditee untuk unit: {$unit->name} pada periode: {$periode->periode}");
+
         return jsonSuccess('Tim Auditee berhasil disimpan.', route('pemutu.tim-mutu.index'));
     }
 
@@ -146,7 +148,7 @@ class TimMutuController extends Controller
     public function editAuditor(PeriodeSpmi $periode, StrukturOrganisasi $unit)
     {
         $periodeId = $periode->periodespmi_id;
-        $unitId    = $unit->orgunit_id;
+        $unitId = $unit->orgunit_id;
 
         $assignments = TimMutu::forPeriode($periodeId)
             ->forUnit($unitId)
@@ -154,7 +156,7 @@ class TimMutuController extends Controller
             ->get();
 
         $ketuaAuditor = $assignments->where('role', 'ketua_auditor')->first();
-        $auditor      = $assignments->where('role', 'auditor');
+        $auditor = $assignments->where('role', 'auditor');
 
         return view('pages.pemutu.tim-mutu.edit-auditor-ajax', compact('periode', 'unit', 'ketuaAuditor', 'auditor'));
     }
@@ -166,14 +168,15 @@ class TimMutuController extends Controller
     {
         $validated = $request->validated();
         $periodeId = $periode->periodespmi_id;
-        $unitId    = $unit->orgunit_id;
+        $unitId = $unit->orgunit_id;
 
         $ketuaAuditorId = isset($validated['ketua_auditor_id']) ? decryptId($validated['ketua_auditor_id']) : null;
-        $auditorIds     = collect($validated['auditor_ids'] ?? [])->filter()->map(fn($id) => decryptId($id))->toArray();
+        $auditorIds = collect($validated['auditor_ids'] ?? [])->filter()->map(fn ($id) => decryptId($id))->toArray();
 
         $this->timMutuService->updateAuditor($periodeId, $unitId, $ketuaAuditorId, $auditorIds);
 
         logActivity('pemutu', "Memperbarui Tim Auditor untuk unit: {$unit->name} pada periode: {$periode->periode}");
+
         return jsonSuccess('Tim Auditor berhasil disimpan.', route('pemutu.tim-mutu.index'));
     }
 

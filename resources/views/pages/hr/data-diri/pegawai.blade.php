@@ -1,36 +1,27 @@
 <x-tabler.card-header class="border-bottom py-3">
-    <div class="d-flex flex-wrap gap-2 align-items-center">
-        <div>
-            <x-tabler.datatable-page-length :dataTableId="'pegawai-table'" />
-        </div>
-        <div>
-            <x-tabler.datatable-search :dataTableId="'pegawai-table'" />
-        </div>
-        <div>
-            <x-tabler.datatable-filter :dataTableId="'pegawai-table'">
-                <div class="col-12">
-                    <x-tabler.form-select id="filter-posisi" name="posisi_id" label="Filter Posisi" placeholder="Semua Posisi" class="mb-0">
-                        <option value="">Semua Posisi</option>
-                        @foreach($posisi as $p)
-                            <option value="{{ $p->orgunit_id }}">{{ $p->name }}</option>
-                        @endforeach
-                    </x-tabler.form-select>
-                </div>
-                <div class="col-12 mt-2">
-                    <x-tabler.form-select id="filter-unit" name="orgunit_id" label="Filter Unit" placeholder="Semua Unit" class="mb-0">
-                        <option value="">Semua Unit</option>
-                        @foreach($units as $u)
-                            <option value="{{ $u->orgunit_id }}">{{ $u->name }}</option>
-                        @endforeach
-                    </x-tabler.form-select>
-                </div>
-            </x-tabler.datatable-filter>
-        </div>
-        <div class="ms-auto d-flex gap-2">
-            <x-tabler.button class="btn-outline-success w-100 w-sm-auto" icon="ti ti-file-spreadsheet" text="Export Excel" />
-        </div>
+    <div class="d-flex gap-2 align-items-center">
+        <x-tabler.datatable-page-length :dataTableId="'pegawai-table'" />
+        <x-tabler.datatable-filter :dataTableId="'pegawai-table'" type="button" :target="'#pegawai-filter-area'" />
+        <x-tabler.datatable-search :dataTableId="'pegawai-table'" />
+        <x-tabler.button class="btn-outline-success" icon="ti ti-file-spreadsheet" text="Export Excel" />
     </div>
 </x-tabler.card-header>
+<div class="collapse" id="pegawai-filter-area">
+    <x-tabler.datatable-filter :dataTableId="'pegawai-table'" type="bare">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <x-tabler.form-select name="orgunit_id" label="Unit Kerja" placeholder="" class="mb-0" :options="$units">
+                    <option value="all" selected>Semua Unit</option>
+                </x-tabler.form-select>
+            </div>
+            <div class="col-md-4">
+                <x-tabler.form-select name="posisi_id" label="Posisi" placeholder="" class="mb-0" :options="$posisi">
+                    <option value="all" selected>Semua Posisi</option>
+                </x-tabler.form-select>
+            </div>
+        </div>
+    </x-tabler.datatable-filter>
+</div>
 <div class="table-responsive">
     <x-tabler.datatable
         id="pegawai-table"

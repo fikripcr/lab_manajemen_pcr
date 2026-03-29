@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Pemutu;
 
 use App\Models\Hr\Pegawai;
@@ -11,9 +12,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TimMutu extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'pemutu_tim_mutu';
+    protected $table = 'pemutu_tim_mutu';
+
     protected $primaryKey = 'tim_mutu_id';
 
     protected $appends = ['encrypted_tim_mutu_id'];

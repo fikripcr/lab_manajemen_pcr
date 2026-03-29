@@ -30,7 +30,7 @@
                     </div>
                     <div class="col-md-6">
                         <x-tabler.form-select id="categoryFilter" name="categoryFilter">
-                            <option value="">Semua Kategori</option>
+                            <option value="all">Semua Kategori</option>
                             @foreach($grouped as $category => $items)
                                 <option value="{{ strtolower($category) }}">{{ strtoupper($category) }}</option>
                             @endforeach

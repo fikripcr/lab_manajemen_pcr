@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Hr;
 
 use App\Http\Requests\BaseRequest;
 
 class PresensiLocationRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -23,7 +21,7 @@ class PresensiLocationRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'latitude'  => 'Latitude',
+            'latitude' => 'Latitude',
             'longitude' => 'Longitude',
         ];
     }

@@ -2,19 +2,17 @@
 
 namespace App\Models\Project;
 
-use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Project extends Model
 {
-    use HasFactory, SoftDeletes, HashidBinding, Blameable;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
     /**
      * Table name
@@ -45,9 +43,9 @@ class Project extends Model
      * Cast attributes
      */
     protected $casts = [
-        'is_agile'   => 'boolean',
+        'is_agile' => 'boolean',
         'start_date' => 'date',
-        'end_date'   => 'date',
+        'end_date' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
@@ -152,11 +150,11 @@ class Project extends Model
     public function getStatusBadgeClassAttribute(): string
     {
         return match ($this->status) {
-            'planning'  => 'bg-blue-lt',
-            'active'    => 'bg-green-lt',
+            'planning' => 'bg-blue-lt',
+            'active' => 'bg-green-lt',
             'completed' => 'bg-teal-lt',
-            'on_hold'   => 'bg-yellow-lt',
-            default     => 'bg-gray-lt',
+            'on_hold' => 'bg-yellow-lt',
+            default => 'bg-gray-lt',
         };
     }
 
@@ -165,7 +163,7 @@ class Project extends Model
      */
     public function getDateRangeAttribute(): string
     {
-        return formatTanggalIndo($this->start_date) . ' - ' . formatTanggalIndo($this->end_date);
+        return formatTanggalIndo($this->start_date).' - '.formatTanggalIndo($this->end_date);
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Models\Lab;
 
-use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SuratBebasLab extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'lab_surat_bebas_labs';
+    protected $table = 'lab_surat_bebas_labs';
+
     protected $primaryKey = 'surat_bebas_lab_id';
 
     protected $appends = ['encrypted_surat_bebas_lab_id'];

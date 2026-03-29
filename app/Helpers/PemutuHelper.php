@@ -17,7 +17,6 @@ use App\Config\PemutuDokumenConfig;
  *   OLD: pemutuDefaultSubDocuments('standar')
  *   NEW: PemutuDokumenConfig::for('standar')->getDefaultPoin()
  */
-
 if (! function_exists('pemutuJenisLabel')) {
     /**
      * @deprecated Use PemutuDokumenConfig::for($jenis)->label() instead
@@ -51,6 +50,7 @@ if (! function_exists('pemutuTabByJenis')) {
 if (! function_exists('pemutuChildLabel')) {
     /**
      * Get label for child elements based on parent document type.
+     *
      * @deprecated Will be replaced in future versions
      */
     function pemutuChildLabel($jenis): string
@@ -67,6 +67,7 @@ if (! function_exists('pemutuChildLabel')) {
 if (! function_exists('pemutuIsDokSubBased')) {
     /**
      * Check if document type uses Sub-Documents (DokSub) for its children.
+     *
      * @deprecated Will be replaced in future versions
      */
     function pemutuIsDokSubBased($jenis): bool
@@ -101,6 +102,7 @@ if (! function_exists('pemutuDefaultSubDocuments')) {
 if (! function_exists('pemutuFixedJenis')) {
     /**
      * Get the next document type in the hierarchy chain.
+     *
      * @deprecated Will be replaced in future versions
      */
     function pemutuFixedJenis($jenis): ?string
@@ -121,6 +123,7 @@ if (! function_exists('pemutuFixedJenis')) {
 if (! function_exists('pemutuIndikatorTypeInfo')) {
     /**
      * Get label and color for indicator type.
+     *
      * @deprecated Will be replaced in future versions
      */
     function pemutuIndikatorTypeInfo($type): array
@@ -138,6 +141,7 @@ if (! function_exists('pemutuIndikatorTypeInfo')) {
 if (! function_exists('pemutuKebijakanJenisList')) {
     /**
      * Get the ordered list of kebijakan document types.
+     *
      * @deprecated Use PemutuDokumenConfig::all() instead
      */
     function pemutuKebijakanJenisList(): array
@@ -196,6 +200,7 @@ if (! function_exists('pemutuLabelBadges')) {
         foreach ($labels as $label) {
             $badges[] = pemutuLabelBadge($label, $style);
         }
+
         return implode(' ', $badges);
     }
 }
@@ -209,7 +214,7 @@ if (! function_exists('pemutuDtColNo')) {
     {
         $origin = $row->origin_from ?? '';
         $type   = $row->type ? ucfirst($row->type) : 'Standar';
-        $kel    = $row->kelompok_indikator ?? '-';
+        $kel    = $row->kelompok_indikator ?? null;
         $risk   = strtoupper($row->level_risk ?? 'NO RISK');
         $jd     = $row->jenis_data ?? '-';
         $base   = $row->parent_no_indikator ?? ($row->parent?->no_indikator ?? null);
@@ -231,13 +236,9 @@ if (! function_exists('pemutuDtColNo')) {
             default       => 'secondary',
         };
 
-        $html  = '<div class="text-center small d-flex flex-column gap-1 align-items-center" style="min-width: 70px;">';
-        $html .= '<div class="text-muted fw-bold" style="font-size: 10px;">' . e(ucfirst($origin)) . '</div>';
-        $html .= '<div class="badge bg-secondary-lt text-uppercase" style="font-size: 9px;">' . e($type) . '</div>';
+        $html = '<div class="text-center small d-flex flex-column gap-1 align-items-center" style="min-width: 70px;">';
 
-        if ($kel !== '-') {
-            $html .= '<div class="text-muted mt-1" style="font-size: 9px;">' . e($kel) . '</div>';
-        }
+        $html .= $kel ? '<div class="text-muted mt-1" style="font-size: 9px;">' . e($kel) . '</div>' : '';
 
         // Show Matrix if available, otherwise show Risk
         if ($important || $urgent) {
@@ -278,23 +279,30 @@ if (! function_exists('pemutuDtColIndikator')) {
         // 1. Standar Header
         $standar = '-';
         if (isset($row->doksub_details) && $row->doksub_details !== '-') {
-            $details = explode(' ;; ', $row->doksub_details);
-            $first   = explode('|', $details[0]);
-            $standar = ($first[1] ?? '') . ' ' . $first[0];
+            $ds  = $row->dokSubs->first();
+            $doc = $ds->dokumen ?? null;
+            // Get root/parent doc if exists (e.g. Formulir -> Standar)
+            $induk = ($doc && $doc->parent) ? $doc->parent : $doc;
+            if ($induk) {
+                $standar = trim(($induk->kode ?? '') . ' ' . ($induk->judul ?? ''));
+            }
         } elseif (isset($row->dokumen_judul)) {
             $standar = $row->dokumen_judul;
         } elseif (isset($row->dokSubs) && $row->dokSubs->isNotEmpty()) {
             $ds  = $row->dokSubs->first();
             $doc = $ds->dokumen ?? null;
-            // Prefer root standard title (parent document)
-            if ($doc && $doc->parent) {
-                $standar = ($doc->parent->kode ?? '') . ' ' . $doc->parent->judul;
+            // Find root/main document
+            $induk = ($doc && $doc->parent) ? $doc->parent : $doc;
+            if ($induk) {
+                $standar = trim(($induk->kode ?? '') . ' ' . ($induk->judul ?? ''));
             } else {
-                $standar = ($ds->kode ?? '') . ' ' . $ds->judul;
+                // If no document found, fallback to sub-document title
+                $standar = trim(($ds->kode ?? '') . ' ' . ($ds->judul ?? ''));
             }
-            if ($doc && $doc->periode) {
-                $standar .= ' (' . $doc->periode . ')';
-            }
+        }
+
+        if (isset($doc) && $doc && $doc->periode) {
+            $standar .= ' (' . $doc->periode . ')';
         }
 
         // 2. Body Text
@@ -404,9 +412,9 @@ if (! function_exists('pemutuDtColAnalisisEd')) {
         // Evidence items
         $evidenceHtml = '';
         if ($pivot) {
-            $itemId = $pivot->indikorgunit_id ?? null;
+            $itemId   = $pivot->indikorgunit_id ?? null;
             $indModel = $itemId ? \App\Models\Pemutu\IndikatorOrgUnit::with('media')->find($itemId) : null;
-            $hasFile = $indModel ? $indModel->hasMedia('ed_attachments') : false;
+            $hasFile  = $indModel ? $indModel->hasMedia('ed_attachments') : false;
 
             $hasLinks   = false;
             $linksArray = [];
@@ -459,7 +467,7 @@ if (! function_exists('pemutuDtColStatusPengend')) {
      */
     function pemutuDtColStatusPengend($row)
     {
-        $status = null;
+        $status     = null;
         $statusAtsn = null;
 
         if (isset($row->orgUnits) && ! is_string($row->orgUnits) && $row->orgUnits->isNotEmpty()) {
@@ -483,7 +491,7 @@ if (! function_exists('pemutuDtColStatusPengend')) {
             $m     = $map[$status];
             $html .= '<div class="d-flex flex-column gap-1">';
             $html .= '<span class="badge bg-' . $m['color'] . '-lt text-' . $m['color'] . '" title="Usulan Unit">' . $m['label'] . '</span>';
-            
+
             if ($statusAtsn && isset($map[$statusAtsn])) {
                 $mAtsn = $map[$statusAtsn];
                 if ($statusAtsn !== $status) {
@@ -493,6 +501,7 @@ if (! function_exists('pemutuDtColStatusPengend')) {
                 }
             }
             $html .= '</div>';
+
             return $html;
         }
 
@@ -545,6 +554,7 @@ if (! function_exists('pemutuDtColAnalisisPengend')) {
         }
         $plain   = strip_tags($analisis);
         $preview = mb_strlen($plain) > 80 ? mb_substr($plain, 0, 80) . '…' : $plain;
+
         return '<span class="small text-muted" title="' . e($plain) . '">' . e($preview) . '</span>';
     }
 }
@@ -645,36 +655,37 @@ if (! function_exists('pemutuDtColStatusAmi')) {
             // Jika KTS, tampilkan semua detail jika ada
             if ($amiHasil == 0) {
                 $html .= '<div style="max-height: 150px; overflow-y: auto; scrollbar-width: thin;" class="text-muted pe-1 mt-1">';
-                
+
                 if ($amiTemuan && $amiTemuan !== '-') {
                     $html .= '<span class="fw-bold d-block text-uppercase text-danger mb-0" style="font-size: 9px; opacity: 0.8;">Temuan Umum:</span>';
                     $html .= '<div class="small lh-sm mb-2">' . e(\Str::limit(strip_tags($amiTemuan), 100)) . '</div>';
                 }
-                
+
                 if ($amiSebab && $amiSebab !== '-') {
                     $html .= '<span class="fw-bold d-block text-uppercase text-danger mb-0" style="font-size: 9px; opacity: 0.8;">Sebab:</span>';
                     $html .= '<div class="small lh-sm mb-2">' . e(\Str::limit(strip_tags($amiSebab), 100)) . '</div>';
                 }
-                
+
                 if ($amiAkibat && $amiAkibat !== '-') {
                     $html .= '<span class="fw-bold d-block text-uppercase text-danger mb-0" style="font-size: 9px; opacity: 0.8;">Akibat:</span>';
                     $html .= '<div class="small lh-sm mb-2">' . e(\Str::limit(strip_tags($amiAkibat), 100)) . '</div>';
                 }
-                
+
                 if ($amiRekom && $amiRekom !== '-') {
                     $html .= '<span class="fw-bold d-block text-uppercase text-danger mb-0" style="font-size: 9px; opacity: 0.8;">Rekomendasi Auditor:</span>';
                     $html .= '<div class="small lh-sm mb-1">' . e(\Str::limit(strip_tags($amiRekom), 100)) . '</div>';
                 }
-                
+
                 $html .= '</div>';
             } elseif ($amiTemuan && $amiTemuan !== '-') {
                 // Untuk Terpenuhi/Terlampaui yang punya temuan umum
-                $plainText = strip_tags($amiTemuan);
-                $excerpt  = \Str::limit($plainText, 100);
-                $html    .= '<div class="text-muted small italic mt-1" title="' . e($plainText) . '">' . e($excerpt) . '</div>';
+                $plainText  = strip_tags($amiTemuan);
+                $excerpt    = \Str::limit($plainText, 100);
+                $html      .= '<div class="text-muted small italic mt-1" title="' . e($plainText) . '">' . e($excerpt) . '</div>';
             }
 
             $html .= '</div>';
+
             return $html;
         }
 
@@ -686,7 +697,7 @@ if (! function_exists('pemutuDtColStatusPeningkatan')) {
     function pemutuDtColStatusPeningkatan($row)
     {
         $status = $row->prev_pengend_status_atsn ?? ($row->prev_ou->pengend_status_atsn ?? null);
-        
+
         $map = [
             'tetap'        => ['label' => 'Dipertahankan', 'color' => 'success'],
             'penyesuaian'  => ['label' => 'Disesuaikan', 'color' => 'warning'],
@@ -696,6 +707,7 @@ if (! function_exists('pemutuDtColStatusPeningkatan')) {
 
         if ($status && isset($map[$status])) {
             $m = $map[$status];
+
             return '<span class="badge bg-' . $m['color'] . '-lt text-' . $m['color'] . '">' . $m['label'] . '</span>';
         }
 
@@ -720,7 +732,7 @@ if (! function_exists('pemutuDtColRtp')) {
         $text = $pivot->ami_rtp_isi;
         $tgl  = $pivot->ami_rtp_tgl_pelaksanaan ? formatTanggalIndo($pivot->ami_rtp_tgl_pelaksanaan) : '-';
 
-        $html = '<div class="d-flex flex-column gap-2">';
+        $html  = '<div class="d-flex flex-column gap-2">';
         $html .= '<div style="max-height: 150px; overflow-y: auto; scrollbar-width: thin;" class="pe-1 small lh-base">' . $text . '</div>';
         $html .= '<div class="mt-auto pt-1 border-top" style="font-size: 10px;">';
         $html .= '<span class="text-muted text-uppercase fw-bold"><i class="ti ti-calendar-event me-1"></i>Pelaksanaan:</span>';
@@ -729,5 +741,61 @@ if (! function_exists('pemutuDtColRtp')) {
         $html .= '</div>';
 
         return $html;
+    }
+}
+
+if (! function_exists('pemutuPeriodeStatus')) {
+    /**
+     * Get human readable period standing (active, ended, upcoming).
+     *
+     * @param  \Carbon\Carbon|string|null  $startDate
+     * @param  \Carbon\Carbon|string|null  $endDate
+     */
+    function pemutuPeriodeStatus($startDate, $endDate): array
+    {
+        if (! $startDate || ! $endDate) {
+            return [
+                'is_active'   => false,
+                'status_text' => 'Jadwal Belum Diatur',
+                'time_info'   => 'Tidak ada rentang waktu tersedia',
+                'color'       => 'warning',
+            ];
+        }
+
+        $now   = \Carbon\Carbon::now()->startOfDay();
+        $start = \Carbon\Carbon::parse($startDate)->startOfDay();
+        $end   = \Carbon\Carbon::parse($endDate)->endOfDay();
+
+        if ($now->lt($start)) {
+            $diffDays = $now->diffInDays($start);
+            $timeInfo = $diffDays > 0 ? "Dimulai dalam {$diffDays} hari" : 'Dimulai hari ini (segera)';
+
+            return [
+                'is_active'   => false,
+                'status_text' => 'Belum Mulai',
+                'time_info'   => $timeInfo,
+                'color'       => 'secondary',
+            ];
+        } elseif ($now->gt($end)) {
+            $diffDays = $end->copy()->startOfDay()->diffInDays($now);
+            $timeInfo = $diffDays > 0 ? '' : 'Berakhir kemarin';
+
+            return [
+                'is_active'   => false,
+                'status_text' => 'Telah Berakhir',
+                'time_info'   => $timeInfo,
+                'color'       => 'danger',
+            ];
+        } else {
+            $diffDays = $now->diffInDays($end->copy()->startOfDay());
+            $timeInfo = $diffDays == 0 ? 'Berakhir hari ini' : "Sisa {$diffDays} hari lagi";
+
+            return [
+                'is_active'   => true,
+                'status_text' => 'Sedang Berjalan',
+                'time_info'   => $timeInfo,
+                'color'       => 'success',
+            ];
+        }
     }
 }

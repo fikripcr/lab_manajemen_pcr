@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Lab;
 
 use App\Exports\InventarisExport;
@@ -32,8 +33,8 @@ class InventarisService
         $searchValue = sysDataTableSearchValue($filters['search'] ?? '');
         if (! empty($searchValue)) {
             $query->where(function ($q) use ($searchValue) {
-                $q->where('nama_alat', 'like', '%' . $searchValue . '%')
-                    ->orWhere('jenis_alat', 'like', '%' . $searchValue . '%');
+                $q->where('nama_alat', 'like', '%'.$searchValue.'%')
+                    ->orWhere('jenis_alat', 'like', '%'.$searchValue.'%');
             });
         }
 
@@ -81,7 +82,7 @@ class InventarisService
 
             logActivity(
                 'inventaris_management',
-                "Memperbarui inventaris: {$oldName}" . ($oldName !== $inventaris->nama_alat ? " menjadi {$inventaris->nama_alat}" : "")
+                "Memperbarui inventaris: {$oldName}".($oldName !== $inventaris->nama_alat ? " menjadi {$inventaris->nama_alat}" : '')
             );
 
             return true;
@@ -138,6 +139,7 @@ class InventarisService
         if (! $model) {
             throw new \Exception("Inventaris dengan ID {$id} tidak ditemukan.");
         }
+
         return $model;
     }
 }

@@ -1,13 +1,34 @@
 <?php
+
 namespace App\Services\Hr;
 
 use App\Models\Hr\Indisipliner;
 use App\Models\Hr\IndisiplinerPegawai;
+use App\Models\Hr\JenisIndisipliner;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class IndisiplinerService
 {
+    /**
+     * Get data for dropdown
+     */
+    public function getJenisIndisipliner()
+    {
+        return JenisIndisipliner::orderBy('jenis_indisipliner')->get();
+    }
+
+    /**
+     * Get base query for DataTable
+     */
+    public function getDataQuery(?string $tahun = null)
+    {
+        return Indisipliner::with(['jenisIndisipliner', 'indisiplinerPegawai.pegawai.latestDataDiri'])
+            ->select('hr_indisipliner.*')
+            ->filterByYear($tahun)
+            ->latest('tgl_indisipliner');
+    }
+
     /**
      * Store new indisipliner record
      */
@@ -16,8 +37,8 @@ class IndisiplinerService
         return DB::transaction(function () use ($data, $file) {
             $indisipliner = Indisipliner::create([
                 'jenisindisipliner_id' => $data['jenisindisipliner_id'],
-                'tgl_indisipliner'     => $data['tgl_indisipliner'],
-                'keterangan'           => $data['keterangan'] ?? null,
+                'tgl_indisipliner' => $data['tgl_indisipliner'],
+                'keterangan' => $data['keterangan'] ?? null,
             ]);
 
             if ($file) {
@@ -28,11 +49,11 @@ class IndisiplinerService
             foreach ($data['pegawai_id'] as $pegawaiId) {
                 IndisiplinerPegawai::create([
                     'indisipliner_id' => $indisipliner->indisipliner_id,
-                    'pegawai_id'      => $pegawaiId,
+                    'pegawai_id' => $pegawaiId,
                 ]);
             }
 
-            logActivity('hr', "Mencatat indisipliner: " . ($indisipliner->jenisIndisipliner->jenis_indisipliner ?? 'N/A'), $indisipliner);
+            logActivity('hr', 'Mencatat indisipliner: '.($indisipliner->jenisIndisipliner->jenis_indisipliner ?? 'N/A'), $indisipliner);
 
             return $indisipliner;
         });
@@ -46,8 +67,8 @@ class IndisiplinerService
         return DB::transaction(function () use ($indisipliner, $data, $file) {
             $indisipliner->update([
                 'jenisindisipliner_id' => $data['jenisindisipliner_id'],
-                'tgl_indisipliner'     => $data['tgl_indisipliner'],
-                'keterangan'           => $data['keterangan'] ?? null,
+                'tgl_indisipliner' => $data['tgl_indisipliner'],
+                'keterangan' => $data['keterangan'] ?? null,
             ]);
 
             if ($file) {
@@ -64,11 +85,11 @@ class IndisiplinerService
             foreach ($data['pegawai_id'] as $pegawaiId) {
                 IndisiplinerPegawai::create([
                     'indisipliner_id' => $indisipliner->indisipliner_id,
-                    'pegawai_id'      => $pegawaiId,
+                    'pegawai_id' => $pegawaiId,
                 ]);
             }
 
-            logActivity('hr', "Mengupdate indisipliner: " . ($indisipliner->jenisIndisipliner->jenis_indisipliner ?? 'N/A'), $indisipliner);
+            logActivity('hr', 'Mengupdate indisipliner: '.($indisipliner->jenisIndisipliner->jenis_indisipliner ?? 'N/A'), $indisipliner);
 
             return $indisipliner;
         });
@@ -85,7 +106,7 @@ class IndisiplinerService
 
             $indisipliner->delete();
 
-            logActivity('hr', "Menghapus data indisipliner", $indisipliner);
+            logActivity('hr', 'Menghapus data indisipliner', $indisipliner);
         });
     }
 }

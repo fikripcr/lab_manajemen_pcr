@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Exports\Pemutu;
 
 use App\Models\Pemutu\IndikatorSummaryStandar;
@@ -9,7 +10,7 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class IndikatorSummaryExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles
+class IndikatorSummaryExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
     protected $filters;
 
@@ -107,7 +108,7 @@ class IndikatorSummaryExport implements FromCollection, WithHeadings, WithMappin
             $row->indikator,
             $row->unit_code,
             $row->unit_name,
-            $row->label_details . ' (' . $row->kelompok_indikator . ')',
+            $row->label_details.' ('.$row->kelompok_indikator.')',
             $row->periode_aktif,
             $row->ed_capaian,
             $row->ed_skala,
@@ -121,7 +122,7 @@ class IndikatorSummaryExport implements FromCollection, WithHeadings, WithMappin
             strip_tags($row->pengend_analisis),
             $row->pengend_status_atsn,
             strip_tags($row->pengend_analisis_atsn),
-            ($row->pengend_important_matrix_atsn ?? '-') . ' / ' . ($row->pengend_urgent_matrix_atsn ?? '-'),
+            ($row->pengend_important_matrix_atsn ?? '-').' / '.($row->pengend_urgent_matrix_atsn ?? '-'),
         ];
     }
 

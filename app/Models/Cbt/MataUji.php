@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Cbt;
 
 use App\Traits\Blameable;
@@ -9,11 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MataUji extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'cbt_mata_uji';
+    protected $table = 'cbt_mata_uji';
+
     protected $primaryKey = 'mata_uji_id';
-    protected $appends    = ['encrypted_mata_uji_id'];
+
+    protected $appends = ['encrypted_mata_uji_id'];
 
     protected $fillable = [
         'nama_mata_uji',

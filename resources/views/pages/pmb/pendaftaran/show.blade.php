@@ -75,7 +75,12 @@
                 </x-tabler.card>
 
                 {{-- Verification History --}}
-                <x-tabler.approval-history :approvals="$pendaftaran->approvals" title="Riwayat Verifikasi" />
+                <x-tabler.card class="mb-3">
+                    <x-tabler.card-header title="Riwayat Verifikasi" />
+                    <x-tabler.card-body>
+                        <x-tabler.approval-history :approvals="$pendaftaran->approvals" />
+                    </x-tabler.card-body>
+                </x-tabler.card>
 
                 {{-- History Status (Legacy timeline) --}}
                 <x-tabler.card class="mt-3">

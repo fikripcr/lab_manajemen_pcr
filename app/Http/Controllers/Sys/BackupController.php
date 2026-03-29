@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
@@ -7,8 +8,7 @@ use App\Services\Sys\BackupService;
 
 class BackupController extends Controller
 {
-    public function __construct(protected BackupService $backupService)
-    {}
+    public function __construct(protected BackupService $backupService) {}
 
     /**
      * Display a listing of backups

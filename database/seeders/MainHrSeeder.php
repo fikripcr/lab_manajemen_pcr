@@ -1,15 +1,16 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Models\Hr\JabatanFungsional;
 use App\Models\Hr\JenisIndisipliner;
 use App\Models\Hr\JenisIzin;
 use App\Models\Hr\JenisShift;
-use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Hr\Pegawai;
 use App\Models\Hr\RiwayatDataDiri;
 use App\Models\Hr\StatusAktifitas;
 use App\Models\Hr\StatusPegawai;
+use App\Models\Hr\StrukturOrganisasi;
 use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -68,12 +69,12 @@ class MainHrSeeder extends Seeder
         DB::transaction(function () {
             // Level 1: Institusi / Root
             $pcr = StrukturOrganisasi::create([
-                'name'       => 'Politeknik Chevron Riau',
-                'type'       => 'Institusi',
-                'level'      => 1,
+                'name' => 'Politeknik Chevron Riau',
+                'type' => 'Institusi',
+                'level' => 1,
                 'sort_order' => 1,
-                'code'       => 'PCR',
-                'is_active'  => true,
+                'code' => 'PCR',
+                'is_active' => true,
             ]);
 
             // Level 2: Senat & SPM
@@ -109,7 +110,7 @@ class MainHrSeeder extends Seeder
 
             // Level 2: Jurusans
             $seqJurusan = 10;
-            $jti        = $this->createUnit($pcr, 'Jurusan Teknologi Industri', 'Jurusan', $seqJurusan++, 'JTIN');
+            $jti = $this->createUnit($pcr, 'Jurusan Teknologi Industri', 'Jurusan', $seqJurusan++, 'JTIN');
             $this->createUnit($jti, 'D4 Teknologi Rekayasa Mekatronika', 'Prodi', 1);
             $this->createUnit($jti, 'D4 Teknik Mesin', 'Prodi', 2);
             $this->createUnit($jti, 'D4 Teknologi Rekayasa Jaringan Telekomunikasi', 'Prodi', 3);
@@ -153,25 +154,26 @@ class MainHrSeeder extends Seeder
     private function createUnit($parent, $name, $type, $sort_order, $code = null)
     {
         return StrukturOrganisasi::create([
-            'parent_id'  => $parent->orgunit_id,
-            'name'       => $name,
-            'type'       => $type,
-            'level'      => $parent->level + 1,
+            'parent_id' => $parent->orgunit_id,
+            'name' => $name,
+            'type' => $type,
+            'level' => $parent->level + 1,
             'sort_order' => $sort_order,
-            'code'       => $code ?? $this->generateCode($name),
-            'is_active'  => true,
+            'code' => $code ?? $this->generateCode($name),
+            'is_active' => true,
         ]);
     }
 
     private function generateCode($name)
     {
         $words = explode(' ', $name);
-        $code  = '';
+        $code = '';
         foreach ($words as $word) {
             if (ctype_alnum($word)) {
                 $code .= strtoupper(substr($word, 0, 1));
             }
         }
+
         return substr($code, 0, 10);
     }
 
@@ -194,8 +196,8 @@ class MainHrSeeder extends Seeder
                 ['kode_status' => $item['kode_status']],
                 [
                     'nama_status' => $item['nama_status'],
-                    'organisasi'  => $item['organisasi'],
-                    'is_active'   => true,
+                    'organisasi' => $item['organisasi'],
+                    'is_active' => true,
                 ]
             );
         }
@@ -224,7 +226,7 @@ class MainHrSeeder extends Seeder
                 ['kode_status' => $item['kode_status']],
                 [
                     'nama_status' => $item['nama_status'],
-                    'is_active'   => true,
+                    'is_active' => true,
                 ]
             );
         }
@@ -275,62 +277,62 @@ class MainHrSeeder extends Seeder
     private function seedHumanCapital()
     {
         $this->command->info('Seeding Human Capital (Personnel Data)...');
-        $faker     = Faker::create('id_ID');
+        $faker = Faker::create('id_ID');
         $sysUserId = 1;
 
-        $depts          = StrukturOrganisasi::where('type', 'Jurusan')->get();
-        $posisis        = StrukturOrganisasi::where('type', 'posisi')->get();
+        $depts = StrukturOrganisasi::where('type', 'Jurusan')->get();
+        $posisis = StrukturOrganisasi::where('type', 'posisi')->get();
         $statusPegawais = StatusPegawai::all();
-        $statusAktifs   = StatusAktifitas::where('nama_status', 'Aktif')->first();
+        $statusAktifs = StatusAktifitas::where('nama_status', 'Aktif')->first();
         $jabFungsionals = JabatanFungsional::all();
-        $orgUnits       = StrukturOrganisasi::whereIn('type', ['Bagian', 'Prodi', 'posisi'])->get();
-        $strUnits       = StrukturOrganisasi::where('type', 'jabatan_struktural')->get();
+        $orgUnits = StrukturOrganisasi::whereIn('type', ['Bagian', 'Prodi', 'posisi'])->get();
+        $strUnits = StrukturOrganisasi::where('type', 'jabatan_struktural')->get();
 
         if ($orgUnits->whereIn('type', ['Bagian', 'Prodi'])->isEmpty() || $orgUnits->where('type', 'posisi')->isEmpty()) {
             return;
         }
 
-        DB::transaction(function () use ($faker, $sysUserId, $depts, $posisis, $statusPegawais, $statusAktifs, $jabFungsionals, $orgUnits, $strUnits) {
+        DB::transaction(function () use ($faker, $sysUserId, $orgUnits) {
             for ($i = 0; $i < 30; $i++) {
-                $gender      = $faker->randomElement(['L', 'P']);
+                $gender = $faker->randomElement(['L', 'P']);
                 $pegawaiName = $faker->name($gender == 'L' ? 'male' : 'female');
                 $email = $faker->unique()->safeEmail;
 
                 // Create User first
                 $user = \App\Models\User::create([
-                    'name'              => $pegawaiName,
-                    'email'             => $email,
-                    'password'          => \Illuminate\Support\Facades\Hash::make('password'),
+                    'name' => $pegawaiName,
+                    'email' => $email,
+                    'password' => \Illuminate\Support\Facades\Hash::make('password'),
                     'email_verified_at' => now(),
-                    'created_by'        => $sysUserId,
+                    'created_by' => $sysUserId,
                 ]);
 
                 // Create Pegawai with user_id
-                $pegawai     = Pegawai::create([
-                    'user_id'     => $user->id,
-                    'created_by'  => $sysUserId,
+                $pegawai = Pegawai::create([
+                    'user_id' => $user->id,
+                    'created_by' => $sysUserId,
                 ]);
 
                 $deptUnits = $orgUnits->whereIn('type', ['Bagian', 'Prodi']);
-                $posUnits  = $orgUnits->where('type', 'posisi');
+                $posUnits = $orgUnits->where('type', 'posisi');
 
                 if ($deptUnits->isNotEmpty() && $posUnits->isNotEmpty()) {
                     $riwayatDataDiriData = [
-                        'pegawai_id'            => $pegawai->pegawai_id,
-                        'nama'                  => $pegawaiName,
-                        'email'                 => $email,
-                        'nip'                   => $faker->unique()->numerify('19###### ###### # ###'),
-                        'nidn'                  => $faker->optional(0.3)->numerify('##########'),
-                        'jenis_kelamin'         => $gender,
-                        'tempat_lahir'          => $faker->city,
-                        'tgl_lahir'             => $faker->dateTimeBetween('-50 years', '-22 years')->format('Y-m-d'),
-                        'alamat'                => $faker->address,
-                        'no_hp'                 => $faker->phoneNumber,
-                        'status_nikah'          => $faker->randomElement(['Menikah', 'Belum Menikah']),
-                        'agama'                 => 'Islam',
+                        'pegawai_id' => $pegawai->pegawai_id,
+                        'nama' => $pegawaiName,
+                        'email' => $email,
+                        'nip' => $faker->unique()->numerify('19###### ###### # ###'),
+                        'nidn' => $faker->optional(0.3)->numerify('##########'),
+                        'jenis_kelamin' => $gender,
+                        'tempat_lahir' => $faker->city,
+                        'tgl_lahir' => $faker->dateTimeBetween('-50 years', '-22 years')->format('Y-m-d'),
+                        'alamat' => $faker->address,
+                        'no_hp' => $faker->phoneNumber,
+                        'status_nikah' => $faker->randomElement(['Menikah', 'Belum Menikah']),
+                        'agama' => 'Islam',
                         'orgunit_departemen_id' => $deptUnits->random()->orgunit_id,
-                        'orgunit_posisi_id'     => $posUnits->random()->orgunit_id,
-                        'created_by'            => $sysUserId,
+                        'orgunit_posisi_id' => $posUnits->random()->orgunit_id,
+                        'created_by' => $sysUserId,
                     ];
                     $riwayatDiri = $this->createApprovedHistory(RiwayatDataDiri::class, $riwayatDataDiriData, $sysUserId);
                     $pegawai->update(['latest_riwayatdatadiri_id' => $riwayatDiri->getKey()]);
@@ -342,19 +344,20 @@ class MainHrSeeder extends Seeder
     private function createApprovedHistory($modelClass, $data, $userId)
     {
         $approvalId = DB::table('hr_riwayat_approval')->insertGetId([
-            'model'      => $modelClass,
-            'model_id'   => 0,
-            'status'     => 'Approved',
+            'model' => $modelClass,
+            'model_id' => 0,
+            'status' => 'Approved',
             'keterangan' => 'Seeder Data',
-            'pejabat'    => 'System Seeder',
+            'pejabat' => 'System Seeder',
             'created_by' => $userId,
             'updated_by' => $userId,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
         $data['latest_riwayatapproval_id'] = $approvalId;
-        $model                             = $modelClass::create($data);
+        $model = $modelClass::create($data);
         DB::table('hr_riwayat_approval')->where('riwayatapproval_id', $approvalId)->update(['model_id' => $model->getKey()]);
+
         return $model;
     }
 }

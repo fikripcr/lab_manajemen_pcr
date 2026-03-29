@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Sys;
 
 use App\Models\Sys\Activity;
@@ -64,7 +65,7 @@ class ActivityLogsService
             $filters['date_to'] = $request->date_to;
         }
 
-        $filters['per_page'] =  10;
+        $filters['per_page'] = 10;
 
         // Apply search parameters for DataTables
         if ($request->has('search') && $request->search['value'] != '') {
@@ -72,7 +73,7 @@ class ActivityLogsService
         }
 
         // Remove null/empty values to avoid interference with filtering
-        return array_filter($filters, fn($value) => $value !== null && $value !== '');
+        return array_filter($filters, fn ($value) => $value !== null && $value !== '');
     }
 
     /**
@@ -81,6 +82,7 @@ class ActivityLogsService
     public function getActivitiesList(array $filters = []): LengthAwarePaginator
     {
         $query = $this->getFilteredQuery($filters);
+
         return $query->paginate($filters['per_page'] ?? 15);
     }
 

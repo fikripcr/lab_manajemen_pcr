@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Eoffice;
 
 use App\Http\Controllers\Controller;
@@ -31,10 +32,11 @@ class JenisLayananPeriodeController extends Controller
      */
     public function store(JenisLayananPeriodeStoreRequest $request, JenisLayanan $jenisLayanan)
     {
-        $validated                    = $request->validated();
+        $validated = $request->validated();
         $validated['jenislayanan_id'] = $jenisLayanan->jenislayanan_id;
 
         $this->jenisLayananPeriodeService->createPeriode($validated);
+
         return jsonSuccess('Periode berhasil dibuat.');
     }
 
@@ -46,6 +48,7 @@ class JenisLayananPeriodeController extends Controller
         $validated = $request->validated();
 
         $this->jenisLayananPeriodeService->update($periode->jlperiode_id, $validated);
+
         return jsonSuccess('Periode berhasil diperbarui.');
     }
 
@@ -55,6 +58,7 @@ class JenisLayananPeriodeController extends Controller
     public function destroy(JenisLayananPeriode $periode)
     {
         $this->jenisLayananPeriodeService->destroy($periode->jlperiode_id);
+
         return jsonSuccess('Periode berhasil dihapus.');
     }
 
@@ -69,12 +73,12 @@ class JenisLayananPeriodeController extends Controller
         $formatted = $data->map(function ($item) {
             return [
                 'jlperiode_id' => $item->jlperiode_id,
-                'hashid'       => $item->hashid,
-                'tgl_mulai'    => $item->tgl_mulai->format('d M Y'),
-                'tgl_selesai'  => $item->tgl_selesai->format('d M Y'),
+                'hashid' => $item->hashid,
+                'tgl_mulai' => $item->tgl_mulai->format('d M Y'),
+                'tgl_selesai' => $item->tgl_selesai->format('d M Y'),
                 'tahun_ajaran' => $item->tahun_ajaran ?? '-',
-                'semester'     => $item->semester ?? '-',
-                'is_active'    => now()->between($item->tgl_mulai, $item->tgl_selesai),
+                'semester' => $item->semester ?? '-',
+                'is_active' => now()->between($item->tgl_mulai, $item->tgl_selesai),
             ];
         });
 
@@ -88,10 +92,10 @@ class JenisLayananPeriodeController extends Controller
     {
         return jsonSuccess('Data retrieved', null, [
             'jlperiode_id' => $periode->jlperiode_id,
-            'tgl_mulai'    => $periode->tgl_mulai->format('Y-m-d'),
-            'tgl_selesai'  => $periode->tgl_selesai->format('Y-m-d'),
+            'tgl_mulai' => $periode->tgl_mulai->format('Y-m-d'),
+            'tgl_selesai' => $periode->tgl_selesai->format('Y-m-d'),
             'tahun_ajaran' => $periode->tahun_ajaran,
-            'semester'     => $periode->semester,
+            'semester' => $periode->semester,
         ]);
     }
 }

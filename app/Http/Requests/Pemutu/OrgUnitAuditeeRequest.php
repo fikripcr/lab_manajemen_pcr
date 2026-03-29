@@ -7,9 +7,6 @@ use App\Http\Requests\BaseRequest;
 class OrgUnitAuditeeRequest extends BaseRequest
 {
     /**
-     */
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -25,7 +22,7 @@ class OrgUnitAuditeeRequest extends BaseRequest
     {
         return [
             'auditee_user_id' => 'User Auditee',
-            'org_unit_id'     => 'Unit Kerja',
+            'org_unit_id' => 'Unit Kerja',
         ];
     }
 }

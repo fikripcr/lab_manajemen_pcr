@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
@@ -9,8 +10,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class JenisShiftController extends Controller
 {
-    public function __construct(protected JenisShiftService $jenisShiftService)
-    {}
+    public function __construct(protected JenisShiftService $jenisShiftService) {}
 
     public function index()
     {
@@ -28,7 +28,7 @@ class JenisShiftController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('hr.jenis-shift.edit', ['jenis_shift' => $row->hashid]),
+                    'editUrl' => route('hr.jenis-shift.edit', ['jenis_shift' => $row->hashid]),
                     'editModal' => true,
                     'deleteUrl' => route('hr.jenis-shift.destroy', ['jenis_shift' => $row->hashid]),
                 ])->render();
@@ -39,13 +39,15 @@ class JenisShiftController extends Controller
 
     public function create()
     {
-        $jenisShift = new JenisShift();
+        $jenisShift = new JenisShift;
+
         return view('pages.hr.jenis-shift.create-edit-ajax', compact('jenisShift'));
     }
 
     public function store(JenisShiftRequest $request)
     {
         $this->jenisShiftService->create($request->validated());
+
         return jsonSuccess('Jenis Shift created successfully.');
     }
 
@@ -57,12 +59,14 @@ class JenisShiftController extends Controller
     public function update(JenisShiftRequest $request, JenisShift $jenisShift)
     {
         $this->jenisShiftService->update($jenisShift, $request->validated());
+
         return jsonSuccess('Jenis Shift updated successfully.');
     }
 
     public function destroy(JenisShift $jenisShift)
     {
         $jenisShift->delete();
+
         return jsonSuccess('Jenis Shift deleted successfully.');
     }
 }

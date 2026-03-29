@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\RiwayatStatAktifitasRequest;
+use App\Models\Hr\Pegawai;
 use App\Models\Hr\RiwayatStatAktifitas;
 use App\Models\Hr\StatusAktifitas;
-use App\Models\Hr\Pegawai;
 use App\Services\Hr\RiwayatStatAktifitasService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -13,8 +14,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class RiwayatStatAktifitasController extends Controller
 {
-    public function __construct(protected RiwayatStatAktifitasService $statAktifitasService)
-    {}
+    public function __construct(protected RiwayatStatAktifitasService $statAktifitasService) {}
 
     public function index()
     {
@@ -24,13 +24,15 @@ class RiwayatStatAktifitasController extends Controller
     public function create(Pegawai $pegawai)
     {
         $statusAktifitas = StatusAktifitas::where('is_active', 1)->get();
-        return view('pages.hr.pegawai.status-aktifitas.create-edit-ajax', compact('hr_pegawai', 'statusAktifitas'));
+
+        return view('pages.hr.pegawai.status-aktifitas.create-edit-ajax', compact('pegawai', 'statusAktifitas'));
     }
 
     public function store(RiwayatStatAktifitasRequest $request, Pegawai $pegawai)
     {
         $this->statAktifitasService->requestChange($pegawai, $request->validated());
-        return jsonSuccess('Riwayat Status Aktifitas berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id) . '#section-kepegawaian');
+
+        return jsonSuccess('Riwayat Status Aktifitas berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id).'#section-kepegawaian');
     }
 
     public function data(Request $request)
@@ -39,6 +41,10 @@ class RiwayatStatAktifitasController extends Controller
 
         if ($request->has('pegawai_id')) {
             $query->where('pegawai_id', decryptIdIfEncrypted($request->pegawai_id));
+        }
+
+        if ($request->filled('status_aktifitas_id') && $request->status_aktifitas_id !== 'all') {
+            $query->where('status_aktifitas_id', $request->status_aktifitas_id);
         }
 
         return DataTables::of($query)
@@ -56,6 +62,7 @@ class RiwayatStatAktifitasController extends Controller
                 if ($row->approval) {
                     return getApprovalStatus($row->approval->status);
                 }
+
                 return '<span class="status status-success"><span class="status-dot"></span> Aktif</span>';
             })
             ->addColumn('action', function ($row) {

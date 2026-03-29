@@ -11,8 +11,7 @@ use App\Services\Project\ProjectService;
 
 class ProjectMemberController extends Controller
 {
-    public function __construct(protected ProjectService $projectService)
-    {}
+    public function __construct(protected ProjectService $projectService) {}
 
     /**
      * Store a newly created member in storage.
@@ -40,8 +39,8 @@ class ProjectMemberController extends Controller
     public function editModal(Project $project, ?ProjectMember $member = null)
     {
         $users = User::all();
-        if (!$member) {
-            $member = new ProjectMember();
+        if (! $member) {
+            $member = new ProjectMember;
             $member->project_id = $project->project_id;
         }
 

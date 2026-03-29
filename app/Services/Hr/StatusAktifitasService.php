@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Hr;
 
 use App\Models\Hr\StatusAktifitas;
@@ -11,6 +12,7 @@ class StatusAktifitasService
         return DB::transaction(function () use ($data) {
             $statusAktifitas = StatusAktifitas::create($data);
             logActivity('hr', "Menambahkan status aktifitas: {$statusAktifitas->nama_status}", $statusAktifitas);
+
             return $statusAktifitas;
         });
     }
@@ -20,6 +22,7 @@ class StatusAktifitasService
         return DB::transaction(function () use ($statusAktifitas, $data) {
             $statusAktifitas->update($data);
             logActivity('hr', "Memperbarui status aktifitas: {$statusAktifitas->nama_status}", $statusAktifitas);
+
             return $statusAktifitas;
         });
     }

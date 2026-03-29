@@ -5,7 +5,6 @@ namespace App\Services\Project;
 use App\Models\Project\Project;
 use App\Models\Project\ProjectTask;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ProjectTaskService
@@ -55,19 +54,19 @@ class ProjectTaskService
     {
         return DB::transaction(function () use ($data) {
             $task = ProjectTask::create([
-                'project_id'       => $data['project_id'],
+                'project_id' => $data['project_id'],
                 'project_phase_id' => $data['project_phase_id'] ?? null,
                 'project_sprint_id' => $data['project_sprint_id'] ?? null,
-                'assignee_id'      => $data['assignee_id'] ?? null,
-                'parent_id'        => $data['parent_id'] ?? null,
-                'task_title'       => $data['task_title'],
-                'task_desc'        => $data['task_desc'] ?? null,
-                'status'           => $data['status'] ?? 'todo',
-                'weight'           => $data['weight'] ?? 1,
-                'hours_worked'     => $data['hours_worked'] ?? 0,
-                'seq'              => $data['seq'] ?? $this->getNextSequence($data['project_id']),
-                'priority'         => $data['priority'] ?? 'medium',
-                'due_date'         => $data['due_date'] ?? null,
+                'assignee_id' => $data['assignee_id'] ?? null,
+                'parent_id' => $data['parent_id'] ?? null,
+                'task_title' => $data['task_title'],
+                'task_desc' => $data['task_desc'] ?? null,
+                'status' => $data['status'] ?? 'todo',
+                'weight' => $data['weight'] ?? 1,
+                'hours_worked' => $data['hours_worked'] ?? 0,
+                'seq' => $data['seq'] ?? $this->getNextSequence($data['project_id']),
+                'priority' => $data['priority'] ?? 'medium',
+                'due_date' => $data['due_date'] ?? null,
             ]);
 
             logActivity(
@@ -89,17 +88,17 @@ class ProjectTaskService
             $oldTitle = $task->task_title;
 
             $task->update([
-                'task_title'        => $data['task_title'] ?? $task->task_title,
-                'task_desc'         => $data['task_desc'] ?? $task->task_desc,
-                'status'            => $data['status'] ?? $task->status,
-                'weight'            => $data['weight'] ?? $task->weight,
-                'hours_worked'      => $data['hours_worked'] ?? $task->hours_worked,
-                'priority'          => $data['priority'] ?? $task->priority,
-                'due_date'          => $data['due_date'] ?? $task->due_date,
-                'project_phase_id'  => $data['project_phase_id'] ?? $task->project_phase_id,
+                'task_title' => $data['task_title'] ?? $task->task_title,
+                'task_desc' => $data['task_desc'] ?? $task->task_desc,
+                'status' => $data['status'] ?? $task->status,
+                'weight' => $data['weight'] ?? $task->weight,
+                'hours_worked' => $data['hours_worked'] ?? $task->hours_worked,
+                'priority' => $data['priority'] ?? $task->priority,
+                'due_date' => $data['due_date'] ?? $task->due_date,
+                'project_phase_id' => $data['project_phase_id'] ?? $task->project_phase_id,
                 'project_sprint_id' => $data['project_sprint_id'] ?? $task->project_sprint_id,
-                'assignee_id'       => $data['assignee_id'] ?? $task->assignee_id,
-                'parent_id'         => $data['parent_id'] ?? $task->parent_id,
+                'assignee_id' => $data['assignee_id'] ?? $task->assignee_id,
+                'parent_id' => $data['parent_id'] ?? $task->parent_id,
             ]);
 
             logActivity(
@@ -119,8 +118,8 @@ class ProjectTaskService
     {
         $validStatuses = ['todo', 'in_progress', 'review', 'done'];
 
-        if (!in_array($newStatus, $validStatuses)) {
-            throw new Exception('Invalid status. Must be one of: ' . implode(', ', $validStatuses));
+        if (! in_array($newStatus, $validStatuses)) {
+            throw new Exception('Invalid status. Must be one of: '.implode(', ', $validStatuses));
         }
 
         return DB::transaction(function () use ($task, $newStatus) {
@@ -167,10 +166,10 @@ class ProjectTaskService
         $tasks = $this->getTasksByProject($projectId);
 
         return [
-            'todo'        => $tasks->where('status', 'todo')->values()->all(),
+            'todo' => $tasks->where('status', 'todo')->values()->all(),
             'in_progress' => $tasks->where('status', 'in_progress')->values()->all(),
-            'review'      => $tasks->where('status', 'review')->values()->all(),
-            'done'        => $tasks->where('status', 'done')->values()->all(),
+            'review' => $tasks->where('status', 'review')->values()->all(),
+            'done' => $tasks->where('status', 'done')->values()->all(),
         ];
     }
 
@@ -180,6 +179,7 @@ class ProjectTaskService
     protected function getNextSequence(int $projectId): int
     {
         $maxSeq = ProjectTask::where('project_id', $projectId)->max('seq');
+
         return ($maxSeq ?? 0) + 1;
     }
 
@@ -203,7 +203,7 @@ class ProjectTaskService
     protected function findOrFail(string $id): ProjectTask
     {
         $task = ProjectTask::find($id);
-        if (!$task) {
+        if (! $task) {
             throw new Exception('Task not found');
         }
 

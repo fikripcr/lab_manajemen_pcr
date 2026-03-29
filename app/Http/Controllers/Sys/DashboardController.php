@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
@@ -9,17 +10,16 @@ class DashboardController extends Controller
 {
     public function __construct(
         protected DashboardService $dashboardService
-    ) {
-    }
+    ) {}
 
     public function index()
     {
         // Get statistics
-        $stats            = $this->dashboardService->getDashboardStats();
-        $totalUsers       = $stats['totalUsers'];
-        $totalRoles       = $stats['totalRoles'];
+        $stats = $this->dashboardService->getDashboardStats();
+        $totalUsers = $stats['totalUsers'];
+        $totalRoles = $stats['totalRoles'];
         $totalPermissions = $stats['totalPermissions'];
-        $todayActivities  = $stats['todayActivities'];
+        $todayActivities = $stats['todayActivities'];
 
         // Get application name from config
         $appName = config('app.name', 'Laravel');
@@ -32,8 +32,8 @@ class DashboardController extends Controller
 
         // Get application environment
         $appEnvironment = app()->environment();
-        $appDebug       = config('app.debug') ? 'Enabled' : 'Disabled';
-        $appUrl         = config('app.url');
+        $appDebug = config('app.debug') ? 'Enabled' : 'Disabled';
+        $appUrl = config('app.url');
 
         // Get recent activities (last 10)
         $recentLogs = $this->dashboardService->getRecentLogs(10);
@@ -42,11 +42,11 @@ class DashboardController extends Controller
         $roleUserCounts = $this->dashboardService->getUserRoleDistribution();
 
         $activityData = $this->dashboardService->getActivitiesByDate();
-        $errorData    = $this->dashboardService->getErrorLogsByDate();
+        $errorData = $this->dashboardService->getErrorLogsByDate();
 
         // Format activity data for ApexCharts
         $activityChartData = json_encode([
-            'series'     => [[
+            'series' => [[
                 'name' => 'Activities',
                 'data' => $activityData['data'],
             ]],
@@ -55,7 +55,7 @@ class DashboardController extends Controller
 
         // Format error data for ApexCharts
         $errorChartData = json_encode([
-            'series'     => [[
+            'series' => [[
                 'name' => 'Errors',
                 'data' => $errorData['data'],
             ]],
@@ -72,8 +72,8 @@ class DashboardController extends Controller
         $serverMonitoringData = $this->dashboardService->getServerMonitoringData();
 
         $yesterdayActivityCount = $this->dashboardService->getYesterdayActivityCount();
-        $yesterdayErrorCount    = $this->dashboardService->getYesterdayErrorCount();
-        $recentErrors           = $this->dashboardService->getRecentErrors(10);
+        $yesterdayErrorCount = $this->dashboardService->getYesterdayErrorCount();
+        $recentErrors = $this->dashboardService->getRecentErrors(10);
 
         return view('pages.sys.dashboard.index', compact(
             'totalUsers',

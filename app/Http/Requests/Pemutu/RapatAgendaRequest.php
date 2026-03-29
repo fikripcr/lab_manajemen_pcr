@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Pemutu;
 
 use App\Http\Requests\BaseRequest;
 
 class RapatAgendaRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -16,19 +14,19 @@ class RapatAgendaRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'rapat_id'     => 'required|exists:rapats,rapat_id', // Note: Using table name from migration/model
+            'rapat_id' => 'required|exists:rapats,rapat_id', // Note: Using table name from migration/model
             'judul_agenda' => 'required|string|max:250',
-            'seq'          => 'required|integer',
+            'seq' => 'required|integer',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'rapat_id'     => 'Rapat',
+            'rapat_id' => 'Rapat',
             'judul_agenda' => 'Judul Agenda',
-            'isi'          => 'Isi Agenda',
-            'seq'          => 'Urutan',
+            'isi' => 'Isi Agenda',
+            'seq' => 'Urutan',
         ];
     }
 }

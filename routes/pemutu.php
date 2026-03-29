@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Pemutu\ApprovalController;
 use App\Http\Controllers\Pemutu\DashboardController;
 use App\Http\Controllers\Pemutu\DokumenApprovalController;
 use App\Http\Controllers\Pemutu\DokumenController;
@@ -7,7 +8,6 @@ use App\Http\Controllers\Pemutu\DokumenSpmiController;
 use App\Http\Controllers\Pemutu\IndikatorController;
 use App\Http\Controllers\Pemutu\IndikatorSummaryController;
 use App\Http\Controllers\Pemutu\LabelController;
-use App\Http\Controllers\Pemutu\LabelTypeController;
 use App\Http\Controllers\Pemutu\PegawaiController;
 use App\Http\Controllers\Pemutu\PelaksanaanController;
 use App\Http\Controllers\Pemutu\PeriodeKpiController;
@@ -16,6 +16,13 @@ use App\Http\Controllers\Pemutu\RenopController;
 use App\Http\Controllers\Pemutu\StandarController;
 use App\Http\Controllers\Pemutu\TimMutuController;
 use Illuminate\Support\Facades\Route;
+
+// ==========================
+// 🔹 SPMI (PEMTU) Public Routes
+// ==========================
+Route::prefix('pemutu')->name('pemutu.')->group(function () {
+    Route::get('dokumen/verify/{dokumen}', [\App\Http\Controllers\Pemutu\DokumenApprovalController::class, 'verify'])->name('dokumen.verify');
+});
 
 // ==========================
 // 🔹 SPMI (PEMTU) Routes
@@ -28,6 +35,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::post('set-siklus', function (\Illuminate\Http\Request $request) {
         $request->validate(['siklus_tahun' => 'required|integer']);
         session(['siklus_spmi_tahun' => (int) $request->siklus_tahun]);
+
         return back();
     })->name('set-siklus');
 
@@ -102,6 +110,11 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::post('dokumen/{dokumen}/approve', [DokumenApprovalController::class, 'store'])->name('dokumen.approve');
     Route::delete('dokumen/approval/{approval}', [DokumenApprovalController::class, 'destroy'])->name('dokumen.approval.destroy');
 
+    // Pegawai Approval Inbox
+    Route::get('approval', [ApprovalController::class, 'index'])->name('approval.index');
+    Route::get('approval/{id}', [ApprovalController::class, 'show'])->name('approval.show');
+    Route::post('approval/{id}/process', [ApprovalController::class, 'process'])->name('approval.process');
+
     // Period SPMI (PEPP Cycle)
     Route::get('api/periode-spmi', [PeriodeSpmiController::class, 'data'])->name('periode-spmi.data');
     Route::resource('periode-spmi', PeriodeSpmiController::class);
@@ -120,15 +133,13 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::post('renop', [RenopController::class, 'store'])->name('renop.store');
     Route::get('renop', [RenopController::class, 'index'])->name('renop.index');
 
-    // Pelaksanaan (NEW)
-    Route::prefix('pelaksanaan')->name('pelaksanaan.')->group(function () {
-        Route::get('pemantauan', [PelaksanaanController::class, 'pemantauanIndex'])->name('pemantauan.index');
-        Route::get('pemantauan/data', [PelaksanaanController::class, 'pemantauanData'])->name('pemantauan.data');
-        Route::get('pemantauan/create', [PelaksanaanController::class, 'pemantauanCreate'])->name('pemantauan.create');
-        Route::post('pemantauan', [PelaksanaanController::class, 'pemantauanStore'])->name('pemantauan.store');
-        Route::get('pemantauan/{rapat}/edit', [PelaksanaanController::class, 'pemantauanEdit'])->name('pemantauan.edit');
-        Route::put('pemantauan/{rapat}', [PelaksanaanController::class, 'pemantauanUpdate'])->name('pemantauan.update');
-    });
+    // Pemantauan (Shortened URI)
+    Route::get('pemantauan', [PelaksanaanController::class, 'pemantauanIndex'])->name('pemantauan.index');
+    Route::get('pemantauan/data', [PelaksanaanController::class, 'pemantauanData'])->name('pemantauan.data');
+    Route::get('pemantauan/create', [PelaksanaanController::class, 'pemantauanCreate'])->name('pemantauan.create');
+    Route::post('pemantauan', [PelaksanaanController::class, 'pemantauanStore'])->name('pemantauan.store');
+    Route::get('pemantauan/{rapat}/edit', [PelaksanaanController::class, 'pemantauanEdit'])->name('pemantauan.edit');
+    Route::put('pemantauan/{rapat}', [PelaksanaanController::class, 'pemantauanUpdate'])->name('pemantauan.update');
 
     // Evaluasi Diri
     Route::get('evaluasi-diri', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'index'])->name('evaluasi-diri.index');
@@ -160,7 +171,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::post('ami/rtp/{indOrg}', [App\Http\Controllers\Pemutu\AmiController::class, 'updateRtp'])->name('ami.rtp-update');
     Route::get('ami/te/{indOrg}', [App\Http\Controllers\Pemutu\AmiController::class, 'editTe'])->name('ami.te-edit');
     Route::post('ami/te/{indOrg}', [App\Http\Controllers\Pemutu\AmiController::class, 'updateTe'])->name('ami.te-update');
-    
+
     // AMI Export
     Route::get('ami/{periode}/export-ptk', [App\Http\Controllers\Pemutu\AmiController::class, 'exportPtk'])->name('ami.export-ptk');
     Route::get('ami/{periode}/export-temuan-audit', [App\Http\Controllers\Pemutu\AmiController::class, 'exportTemuanAudit'])->name('ami.export-temuan-audit');

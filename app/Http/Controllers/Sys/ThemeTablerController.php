@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
@@ -16,27 +17,27 @@ class ThemeTablerController extends Controller
         $config = $this->loadConfig($mode);
 
         return [
-            'theme'                => $config['theme'] ?? 'light',
-            'themePrimary'         => $config['primary_color'] ?? '#206bc4',
-            'themeFont'            => $config['font_family'] ?? 'inter',
-            'themeBase'            => $config['base'] ?? 'gray',
-            'themeRadius'          => $config['radius'] ?? '1',
-            'themeBg'              => $config['bg_body'] ?? '',
-            'themeSidebarBg'       => $config['bg_sidebar'] ?? '',
-            'themeHeaderTopBg'     => $config['bg_header_top'] ?? '',
+            'theme' => $config['theme'] ?? 'light',
+            'themePrimary' => $config['primary_color'] ?? '#206bc4',
+            'themeFont' => $config['font_family'] ?? 'inter',
+            'themeBase' => $config['base'] ?? 'gray',
+            'themeRadius' => $config['radius'] ?? '1',
+            'themeBg' => $config['bg_body'] ?? '',
+            'themeSidebarBg' => $config['bg_sidebar'] ?? '',
+            'themeHeaderTopBg' => $config['bg_header_top'] ?? '',
             'themeHeaderOverlapBg' => $config['bg_header_overlap'] ?? '',
-            'themeHeaderSticky'    => $config['header_sticky'] ?? 'false',
-            'themeCardStyle'       => $config['card_style'] ?? 'flat',
-            'themeBoxedBg'         => $config['bg_boxed'] ?? '',
+            'themeHeaderSticky' => $config['header_sticky'] ?? 'false',
+            'themeCardStyle' => $config['card_style'] ?? 'flat',
+            'themeBoxedBg' => $config['bg_boxed'] ?? '',
             // Advanced customization options
-            'themeDensity'         => $config['density'] ?? 'standard',
-            'themeFontSize'        => $config['font_size'] ?? '14px',
-            'themeIconWeight'      => $config['icon_weight'] ?? '1.5',
-            'themeTexture'         => $config['bg_texture'] ?? 'none',
-            'layout'               => $config['layout'] ?? 'vertical',
-            'containerWidth'       => $config['container_width'] ?? 'standard',
-            'authLayout'           => $config['auth_layout'] ?? 'basic',
-            'authFormPosition'     => $config['auth_form_position'] ?? 'left',
+            'themeDensity' => $config['density'] ?? 'standard',
+            'themeFontSize' => $config['font_size'] ?? '14px',
+            'themeIconWeight' => $config['icon_weight'] ?? '1.5',
+            'themeTexture' => $config['bg_texture'] ?? 'none',
+            'layout' => $config['layout'] ?? 'vertical',
+            'containerWidth' => $config['container_width'] ?? 'standard',
+            'authLayout' => $config['auth_layout'] ?? 'basic',
+            'authFormPosition' => $config['auth_form_position'] ?? 'left',
         ];
     }
 
@@ -47,7 +48,7 @@ class ThemeTablerController extends Controller
     {
         $config = $this->loadConfig($mode);
         $layout = $config['layout'] ?? 'vertical';
-        $width  = $config['container_width'] ?? 'standard';
+        $width = $config['container_width'] ?? 'standard';
 
         $classes = ["layout-{$layout}"];
         if ($layout === 'horizontal') {
@@ -58,15 +59,15 @@ class ThemeTablerController extends Controller
         }
 
         return [
-            'containerWidth'        => $width,
-            'containerClass'        => $width === 'fluid' ? 'container-fluid' : 'container-xl',
-            'bodyClass'             => implode(' ', $classes),
-            'layout'                => $layout,
-            'layoutSidebar'         => ! in_array($layout, ['condensed', 'horizontal']),
-            'layoutHideTopbar'      => ($config['header_sticky'] ?? 'false') === 'hidden',
-            'layoutNavbarSticky'    => ($config['header_sticky'] ?? 'false') === 'true',
+            'containerWidth' => $width,
+            'containerClass' => $width === 'fluid' ? 'container-fluid' : 'container-xl',
+            'bodyClass' => implode(' ', $classes),
+            'layout' => $layout,
+            'layoutSidebar' => ! in_array($layout, ['condensed', 'horizontal']),
+            'layoutHideTopbar' => ($config['header_sticky'] ?? 'false') === 'hidden',
+            'layoutNavbarSticky' => ($config['header_sticky'] ?? 'false') === 'true',
             'layoutNavbarCondensed' => $layout === 'condensed',
-            'layoutNavbarClass'     => $layout === 'condensed' ? 'navbar-overlap' : '',
+            'layoutNavbarClass' => $layout === 'condensed' ? 'navbar-overlap' : '',
         ];
     }
 
@@ -86,7 +87,7 @@ class ThemeTablerController extends Controller
 
         // Load existing config and merge
         $existingConfig = $this->loadConfig($mode);
-        $mergedConfig   = array_merge($existingConfig, $configData);
+        $mergedConfig = array_merge($existingConfig, $configData);
 
         // Save to JSON
         $this->saveConfig($mode, $mergedConfig);
@@ -111,29 +112,29 @@ class ThemeTablerController extends Controller
     public function getStyleBlock(string $mode = 'sys'): string
     {
         $config = $this->loadConfig($mode);
-        $css    = [];
-        $bgCss  = [];
+        $css = [];
+        $bgCss = [];
 
         // Primary Color
         if (! empty($config['primary_color'])) {
             $primaryRgb = $this->hexToRgb($config['primary_color']);
-            $css[]      = "--tblr-primary: {$config['primary_color']};";
-            $css[]      = "--tblr-primary-rgb: {$primaryRgb};";
+            $css[] = "--tblr-primary: {$config['primary_color']};";
+            $css[] = "--tblr-primary-rgb: {$primaryRgb};";
         }
 
         // Font Family
         if (! empty($config['font_family'])) {
             $fontStack = $this->getFontStack($config['font_family']);
-            $css[]     = "--tblr-font-sans-serif: {$fontStack};";
+            $css[] = "--tblr-font-sans-serif: {$fontStack};";
         }
 
         // Border Radius
         if (isset($config['radius'])) {
             $radius = (float) $config['radius'];
-            $css[]  = "--tblr-border-radius: {$radius}rem;";
-            $css[]  = "--tblr-border-radius-sm: " . ($radius * 0.75) . "rem;";
-            $css[]  = "--tblr-border-radius-lg: " . ($radius * 1.25) . "rem;";
-            $css[]  = "--tblr-border-radius-pill: 100rem;";
+            $css[] = "--tblr-border-radius: {$radius}rem;";
+            $css[] = '--tblr-border-radius-sm: '.($radius * 0.75).'rem;';
+            $css[] = '--tblr-border-radius-lg: '.($radius * 1.25).'rem;';
+            $css[] = '--tblr-border-radius-pill: 100rem;';
         }
 
         // Advanced: Font Size
@@ -148,36 +149,36 @@ class ThemeTablerController extends Controller
                 '18px' => '1.125rem',
             ];
             $fontSize = $fontSizeMap[$config['font_size']] ?? '0.875rem';
-            $css[]    = "--tblr-font-size-base: {$fontSize};";
-            $css[]    = "--tblr-body-font-size: {$fontSize};";
+            $css[] = "--tblr-font-size-base: {$fontSize};";
+            $css[] = "--tblr-body-font-size: {$fontSize};";
         }
 
         // Advanced: Icon Weight
         if (! empty($config['icon_weight'])) {
             $iconWeightMap = [
-                '1'    => '1.0',
+                '1' => '1.0',
                 '1.25' => '1.25',
-                '1.5'  => '1.5',
+                '1.5' => '1.5',
                 '1.75' => '1.75',
-                '2'    => '2',
-                '2.5'  => '2.5',
+                '2' => '2',
+                '2.5' => '2.5',
             ];
             $iconWeight = $iconWeightMap[$config['icon_weight']] ?? '1.5';
-            $css[]      = "--tblr-icon-stroke-width: {$iconWeight};";
+            $css[] = "--tblr-icon-stroke-width: {$iconWeight};";
         }
 
         // Background Colors (only if not empty and NOT in dark mode)
         if (($config['theme'] ?? 'light') !== 'dark') {
             if (! empty($config['bg_body'])) {
-                $bgCss[]   = "--tblr-body-bg: {$config['bg_body']};";
+                $bgCss[] = "--tblr-body-bg: {$config['bg_body']};";
                 $textColor = $this->getContrastColor($config['bg_body']);
-                $bgCss[]   = "--tblr-body-text: {$textColor};";
+                $bgCss[] = "--tblr-body-text: {$textColor};";
             }
 
             if (! empty($config['bg_sidebar'])) {
-                $bgCss[]    = "--tblr-sidebar-bg: {$config['bg_sidebar']};";
-                $textColor  = $this->getContrastColor($config['bg_sidebar']);
-                $bgCss[]    = "--tblr-sidebar-text: {$textColor};";
+                $bgCss[] = "--tblr-sidebar-bg: {$config['bg_sidebar']};";
+                $textColor = $this->getContrastColor($config['bg_sidebar']);
+                $bgCss[] = "--tblr-sidebar-text: {$textColor};";
                 $mutedColor = $this->getLuminance($config['bg_sidebar']) < 0.6
                     ? 'rgba(255, 255, 255, 0.7)'
                     : '#6c757d';
@@ -185,9 +186,9 @@ class ThemeTablerController extends Controller
             }
 
             if (! empty($config['bg_header_top'])) {
-                $bgCss[]   = "--tblr-header-top-bg: {$config['bg_header_top']};";
+                $bgCss[] = "--tblr-header-top-bg: {$config['bg_header_top']};";
                 $textColor = $this->getContrastColor($config['bg_header_top']);
-                $bgCss[]   = "--tblr-header-top-text: {$textColor};";
+                $bgCss[] = "--tblr-header-top-text: {$textColor};";
             }
 
             if (! empty($config['bg_boxed'])) {
@@ -197,11 +198,11 @@ class ThemeTablerController extends Controller
 
         // Always allow Header Overlap BG in Dark Mode if needed for depth
         if (! empty($config['bg_header_overlap'])) {
-            $overlapCss   = [];
+            $overlapCss = [];
             $overlapCss[] = "--tblr-header-overlap-bg: {$config['bg_header_overlap']};";
 
             // Generate contrast text color
-            $textColor    = $this->getContrastColor($config['bg_header_overlap']);
+            $textColor = $this->getContrastColor($config['bg_header_overlap']);
             $overlapCss[] = "--tblr-header-overlap-text: {$textColor};";
 
             // Generate muted text color
@@ -225,17 +226,17 @@ class ThemeTablerController extends Controller
         $style = "<style>\n";
 
         if (! empty($css)) {
-            $cssString  = implode("\n    ", $css);
-            $style     .= ":root {\n    {$cssString}\n}\n";
+            $cssString = implode("\n    ", $css);
+            $style .= ":root {\n    {$cssString}\n}\n";
         }
 
         if (! empty($bgCss)) {
-            $bgCssString  = implode("\n    ", $bgCss);
+            $bgCssString = implode("\n    ", $bgCss);
             // Wrap in :not selector to allow live preview to override server styles
             $style .= "html:not([data-bs-theme=\"dark\"]) {\n    {$bgCssString}\n}\n";
         }
 
-        $style .= "</style>";
+        $style .= '</style>';
 
         return $style;
     }
@@ -245,11 +246,11 @@ class ThemeTablerController extends Controller
      */
     public function getHtmlAttributes(string $mode = 'sys'): string
     {
-        $config     = $this->loadConfig($mode);
+        $config = $this->loadConfig($mode);
         $attributes = [];
 
         // Theme mode (light/dark)
-        $theme        = $config['theme'] ?? 'light';
+        $theme = $config['theme'] ?? 'light';
         $attributes[] = "data-bs-theme=\"{$theme}\"";
 
         // Font family
@@ -312,7 +313,7 @@ class ThemeTablerController extends Controller
      */
     public function getBodyAttributes(string $mode = 'sys'): string
     {
-        $config     = $this->loadConfig($mode);
+        $config = $this->loadConfig($mode);
         $attributes = [];
 
         // Container width
@@ -321,7 +322,7 @@ class ThemeTablerController extends Controller
         }
 
         // Layout classes
-        $layout  = $config['layout'] ?? 'vertical';
+        $layout = $config['layout'] ?? 'vertical';
         $classes = ["layout-{$layout}"];
 
         if ($layout === 'horizontal') {
@@ -334,7 +335,7 @@ class ThemeTablerController extends Controller
         }
 
         if (! empty($classes)) {
-            $attributes[] = 'class="' . implode(' ', $classes) . '"';
+            $attributes[] = 'class="'.implode(' ', $classes).'"';
         }
 
         return implode(' ', $attributes);
@@ -350,17 +351,18 @@ class ThemeTablerController extends Controller
         if (Storage::exists($filename)) {
             try {
                 $content = Storage::get($filename);
-                $config  = json_decode($content, true);
+                $config = json_decode($content, true);
                 if (is_array($config)) {
                     return array_merge($this->getDefaultConfig(), $config);
                 }
             } catch (Exception $e) {
-                \Log::warning("Failed to load theme config for {$mode}: " . $e->getMessage());
+                \Log::warning("Failed to load theme config for {$mode}: ".$e->getMessage());
             }
         }
 
         $defaults = $this->getDefaultConfig();
         $this->saveConfig($mode, $defaults);
+
         return $defaults;
     }
 
@@ -371,7 +373,7 @@ class ThemeTablerController extends Controller
     {
         $filename = "theme-{$mode}.json";
 
-        $data = array_filter($data, fn($value) => $value !== null);
+        $data = array_filter($data, fn ($value) => $value !== null);
 
         Storage::put($filename, json_encode($data, JSON_PRETTY_PRINT));
     }
@@ -382,26 +384,26 @@ class ThemeTablerController extends Controller
     private function getDefaultConfig(): array
     {
         return [
-            'theme'              => 'light',
-            'layout'             => 'vertical',
-            'container_width'    => 'standard',
-            'header_sticky'      => 'false',
-            'card_style'         => 'flat',
-            'primary_color'      => '#206bc4',
-            'font_family'        => 'inter',
-            'base'               => 'gray',
-            'radius'             => '1',
-            'bg_body'            => '',
-            'bg_sidebar'         => '',
-            'bg_header_top'      => '',
-            'bg_header_overlap'  => '',
-            'bg_boxed'           => '',
+            'theme' => 'light',
+            'layout' => 'vertical',
+            'container_width' => 'standard',
+            'header_sticky' => 'false',
+            'card_style' => 'flat',
+            'primary_color' => '#206bc4',
+            'font_family' => 'inter',
+            'base' => 'gray',
+            'radius' => '1',
+            'bg_body' => '',
+            'bg_sidebar' => '',
+            'bg_header_top' => '',
+            'bg_header_overlap' => '',
+            'bg_boxed' => '',
             // Advanced customization defaults
-            'density'            => 'standard',
-            'font_size'          => '14px',
-            'icon_weight'        => '1.5',
-            'bg_texture'         => 'none',
-            'auth_layout'        => 'basic',
+            'density' => 'standard',
+            'font_size' => '14px',
+            'icon_weight' => '1.5',
+            'bg_texture' => 'none',
+            'auth_layout' => 'basic',
             'auth_form_position' => 'left',
         ];
     }
@@ -412,32 +414,32 @@ class ThemeTablerController extends Controller
     private function mapToConfigKeys(array $data): array
     {
         $map = [
-            'theme'                   => 'theme',
-            'theme-font'              => 'font_family',
-            'theme-base'              => 'base',
-            'theme-radius'            => 'radius',
-            'theme-primary'           => 'primary_color',
-            'theme-card-style'        => 'card_style',
-            'container-width'         => 'container_width',
-            'theme-header-sticky'     => 'header_sticky',
-            'theme-bg'                => 'bg_body',
-            'theme-sidebar-bg'        => 'bg_sidebar',
-            'theme-header-top-bg'     => 'bg_header_top',
+            'theme' => 'theme',
+            'theme-font' => 'font_family',
+            'theme-base' => 'base',
+            'theme-radius' => 'radius',
+            'theme-primary' => 'primary_color',
+            'theme-card-style' => 'card_style',
+            'container-width' => 'container_width',
+            'theme-header-sticky' => 'header_sticky',
+            'theme-bg' => 'bg_body',
+            'theme-sidebar-bg' => 'bg_sidebar',
+            'theme-header-top-bg' => 'bg_header_top',
             'theme-header-overlap-bg' => 'bg_header_overlap',
-            'theme-boxed-bg'          => 'bg_boxed',
-            'layout'                  => 'layout',
-            'auth-layout'             => 'auth_layout',
-            'auth-form-position'      => 'auth_form_position',
+            'theme-boxed-bg' => 'bg_boxed',
+            'layout' => 'layout',
+            'auth-layout' => 'auth_layout',
+            'auth-form-position' => 'auth_form_position',
             // Advanced customization mappings
-            'theme-density'           => 'density',
-            'theme-font-size'         => 'font_size',
-            'theme-icon-weight'       => 'icon_weight',
-            'theme-texture'           => 'bg_texture',
+            'theme-density' => 'density',
+            'theme-font-size' => 'font_size',
+            'theme-icon-weight' => 'icon_weight',
+            'theme-texture' => 'bg_texture',
         ];
 
         $result = [];
         foreach ($data as $key => $value) {
-            $configKey          = $map[$key] ?? $key;
+            $configKey = $map[$key] ?? $key;
             $result[$configKey] = $value;
         }
 
@@ -450,11 +452,11 @@ class ThemeTablerController extends Controller
     private function getFontStack(string $font): string
     {
         $stacks = [
-            'inter'       => "'Inter', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif",
-            'roboto'      => "'Roboto', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Helvetica Neue, sans-serif",
-            'poppins'     => "'Poppins', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif",
+            'inter' => "'Inter', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif",
+            'roboto' => "'Roboto', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Helvetica Neue, sans-serif",
+            'poppins' => "'Poppins', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif",
             'public-sans' => "'Public Sans', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif",
-            'nunito'      => "'Nunito', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif",
+            'nunito' => "'Nunito', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif",
         ];
 
         return $stacks[$font] ?? $stacks['inter'];
@@ -466,6 +468,7 @@ class ThemeTablerController extends Controller
     private function hexToRgb(string $color): string
     {
         [$r, $g, $b] = $this->extractRgb($color);
+
         return "{$r}, {$g}, {$b}";
     }
 
@@ -475,6 +478,7 @@ class ThemeTablerController extends Controller
     private function getLuminance(string $color): float
     {
         [$r, $g, $b] = $this->extractRgb($color);
+
         return (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
     }
 
@@ -485,6 +489,7 @@ class ThemeTablerController extends Controller
     {
         if (str_contains($color, ',')) {
             $parts = explode(',', preg_replace('/[^0-9,]/', '', $color));
+
             return [
                 (int) ($parts[0] ?? 0),
                 (int) ($parts[1] ?? 0),
@@ -495,15 +500,15 @@ class ThemeTablerController extends Controller
         $hex = ltrim($color, '#');
 
         if (strlen($hex) === 3) {
-            $r = hexdec($hex[0] . $hex[0]);
-            $g = hexdec($hex[1] . $hex[1]);
-            $b = hexdec($hex[2] . $hex[2]);
+            $r = hexdec($hex[0].$hex[0]);
+            $g = hexdec($hex[1].$hex[1]);
+            $b = hexdec($hex[2].$hex[2]);
         } else {
             // Ensure 6 chars
             $hex = str_pad($hex, 6, '0');
-            $r   = hexdec(substr($hex, 0, 2));
-            $g   = hexdec(substr($hex, 2, 2));
-            $b   = hexdec(substr($hex, 4, 2));
+            $r = hexdec(substr($hex, 0, 2));
+            $g = hexdec(substr($hex, 2, 2));
+            $b = hexdec(substr($hex, 4, 2));
         }
 
         return [$r, $g, $b];
@@ -515,6 +520,7 @@ class ThemeTablerController extends Controller
     private function getContrastColor(string $bgColor): string
     {
         $luminance = $this->getLuminance($bgColor);
+
         return $luminance < 0.6 ? '#ffffff' : '#1e293b';
     }
 }

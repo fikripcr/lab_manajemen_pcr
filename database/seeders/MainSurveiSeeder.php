@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Models\Survei\Halaman;
@@ -36,7 +37,7 @@ class MainSurveiSeeder extends Seeder
         $faker = Faker::create('id_ID');
 
         // 1. Create 10 Surveys
-        $surveys      = [];
+        $surveys = [];
         $surveyTitles = [
             'Survei Kepuasan Mahasiswa terhadap Layanan Akademik',
             'Evaluasi Kinerja Dosen Semester Ganjil 2024/2025',
@@ -51,27 +52,27 @@ class MainSurveiSeeder extends Seeder
         ];
 
         foreach ($surveyTitles as $index => $title) {
-            $tglMulai   = Carbon::now()->subMonths(rand(1, 6));
+            $tglMulai = Carbon::now()->subMonths(rand(1, 6));
             $tglSelesai = Carbon::now()->addMonths(rand(1, 6));
 
             $survei = Survei::create([
-                'judul'           => $title,
-                'deskripsi'       => $faker->paragraph(),
-                'slug'            => Str::slug($title) . '-' . Str::random(5),
-                'target_role'     => $faker->randomElement(['Mahasiswa', 'Dosen', 'Tendik', 'Alumni', 'Umum']),
-                'is_aktif'        => true,
-                'wajib_login'     => $faker->boolean(70),
-                'bisa_isi_ulang'  => false,
-                'tanggal_mulai'   => $tglMulai,
+                'judul' => $title,
+                'deskripsi' => $faker->paragraph(),
+                'slug' => Str::slug($title).'-'.Str::random(5),
+                'target_role' => $faker->randomElement(['Mahasiswa', 'Dosen', 'Tendik', 'Alumni', 'Umum']),
+                'is_aktif' => true,
+                'wajib_login' => $faker->boolean(70),
+                'bisa_isi_ulang' => false,
+                'tanggal_mulai' => $tglMulai,
                 'tanggal_selesai' => $tglSelesai,
             ]);
             $surveys[] = $survei;
 
             // Create 1-2 Halaman per Survey
             $halaman1 = Halaman::create([
-                'survei_id'         => $survei->survei_id,
-                'judul_halaman'     => 'Bagian Utama',
-                'urutan'            => 1,
+                'survei_id' => $survei->survei_id,
+                'judul_halaman' => 'Bagian Utama',
+                'urutan' => 1,
                 'deskripsi_halaman' => 'Silakan isi pertanyaan di bawah ini dengan sejujur-jujurnya.',
             ]);
 
@@ -89,12 +90,12 @@ class MainSurveiSeeder extends Seeder
         // Prepare IDs for faster access
         $surveyData = [];
         foreach ($surveys as $s) {
-            $sid          = $s->survei_id;
-            $questions    = Pertanyaan::where('survei_id', $sid)->with('opsi')->get();
+            $sid = $s->survei_id;
+            $questions = Pertanyaan::where('survei_id', $sid)->with('opsi')->get();
             $surveyData[] = [
-                'id'          => $sid,
-                'questions'   => $questions,
-                'tgl_mulai'   => $s->tanggal_mulai,
+                'id' => $sid,
+                'questions' => $questions,
+                'tgl_mulai' => $s->tanggal_mulai,
                 'tgl_selesai' => $s->tanggal_selesai,
                 'wajib_login' => $s->wajib_login,
             ];
@@ -104,23 +105,23 @@ class MainSurveiSeeder extends Seeder
             $sData = $surveyData[array_rand($surveyData)];
 
             // Create Pengisian (Respondent Entry)
-            $waktuMulai   = $faker->dateTimeBetween($sData['tgl_mulai'], 'now');
-            $waktuSelesai = (clone $waktuMulai)->modify('+' . rand(5, 15) . ' minutes');
+            $waktuMulai = $faker->dateTimeBetween($sData['tgl_mulai'], 'now');
+            $waktuSelesai = (clone $waktuMulai)->modify('+'.rand(5, 15).' minutes');
 
             $pengisian = Pengisian::create([
-                'survei_id'     => $sData['id'],
-                'user_id'       => $sData['wajib_login'] ? ($users->random()->id ?? null) : null,
-                'status'        => 'Selesai',
-                'waktu_mulai'   => $waktuMulai,
+                'survei_id' => $sData['id'],
+                'user_id' => $sData['wajib_login'] ? ($users->random()->id ?? null) : null,
+                'status' => 'Selesai',
+                'waktu_mulai' => $waktuMulai,
                 'waktu_selesai' => $waktuSelesai,
-                'ip_address'    => $faker->ipv4,
+                'ip_address' => $faker->ipv4,
             ]);
 
             // Fill Answers
             foreach ($sData['questions'] as $q) {
-                $nilaiTeks  = null;
+                $nilaiTeks = null;
                 $nilaiAngka = null;
-                $opsiId     = null;
+                $opsiId = null;
 
                 if ($q->tipe == 'Skala_Linear') {
                     $nilaiAngka = rand(1, 5);
@@ -129,23 +130,23 @@ class MainSurveiSeeder extends Seeder
                 } elseif ($q->tipe == 'Pilihan_Ganda' || $q->tipe == 'Dropdown') {
                     $opts = $q->opsi;
                     if ($opts->isNotEmpty()) {
-                        $opt       = $opts->random();
-                        $opsiId    = $opt->opsi_id;
+                        $opt = $opts->random();
+                        $opsiId = $opt->opsi_id;
                         $nilaiTeks = $opt->label;
                     }
                 }
 
                 Jawaban::create([
-                    'pengisian_id'  => $pengisian->pengisian_id,
+                    'pengisian_id' => $pengisian->pengisian_id,
                     'pertanyaan_id' => $q->pertanyaan_id,
-                    'nilai_teks'    => $nilaiTeks,
-                    'nilai_angka'   => $nilaiAngka,
-                    'opsi_id'       => $opsiId,
+                    'nilai_teks' => $nilaiTeks,
+                    'nilai_angka' => $nilaiAngka,
+                    'opsi_id' => $opsiId,
                 ]);
             }
 
             if (($i + 1) % 500 == 0) {
-                $this->command->info("Generated " . ($i + 1) . " respondents...");
+                $this->command->info('Generated '.($i + 1).' respondents...');
             }
         }
 
@@ -160,44 +161,44 @@ class MainSurveiSeeder extends Seeder
         // 1. Skala Questions (Likert) - 3 questions
         for ($i = 1; $i <= 3; $i++) {
             Pertanyaan::create([
-                'survei_id'       => $sid,
-                'halaman_id'      => $hid,
-                'teks_pertanyaan' => "Seberapa puas Anda dengan aspek ke-$i dari " . $survei->judul . "?",
-                'tipe'            => 'Skala_Linear',
-                'wajib_diisi'     => true,
-                'urutan'          => $i,
-                'config_json'     => ['min' => 1, 'max' => 5],
+                'survei_id' => $sid,
+                'halaman_id' => $hid,
+                'teks_pertanyaan' => "Seberapa puas Anda dengan aspek ke-$i dari ".$survei->judul.'?',
+                'tipe' => 'Skala_Linear',
+                'wajib_diisi' => true,
+                'urutan' => $i,
+                'config_json' => ['min' => 1, 'max' => 5],
             ]);
         }
 
         // 2. Choice Question - 1 question with options
         $qChoice = Pertanyaan::create([
-            'survei_id'       => $sid,
-            'halaman_id'      => $hid,
-            'teks_pertanyaan' => "Melalui media apa Anda mengetahui informasi ini?",
-            'tipe'            => 'Pilihan_Ganda',
-            'wajib_diisi'     => true,
-            'urutan'          => 4,
+            'survei_id' => $sid,
+            'halaman_id' => $hid,
+            'teks_pertanyaan' => 'Melalui media apa Anda mengetahui informasi ini?',
+            'tipe' => 'Pilihan_Ganda',
+            'wajib_diisi' => true,
+            'urutan' => 4,
         ]);
 
         $options = ['Website', 'Instagram', 'WhatsApp Group', 'E-mail', 'Lainnya'];
         foreach ($options as $idx => $label) {
             Opsi::create([
-                'pertanyaan_id'   => $qChoice->pertanyaan_id,
-                'label'           => $label,
+                'pertanyaan_id' => $qChoice->pertanyaan_id,
+                'label' => $label,
                 'nilai_tersimpan' => Str::slug($label),
-                'urutan'          => $idx + 1,
+                'urutan' => $idx + 1,
             ]);
         }
 
         // 3. Text Questions - 1 question
         Pertanyaan::create([
-            'survei_id'       => $sid,
-            'halaman_id'      => $hid,
-            'teks_pertanyaan' => "Berikan masukan atau saran Anda:",
-            'tipe'            => 'Esai',
-            'wajib_diisi'     => false,
-            'urutan'          => 5,
+            'survei_id' => $sid,
+            'halaman_id' => $hid,
+            'teks_pertanyaan' => 'Berikan masukan atau saran Anda:',
+            'tipe' => 'Esai',
+            'wajib_diisi' => false,
+            'urutan' => 5,
         ]);
     }
 }

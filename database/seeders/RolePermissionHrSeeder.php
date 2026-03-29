@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Models\Sys\Permission;
@@ -85,10 +86,10 @@ class RolePermissionHrSeeder extends Seeder
 
         foreach ($permissionData as $permission) {
             Permission::updateOrCreate(['name' => $permission['name']], [
-                'guard_name'   => 'web',
-                'category'     => $permission['category'],
+                'guard_name' => 'web',
+                'category' => $permission['category'],
                 'sub_category' => $permission['sub_category'],
-                'description'  => $permission['description'],
+                'description' => $permission['description'],
             ]);
         }
 

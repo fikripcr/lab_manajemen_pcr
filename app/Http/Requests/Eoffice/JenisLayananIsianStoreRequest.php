@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Eoffice;
 
 use App\Http\Requests\BaseRequest;
 
 class JenisLayananIsianStoreRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -17,13 +15,12 @@ class JenisLayananIsianStoreRequest extends BaseRequest
     {
         return [
             'kategoriisian_id' => 'required|exists:eoffice_kategori_isian,kategoriisian_id',
-            'seq'              => 'required|integer',
-            'is_required'      => 'nullable|boolean',
+            'seq' => 'required|integer',
+            'is_required' => 'nullable|boolean',
         ];
     }
 
     /**
-     *
      * @return array<string, string>
      */
 }

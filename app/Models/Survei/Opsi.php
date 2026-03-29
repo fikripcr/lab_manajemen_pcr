@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Survei;
 
 use App\Traits\HashidBinding;
@@ -10,7 +11,9 @@ class Opsi extends Model
     use HasFactory, HashidBinding;
 
     protected $table = 'survei_opsi';
+
     protected $primaryKey = 'opsi_id';
+
     protected $appends = ['encrypted_opsi_id'];
 
     public function getRouteKeyName()

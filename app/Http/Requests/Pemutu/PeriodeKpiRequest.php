@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Pemutu;
 
 use App\Http\Requests\BaseRequest;
 
 class PeriodeKpiRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -16,9 +14,9 @@ class PeriodeKpiRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'nama'            => 'required|string|max:100',
-            'tahun'           => 'required|integer',
-            'tanggal_mulai'   => 'required|date',
+            'nama' => 'required|string|max:100',
+            'tahun' => 'required|integer',
+            'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after:tanggal_mulai',
         ];
     }
@@ -26,9 +24,9 @@ class PeriodeKpiRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'nama'            => 'Nama',
-            'tahun'           => 'Tahun',
-            'tanggal_mulai'   => 'Tanggal Mulai',
+            'nama' => 'Nama',
+            'tahun' => 'Tahun',
+            'tanggal_mulai' => 'Tanggal Mulai',
             'tanggal_selesai' => 'Tanggal Selesai',
         ];
     }

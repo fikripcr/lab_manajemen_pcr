@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api\Sys;
 
 use App\Http\Controllers\Controller;
@@ -8,33 +9,32 @@ use Illuminate\Http\Request;
 
 class ActivityLogController extends Controller
 {
-    public function __construct(protected ActivityLogsService $activityLogsService)
-    {}
+    public function __construct(protected ActivityLogsService $activityLogsService) {}
 
     /**
      * Get paginated list of activity logs
      */
     public function list(Request $request): JsonResponse
     {
-        $filters    = $this->activityLogsService->buildFiltersFromRequest($request);
+        $filters = $this->activityLogsService->buildFiltersFromRequest($request);
         $activities = $this->activityLogsService->getActivitiesList($filters);
 
         return jsonSuccess('Data retrieved', null, [
-            'data'  => $activities->items(),
+            'data' => $activities->items(),
             'links' => [
                 'first' => $activities->url(1),
-                'last'  => $activities->url($activities->lastPage()),
-                'prev'  => $activities->previousPageUrl(),
-                'next'  => $activities->nextPageUrl(),
+                'last' => $activities->url($activities->lastPage()),
+                'prev' => $activities->previousPageUrl(),
+                'next' => $activities->nextPageUrl(),
             ],
-            'meta'  => [
+            'meta' => [
                 'current_page' => $activities->currentPage(),
-                'from'         => $activities->firstItem(),
-                'last_page'    => $activities->lastPage(),
-                'path'         => $activities->path(),
-                'per_page'     => $activities->perPage(),
-                'to'           => $activities->lastItem(),
-                'total'        => $activities->total(),
+                'from' => $activities->firstItem(),
+                'last_page' => $activities->lastPage(),
+                'path' => $activities->path(),
+                'per_page' => $activities->perPage(),
+                'to' => $activities->lastItem(),
+                'total' => $activities->total(),
             ],
         ]);
     }

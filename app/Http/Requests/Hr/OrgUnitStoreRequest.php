@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Hr;
 
 use App\Http\Requests\BaseRequest;
 
 class OrgUnitStoreRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -16,12 +14,12 @@ class OrgUnitStoreRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'name'        => 'required|string|max:255',
-            'type'        => 'required|string',
-            'parent_id'   => 'nullable|exists:struktur_organisasi,orgunit_id',
-            'level'       => 'nullable|integer|min:1',
-            'sort_order'  => 'nullable|integer|min:1',
-            'is_active'   => 'nullable|boolean',
+            'name' => 'required|string|max:255',
+            'type' => 'required|string',
+            'parent_id' => 'nullable|exists:struktur_organisasi,orgunit_id',
+            'level' => 'nullable|integer|min:1',
+            'sort_order' => 'nullable|integer|min:1',
+            'is_active' => 'nullable|boolean',
             'description' => 'nullable|string|max:1000',
         ];
     }
@@ -29,12 +27,12 @@ class OrgUnitStoreRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'name'        => 'Nama Unit',
-            'type'        => 'Tipe Unit',
-            'parent_id'   => 'Parent Unit',
-            'level'       => 'Level',
-            'sort_order'  => 'Urutan',
-            'is_active'   => 'Status Aktif',
+            'name' => 'Nama Unit',
+            'type' => 'Tipe Unit',
+            'parent_id' => 'Parent Unit',
+            'level' => 'Level',
+            'sort_order' => 'Urutan',
+            'is_active' => 'Status Aktif',
             'description' => 'Deskripsi',
         ];
     }

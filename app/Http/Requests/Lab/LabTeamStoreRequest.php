@@ -7,9 +7,6 @@ use App\Http\Requests\BaseRequest;
 class LabTeamStoreRequest extends BaseRequest
 {
     /**
-     */
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -38,7 +35,7 @@ class LabTeamStoreRequest extends BaseRequest
     {
         return [
             'user_id' => 'Anggota Tim',
-            'role'    => 'Role',
+            'role' => 'Role',
             'jabatan' => 'Jabatan',
         ];
     }

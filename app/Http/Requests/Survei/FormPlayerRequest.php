@@ -1,14 +1,12 @@
 <?php
+
 namespace App\Http\Requests\Survei;
 
-use App\Models\Survei\Survei;
 use App\Http\Requests\BaseRequest;
+use App\Models\Survei\Survei;
 
 class FormPlayerRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -16,12 +14,12 @@ class FormPlayerRequest extends BaseRequest
      */
     public function rules(): array
     {
-        $slug   = $this->route('slug');
+        $slug = $this->route('slug');
         $survei = Survei::where('slug', $slug)
             ->where('is_aktif', true)
             ->firstOrFail();
 
-        $rules         = ['jawaban' => 'required|array'];
+        $rules = ['jawaban' => 'required|array'];
         $pertanyaanMap = $survei->pertanyaan()->pluck('tipe', 'pertanyaan_id');
 
         foreach ($pertanyaanMap as $id => $tipe) {
@@ -34,15 +32,10 @@ class FormPlayerRequest extends BaseRequest
         return $rules;
     }
 
-    /**
-     *
-     * @return array
-     */
-
     public function attributes(): array
     {
         return [
-            'jawaban'   => 'Jawaban',
+            'jawaban' => 'Jawaban',
             'jawaban.*' => 'Jawaban',
         ];
     }

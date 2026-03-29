@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Cms;
 
 use App\Traits\Blameable;
@@ -9,11 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Menu extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'cms_menus';
+    protected $table = 'cms_menus';
+
     protected $primaryKey = 'menu_id';
-    protected $appends    = ['encrypted_menu_id'];
+
+    protected $appends = ['encrypted_menu_id'];
 
     public function getEncryptedMenuIdAttribute()
     {

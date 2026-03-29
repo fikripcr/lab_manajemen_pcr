@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Pemutu;
 
 use App\Traits\HashidBinding;
@@ -8,18 +9,21 @@ class IndikatorSummaryPerforma extends Model
 {
     use HashidBinding;
 
-    protected $table      = 'vw_pemutu_summary_indikator_performa';
+    protected $table = 'vw_pemutu_summary_indikator_performa';
+
     protected $primaryKey = 'indikator_pegawai_id';
-    public $incrementing  = false;
-    public $timestamps    = false;
+
+    public $incrementing = false;
+
+    public $timestamps = false;
 
     protected $appends = ['encrypted_indikator_pegawai_id', 'encrypted_indikator_id'];
 
     protected $casts = [
         'indikator_pegawai_id' => 'integer',
-        'indikator_id'         => 'integer',
-        'pegawai_id'           => 'integer',
-        'unit_id'              => 'integer',
+        'indikator_id' => 'integer',
+        'pegawai_id' => 'integer',
+        'unit_id' => 'integer',
     ];
 
     /**
@@ -44,7 +48,7 @@ class IndikatorSummaryPerforma extends Model
             return [];
         }
 
-        $names  = explode(', ', $this->all_labels ?? '');
+        $names = explode(', ', $this->all_labels ?? '');
         $colors = explode(', ', $this->all_label_colors ?? '');
 
         return array_map(function ($name, $color) {

@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Pmb;
 
 use App\Http\Requests\BaseRequest;
 
 class VerifyDocRequest extends BaseRequest
 {
-    /**
-     */
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -16,7 +14,7 @@ class VerifyDocRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'status'     => 'required|in:Valid,Tidak_Valid',
+            'status' => 'required|in:Valid,Tidak_Valid',
             'keterangan' => 'nullable|string|max:1000',
         ];
     }
@@ -24,7 +22,7 @@ class VerifyDocRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'status'     => 'Status Dokumen',
+            'status' => 'Status Dokumen',
             'keterangan' => 'Keterangan',
         ];
     }

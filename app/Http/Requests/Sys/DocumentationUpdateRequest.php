@@ -7,12 +7,7 @@ use App\Http\Requests\BaseRequest;
 class DocumentationUpdateRequest extends BaseRequest
 {
     /**
-     */
-
-    /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -21,10 +16,10 @@ class DocumentationUpdateRequest extends BaseRequest
         ];
     }
 
-    public function attributes(): array
+    protected function customAttributes(): array
     {
         return [
-            'content' => 'Konten',
+            'content' => 'Konten Dokumentasi',
         ];
     }
 }

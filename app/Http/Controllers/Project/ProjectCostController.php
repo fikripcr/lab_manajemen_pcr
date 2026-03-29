@@ -11,8 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ProjectCostController extends Controller
 {
-    public function __construct(protected ProjectService $projectService)
-    {}
+    public function __construct(protected ProjectService $projectService) {}
 
     /**
      * Store a newly created cost in storage.
@@ -22,7 +21,7 @@ class ProjectCostController extends Controller
         $data = $request->validated();
         $data['project_id'] = $project->project_id;
         $data['author_id'] = Auth::id();
-        
+
         ProjectCost::create($data);
 
         return jsonSuccess('Cost recorded successfully');
@@ -54,8 +53,8 @@ class ProjectCostController extends Controller
     public function editModal(Project $project, ?ProjectCost $cost = null)
     {
         $tasks = $project->tasks;
-        if (!$cost) {
-            $cost = new ProjectCost();
+        if (! $cost) {
+            $cost = new ProjectCost;
             $cost->project_id = $project->project_id;
             $cost->cost_date = now()->format('Y-m-d');
             $cost->cost_type = 'out_cash';

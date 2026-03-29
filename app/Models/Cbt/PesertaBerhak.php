@@ -1,15 +1,16 @@
 <?php
+
 namespace App\Models\Cbt;
 
-use App\Models\Cbt\JadwalUjian;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class PesertaBerhak extends Model
 {
-    protected $table      = 'cbt_peserta_berhak';
+    protected $table = 'cbt_peserta_berhak';
+
     protected $primaryKey = 'peserta_berhak_id';
-    protected $appends    = ['encrypted_peserta_berhak_id'];
+
+    protected $appends = ['encrypted_peserta_berhak_id'];
 
     protected $fillable = [
         'jadwal_id',

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Eoffice;
 
 use App\Traits\Blameable;
@@ -9,12 +10,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Layanan extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'eoffice_layanan';
+    protected $table = 'eoffice_layanan';
+
     protected $primaryKey = 'layanan_id';
 
-    protected $appends  = ['encrypted_layanan_id'];
+    protected $appends = ['encrypted_layanan_id'];
+
     protected $fillable = [
         'no_layanan',
         'jenislayanan_id',

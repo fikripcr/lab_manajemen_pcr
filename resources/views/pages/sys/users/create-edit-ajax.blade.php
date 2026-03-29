@@ -18,7 +18,7 @@
             <x-tabler.form-input 
                 type="email"
                 name="email" 
-                label="Alamat Email" 
+                label="Email" 
                 :value="$user->email" 
                 required 
                 placeholder="email@example.com" 

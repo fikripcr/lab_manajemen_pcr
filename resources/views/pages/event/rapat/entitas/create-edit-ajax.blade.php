@@ -1,25 +1,6 @@
 @php
-    $selectedEntityText = '';
-    $selectedEntityId   = '';
-    if ($entitas->exists && $entitas->model === \App\Models\Pemutu\IndikatorOrgUnit::class) {
-        $item = \App\Models\Pemutu\IndikatorOrgUnit::with('indikator')->find($entitas->model_id);
-        if ($item && $item->indikator) {
-            $selectedEntityText = '[Indikator Unit] ' . $item->indikator->no_indikator . ' - ' . $item->indikator->indikator;
-            $selectedEntityId   = 'IndikatorOrgUnit:' . $item->indikorgunit_id;
-        }
-    } elseif ($entitas->exists && $entitas->model === \App\Models\Hr\StrukturOrganisasi::class) {
-        $item = \App\Models\Hr\StrukturOrganisasi::find($entitas->model_id);
-        if ($item) {
-            $selectedEntityText = '[Unit Kerja] ' . $item->name . ($item->code ? " ({$item->code})" : "");
-            $selectedEntityId   = 'StrukturOrganisasi:' . $item->orgunit_id;
-        }
-    } elseif ($entitas->exists && $entitas->model === \App\Models\Pemutu\Indikator::class) {
-        $item = \App\Models\Pemutu\Indikator::find($entitas->model_id);
-        if ($item) {
-            $selectedEntityText = '[Indikator Mutu] ' . $item->no_indikator . ' - ' . $item->indikator;
-            $selectedEntityId   = 'Indikator:' . $item->indikator_id;
-        }
-    }
+    $selectedEntityText = $selectedEntityText ?? '';
+    $selectedEntityId   = $selectedEntityId ?? '';
 @endphp
 
 <x-tabler.form-modal 

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Lab;
 
 use App\Models\Lab\RiwayatApproval;
@@ -32,20 +33,20 @@ class SuratBebasLabService
         return DB::transaction(function () use ($data) {
             $surat = SuratBebasLab::create([
                 'student_id' => auth()->id(),
-                'status'     => 'pending',
+                'status' => 'pending',
             ]);
 
             // Create Initial Approval (Pending)
             $approval = RiwayatApproval::create([
-                'model'    => SuratBebasLab::class,
+                'model' => SuratBebasLab::class,
                 'model_id' => $surat->surat_bebas_lab_id,
-                'status'   => 'pending',
-                'catatan'  => $data['catatan'] ?? 'Pengajuan baru',
+                'status' => 'Pending',  // ✅ Uppercase untuk konsistensi
+                'catatan' => $data['catatan'] ?? 'Pengajuan baru',
             ]);
 
             $surat->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
 
-            logActivity('surat_bebas_lab', "Membuat pengajuan surat bebas lab baru untuk mahasiswa ID " . auth()->id());
+            logActivity('surat_bebas_lab', 'Membuat pengajuan surat bebas lab baru untuk mahasiswa ID '.auth()->id());
 
             return $surat;
         });
@@ -57,17 +58,17 @@ class SuratBebasLabService
     public function updateStatus(SuratBebasLab $surat, array $data): bool
     {
         return DB::transaction(function () use ($surat, $data) {
-            $status  = $data['status'];
+            $status = $data['status'];
             $catatan = $data['catatan'] ?? null;
 
             // Create New Approval Record
             $approval = RiwayatApproval::create([
-                'model'    => SuratBebasLab::class,
+                'model' => SuratBebasLab::class,
                 'model_id' => $surat->surat_bebas_lab_id,
-                'status'   => $status,
-                'pejabat'  => auth()->user()->name,
-                'jabatan'  => auth()->user()->pegawai->jabatan_fungsional->jabfungsional ?? 'Staff',
-                'catatan'  => $catatan,
+                'status' => ucfirst(strtolower($status)),  // ✅ Normalize ke format Capitalized
+                'pejabat' => auth()->user()->name,
+                'jabatan' => auth()->user()->pegawai->jabatan_fungsional->jabfungsional ?? 'Staff',
+                'catatan' => $catatan,
             ]);
 
             $surat->update([

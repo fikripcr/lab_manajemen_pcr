@@ -1,17 +1,7 @@
 <?php
+
 namespace App\Models\Hr;
 
-use App\Models\Hr\FilePegawai;
-use App\Models\Hr\Keluarga;
-use App\Models\Hr\PengembanganDiri;
-use App\Models\Hr\RiwayatApproval;
-use App\Models\Hr\RiwayatDataDiri;
-use App\Models\Hr\RiwayatInpassing;
-use App\Models\Hr\RiwayatJabFungsional;
-use App\Models\Hr\RiwayatJabStruktural;
-use App\Models\Hr\RiwayatPendidikan;
-use App\Models\Hr\RiwayatStatAktifitas;
-use App\Models\Hr\RiwayatStatPegawai;
 use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
@@ -22,9 +12,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pegawai extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'hr_pegawai';
+    protected $table = 'hr_pegawai';
+
     protected $primaryKey = 'pegawai_id';
 
     protected $appends = ['encrypted_pegawai_id'];

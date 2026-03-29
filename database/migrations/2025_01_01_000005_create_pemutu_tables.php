@@ -120,7 +120,7 @@ return new class extends Migration
             $table->id('indikator_id');
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->unsignedBigInteger('prev_indikator_id')->nullable();
-            
+
             // Renstra Mappings (merged from 2026_03_12)
             $table->unsignedBigInteger('renstra_id')->nullable();
             $table->unsignedBigInteger('renstra_poin_id')->nullable();
@@ -316,7 +316,7 @@ return new class extends Migration
             $table->string('model');
             $table->unsignedBigInteger('model_id');
             $table->enum('status', ['Draft', 'Pending', 'Approved', 'Rejected'])->default('Draft');
-            
+
             // Merged pegwai_id (reference hr_pegawai) from 2026_03_14
             $table->unsignedBigInteger('pegawai_id')->nullable();
 
@@ -456,7 +456,7 @@ return new class extends Migration
             LEFT JOIN hr_struktur_organisasi so ON io.org_unit_id = so.orgunit_id
             LEFT JOIN pemutu_indikator_label il ON i.indikator_id = il.indikator_id
             LEFT JOIN pemutu_label l ON il.label_id = l.label_id
-            LEFT JOIN pemutu_indikator_doksub ids ON i.indikator_id = ids.indikator_id
+            LEFT JOIN pemutu_indikator_doksub ids ON i.indikator_id = ids.source_id AND ids.source_type = 'App\Models\Pemutu\Indikator'
             LEFT JOIN pemutu_dok_sub ds ON ids.doksub_id = ds.doksub_id
             LEFT JOIN pemutu_indikator_pegawai ip ON i.indikator_id = ip.indikator_id
             GROUP BY
@@ -567,9 +567,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        \Illuminate\Support\Facades\DB::statement("DROP VIEW IF EXISTS vw_pemutu_summary_indikator");
-        \Illuminate\Support\Facades\DB::statement("DROP VIEW IF EXISTS vw_pemutu_summary_indikator_standar");
-        \Illuminate\Support\Facades\DB::statement("DROP VIEW IF EXISTS vw_pemutu_summary_indikator_performa");
+        \Illuminate\Support\Facades\DB::statement('DROP VIEW IF EXISTS vw_pemutu_summary_indikator');
+        \Illuminate\Support\Facades\DB::statement('DROP VIEW IF EXISTS vw_pemutu_summary_indikator_standar');
+        \Illuminate\Support\Facades\DB::statement('DROP VIEW IF EXISTS vw_pemutu_summary_indikator_performa');
 
         Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('pemutu_doksub_mapping');

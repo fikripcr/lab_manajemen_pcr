@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Pmb;
 
 use App\Traits\Blameable;
@@ -9,11 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JenisDokumen extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'pmb_jenis_dokumen';
+    protected $table = 'pmb_jenis_dokumen';
+
     protected $primaryKey = 'jenis_dokumen_id';
-    protected $appends    = ['encrypted_jenis_dokumen_id'];
+
+    protected $appends = ['encrypted_jenis_dokumen_id'];
 
     public function getRouteKeyName()
     {
@@ -30,5 +33,4 @@ class JenisDokumen extends Model
         'tipe_file',
         'max_size_kb',
     ];
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Pmb;
 
 use App\Http\Controllers\Controller;
@@ -32,10 +33,10 @@ class VerificationController extends Controller
     {
         return datatables()->of($this->verificationService->getPendingPaymentsQuery())
             ->addIndexColumn()
-            ->editColumn('jumlah_bayar', fn($p) => pmbCurrency($p->jumlah_bayar))
+            ->editColumn('jumlah_bayar', fn ($p) => pmbCurrency($p->jumlah_bayar))
             ->addColumn('action', function ($row) {
                 return view('pages.pmb.verification._payment_action', [
-                    'row'       => $row,
+                    'row' => $row,
                     'verifyUrl' => route('pmb.verification.payment-form', $row->encrypted_pembayaran_id),
                 ])->render();
             })
@@ -50,6 +51,7 @@ class VerificationController extends Controller
     {
         $pembayaran = Pembayaran::findOrFail(decryptIdIfEncrypted($encryptedId));
         $pembayaran = $this->verificationService->getPaymentDetails($pembayaran);
+
         return view('pages.pmb.verification.payment_form', compact('pembayaran'));
     }
 
@@ -61,6 +63,7 @@ class VerificationController extends Controller
         $pembayaran = Pembayaran::findOrFail(decryptIdIfEncrypted($encryptedId));
 
         $this->verificationService->verifyPayment($pembayaran, $request->validated());
+
         return jsonSuccess('Proses verifikasi pembayaran selesai.', route('pmb.verification.payments'));
     }
 
@@ -77,13 +80,13 @@ class VerificationController extends Controller
      */
     public function dataDocuments(Request $request)
     {
-        $filters           = $request->all();
+        $filters = $request->all();
         $filters['status'] = 'Menunggu_Verifikasi_Berkas';
 
         return datatables()->of($this->pendaftaranService->getFilteredQuery($filters))
             ->addIndexColumn()
             ->addColumn('action', function ($p) {
-                return '<a href="' . route('pmb.pendaftaran.show', $p->encrypted_pendaftaran_id) . '" class="btn btn-sm btn-primary">Verifikasi Berkas</a>';
+                return '<a href="'.route('pmb.pendaftaran.show', $p->encrypted_pendaftaran_id).'" class="btn btn-sm btn-primary">Verifikasi Berkas</a>';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -113,7 +116,7 @@ class VerificationController extends Controller
         foreach ($request->dokumen_ids as $dokumenId) {
             $dokumen = \App\Models\Pmb\DokumenUpload::findOrFail($dokumenId);
             $dokumen->update([
-                'status_verifikasi'  => $request->status,
+                'status_verifikasi' => $request->status,
                 'catatan_verifikasi' => $request->catatan,
             ]);
         }

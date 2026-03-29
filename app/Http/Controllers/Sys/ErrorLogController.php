@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
@@ -11,8 +12,7 @@ class ErrorLogController extends Controller
 {
     public function __construct(
         protected ErrorLogService $errorLogService
-    ) {
-    }
+    ) {}
 
     /**
      * Display a listing of error logs.
@@ -28,9 +28,9 @@ class ErrorLogController extends Controller
     public function data(Request $request)
     {
         $filters = [
-            'level'      => $request->get('level'),
+            'level' => $request->get('level'),
             'start_date' => $request->get('start_date'),
-            'end_date'   => $request->get('end_date'),
+            'end_date' => $request->get('end_date'),
         ];
 
         $errorLogs = $this->errorLogService->getFilteredQuery($filters);
@@ -40,9 +40,10 @@ class ErrorLogController extends Controller
             ->editColumn('message', function ($log) {
                 // Limit message length and add ellipsis if needed
                 $message = strlen($log->message) > 300
-                    ? substr($log->message, 0, 300) . '...'
+                    ? substr($log->message, 0, 300).'...'
                     : $log->message;
-                return '<span title="' . e($log->message) . '">' . e($message) . '</span>';
+
+                return '<span title="'.e($log->message).'">'.e($message).'</span>';
             })
             ->addColumn('error_type', function ($log) {
                 $errorClass = class_basename($log->exception_class);
@@ -57,10 +58,10 @@ class ErrorLogController extends Controller
                     $sqlState = $matches[1];
                 }
 
-                $display = '<span class="text-danger" title="' . e($log->exception_class) . '">' . e($errorClass) . '</span>';
+                $display = '<span class="text-danger" title="'.e($log->exception_class).'">'.e($errorClass).'</span>';
 
                 if ($sqlState) {
-                    $display .= '<br><small class="text-muted">[' . e($sqlState) . ']</small>';
+                    $display .= '<br><small class="text-muted">['.e($sqlState).']</small>';
                 }
 
                 return $display;
@@ -68,7 +69,7 @@ class ErrorLogController extends Controller
             ->addColumn('user_info', function ($log) {
                 if ($log->user) {
                     // If user is authenticated, show user's name
-                    return '<span class="text-primary" title="User: ' . e($log->user->name) . '">' . e($log->user->name) . '</span>';
+                    return '<span class="text-primary" title="User: '.e($log->user->name).'">'.e($log->user->name).'</span>';
                 } else {
                     // If no user (system error), show "System"
                     return '<span class="text-muted" title="System error">System</span>';
@@ -83,7 +84,8 @@ class ErrorLogController extends Controller
             ->addColumn('file_short', function ($log) {
                 // Return short file path with line number
                 $shortFile = basename($log->file ?? '');
-                return '<span title="' . e($log->file) . '">' . e($shortFile) . ':' . e($log->line) . '</span>';
+
+                return '<span title="'.e($log->file).'">'.e($shortFile).':'.e($log->line).'</span>';
             })
             ->addColumn('action', function ($log) {
                 return view('components.tabler.datatables-actions', [

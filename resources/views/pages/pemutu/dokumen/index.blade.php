@@ -132,12 +132,17 @@ $rootDoc = $isTreeBased ? null : $dokData->first();
                                         <div>
                                             <div class="fw-bold text-reset">{{ $dok->judul }}</div>
                                             <div class="text-muted small">
-                                                <i class="ti ti-file-description me-1"></i> {{ $dok->dokSubs ? $dok->dokSubs->count() : 0 }} poin
+                                                @if($dok->jenis === 'renop')
+                                                    <i class="ti ti-target me-1"></i> {{ $dok->renop_indikator_count ?? 0 }} Indikator
+                                                @else
+                                                    <i class="ti ti-file-description me-1"></i> {{ $dok->dokSubs ? $dok->dokSubs->count() : 0 }} poin
+                                                @endif
                                             </div>
                                         </div>
                                     </a>
                                 </div>
                             </div>
+                            @if($dok->jenis !== 'renop')
                             <div class="ms-2">
                                 <ul class="list-unstyled mb-0 ms-2 border-start ms-3 ps-3">
                                     @forelse($dok->dokSubs ?? [] as $sub)
@@ -163,6 +168,7 @@ $rootDoc = $isTreeBased ? null : $dokData->first();
                                     @endforelse
                                 </ul>
                             </div>
+                            @endif
                         @else
                             <div class="text-muted text-center py-3">
                                 <div class="mb-2"><i class="ti ti-file-off fs-1 opacity-25"></i></div>

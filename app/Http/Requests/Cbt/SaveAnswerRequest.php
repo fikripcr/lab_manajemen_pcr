@@ -1,12 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Cbt;
 
 use App\Http\Requests\BaseRequest;
 
 class SaveAnswerRequest extends BaseRequest
 {
-    
-
     protected function prepareForValidation()
     {
         $this->merge([
@@ -18,20 +17,20 @@ class SaveAnswerRequest extends BaseRequest
     public function rules()
     {
         return [
-            'soal_id'      => 'required|exists:cbt_soal,soal_id',
-            'opsi_id'      => 'nullable|exists:cbt_opsi_jawaban,opsi_jawaban_id',
+            'soal_id' => 'required|exists:cbt_soal,soal_id',
+            'opsi_id' => 'nullable|exists:cbt_opsi_jawaban,opsi_jawaban_id',
             'jawaban_esai' => 'nullable|string',
-            'is_ragu'      => 'nullable|boolean',
+            'is_ragu' => 'nullable|boolean',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'soal_id'      => 'Soal',
-            'opsi_id'      => 'Opsi Jawaban',
+            'soal_id' => 'Soal',
+            'opsi_id' => 'Opsi Jawaban',
             'jawaban_esai' => 'Jawaban Esai',
-            'is_ragu'      => 'Status Ragu-Ragu',
+            'is_ragu' => 'Status Ragu-Ragu',
         ];
     }
 }

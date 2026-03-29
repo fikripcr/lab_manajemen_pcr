@@ -1,257 +1,172 @@
 <?php
+
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sys\DocumentationUpdateRequest;
-use League\CommonMark\CommonMarkConverter;
-use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
-use League\CommonMark\Extension\Table\TableExtension;
+use App\Services\Sys\DocumentationService;
+use Illuminate\Http\Request;
 
 class DocumentationController extends Controller
 {
-    protected $docsPath;
-    protected $allowedDirectories;
+    public function __construct(
+        protected DocumentationService $documentationService
+    ) {}
 
-    public function __construct()
+    /**
+     * Display documentation index with search and categories
+     */
+    public function index(Request $request)
     {
-        $this->docsPath           = base_path('docs/');
-        $this->allowedDirectories = [
-            base_path('docs/'),
-            base_path('docs/archive/'),
-        ];
-    }
+        $search = $request->get('search');
+        $category = $request->get('category');
 
-    public function index()
-    {
-        $docs = $this->getAvailableDocumentation();
+        $docs = $this->documentationService->getAllDocumentation($search);
+
+        // Filter by category if provided
+        if ($category) {
+            $docs = $docs->where('category', $category);
+        }
+
+        $tree = $this->documentationService->getTree($search);
+        $stats = $this->documentationService->getStatistics();
 
         return view('pages.sys.documentation.index', [
-            'pageTitle' => 'Documentation Index',
-            'docs'      => $docs,
+            'pageTitle' => 'Documentation',
+            'docs' => $docs,
+            'tree' => $tree,
+            'stats' => $stats,
+            'search' => $search,
+            'currentCategory' => $category,
         ]);
     }
 
     /**
-     * Get all available documentation files
+     * Display documentation by category
      */
-    protected function getAvailableDocumentation()
+    public function category(Request $request, string $category)
     {
-        $docs = [];
+        $category = rtrim($category, '/');
+        $search = $request->get('search');
+        
+        $docs = $this->documentationService->getAllDocumentation($search)
+            ->where('category', $category);
 
-        // Scan docs directory
-        if (is_dir($this->docsPath)) {
-            $files = scandir($this->docsPath);
+        $tree = $this->documentationService->getTree($search);
 
-            foreach ($files as $file) {
-                if ($file === '.' || $file === '..') {
-                    continue;
-                }
-
-                $filePath = $this->docsPath . $file;
-
-                if (is_dir($filePath)) {
-                    continue;
-                }
-
-                if (pathinfo($file, PATHINFO_EXTENSION) !== 'md') {
-                    continue;
-                }
-
-                $fileName = pathinfo($file, PATHINFO_FILENAME);
-                $docs[]   = [
-                    'name'        => $fileName,
-                    'title'       => $this->generatePageTitle($file),
-                    'file'        => $file,
-                    'path'        => $filePath,
-                    'lastUpdated' => filemtime($filePath),
-                    'size'        => filesize($filePath),
-                    'category'    => 'main',
-                ];
-            }
-
-            // Scan archive subdirectory
-            $archivePath = $this->docsPath . 'archive/';
-            if (is_dir($archivePath)) {
-                $archiveFiles = scandir($archivePath);
-
-                foreach ($archiveFiles as $file) {
-                    if ($file === '.' || $file === '..') {
-                        continue;
-                    }
-
-                    $filePath = $archivePath . $file;
-
-                    if (is_dir($filePath)) {
-                        continue;
-                    }
-
-                    if (pathinfo($file, PATHINFO_EXTENSION) !== 'md') {
-                        continue;
-                    }
-
-                    $fileName = pathinfo($file, PATHINFO_FILENAME);
-                    $docs[]   = [
-                        'name'        => 'archive/' . $fileName,
-                        'title'       => $this->generatePageTitle($file),
-                        'file'        => 'archive/' . $file,
-                        'path'        => $filePath,
-                        'lastUpdated' => filemtime($filePath),
-                        'size'        => filesize($filePath),
-                        'category'    => 'archive',
-                    ];
-                }
-            }
-        }
-
-        // Sort: main docs first, then archive, alphabetically
-        usort($docs, function ($a, $b) {
-            if ($a['category'] !== $b['category']) {
-                return $a['category'] === 'main' ? -1 : 1;
-            }
-            return strcmp($a['title'], $b['title']);
-        });
-
-        return $docs;
+        return view('pages.sys.documentation.index', [
+            'pageTitle' => $this->documentationService->getTree()[$category]['display_name'] ?? ucfirst($category),
+            'docs' => $docs,
+            'tree' => $tree,
+            'stats' => $this->documentationService->getStatistics(),
+            'search' => $search,
+            'currentCategory' => $category,
+        ]);
     }
 
-    public function show($page = 'index')
+    /**
+     * Show documentation content
+     */
+    public function show(Request $request, string $path = 'index')
     {
-                                              // Allow subdirectories (e.g., archive/filename)
-        $page = str_replace('..', '', $page); // Prevent directory traversal
+        // Clean path
+        $path = rtrim($path, '/');
 
-        // Ensure the file has .md extension
-        if (! str_ends_with($page, '.md')) {
-            $page .= '.md';
+        $doc = $this->documentationService->getDocumentation($path);
+
+        if (! $doc) {
+            abort(404, 'Documentation not found');
         }
 
-        $filePath = $this->docsPath . $page;
+        $breadcrumb = $this->documentationService->getBreadcrumb($path);
+        $navigation = $this->documentationService->getNavigation($path);
+        $related = $this->documentationService->getRelatedDocumentation($path);
 
-        // Fallback to project root if not in docs/
-        if (! file_exists($filePath)) {
-            $rootPath = base_path($page);
-            if (file_exists($rootPath) && strpos(realpath($rootPath), realpath(base_path())) === 0) {
-                $filePath = $rootPath;
-            }
+        // Handle AJAX requests for modal view
+        if ($request->ajax() || $request->has('ajax')) {
+            return view('pages.sys.documentation.show-modal', [
+                'doc' => $doc,
+                'htmlContent' => $doc['htmlContent'],
+            ]);
         }
-
-        // Check if the file exists and is within the allowed directories
-        if (! file_exists($filePath)) {
-            abort(404, 'Documentation page not found');
-        }
-
-        $content     = file_get_contents($filePath);
-        $htmlContent = $this->convertMarkdownToHtml($content);
-
-        // Generate page title from filename
-        $pageTitle = $this->generatePageTitle(basename($page));
-
-        $lastUpdated = filemtime($filePath);
 
         return view('pages.sys.documentation.show', [
-            'htmlContent' => $htmlContent,
-            'lastUpdated' => $lastUpdated,
-            'pageTitle'   => $pageTitle,
-            'fileName'    => str_replace('.md', '', $page),
+            'doc' => $doc,
+            'pageTitle' => $doc['title'],
+            'htmlContent' => $doc['htmlContent'],
+            'breadcrumb' => $breadcrumb,
+            'navigation' => $navigation,
+            'related' => $related,
+            'fileName' => $doc['filename'],
+            'filePath' => $path,
         ]);
-    }
-
-    /**
-     * Convert Markdown to HTML
-     */
-    protected function convertMarkdownToHtml($markdown)
-    {
-        // Create a new CommonMark converter with GFM and table extensions
-        $converter = new CommonMarkConverter([
-            'html_input'         => 'strip',
-            'allow_unsafe_links' => false,
-        ]);
-
-        // Add extensions for GitHub Flavored Markdown support
-        $environment = $converter->getEnvironment();
-        $environment->addExtension(new GithubFlavoredMarkdownExtension());
-        $environment->addExtension(new TableExtension());
-
-        return $converter->convert($markdown)->getContent();
     }
 
     /**
      * Show the documentation edit form
      */
-    public function edit($page = 'index')
+    public function edit(string $path = 'index')
     {
-        // Sanitize the page parameter to prevent directory traversal
-        $page = basename($page);
+        $path = rtrim($path, '/');
+        $doc = $this->documentationService->getDocumentation($path);
 
-        // Ensure the file has .md extension and is valid
-        if (! str_ends_with($page, '.md')) {
-            $page .= '.md';
+        if (! $doc) {
+            abort(404, 'Documentation not found');
         }
 
-        // Additional security: Only allow files in docs directory and with expected extensions
-        if (! preg_match('/^[a-zA-Z0-9_-]+\.md$/', $page)) {
-            abort(400, 'Invalid file name');
-        }
+        $breadcrumb = $this->documentationService->getBreadcrumb($path);
 
-        $filePath = $this->docsPath . $page;
-
-        // Check if the file exists and is within the docs directory
-        if (! file_exists($filePath) || strpos(realpath($filePath), realpath($this->docsPath)) !== 0) {
-            abort(404, 'Documentation page not found');
-        }
-
-        $content   = file_get_contents($filePath);
-        $pageTitle = $this->generatePageTitle($page);
-
-        return view('pages.sys.documentation.create-edit', [
-            'content'   => $content,
-            'page'      => str_replace('.md', '', $page),
-            'pageTitle' => 'Edit - ' . $pageTitle,
+        return view('pages.sys.documentation.edit', [
+            'doc' => $doc,
+            'content' => $doc['content'],
+            'path' => $path,
+            'pageTitle' => 'Edit - ' . $doc['title'],
+            'breadcrumb' => $breadcrumb,
         ]);
     }
 
     /**
      * Update the documentation file
      */
-    public function update(DocumentationUpdateRequest $request, $page = 'index')
+    public function update(DocumentationUpdateRequest $request, string $path = 'index')
     {
-
-        // Sanitize content to prevent potential security issues
+        $path = rtrim($path, '/');
         $content = $request->input('content');
 
-        // Check if file is writable before attempting to write
-        if (! is_writable($filePath)) {
-            \Log::error('Documentation file is not writable: ' . $filePath);
-            return redirect()->back()->with('error', 'Documentation file is not writable. Check file permissions.');
-        }
+        $success = $this->documentationService->updateDocumentation($path, $content);
 
-        // Write the updated content back to the file
-        $bytesWritten = file_put_contents($filePath, $content);
-        if ($bytesWritten === false) {
-            \Log::error('Failed to write documentation file: ' . $filePath);
-            return redirect()->back()->with('error', 'Failed to update documentation file. Check file permissions.');
-        }
-
-        if ($bytesWritten === 0 && ! empty($content)) {
-            \Log::warning('0 bytes written to documentation file: ' . $filePath);
-            return redirect()->back()->with('error', 'Failed to update documentation file. No content was written.');
+        if (! $success) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Failed to update documentation. Check file permissions.');
         }
 
         // Log activity
-        logActivity('documentation', 'Updated documentation: ' . str_replace('.md', '', $page));
+        logActivity('documentation', 'Updated documentation: ' . $path);
 
-        return redirect()->route('sys.documentation.show', str_replace('.md', '', $page))
+        return redirect()->route('sys.documentation.show', ['path' => $path])
             ->with('success', 'Documentation updated successfully.');
     }
 
     /**
-     * Generate page title from filename
+     * Search documentation
      */
-    protected function generatePageTitle($filename)
+    public function search(Request $request)
     {
-        $title = str_replace('.md', '', $filename);
-        $title = str_replace(['-', '_'], ' ', $title);
-        $title = ucwords($title);
+        $query = $request->get('q');
 
-        return $title;
+        if (! $query || strlen($query) < 2) {
+            return redirect()->route('sys.documentation.index')
+                ->with('error', 'Please enter at least 2 characters to search.');
+        }
+
+        $docs = $this->documentationService->getAllDocumentation($query);
+
+        return view('pages.sys.documentation.search', [
+            'pageTitle' => 'Search Results: ' . $query,
+            'docs' => $docs,
+            'query' => $query,
+            'tree' => $this->documentationService->getTree(),
+        ]);
     }
 }

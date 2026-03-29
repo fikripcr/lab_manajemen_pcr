@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Pmb;
 
 use App\Http\Controllers\Controller;
@@ -27,12 +28,13 @@ class PendaftaranController extends Controller
 
         if ($user->hasRole('camaba')) {
             $data = $this->pendaftaranService->getCamabaDashboardData($user->id);
+
             return view('pages.pmb.dashboard.index', $data);
         }
 
-        $stats               = $this->pendaftaranService->getDashboardStats();
+        $stats = $this->pendaftaranService->getDashboardStats();
         $recentPendaftar = $this->pendaftaranService->getRecentRegistrations(10);
-        $jalurStats      = $this->pendaftaranService->getStatsByJalur();
+        $jalurStats = $this->pendaftaranService->getStatsByJalur();
 
         return view('pages.pmb.dashboard.index', compact('stats', 'recentPendaftar', 'jalurStats'));
     }
@@ -53,18 +55,19 @@ class PendaftaranController extends Controller
         return \datatables()->of($this->pendaftaranService->getFilteredQuery($request->all()))
             ->addIndexColumn()
             ->editColumn('no_pendaftaran', function ($pendaftaran) {
-                return '<span class="badge bg-blue-lt">' . $pendaftaran->no_pendaftaran . '</span>';
+                return '<span class="badge bg-blue-lt">'.$pendaftaran->no_pendaftaran.'</span>';
             })
             ->editColumn('status_terkini', function ($pendaftaran) {
                 $class = match ($pendaftaran->status_terkini) {
-                    'Draft'       => 'bg-secondary',
+                    'Draft' => 'bg-secondary',
                     'Menunggu_Verifikasi_Bayar', 'Menunggu_Verifikasi_Berkas' => 'bg-warning',
-                    'Siap_Ujian'  => 'bg-info',
-                    'Lulus'       => 'bg-success',
+                    'Siap_Ujian' => 'bg-info',
+                    'Lulus' => 'bg-success',
                     'Tidak_Lulus' => 'bg-danger',
-                    default       => 'bg-primary'
+                    default => 'bg-primary'
                 };
-                return '<span class="badge ' . $class . ' text-white">' . str_replace('_', ' ', $pendaftaran->status_terkini) . '</span>';
+
+                return '<span class="badge '.$class.' text-white">'.str_replace('_', ' ', $pendaftaran->status_terkini).'</span>';
             })
             ->editColumn('waktu_daftar', function ($pendaftaran) {
                 return formatTanggalIndo($pendaftaran->waktu_daftar);
@@ -73,16 +76,16 @@ class PendaftaranController extends Controller
                 $customActions = [];
                 if (in_array($pendaftaran->status_terkini, ['Menunggu_Verifikasi_Bayar', 'Menunggu_Verifikasi_Berkas'])) {
                     $customActions[] = [
-                        'url'   => 'javascript:void(0)',
+                        'url' => 'javascript:void(0)',
                         'label' => 'Verifikasi',
-                        'icon'  => 'check',
+                        'icon' => 'check',
                         'class' => 'btn-verify',
-                        'attr'  => 'data-id="' . $pendaftaran->encrypted_pendaftaran_id . '"',
+                        'attr' => 'data-id="'.$pendaftaran->encrypted_pendaftaran_id.'"',
                     ];
                 }
 
                 return \view('components.tabler.datatables-actions', [
-                    'viewUrl'       => \route('pmb.pendaftaran.show', $pendaftaran->encrypted_pendaftaran_id),
+                    'viewUrl' => \route('pmb.pendaftaran.show', $pendaftaran->encrypted_pendaftaran_id),
                     'customActions' => $customActions,
                 ])->render();
             })
@@ -98,6 +101,7 @@ class PendaftaranController extends Controller
         $pendaftaran->load(['user', 'profil', 'dokumenUpload.jenisDokumen', 'riwayat.pelaku', 'approvals' => function ($q) {
             $q->orderBy('created_at', 'desc');
         }]);
+
         return \view('pages.pmb.pendaftaran.show', compact('pendaftaran'));
     }
 
@@ -115,6 +119,7 @@ class PendaftaranController extends Controller
     public function updateStatus(UpdateStatusRequest $request, Pendaftaran $pendaftaran)
     {
         $this->verificationService->updatePendaftaranStatus($pendaftaran, $request->validated('status'), $request->validated('keterangan'));
+
         return jsonSuccess('Status pendaftaran berhasil diperbarui.');
     }
 
@@ -132,9 +137,10 @@ class PendaftaranController extends Controller
     public function verifyDocument(VerifyDocRequest $request, DokumenUpload $document)
     {
         $this->verificationService->verifyDocument($document->pendaftaran, [
-            'status'     => $request->validated('status'),
+            'status' => $request->validated('status'),
             'keterangan' => $request->validated('keterangan'),
         ]);
+
         return jsonSuccess('Status dokumen berhasil diperbarui!');
     }
 }

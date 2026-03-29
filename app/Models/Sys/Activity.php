@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Sys;
 
 use App\Traits\HashidBinding;

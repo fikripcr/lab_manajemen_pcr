@@ -2,7 +2,6 @@
 
 namespace App\Models\Project;
 
-use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,9 +11,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProjectMember extends Model
 {
-    use HasFactory, SoftDeletes, HashidBinding, Blameable;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
     protected $table = 'pr_project_members';
+
     protected $primaryKey = 'project_member_id';
 
     protected $fillable = [
@@ -30,9 +30,9 @@ class ProjectMember extends Model
 
     protected $casts = [
         'rate_per_hour' => 'decimal:2',
-        'created_at'    => 'datetime',
-        'updated_at'    => 'datetime',
-        'deleted_at'    => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     public function project(): BelongsTo

@@ -1,8 +1,9 @@
 <?php
+
 namespace App\View\Composers;
 
-use Illuminate\View\View;
 use App\Services\Pemutu\PeriodeSpmiService;
+use Illuminate\View\View;
 
 class SiklusSpmiComposer
 {
@@ -16,7 +17,6 @@ class SiklusSpmiComposer
     /**
      * Bind data to the view.
      *
-     * @param  \Illuminate\View\View  $view
      * @return void
      */
     public function compose(View $view)

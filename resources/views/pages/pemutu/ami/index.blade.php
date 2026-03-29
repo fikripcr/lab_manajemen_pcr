@@ -4,14 +4,14 @@
 @section('header')
 <x-tabler.page-header title="Audit Mutu Internal (AMI) {{ $siklus['tahun'] }}" pretitle="Evaluasi">
     <x-slot:actions>
-        <div class="nav nav-pills" id="top-tabs" role="tablist">
+        <nav class="nav nav-segmented" id="top-tabs" role="tablist">
             <a href="#tab-akademik" class="nav-link active" data-bs-toggle="tab" role="tab">
-                <i class="ti ti-school me-2"></i>Akademik
+                <i class="ti ti-school"></i>Akademik
             </a>
             <a href="#tab-non-akademik" class="nav-link" data-bs-toggle="tab" role="tab" tabindex="-1">
-                <i class="ti ti-building-community me-2"></i>Non Akademik
+                <i class="ti ti-building-community"></i>Non Akademik
             </a>
-        </div>
+        </nav>
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -56,13 +56,14 @@
                                 <div class="row align-items-center">
                                     <div class="col">
                                         <h3 class="mb-1">Periode {{ $periode->jenis_periode }} {{ $periode->periode }}</h3>
-                                        <div class="text-muted small">
-                                            @if($jadwalTersedia)
+                                        <div class="text-muted small mt-1">
+                                            @php $periodeInfo = pemutuPeriodeStatus($periode->ami_awal, $periode->ami_akhir); @endphp
+                                            @if($periode->ami_awal && $periode->ami_akhir)
                                                 <i class="ti ti-calendar me-1"></i>
-                                                Jadwal: {{ $periode->ami_awal->format('d M') }} - {{ $periode->ami_akhir->format('d M Y') }}
-                                            @else
-                                                <span class="text-warning"><i class="ti ti-alert-triangle me-1"></i> Jadwal Belum Diatur</span>
+                                                Jadwal: {{ $periode->ami_awal->format('d M Y') }} s.d. {{ $periode->ami_akhir->format('d M Y') }}
                                             @endif
+                                            <span class="badge bg-{{ $periodeInfo['color'] }}-lt ms-2">{{ $periodeInfo['status_text'] }}</span>
+                                            <span class="text-{{ $periodeInfo['color'] }} ms-1 fw-bold" style="font-size: 0.85em;">({{ $periodeInfo['time_info'] }})</span>
                                         </div>
                                     </div>
                                     <div class="col-auto d-flex gap-2">
@@ -98,8 +99,8 @@
                                 <x-tabler.datatable-filter :dataTableId="'table-ami-' . $typeId" type="bare">
                                     <div class="row g-3">
                                         <div class="col-md-3">
-                                            <x-tabler.form-select name="unit_id" id="unit_id_{{ $typeId }}" label="Unit / Area" placeholder="">
-                                                <option value="">Semua Unit</option>
+                                            <x-tabler.form-select name="orgunit_id" id="orgunit_id_{{ $typeId }}" label="Unit / Area" placeholder="">
+                                                <option value="all">Semua Unit</option>
                                                 @foreach($units as $unit)
                                                     <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
                                                 @endforeach
@@ -107,7 +108,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <x-tabler.form-select name="dok_id" id="dok_id_{{ $typeId }}" label="Standar / Dokumen" placeholder="">
-                                                <option value="">Semua Standar</option>
+                                                <option value="all">Semua Standar</option>
                                                 @foreach($rootDoks as $dok)
                                                     <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->judul }}</option>
                                                 @endforeach
@@ -115,7 +116,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <x-tabler.form-select name="ami_hasil_akhir" id="ami_hasil_akhir_{{ $typeId }}" label="Hasil AMI" placeholder="">
-                                                <option value="">Semua Hasil</option>
+                                                <option value="all">Semua Hasil</option>
                                                 <option value="empty">Belum Dinilai</option>
                                                 <option value="0">KTS</option>
                                                 <option value="1">Terpenuhi</option>
@@ -124,7 +125,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <x-tabler.form-select name="ed_status" id="ed_status_{{ $typeId }}" label="Status ED" placeholder="">
-                                                <option value="">Semua Status</option>
+                                                <option value="all">Semua Status</option>
                                                 <option value="filled">Sudah Isi</option>
                                                 <option value="empty">Belum Isi</option>
                                             </x-tabler.form-select>
@@ -168,7 +169,7 @@
                                     <div class="row g-3">
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="unit_id" id="unit_id_te_{{ $typeId }}" label="Unit / Area" placeholder="">
-                                                <option value="">Semua Unit</option>
+                                                <option value="all">Semua Unit</option>
                                                 @foreach($units as $unit)
                                                     <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
                                                 @endforeach
@@ -176,7 +177,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="dok_id" id="dok_id_te_{{ $typeId }}" label="Standar / Dokumen" placeholder="">
-                                                <option value="">Semua Standar</option>
+                                                <option value="all">Semua Standar</option>
                                                 @foreach($rootDoks as $dok)
                                                     <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->judul }}</option>
                                                 @endforeach
@@ -184,7 +185,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="te_status" id="te_status_{{ $typeId }}" label="Status Tinjauan" placeholder="">
-                                                <option value="">Semua Status</option>
+                                                <option value="all">Semua Status</option>
                                                 <option value="filled">Sudah Ditinjau</option>
                                                 <option value="empty">Belum Ditinjau</option>
                                             </x-tabler.form-select>
@@ -229,7 +230,7 @@
                                     <div class="row g-3">
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="unit_id" id="unit_id_rtp_{{ $typeId }}" label="Unit / Area" placeholder="">
-                                                <option value="">Semua Unit</option>
+                                                <option value="all">Semua Unit</option>
                                                 @foreach($units as $unit)
                                                     <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
                                                 @endforeach
@@ -237,7 +238,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="dok_id" id="dok_id_rtp_{{ $typeId }}" label="Standar / Dokumen" placeholder="">
-                                                <option value="">Semua Standar</option>
+                                                <option value="all">Semua Standar</option>
                                                 @foreach($rootDoks as $dok)
                                                     <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->judul }}</option>
                                                 @endforeach
@@ -245,7 +246,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <x-tabler.form-select name="rtp_status" id="rtp_status_{{ $typeId }}" label="Status RTP" placeholder="">
-                                                <option value="">Semua Status</option>
+                                                <option value="all">Semua Status</option>
                                                 <option value="filled">Sudah Mengisi</option>
                                                 <option value="empty">Belum Mengisi</option>
                                             </x-tabler.form-select>

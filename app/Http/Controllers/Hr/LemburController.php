@@ -1,10 +1,10 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\LemburRequest;
 use App\Models\Hr\Lembur;
-use App\Models\Hr\Pegawai;
 use App\Services\Hr\LemburService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -21,6 +21,7 @@ class LemburController extends Controller
     public function index()
     {
         $pageTitle = 'Data Lembur';
+
         return view('pages.hr.lembur.index', compact('pageTitle'));
     }
 
@@ -29,8 +30,7 @@ class LemburController extends Controller
      */
     public function data(Request $request)
     {
-        $query = Lembur::with(['pengusul.latestDataDiri', 'latestApproval', 'pegawais'])
-            ->orderBy('tgl_pelaksanaan', 'desc');
+        $query = $this->lemburService->getDataQuery();
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -41,11 +41,12 @@ class LemburController extends Controller
                 return $row->tgl_pelaksanaan?->format('d/m/Y') ?? '-';
             })
             ->addColumn('waktu', function ($row) {
-                return $row->jam_mulai . ' - ' . $row->jam_selesai;
+                return $row->jam_mulai.' - '.$row->jam_selesai;
             })
             ->addColumn('durasi', function ($row) {
-                $jam   = floor($row->durasi_menit / 60);
+                $jam = floor($row->durasi_menit / 60);
                 $menit = $row->durasi_menit % 60;
+
                 return "{$jam} jam {$menit} menit";
             })
             ->addColumn('jumlah_pegawai', function ($row) {
@@ -56,8 +57,8 @@ class LemburController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'viewUrl'   => route('hr.lembur.show', $row->encrypted_lembur_id),
-                    'editUrl'   => route('hr.lembur.edit', $row->encrypted_lembur_id),
+                    'viewUrl' => route('hr.lembur.show', $row->encrypted_lembur_id),
+                    'editUrl' => route('hr.lembur.edit', $row->encrypted_lembur_id),
                     'editModal' => true,
                     'editTitle' => 'Edit Lembur',
                     'deleteUrl' => route('hr.lembur.destroy', $row->encrypted_lembur_id),
@@ -73,9 +74,12 @@ class LemburController extends Controller
     public function create()
     {
         $pageTitle = 'Tambah Lembur';
-        $pegawais  = Pegawai::with('latestDataDiri')->get();
-        $lembur    = new Lembur();
-        return view('pages.hr.lembur.create-edit-ajax', compact('pageTitle', 'pegawais', 'lembur'));
+        $lembur = new Lembur;
+
+        return view('pages.hr.lembur.create-edit-ajax', array_merge(
+            compact('pageTitle', 'lembur'),
+            $this->lemburService->getFormData()
+        ));
     }
 
     /**
@@ -94,6 +98,7 @@ class LemburController extends Controller
     public function show(Lembur $lembur)
     {
         $lembur->load(['pengusul.latestDataDiri', 'pegawais.latestDataDiri', 'latestApproval', 'approvals']);
+
         return view('pages.hr.lembur.show', compact('lembur'));
     }
 
@@ -103,9 +108,12 @@ class LemburController extends Controller
     public function edit(Lembur $lembur)
     {
         $pageTitle = 'Edit Lembur';
-        $pegawais  = Pegawai::with('latestDataDiri')->get();
         $lembur->load(['pengusul', 'pegawais']);
-        return view('pages.hr.lembur.create-edit-ajax', compact('pageTitle', 'lembur', 'pegawais'));
+
+        return view('pages.hr.lembur.create-edit-ajax', array_merge(
+            compact('pageTitle', 'lembur'),
+            $this->lemburService->getFormData()
+        ));
     }
 
     /**
@@ -136,6 +144,6 @@ class LemburController extends Controller
         $validated = $request->validated();
         $this->lemburService->approve($lembur, $validated);
 
-        return jsonSuccess('Lembur berhasil di-' . ($validated['status'] === 'approved' ? 'setujui' : 'tolak'));
+        return jsonSuccess('Lembur berhasil di-'.($validated['status'] === 'approved' ? 'setujui' : 'tolak'));
     }
 }

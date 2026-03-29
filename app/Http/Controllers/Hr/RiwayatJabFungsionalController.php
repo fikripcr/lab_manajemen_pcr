@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\RiwayatJabFungsionalRequest;
 use App\Models\Hr\JabatanFungsional;
-use App\Models\Hr\RiwayatJabFungsional;
 use App\Models\Hr\Pegawai;
+use App\Models\Hr\RiwayatJabFungsional;
 use App\Services\Hr\RiwayatJabFungsionalService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -13,8 +14,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class RiwayatJabFungsionalController extends Controller
 {
-    public function __construct(protected RiwayatJabFungsionalService $fungsionalService)
-    {}
+    public function __construct(protected RiwayatJabFungsionalService $fungsionalService) {}
 
     public function index()
     {
@@ -24,14 +24,16 @@ class RiwayatJabFungsionalController extends Controller
     public function create(Pegawai $pegawai)
     {
         $jabatan = JabatanFungsional::where('is_active', 1)->get();
-        $riwayat = new RiwayatJabFungsional();
-        return view('pages.hr.pegawai.jabatan-fungsional.create-edit-ajax', compact('hr_pegawai', 'jabatan', 'riwayat'));
+        $riwayat = new RiwayatJabFungsional;
+
+        return view('pages.hr.pegawai.jabatan-fungsional.create-edit-ajax', compact('pegawai', 'jabatan', 'riwayat'));
     }
 
     public function store(RiwayatJabFungsionalRequest $request, Pegawai $pegawai)
     {
         $this->fungsionalService->requestChange($pegawai, $request->validated());
-        return jsonSuccess('Perubahan Jabatan Fungsional berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id) . '#section-fungsional');
+
+        return jsonSuccess('Perubahan Jabatan Fungsional berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id).'#section-fungsional');
     }
 
     public function data(Request $request)
@@ -40,6 +42,10 @@ class RiwayatJabFungsionalController extends Controller
 
         if ($request->has('pegawai_id')) {
             $query->where('pegawai_id', decryptIdIfEncrypted($request->pegawai_id));
+        }
+
+        if ($request->filled('jabatan_fungsional_id') && $request->jabatan_fungsional_id !== 'all') {
+            $query->where('jabatan_fungsional_id', $request->jabatan_fungsional_id);
         }
 
         return DataTables::of($query)
@@ -57,6 +63,7 @@ class RiwayatJabFungsionalController extends Controller
                 if ($row->approval) {
                     return getApprovalStatus($row->approval->status);
                 }
+
                 return '<span class="status status-success"><span class="status-dot"></span> Aktif</span>';
             })
             ->addColumn('action', function ($row) {

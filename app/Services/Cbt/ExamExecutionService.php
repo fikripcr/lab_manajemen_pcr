@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Cbt;
 
 use App\Models\Cbt\JadwalUjian;
@@ -15,9 +16,9 @@ class ExamExecutionService
         return RiwayatUjianSiswa::firstOrCreate(
             ['jadwal_id' => $jadwal->jadwal_ujian_id, 'user_id' => $user->id],
             [
-                'waktu_mulai'  => now(),
-                'status'       => 'Sedang_Mengerjakan',
-                'ip_address'   => $requestData['ip'],
+                'waktu_mulai' => now(),
+                'status' => 'Sedang_Mengerjakan',
+                'ip_address' => $requestData['ip'],
                 'browser_info' => substr($requestData['user_agent'], 0, 255),
             ]
         );
@@ -29,8 +30,8 @@ class ExamExecutionService
             ['riwayat_id' => $riwayat->riwayat_ujian_id, 'soal_id' => $data['soal_id']],
             [
                 'opsi_dipilih_id' => $data['opsi_id'] ?? null,
-                'jawaban_esai'    => $data['jawaban_esai'] ?? null,
-                'is_ragu'         => $data['is_ragu'] ?? false,
+                'jawaban_esai' => $data['jawaban_esai'] ?? null,
+                'is_ragu' => $data['is_ragu'] ?? false,
             ]
         );
     }
@@ -58,9 +59,9 @@ class ExamExecutionService
 
             // 2. Update status and final score
             $riwayat->update([
-                'status'        => 'Selesai',
+                'status' => 'Selesai',
                 'waktu_selesai' => now(),
-                'nilai_akhir'   => $totalNilai,
+                'nilai_akhir' => $totalNilai,
             ]);
 
             // 3. Integration with PMB (optional — only if user has active registration)
@@ -88,11 +89,11 @@ class ExamExecutionService
     public function getMonitoringStats(): array
     {
         return [
-            'active_exams'          => JadwalUjian::where('waktu_mulai', '<=', now())
+            'active_exams' => JadwalUjian::where('waktu_mulai', '<=', now())
                 ->where('waktu_selesai', '>=', now())
                 ->count(),
-            'total_exams_today'     => JadwalUjian::whereDate('waktu_mulai', today())->count(),
-            'students_taking_exam'  => RiwayatUjianSiswa::where('status', 'Sedang_Mengerjakan')->count(),
+            'total_exams_today' => JadwalUjian::whereDate('waktu_mulai', today())->count(),
+            'students_taking_exam' => RiwayatUjianSiswa::where('status', 'Sedang_Mengerjakan')->count(),
             'completed_exams_today' => RiwayatUjianSiswa::whereDate('waktu_selesai', today())->count(),
         ];
     }
@@ -130,15 +131,15 @@ class ExamExecutionService
             ->first();
 
         $hasPendaftaran = (bool) $pendaftaran;
-        $questions      = collect();
+        $questions = collect();
         $activeSessions = collect();
-        $sesiUjian      = null;
-        $paketUjian     = null;
+        $sesiUjian = null;
+        $paketUjian = null;
 
         if ($hasPendaftaran) {
             $pesertaUjian = $pendaftaran->pesertaUjian;
             if ($pesertaUjian && $pesertaUjian->sesiUjian) {
-                $sesiUjian  = $pesertaUjian->sesiUjian;
+                $sesiUjian = $pesertaUjian->sesiUjian;
                 $paketUjian = $sesiUjian->paket;
 
                 if ($paketUjian) {
@@ -156,12 +157,12 @@ class ExamExecutionService
         }
 
         return [
-            'pendaftaran'    => $pendaftaran,
+            'pendaftaran' => $pendaftaran,
             'hasPendaftaran' => $hasPendaftaran,
-            'questions'      => $questions,
+            'questions' => $questions,
             'activeSessions' => $activeSessions,
-            'sesiUjian'      => $sesiUjian,
-            'paketUjian'     => $paketUjian,
+            'sesiUjian' => $sesiUjian,
+            'paketUjian' => $paketUjian,
         ];
     }
 }

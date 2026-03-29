@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Services\Pemutu;
 
+use App\Models\Hr\Pegawai;
 use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Models\Pemutu\TimMutu;
-use App\Models\Hr\Pegawai;
 use Illuminate\Support\Facades\DB;
 
 class TimMutuService
@@ -28,12 +29,12 @@ class TimMutuService
         $assignments = TimMutu::forPeriode($periodeId)->get();
 
         return [
-            'total_units'         => $assignments->pluck('org_unit_id')->unique()->count(),
-            'total_auditee'       => $assignments->where('role', 'auditee')->count(),
-            'total_anggota'       => $assignments->where('role', 'anggota')->count(),
-            'total_auditor'       => $assignments->where('role', 'auditor')->count(),
+            'total_units' => $assignments->pluck('org_unit_id')->unique()->count(),
+            'total_auditee' => $assignments->where('role', 'auditee')->count(),
+            'total_anggota' => $assignments->where('role', 'anggota')->count(),
+            'total_auditor' => $assignments->where('role', 'auditor')->count(),
             'total_ketua_auditor' => $assignments->where('role', 'ketua_auditor')->count(),
-            'total_pegawai'       => $assignments->pluck('pegawai_id')->unique()->count(),
+            'total_pegawai' => $assignments->pluck('pegawai_id')->unique()->count(),
         ];
     }
 
@@ -61,13 +62,13 @@ class TimMutuService
                 $addInsert = function ($pegawaiId, $role) use ($periodeId, $unitId) {
                     return [
                         'periodespmi_id' => $periodeId,
-                        'org_unit_id'    => $unitId,
-                        'pegawai_id'     => $pegawaiId,
-                        'role'           => $role,
-                        'created_at'     => now(),
-                        'updated_at'     => now(),
-                        'created_by'     => auth()->id(),
-                        'updated_by'     => auth()->id(),
+                        'org_unit_id' => $unitId,
+                        'pegawai_id' => $pegawaiId,
+                        'role' => $role,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                        'created_by' => auth()->id(),
+                        'updated_by' => auth()->id(),
                     ];
                 };
 
@@ -106,7 +107,7 @@ class TimMutuService
     {
         return DB::transaction(function () use ($periodeId, $unitId, $auditeeId, $ketuaAuditorId, $auditorIds, $anggotaIds) {
             $periode = PeriodeSpmi::findOrFail($periodeId);
-            $unit    = StrukturOrganisasi::findOrFail($unitId);
+            $unit = StrukturOrganisasi::findOrFail($unitId);
 
             // Delete existing
             TimMutu::forPeriode($periodeId)
@@ -114,20 +115,20 @@ class TimMutuService
                 ->forceDelete();
 
             $inserts = [];
-            $now     = now();
-            $userId  = auth()->id();
+            $now = now();
+            $userId = auth()->id();
 
             // Helper
             $addInsert = function ($pegawaiId, $role) use ($periodeId, $unitId, $now, $userId) {
                 return [
                     'periodespmi_id' => $periodeId,
-                    'org_unit_id'    => $unitId,
-                    'pegawai_id'     => $pegawaiId,
-                    'role'           => $role,
-                    'created_at'     => $now,
-                    'updated_at'     => $now,
-                    'created_by'     => $userId,
-                    'updated_by'     => $userId,
+                    'org_unit_id' => $unitId,
+                    'pegawai_id' => $pegawaiId,
+                    'role' => $role,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                    'created_by' => $userId,
+                    'updated_by' => $userId,
                 ];
             };
 
@@ -171,7 +172,7 @@ class TimMutuService
     {
         return DB::transaction(function () use ($periodeId, $unitId, $auditeeId, $anggotaIds) {
             $periode = PeriodeSpmi::findOrFail($periodeId);
-            $unit    = StrukturOrganisasi::findOrFail($unitId);
+            $unit = StrukturOrganisasi::findOrFail($unitId);
 
             // Delete existing auditee roles
             TimMutu::forPeriode($periodeId)
@@ -180,20 +181,20 @@ class TimMutuService
                 ->forceDelete();
 
             $inserts = [];
-            $now     = now();
-            $userId  = auth()->id();
+            $now = now();
+            $userId = auth()->id();
 
             // Helper
             $addInsert = function ($pegawaiId, $role) use ($periodeId, $unitId, $now, $userId) {
                 return [
                     'periodespmi_id' => $periodeId,
-                    'org_unit_id'    => $unitId,
-                    'pegawai_id'     => $pegawaiId,
-                    'role'           => $role,
-                    'created_at'     => $now,
-                    'updated_at'     => $now,
-                    'created_by'     => $userId,
-                    'updated_by'     => $userId,
+                    'org_unit_id' => $unitId,
+                    'pegawai_id' => $pegawaiId,
+                    'role' => $role,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                    'created_by' => $userId,
+                    'updated_by' => $userId,
                 ];
             };
 
@@ -212,6 +213,7 @@ class TimMutuService
             }
 
             logActivity('Tim Mutu Updated', "Mengupdate Tim Auditee untuk unit {$unit->name} pada periode {$periode->periode}", $unit);
+
             return true;
         });
     }
@@ -223,7 +225,7 @@ class TimMutuService
     {
         return DB::transaction(function () use ($periodeId, $unitId, $ketuaAuditorId, $auditorIds) {
             $periode = PeriodeSpmi::findOrFail($periodeId);
-            $unit    = StrukturOrganisasi::findOrFail($unitId);
+            $unit = StrukturOrganisasi::findOrFail($unitId);
 
             // Delete existing auditor roles
             TimMutu::forPeriode($periodeId)
@@ -232,20 +234,20 @@ class TimMutuService
                 ->forceDelete();
 
             $inserts = [];
-            $now     = now();
-            $userId  = auth()->id();
+            $now = now();
+            $userId = auth()->id();
 
             // Helper
             $addInsert = function ($pegawaiId, $role) use ($periodeId, $unitId, $now, $userId) {
                 return [
                     'periodespmi_id' => $periodeId,
-                    'org_unit_id'    => $unitId,
-                    'pegawai_id'     => $pegawaiId,
-                    'role'           => $role,
-                    'created_at'     => $now,
-                    'updated_at'     => $now,
-                    'created_by'     => $userId,
-                    'updated_by'     => $userId,
+                    'org_unit_id' => $unitId,
+                    'pegawai_id' => $pegawaiId,
+                    'role' => $role,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                    'created_by' => $userId,
+                    'updated_by' => $userId,
                 ];
             };
 
@@ -264,6 +266,7 @@ class TimMutuService
             }
 
             logActivity('Tim Mutu Updated', "Mengupdate Tim Auditor untuk unit {$unit->name} pada periode {$periode->periode}", $unit);
+
             return true;
         });
     }
@@ -282,8 +285,8 @@ class TimMutuService
             ->get()
             ->map(function ($p) {
                 return [
-                    'id'   => encryptId($p->pegawai_id),
-                    'text' => $p->nama . ' (' . ($p->nip ?? 'No NIP') . ')',
+                    'id' => encryptId($p->pegawai_id),
+                    'text' => $p->nama.' ('.($p->nip ?? 'No NIP').')',
                 ];
             })
             ->values();

@@ -50,7 +50,10 @@
         </div>
 
         {{-- Approval History --}}
-        <x-tabler.approval-history :approvals="$softwareRequest->approvals" />
+        <div class="mt-4">
+            <h4 class="mb-2">Riwayat Approval</h4>
+            <x-tabler.approval-history :approvals="$softwareRequest->approvals" />
+        </div>
 
         @if(in_array($softwareRequest->status, ['pending', 'menunggu_approval', 'tangguhkan']))
             <div class="mt-4 p-3 border rounded bg-light">
@@ -203,10 +206,11 @@
             </div>
         </div>
 
-        <div class="row row-cards mt-1">
-            <div class="col-12">
+        <x-tabler.card class="mt-3">
+            <x-tabler.card-header title="Riwayat Approval" />
+            <x-tabler.card-body>
                 <x-tabler.approval-history :approvals="$softwareRequest->approvals" />
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     @endsection
 @endif

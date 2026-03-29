@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Eoffice;
 
 use App\Traits\Blameable;
@@ -9,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TanggalTidakHadir extends Model
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use Blameable, HasFactory, HashidBinding, SoftDeletes;
 
-    protected $table      = 'eoffice_tanggal_tidak_hadir';
+    protected $table = 'eoffice_tanggal_tidak_hadir';
+
     protected $primaryKey = 'tanggaltidakhadir_id';
 
     protected $appends = ['encrypted_tanggaltidakhadir_id'];
@@ -42,8 +44,8 @@ class TanggalTidakHadir extends Model
     ];
 
     protected $casts = [
-        'tgl'             => 'date',
+        'tgl' => 'date',
         'additional_info' => 'json',
-        'is_full_day'     => 'boolean',
+        'is_full_day' => 'boolean',
     ];
 }
