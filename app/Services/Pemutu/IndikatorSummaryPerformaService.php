@@ -26,12 +26,16 @@ class IndikatorSummaryPerformaService
                 $q->whereNull('deleted_at');
             });
 
-        // Apply filters
-        if ($request->filled('kelompok_indikator')) {
-            $query->whereHas('indikator', function ($q) use ($request) {
-                $q->where('kelompok_indikator', $request->kelompok_indikator);
-            });
+        // Apply filters (Context Fallback)
+        $kelompok = $request->query('kelompok_indikator');
+        if (empty($kelompok) || $kelompok === 'all') {
+            $activeKelompok = session('pemutu_active_kelompok', 'akademik');
+            $kelompok = $activeKelompok === 'akademik' ? 'Akademik' : 'Non Akademik';
         }
+
+        $query->whereHas('indikator', function ($q) use ($kelompok) {
+            $q->where('kelompok_indikator', $kelompok);
+        });
 
         if ($request->filled('year')) {
             $query->whereHas('indikator', function ($q) use ($request) {

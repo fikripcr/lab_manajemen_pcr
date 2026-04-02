@@ -37,8 +37,8 @@
                     route="{{ route('pemutu.pemantauan.data') }}"
                     :columns="[
                         ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                        ['data' => 'judul_kegiatan', 'name' => 'judul_kegiatan', 'title' => 'Judul Rapat'],
                         ['data' => 'tgl_info', 'name' => 'tgl_rapat', 'title' => 'Waktu Pelaksanaan', 'width' => '20%'],
+                        ['data' => 'judul_kegiatan', 'name' => 'judul_kegiatan', 'title' => 'Judul Rapat'],
                         ['data' => 'tempat_rapat', 'name' => 'tempat_rapat', 'title' => 'Tempat', 'width' => '15%'],
                         ['data' => 'indikator_count', 'name' => 'indikator_count', 'title' => 'Cakupan', 'width' => '10%', 'class' => 'text-center', 'orderable' => false],
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],

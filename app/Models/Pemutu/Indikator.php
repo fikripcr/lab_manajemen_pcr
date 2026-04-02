@@ -17,7 +17,7 @@ class Indikator extends Model
 
     protected $primaryKey = 'indikator_id';
 
-    protected $appends = ['encrypted_indikator_id'];
+    protected $appends = ['encrypted_indikator_id', 'encrypted_renstra_poin_id'];
 
     public function getRouteKeyName()
     {
@@ -56,6 +56,53 @@ class Indikator extends Model
     public function getEncryptedIndikatorIdAttribute()
     {
         return encryptId($this->indikator_id);
+    }
+
+    public function getEncryptedRenstraPoinIdAttribute()
+    {
+        return $this->renstra_poin_id ? encryptId($this->renstra_poin_id) : null;
+    }
+
+    /**
+     * Finds the Renstra point for this indicator by following the document mapping chain.
+     */
+    public function getResolvedRenstraPoin()
+    {
+        // 1. Direct mapping
+        if ($this->renstraPoin) {
+            return $this->renstraPoin;
+        }
+
+        // 2. Mapping via linked DokSubs (e.g. Indicator -> Renop -> Renstra)
+        // Ensure dokSubs.dokumen and dokSubs.mappedTo.dokumen are eager loaded
+        foreach ($this->dokSubs as $ds) {
+            $renstraPoin = $this->findRenstraPoinInChain($ds);
+            if ($renstraPoin) {
+                return $renstraPoin;
+            }
+        }
+
+        return null;
+    }
+
+    private function findRenstraPoinInChain($dokSub)
+    {
+        if ($dokSub->dokumen && $dokSub->dokumen->jenis === 'renstra') {
+            return $dokSub;
+        }
+
+        // In most cases, DokSub is linked to Dokumen already. 
+        // We follow the mappedTo chain recursively.
+        if ($dokSub->relationLoaded('mappedTo')) {
+            foreach ($dokSub->mappedTo as $parent) {
+                $result = $this->findRenstraPoinInChain($parent);
+                if ($result) {
+                    return $result;
+                }
+            }
+        }
+
+        return null;
     }
 
     // Relationships

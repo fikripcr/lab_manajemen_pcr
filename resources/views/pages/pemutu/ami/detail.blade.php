@@ -9,6 +9,31 @@
 </x-tabler.page-header>
 @endsection
 
+@push('styles')
+<style>
+    .nav-segmented-style {
+        background: rgba(var(--tblr-muted-rgb), 0.08); /* Background kontainer */
+        min-width: 320px;
+    }
+    .ami-hasil-btn {
+        background: transparent !important;
+        color: var(--tblr-muted) !important;
+        box-shadow: none !important;
+    }
+    /* State Checked */
+    .form-selectgroup-input:checked + .ami-hasil-btn {
+        background: #fff !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08) !important;
+    }
+    /* Warna per status saat checked */
+    .form-selectgroup-input[value="0"]:checked + .ami-hasil-btn { color: var(--tblr-danger) !important; }
+    .form-selectgroup-input[value="1"]:checked + .ami-hasil-btn { color: var(--tblr-success) !important; }
+    .form-selectgroup-input[value="2"]:checked + .ami-hasil-btn { color: var(--tblr-azure) !important; }
+
+    .transition-all { transition: all 0.2s ease; }
+</style>
+@endpush
+
 @section('content')
 <div class="row row-cards">
 
@@ -37,11 +62,7 @@
         <x-tabler.card class="mb-3">
             <x-tabler.card-header title='<i class="ti ti-info-circle me-2"></i>Informasi Indikator' class="py-3" />
             <x-tabler.card-body>
-                <div class="mb-3">
-                    <div class="text-uppercase text-muted small fw-bold mb-1">Kode Indikator</div>
-                    <div class="fs-3 fw-bold text-primary">{{ $indikator->no_indikator ?? '—' }}</div>
-                </div>
-                <div class="mb-3">
+            <div class="mb-3">
                     <div class="text-uppercase text-muted small fw-bold mb-1">Pernyataan Standar / Indikator</div>
                     <div>{{ $indikator->indikator }}</div>
                     @if($indikator->keterangan)
@@ -50,6 +71,11 @@
                         </div>
                     @endif
                 </div>
+                <div class="mb-3">
+                    <div class="text-uppercase text-muted small fw-bold mb-1">Kode Indikator</div>
+                    <div class="fs-3 fw-bold text-primary">{{ $indikator->no_indikator ?? '—' }}</div>
+                </div>
+                
                 <div class="row g-2 mb-3">
                     <div class="col-6">
                         <div class="text-uppercase text-muted small fw-bold mb-1">Unit Kerja</div>
@@ -136,29 +162,38 @@
                     </div>
                 </div>
 
-                {{-- Skala Penilaian --}}
+                {{-- Standardized Skala Display --}}
                 @if(!empty($skala))
                 <hr class="my-3">
-                <div class="text-uppercase text-muted small fw-bold mb-2">Penilaian Skala (Dipilih Auditee)</div>
-                <div class="list-group list-group-flush">
-                    @foreach($skala as $level => $desc)
-                    @php
-                        $isChosen = ($indOrg->ed_skala !== null && (int)$indOrg->ed_skala === (int)$level);
-                    @endphp
-                    <div class="list-group-item px-2 py-2 {{ $isChosen ? 'bg-primary-lt border-start border-3 border-primary' : '' }}">
-                        <div class="d-flex align-items-center">
-                            <span class="avatar avatar-xs {{ $isChosen ? 'bg-primary text-white' : 'bg-secondary-lt text-muted' }} me-2 rounded">
+                <div class="p-2 bg-light rounded border border-opacity-10">
+                    <div class="text-uppercase text-muted smaller fw-bold mb-2 ps-1">Penilaian Skala (Auditee)</div>
+                    <div class="d-flex flex-wrap gap-1 mb-2">
+                        @foreach($skala as $level => $desc)
+                            @php 
+                                $isChosen = ($indOrg->ed_skala !== null && (int)$indOrg->ed_skala === (int)$level);
+                                $color = match((int)$level) {
+                                    4 => 'success',
+                                    3 => 'blue',
+                                    2 => 'warning',
+                                    1 => 'danger',
+                                    default => 'secondary'
+                                };
+                            @endphp
+                            <div class="py-1 px-3 rounded border {{ $isChosen ? 'bg-'.$color.'-lt border-'.$color.' fw-bold text-'.$color : 'bg-white border-light text-muted opacity-50' }}"
+                                 style="min-width: 45px; text-align: center;"
+                                 title="{{ strip_tags($desc) }}" data-bs-toggle="tooltip">
                                 {{ $level }}
-                            </span>
-                            <div class="small {{ $isChosen ? 'text-primary fw-semibold' : 'text-muted' }} flex-fill">
-                                {!! $desc !!}
                             </div>
-                            @if($isChosen)
-                                <i class="ti ti-circle-check-filled text-primary ms-2"></i>
-                            @endif
-                        </div>
+                        @endforeach
                     </div>
-                    @endforeach
+                    @if($indOrg->ed_skala !== null && isset($skala[$indOrg->ed_skala]))
+                        <div class="p-2 bg-white rounded border border-dashed small text-muted">
+                            <div class="d-flex align-items-start gap-2">
+                                <i class="ti ti-info-circle mt-1 opacity-50"></i>
+                                <span>{!! $skala[$indOrg->ed_skala] !!}</span>
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 @endif
                 @else
@@ -181,18 +216,6 @@
                     <li class="nav-item" role="presentation">
                         <a href="#tabs-audit" class="nav-link active" data-bs-toggle="tab" aria-selected="true" role="tab">
                             <i class="ti ti-gavel me-2"></i>Audit
-                        </a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a href="#tabs-te" class="nav-link" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">
-                            <div class="d-flex align-items-center">
-                                <i class="ti ti-clipboard-list me-2"></i>Rencana Tindakan Elektif (TE)
-                                @if(!request('readonly'))
-                                <button type="button" class="btn btn-sm btn-primary ajax-modal-btn ms-2" data-url="{{ route('pemutu.ami.te-edit', $indOrg->encrypted_indorgunit_id) }}" data-title="Tindakan Elektif (TE)">
-                                    <i class="ti ti-edit me-1"></i> {{ $teData ? 'Edit TE' : 'Isi TE' }}
-                                </button>
-                                @endif
-                            </div>
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
@@ -219,18 +242,23 @@
                     @csrf
 
                             {{-- Hasil Akhir AMI: Radio Buttons --}}
-                            <div class="mb-3">
-                                <label class="form-label required fw-semibold">Hasil Akhir AMI</label>
-                                <div id="radio-hasil-akhir-container" class="form-selectgroup">
+                            <div class="mb-4">
+                                <label class="form-label required fw-bold mb-2"><i class="ti ti-chart-bar me-1"></i>Hasil Akhir AMI</label>
+                                <div id="radio-hasil-akhir-container" class="form-selectgroup form-selectgroup-pills nav-segmented-style bg-muted-lt p-1 rounded-pill d-inline-flex border overflow-hidden">
                                     @foreach($hasilAkhirLabels as $value => $meta)
-                                    <label class="form-selectgroup-item">
+                                    <label class="form-selectgroup-item m-0">
                                         <input type="radio" 
                                                name="ami_hasil_akhir" 
                                                value="{{ $value }}" 
                                                class="form-selectgroup-input"
+                                               data-color="{{ $meta['color'] }}"
                                                @checked($indOrg->ami_hasil_akhir === $value) 
                                                required>
-                                        <span class="form-selectgroup-button border-{{ $meta['color'] }} text-{{ $meta['color'] }} fw-semibold">
+                                        <span class="form-selectgroup-button border-0 rounded-pill px-4 py-2 fw-bold ami-hasil-btn transition-all" data-color-class="text-{{ $meta['color'] }}">
+                                            @if($value === 0) <i class="ti ti-alert-triangle me-1"></i>
+                                            @elseif($value === 1) <i class="ti ti-circle-check me-1"></i>
+                                            @elseif($value === 2) <i class="ti ti-award me-1"></i>
+                                            @endif
                                             {{ $meta['label'] }}
                                         </span>
                                     </label>

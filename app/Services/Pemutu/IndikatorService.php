@@ -1,18 +1,30 @@
 <?php
 namespace App\Services\Pemutu;
 
+use App\Models\Event\Rapat;
+use App\Models\Event\RapatEntitas;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeKpi;
 use App\Models\Pemutu\PeriodeSpmi;
+use App\Models\Pemutu\TimMutu;
+use App\Models\User;
+use App\Services\Event\RapatService;
+use App\Services\Hr\StrukturOrganisasiService;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class IndikatorService
 {
+    public function __construct(
+        protected StrukturOrganisasiService $strukturOrganisasiService,
+        protected RapatService $rapatService,
+    ) {}
+
     public function getFilteredQuery(array $filters)
     {
-        $query = Indikator::with(['dokSubs.dokumen', 'labels', 'parent', 'orgUnits', 'renstraPoin.dokumen']);
+        $query = Indikator::with(['dokSubs.dokumen', 'dokSubs.mappedTo.dokumen', 'labels', 'parent', 'orgUnits', 'renstraPoin.dokumen']);
 
         if (! empty($filters['dokumen_id'])) {
             $dokId = decryptIdIfEncrypted($filters['dokumen_id']);
@@ -22,7 +34,11 @@ class IndikatorService
         }
 
         if (! empty($filters['type'])) {
-            $query->where('type', $filters['type']);
+            if ($filters['type'] === 'standar') {
+                $query->whereIn('type', ['standar', 'renop']);
+            } else {
+                $query->where('type', $filters['type']);
+            }
         }
 
         if (! empty($filters['kelompok_indikator'])) {
@@ -40,17 +56,19 @@ class IndikatorService
         if (! empty($filters['label_ids']) || ! empty($filters['label_ids[]'])) {
             $labelIds = $filters['label_ids'] ?? $filters['label_ids[]'];
             $labelIds = is_array($labelIds) ? $labelIds : [$labelIds];
-            $labelIds = array_map('decryptIdIfEncrypted', $labelIds);
-            $query->whereHas('labels', function ($q) use ($labelIds) {
-                $q->whereIn('pemutu_label.label_id', $labelIds);
-            });
+            $labelIds = array_filter(array_map('decryptIdIfEncrypted', $labelIds));
+            if (!empty($labelIds)) {
+                $query->whereHas('labels', function ($q) use ($labelIds) {
+                    $q->whereIn('pemutu_label.label_id', $labelIds);
+                });
+            }
         }
 
         // Filter by year (Dokumen.periode)
         if (! empty($filters['periode'])) {
             $periode = $filters['periode'];
             $query->whereHas('dokSubs.dokumen', function ($q) use ($periode) {
-                $q->where('periode', 'like', '%' . $periode . '%');
+                $q->where('periode', (int) $periode);
             });
         }
 
@@ -60,6 +78,250 @@ class IndikatorService
     public function getIndikatorById($id)
     {
         return Indikator::with(['dokSubs.dokumen', 'labels', 'orgUnits', 'pegawai.pegawai', 'parent'])->find($id);
+    }
+
+    /**
+     * Resolve Indikator by ID (including encrypted).
+     */
+    public function findIndikator(string|int $id): Indikator
+    {
+        return Indikator::findOrFail(decryptIdIfEncrypted($id));
+    }
+
+    /**
+     * Resolve IndikatorOrgUnit by ID (including encrypted).
+     */
+    public function findIndikatorOrgUnit(string|int $id): IndikatorOrgUnit
+    {
+        return IndikatorOrgUnit::findOrFail(decryptIdIfEncrypted($id));
+    }
+
+    /**
+     * Tentukan Target Unit ID berdasarkan input request atau penugasan Tim Mutu.
+     */
+    public function getTargetUnitId(User $user, ?string $requestUnitId = null): int
+    {
+        if ($requestUnitId) {
+            return decryptIdIfEncrypted($requestUnitId);
+        }
+
+        $userUnitIds = [];
+        if ($user->pegawai) {
+            $userUnitIds = TimMutu::where('pegawai_id', $user->pegawai->pegawai_id)
+                ->pluck('org_unit_id')
+                ->toArray();
+        }
+
+        if (! empty($userUnitIds)) {
+            return $userUnitIds[0];
+        }
+
+        return StrukturOrganisasi::first()->orgunit_id ?? 0;
+    }
+
+    /**
+     * Ambil data lengkap untuk form Edit Evaluasi Diri.
+     */
+    public function getEdDetail(Indikator|string $indikator, int $unitId): array
+    {
+        if (is_string($indikator)) {
+            $indikator = $this->findIndikator($indikator);
+        }
+
+        $pivot = IndikatorOrgUnit::where('indikator_id', $indikator->indikator_id)
+            ->where('org_unit_id', $unitId)
+            ->first();
+
+        // Org unit name
+        $orgUnit = \App\Models\Hr\StrukturOrganisasi::find($unitId);
+
+        // Breadcrumbs hierarki indikator
+        $breadcrumbs = [];
+        $current     = $indikator;
+        while ($current) {
+            array_unshift($breadcrumbs, ['current' => $current]);
+            $current = $current->parent;
+        }
+
+        // Bangun Induk Dokumen Tree
+        $indukDokumenTree = $this->buildIndukDokumenTree($indikator);
+
+        // Resolve Renstra Poin
+        $renstraPoin = $indikator->getResolvedRenstraPoin();
+
+        $edLinks = [];
+        if ($pivot && ! empty($pivot->ed_links)) {
+            $edLinks = is_array($pivot->ed_links) ? $pivot->ed_links : (json_decode($pivot->ed_links, true) ?? []);
+        }
+
+        return compact('indikator', 'pivot', 'unitId', 'orgUnit', 'breadcrumbs', 'edLinks', 'indukDokumenTree', 'renstraPoin');
+    }
+
+    /**
+     * Simpan data Evaluasi Diri (Update atau Insert).
+     */
+    public function saveEvaluasiDiri(Indikator|string $indikator, int $unitId, array $data, ?array $files = null): int
+    {
+        if (is_string($indikator)) {
+            $indikator = $this->findIndikator($indikator);
+        }
+
+        $pivot = DB::table('pemutu_indikator_orgunit')
+            ->where('indikator_id', $indikator->indikator_id)
+            ->where('org_unit_id', $unitId)
+            ->first();
+
+        $updateData = [
+            'ed_capaian'  => $data['ed_capaian'] ?? null,
+            'ed_analisis' => $data['ed_analisis'] ?? null,
+            'ed_skala'    => isset($data['ed_skala']) ? (int) $data['ed_skala'] : null,
+            'updated_at'  => now(),
+        ];
+
+        // Process ed_links
+        $updateData['ed_links'] = $this->processLinks($data);
+
+        if ($pivot) {
+            DB::table('pemutu_indikator_orgunit')
+                ->where('indikorgunit_id', $pivot->indikorgunit_id)
+                ->update($updateData);
+            $id = $pivot->indikorgunit_id;
+        } else {
+            $updateData['indikator_id'] = $indikator->indikator_id;
+            $updateData['org_unit_id']  = $unitId;
+            $updateData['target']       = '-';
+            $updateData['created_at']   = now();
+            $id = DB::table('pemutu_indikator_orgunit')->insertGetId($updateData);
+        }
+
+        $model = IndikatorOrgUnit::find($id);
+
+        // Handle Media/Files via Model
+        if (! empty($files) && $model) {
+            foreach ($files as $file) {
+                $model->addMedia($file)->toMediaCollection('ed_attachments');
+            }
+        }
+
+        logActivity('pemutu', "Mengisi Evaluasi Diri: indikator #{$indikator->indikator_id} unit #{$unitId}", $model);
+
+        return $id;
+    }
+
+    /**
+     * Unggah file tambahan ke Evaluasi Diri.
+     */
+    public function uploadEdAttachment(string|int $id, array $files): IndikatorOrgUnit
+    {
+        $model = $this->findIndikatorOrgUnit($id);
+
+        foreach ($files as $file) {
+            $model->addMedia($file)->toMediaCollection('ed_attachments');
+        }
+
+        logActivity('pemutu', "Mengunggah " . count($files) . " file ke Evaluasi Diri ID: {$model->indikorgunit_id}");
+
+        return $model;
+    }
+
+    /**
+     * Hapus file dari Evaluasi Diri.
+     */
+    public function deleteEdAttachment(string|int $id, int $mediaId): bool
+    {
+        $model = $this->findIndikatorOrgUnit($id);
+        $media = $model->getMedia('ed_attachments')->firstWhere('id', $mediaId);
+
+        if (! $media) {
+            return false;
+        }
+
+        $media->delete();
+        logActivity('pemutu', "Menghapus file dari Evaluasi Diri ID: {$model->indikorgunit_id}");
+
+        return true;
+    }
+
+    /**
+     * Simpan Pelaksanaan Tindakan Perbaikan (PTP).
+     */
+    public function updatePtp(IndikatorOrgUnit|string $indOrg, array $data): bool
+    {
+        if (is_string($indOrg)) {
+            $indOrg = $this->findIndikatorOrgUnit($indOrg);
+        }
+
+        $success = $indOrg->update([
+            'ed_ptp_isi' => $data['ed_ptp_isi'],
+        ]);
+
+        if ($success) {
+            logActivity('pemutu', "Mengisi PTP untuk indikorgunit ID: {$indOrg->indikorgunit_id}");
+        }
+
+        return $success;
+    }
+
+    /**
+     * Private: Build Induk Dokumen Tree.
+     */
+    protected function buildIndukDokumenTree(Indikator $indikator): array
+    {
+        $indukDokumenTree = [];
+        $firstDokSub      = $indikator->dokSubs()->with('dokumen')->first();
+
+        if (! $firstDokSub) {
+            $parent = $indikator->parent;
+            while ($parent && ! $firstDokSub) {
+                $firstDokSub = $parent->dokSubs()->with('dokumen')->first();
+                $parent      = $parent->parent;
+            }
+        }
+
+        if ($firstDokSub) {
+            array_unshift($indukDokumenTree, [
+                'judul'     => $firstDokSub->judul,
+                'kode'      => '',
+                'type'      => 'dok_sub',
+                'doksub_id' => $firstDokSub->doksub_id,
+                'dok_id'    => $firstDokSub->dok_id,
+            ]);
+            $currDok = $firstDokSub->dokumen;
+            while ($currDok) {
+                array_unshift($indukDokumenTree, [
+                    'judul'  => $currDok->judul,
+                    'kode'   => $currDok->kode,
+                    'type'   => 'dokumen',
+                    'dok_id' => $currDok->dok_id,
+                ]);
+                $currDok = $currDok->parent;
+            }
+        }
+
+        return $indukDokumenTree;
+    }
+
+    /**
+     * Private: Process links array to JSON string.
+     */
+    protected function processLinks(array $data): ?string
+    {
+        $linksArray = [];
+        if (isset($data['ed_links_name']) && is_array($data['ed_links_name'])) {
+            $names = $data['ed_links_name'];
+            $urls  = $data['ed_links_url'] ?? [];
+            foreach ($names as $index => $name) {
+                $url = $urls[$index] ?? null;
+                if (! empty($name) && ! empty($url)) {
+                    $linksArray[] = [
+                        'name' => $name,
+                        'url'  => $url,
+                    ];
+                }
+            }
+        }
+
+        return ! empty($linksArray) ? json_encode($linksArray) : null;
     }
 
     /**
@@ -649,5 +911,309 @@ class IndikatorService
             ])
             ->orderBy('pemutu_indikator.no_indikator')
             ->orderBy('org.name');
+    }
+
+    /**
+     * Ambil unit yang tersedia untuk AMI pada periode tertentu,
+     * berdasarkan TimMutu yang terdaftar di periode tersebut.
+     */
+    public function getUnitsByTimMutu(PeriodeSpmi $periode, ?int $pegawaiId = null): Collection
+    {
+        $query = TimMutu::with('orgUnit')
+            ->where('periodespmi_id', $periode->periodespmi_id);
+
+        if ($pegawaiId) {
+            $query->where('pegawai_id', $pegawaiId);
+        }
+
+        return $query->get()->pluck('orgUnit')->filter();
+    }
+
+    /**
+     * Ambil detail lengkap satu IndikatorOrgUnit untuk halaman AMI Detail.
+     */
+    public function getAmiDetail(IndikatorOrgUnit|string $id): array
+    {
+        $indOrg = $this->findIndikatorOrgUnit($id);
+        $indOrg->load([
+            'indikator.labels',
+            'indikator.dokSubs.dokumen',
+            'indikator.parent',
+            'orgUnit',
+            'diskusi.pengirim',
+        ]);
+
+        $indikator = $indOrg->indikator;
+        $skala     = $indikator->skala ?? [];
+
+        // Bangun tree breadcrumb hierarki indikator
+        $breadcrumbs = [];
+        $current     = $indikator;
+        while ($current) {
+            array_unshift($breadcrumbs, ['current' => $current]);
+            $current = $current->parent;
+        }
+
+        $hasilAkhirLabels = IndikatorOrgUnit::$hasilAkhirLabels;
+        $monitorings      = $this->getMonitoringHistory($indOrg->indikorgunit_id);
+
+        return compact('indOrg', 'indikator', 'skala', 'breadcrumbs', 'hasilAkhirLabels', 'monitorings');
+    }
+
+    /**
+     * Submit penilaian AMI: simpan hasil akhir dan temuan.
+     */
+    public function saveAmiResult(IndikatorOrgUnit|string $id, array $data): IndikatorOrgUnit
+    {
+        $indOrg = $this->findIndikatorOrgUnit($id);
+        $indOrg->update([
+            'ami_hasil_akhir'         => $data['ami_hasil_akhir'],
+            'ami_hasil_temuan'        => $data['ami_hasil_temuan'] ?? null,
+            'ami_hasil_temuan_sebab'  => $data['ami_hasil_temuan_sebab'] ?? null,
+            'ami_hasil_temuan_akibat' => $data['ami_hasil_temuan_akibat'] ?? null,
+            'ami_hasil_temuan_rekom'  => $data['ami_hasil_temuan_rekom'] ?? null,
+        ]);
+
+        logActivity('pemutu', 'Submit penilaian AMI: indikator #' . $indOrg->indikator_id . ' unit #' . $indOrg->org_unit_id, $indOrg);
+
+        return $indOrg;
+    }
+
+    /**
+     * Update rencana tindakan perbaikan (RTP) di AMI.
+     */
+    public function updateRtp(IndikatorOrgUnit|string $id, array $data): IndikatorOrgUnit
+    {
+        $indOrg = $this->findIndikatorOrgUnit($id);
+        $indOrg->update([
+            'ami_rtp_isi'             => $data['ami_rtp_isi'],
+            'ami_rtp_tgl_pelaksanaan' => $data['ami_rtp_tgl_pelaksanaan'],
+        ]);
+
+        logActivity('pemutu', 'Update RTP AMI: indikator #' . $indOrg->indikator_id . ' unit #' . $indOrg->org_unit_id, $indOrg);
+
+        return $indOrg;
+    }
+
+    /**
+     * Simpan data pengendalian: status dan analisis.
+     */
+    public function savePengendalian(IndikatorOrgUnit|string $id, array $data): IndikatorOrgUnit
+    {
+        $indOrg = $this->findIndikatorOrgUnit($id);
+        $payload = [
+            'pengend_status'   => $data['pengend_status'],
+            'pengend_analisis' => $data['pengend_analisis'] ?? null,
+            'pengend_important_matrix' => $data['pengend_important_matrix'] ?? null,
+            'pengend_urgent_matrix'    => $data['pengend_urgent_matrix'] ?? null,
+        ];
+
+        // Initial Sync to Superior Columns (draft)
+        $payload['pengend_status_atsn']           = $payload['pengend_status'];
+        $payload['pengend_analisis_atsn']         = $payload['pengend_analisis'];
+        $payload['pengend_important_matrix_atsn'] = $payload['pengend_important_matrix'];
+        $payload['pengend_urgent_matrix_atsn']    = $payload['pengend_urgent_matrix'];
+
+        $indOrg->update($payload);
+
+        logActivity('pemutu', 'Submit pengendalian: indikator #' . $indOrg->indikator_id . ' unit #' . $indOrg->org_unit_id, $indOrg);
+
+        return $indOrg;
+    }
+
+    /**
+     * Update hanya Eisenhower Matrix (Important & Urgent) secara inline/AJAX.
+     */
+    public function updateMatrix(IndikatorOrgUnit|string $id, array $data): IndikatorOrgUnit
+    {
+        $indOrg = $this->findIndikatorOrgUnit($id);
+        $payload = [
+            'pengend_important_matrix' => $data['pengend_important_matrix'] ?? null,
+            'pengend_urgent_matrix'    => $data['pengend_urgent_matrix'] ?? null,
+        ];
+
+        // Also sync to superior columns
+        $payload['pengend_important_matrix_atsn'] = $payload['pengend_important_matrix'];
+        $payload['pengend_urgent_matrix_atsn']    = $payload['pengend_urgent_matrix'];
+
+        $indOrg->update($payload);
+
+        return $indOrg;
+    }
+
+    /**
+     * Simpan validasi atasan: hanya kolom _atsn.
+     */
+    public function saveValidasiPengendalian(IndikatorOrgUnit|string $id, array $data): IndikatorOrgUnit
+    {
+        $indOrg = $this->findIndikatorOrgUnit($id);
+        $payload = [
+            'pengend_status_atsn'           => $data['pengend_status_atsn'],
+            'pengend_analisis_atsn'         => $data['pengend_analisis_atsn'] ?? null,
+            'pengend_important_matrix_atsn' => $data['pengend_important_matrix_atsn'] ?? null,
+            'pengend_urgent_matrix_atsn'    => $data['pengend_urgent_matrix_atsn'] ?? null,
+        ];
+
+        $indOrg->update($payload);
+
+        logActivity('pemutu', 'Validasi pengendalian atasan: indikator #' . $indOrg->indikator_id . ' unit #' . $indOrg->org_unit_id, $indOrg);
+
+        return $indOrg;
+    }
+
+    /**
+     * Simpan data Peningkatan (Improvement). 
+     * Saat ini peningkatan di PPEPP lebih banyak ke Duplikasi & RTM, 
+     * tetapi kita sediakan placeholder jika ada pengisian tambahan.
+     */
+    public function savePeningkatan(IndikatorOrgUnit|string $id, array $data): IndikatorOrgUnit
+    {
+        $indOrg = $this->findIndikatorOrgUnit($id);
+        // Placeholder for future peningkatan columns
+        // $indOrg->update([...]);
+
+        logActivity('pemutu', 'Submit peningkatan: indikator #' . $indOrg->indikator_id . ' unit #' . $indOrg->org_unit_id, $indOrg);
+
+        return $indOrg;
+    }
+
+    /**
+     * Buat Rapat Pemantauan baru (Pelaksanaan).
+     */
+    public function savePemantauan(array $data): Rapat
+    {
+        return DB::transaction(function () use ($data) {
+            $rapat = $this->rapatService->store([
+                'jenis_rapat'     => 'Pemantauan',
+                'judul_kegiatan' => $data['judul_kegiatan'],
+                'tgl_rapat'      => $data['tgl_rapat'],
+                'waktu_mulai'    => $data['waktu_mulai'],
+                'waktu_selesai'  => $data['waktu_selesai'],
+                'tempat_rapat'   => $data['tempat_rapat'],
+                'ketua_user_id'  => isset($data['ketua_user_id']) ? decryptIdIfEncrypted($data['ketua_user_id']) : null,
+                'notulen_user_id' => isset($data['notulen_user_id']) ? decryptIdIfEncrypted($data['notulen_user_id']) : null,
+                'author_user_id' => auth()->id(),
+                'keterangan'     => $data['keterangan'] ?? null,
+            ]);
+
+            if (! empty($data['indikorgunit_ids'])) {
+                foreach ($data['indikorgunit_ids'] as $id) {
+                    RapatEntitas::create([
+                        'rapat_id'   => $rapat->rapat_id,
+                        'model'      => 'IndikatorOrgUnit',
+                        'model_id'   => decryptIdIfEncrypted($id),
+                        'keterangan' => 'Pemantauan Indikator',
+                    ]);
+                }
+            }
+
+            if (! empty($data['agendas'])) {
+                foreach ($data['agendas'] as $index => $agendaItem) {
+                    if (! empty($agendaItem['judul_agenda'])) {
+                        $this->rapatService->addAgenda($rapat, [
+                            'judul_agenda' => $agendaItem['judul_agenda'],
+                            'isi'          => '',
+                            'seq'          => $index,
+                        ]);
+                    }
+                }
+            }
+
+            if (! empty($data['participants'])) {
+                $this->rapatService->inviteParticipants(
+                    $rapat,
+                    $data['participants'],
+                    $data['jabatan_peserta'] ?? 'Peserta'
+                );
+            }
+
+            return $rapat;
+        });
+    }
+
+    /**
+     * Update Rapat Pemantauan.
+     */
+    public function updatePemantauan(Rapat $rapat, array $data): Rapat
+    {
+        return DB::transaction(function () use ($rapat, $data) {
+            $this->rapatService->update($rapat, [
+                'judul_kegiatan' => $data['judul_kegiatan'],
+                'tgl_rapat'      => $data['tgl_rapat'],
+                'waktu_mulai'    => $data['waktu_mulai'],
+                'waktu_selesai'  => $data['waktu_selesai'],
+                'tempat_rapat'   => $data['tempat_rapat'],
+                'ketua_user_id'  => isset($data['ketua_user_id']) ? decryptIdIfEncrypted($data['ketua_user_id']) : null,
+                'notulen_user_id' => isset($data['notulen_user_id']) ? decryptIdIfEncrypted($data['notulen_user_id']) : null,
+                'keterangan'     => $data['keterangan'] ?? null,
+            ]);
+
+            // Sync Indikators
+            if (isset($data['indikorgunit_ids'])) {
+                RapatEntitas::where('rapat_id', $rapat->rapat_id)
+                    ->where('model', 'IndikatorOrgUnit')
+                    ->delete();
+
+                foreach ($data['indikorgunit_ids'] as $id) {
+                    RapatEntitas::create([
+                        'rapat_id'   => $rapat->rapat_id,
+                        'model'      => 'IndikatorOrgUnit',
+                        'model_id'   => decryptIdIfEncrypted($id),
+                        'keterangan' => 'Pemantauan Indikator',
+                    ]);
+                }
+            }
+
+            // Agendas
+            if (! empty($data['agendas'])) {
+                foreach ($data['agendas'] as $index => $agendaItem) {
+                    if (! empty($agendaItem['judul_agenda']) && empty($agendaItem['rapatagenda_id'])) {
+                        $this->rapatService->addAgenda($rapat, [
+                            'judul_agenda' => $agendaItem['judul_agenda'],
+                            'isi'          => '',
+                            'seq'          => $index,
+                        ]);
+                    }
+                }
+            }
+
+            // Participants
+            if (! empty($data['participants'])) {
+                $this->rapatService->inviteParticipants(
+                    $rapat,
+                    $data['participants'],
+                    $data['jabatan_peserta'] ?? 'Peserta'
+                );
+            }
+
+            return $rapat;
+        });
+    }
+
+    /**
+     * Query for Pemantauan meetings.
+     */
+    public function getPemantauanQuery(): Builder
+    {
+        return Rapat::query()
+            ->where('jenis_rapat', 'Pemantauan')
+            ->with(['ketua_user.pegawai.latestDataDiri', 'notulen_user.pegawai.latestDataDiri', 'pesertas'])
+            ->latest('tgl_rapat');
+    }
+
+    /**
+     * Ambil riwayat pemantauan untuk satu indikator.
+     */
+    public function getMonitoringHistory(string|int $id): Collection
+    {
+        $id = decryptIdIfEncrypted($id);
+        return Rapat::where('jenis_rapat', 'Pemantauan')
+            ->whereHas('entitas', function ($q) use ($id) {
+                $q->where('model', 'IndikatorOrgUnit')
+                    ->where('model_id', $id);
+            })
+            ->with(['ketua_user', 'notulen_user'])
+            ->latest('tgl_rapat')
+            ->get();
     }
 }

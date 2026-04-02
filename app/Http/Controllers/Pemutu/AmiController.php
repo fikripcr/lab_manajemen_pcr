@@ -9,7 +9,6 @@ use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Services\Hr\StrukturOrganisasiService;
 use App\Services\Pemutu\AmiExportService;
-use App\Services\Pemutu\AmiService;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
@@ -19,11 +18,10 @@ use Yajra\DataTables\Facades\DataTables;
 class AmiController extends Controller
 {
     public function __construct(
-        protected AmiService $AmiService,
-        protected AmiExportService $AmiExportService,
-        protected PeriodeSpmiService $PeriodeSpmiService,
-        protected IndikatorService $IndikatorService,
-        protected StrukturOrganisasiService $StrukturOrganisasiService,
+        protected AmiExportService $amiExportService,
+        protected PeriodeSpmiService $periodeSpmiService,
+        protected IndikatorService $indikatorService,
+        protected StrukturOrganisasiService $strukturOrganisasiService,
     ) {}
 
     /**
@@ -32,7 +30,11 @@ class AmiController extends Controller
     public function index()
     {
         // Bypass old period selection — use global siklus from session
-        $siklus = $this->PeriodeSpmiService->getSiklusData();
+        $siklus = $this->periodeSpmiService->getSiklusData();
+
+        // Active Kelompok (Akademik / Non Akademik) from session
+        $activeKelompok = session('pemutu_active_kelompok', 'akademik');
+        $periode = $siklus[$activeKelompok] ?? null;
 
         // Fetch root documents for filter
         $rootDoks = \App\Models\Pemutu\Dokumen::whereNull('parent_id')
@@ -41,10 +43,12 @@ class AmiController extends Controller
             ->get();
 
         $data = [
-            'pageTitle' => 'Audit Mutu Internal (AMI)',
-            'siklus'    => $siklus,
-            'units'     => $this->StrukturOrganisasiService->getHierarchicalList(),
-            'rootDoks'  => $rootDoks,
+            'pageTitle'      => 'Audit Mutu Internal (AMI)',
+            'siklus'         => $siklus,
+            'activeKelompok' => $activeKelompok,
+            'periode'        => $periode,
+            'units'          => $this->strukturOrganisasiService->getHierarchicalList(),
+            'rootDoks'       => $rootDoks,
         ];
 
         return view('pages.pemutu.ami.index', $data);
@@ -57,13 +61,13 @@ class AmiController extends Controller
     public function data(PeriodeSpmi $periode, Request $request)
     {
         $filters = [];
-        foreach ($request->only(['orgunit_id', 'ami_hasil_akhir', 'ed_status', 'dok_id', 'rtp_status']) as $key => $value) {
+        foreach ($request->only(['orgunit_id', 'ami_hasil_akhir', 'ed_status', 'dok_id', 'rtp_status', 'kelompok_indikator']) as $key => $value) {
             if ($value !== null && $value !== '' && $value !== 'all') {
                 $filters[$key] = ($key === 'orgunit_id' || $key === 'dok_id') ? decryptIdIfEncrypted($value) : $value;
             }
         }
 
-        $query = $this->IndikatorService->getUnifiedSpmiQuery($periode, $filters);
+        $query = $this->indikatorService->getUnifiedSpmiQuery($periode, $filters);
 
         return datatables()->of($query)
             ->addColumn('no', function ($row) {
@@ -75,11 +79,35 @@ class AmiController extends Controller
             ->addColumn('target', function ($row) {
                 return pemutuDtColTarget($row);
             })
-            ->addColumn('status_ed', function ($row) {
-                return pemutuDtColStatusEd($row);
+            ->addColumn('ed_capaian', function ($row) {
+                return pemutuDtColCapaianSkalaEd($row);
             })
-            ->addColumn('status_ami', function ($row) {
-                return pemutuDtColStatusAmi($row);
+            ->addColumn('ed_analisis', function ($row) {
+                return pemutuDtColAnalisisEd($row);
+            })
+            ->addColumn('ami_hasil', function ($row) {
+                $pivot = $row->orgUnits->first()?->pivot;
+                if (! $pivot) {
+                    return '<span class="text-muted small">-</span>';
+                }
+
+                $textHtml = '';
+                if (! empty($pivot->ami_hasil_temuan)) {
+                    $textHtml .= '<div><strong>Temuan:</strong> ' . nl2br(e($pivot->ami_hasil_temuan)) . '</div>';
+                }
+                if (! empty($pivot->ami_hasil_temuan_sebab)) {
+                    $textHtml .= '<div class="mt-3"><strong>Sebab:</strong> ' . nl2br(e($pivot->ami_hasil_temuan_sebab)) . '</div>';
+                }
+                if (! empty($pivot->ami_hasil_temuan_akibat)) {
+                    $textHtml .= '<div class="mt-3"><strong>Akibat:</strong> ' . nl2br(e($pivot->ami_hasil_temuan_akibat)) . '</div>';
+                }
+
+                $scrollContent = pemutuTextScroll($textHtml ?: null);
+                $statusHtml    = pemutuDtColStatusAmi($row);
+
+                return '<div>' . $scrollContent .
+                    '<div class="pt-2 border-top">' . $statusHtml . '</div>' .
+                    '</div>';
             })
             ->addColumn('action', function ($row) use ($periode) {
                 $pivot        = $row->orgUnits->first()?->pivot;
@@ -98,7 +126,7 @@ class AmiController extends Controller
                 return '<span class="text-muted small">-</span>';
             })
             ->addColumn('rtp_isi', function ($row) {
-                return $row->orgUnits->first()?->pivot->ami_rtp_isi ?? '<span class="text-muted small">-</span>';
+                return pemutuTextScroll($row->orgUnits->first()?->pivot->ami_rtp_isi);
             })
             ->addColumn('rtp_tgl', function ($row) {
                 $tgl = $row->orgUnits->first()?->pivot->ami_rtp_tgl_pelaksanaan;
@@ -106,7 +134,8 @@ class AmiController extends Controller
                 return $tgl ? formatTanggalIndo($tgl) : '<span class="text-muted small">-</span>';
             })
             ->addColumn('auditor_recom', function ($row) {
-                return $row->orgUnits->first()?->pivot->ami_hasil_temuan_rekom ?? '<span class="text-muted small">-</span>';
+                $text = $row->orgUnits->first()?->pivot->ami_hasil_temuan_rekom;
+                return pemutuTextScroll(! empty($text) ? nl2br(e($text)) : null);
             })
             ->addColumn('action_rtp', function ($row) use ($periode) {
                 $pivot = $row->orgUnits->first()?->pivot;
@@ -143,16 +172,16 @@ class AmiController extends Controller
                         ->orWhere('no_indikator', 'like', "%{$keyword}%");
                 });
             })
-            ->rawColumns(['no', 'indikator_full', 'target', 'status_ed', 'status_ami', 'action', 'rtp_isi', 'rtp_tgl', 'auditor_recom', 'action_rtp'])
+            ->rawColumns(['no', 'indikator_full', 'target', 'ed_capaian', 'ed_analisis', 'ami_hasil', 'action', 'rtp_isi', 'rtp_tgl', 'auditor_recom', 'action_rtp'])
             ->make(true);
     }
 
     /**
      * Halaman detail AMI (non-modal).
      */
-    public function detail(IndikatorOrgUnit $indOrg)
+    public function detail(string $id)
     {
-        $data = $this->AmiService->getDetail($indOrg);
+        $data = $this->indikatorService->getAmiDetail($id);
 
         return view('pages.pemutu.ami.detail', $data);
     }
@@ -160,9 +189,9 @@ class AmiController extends Controller
     /**
      * Submit penilaian AMI.
      */
-    public function submitNilai(AmiRequest $request, IndikatorOrgUnit $indOrg)
+    public function submitNilai(AmiRequest $request, string $id)
     {
-        $this->AmiService->submitPenilaian($indOrg, $request->validated());
+        $indOrg = $this->indikatorService->saveAmiResult($id, $request->validated());
 
         return jsonSuccess('Penilaian AMI berhasil disimpan.', route('pemutu.ami.detail', $indOrg->encrypted_indorgunit_id));
     }
@@ -178,9 +207,9 @@ class AmiController extends Controller
     /**
      * Simpan RTP.
      */
-    public function updateRtp(RtpRequest $request, IndikatorOrgUnit $indOrg)
+    public function updateRtp(RtpRequest $request, string $id)
     {
-        $this->AmiService->updateRtp($indOrg, $request->validated());
+        $this->indikatorService->updateRtp($id, $request->validated());
 
         return jsonSuccess('Rencana Tindakan Perbaikan (RTP) berhasil disimpan.');
     }
@@ -191,23 +220,20 @@ class AmiController extends Controller
     public function teData(Request $request, PeriodeSpmi $periode)
     {
         // Cari periode tahun lalu dengan jenis yang sama
-        $prevYear   = (int) $periode->periode - 1;
-        $prevPeriod = PeriodeSpmi::where('periode', $prevYear)
-            ->where('jenis_periode', $periode->jenis_periode)
-            ->first();
+        $prevPeriod = $this->periodeSpmiService->getPreviousPeriod($periode);
 
         if (! $prevPeriod) {
             return DataTables::of(collect([]))->make(true);
         }
 
-        // Ambil indikator KTS dari periode tahun lalu
+                                             // Ambil indikator KTS dari periode tahun lalu
         $filters = ['ami_hasil_akhir' => 0]; // KTS
         foreach ($request->only(['unit_id', 'dok_id', 'te_status']) as $key => $value) {
             if ($value !== null && $value !== '' && $value !== 'all') {
                 $filters[$key] = ($key === 'unit_id' || $key === 'dok_id') ? decryptIdIfEncrypted($value) : $value;
             }
         }
-        $query = $this->IndikatorService->getUnifiedSpmiQuery($prevPeriod, $filters);
+        $query = $this->indikatorService->getUnifiedSpmiQuery($prevPeriod, $filters);
 
         return DataTables::of($query)
             ->addColumn('no', function ($row) {
@@ -253,9 +279,11 @@ class AmiController extends Controller
     /**
      * Simpan Tinjauan Efektivitas (TE).
      */
-    public function updateTe(TeRequest $request, IndikatorOrgUnit $indOrg)
+    public function updateTe(TeRequest $request, string $id)
     {
-        $this->AmiService->updateTe($indOrg, $request->validated());
+        // Add updateTe method to IndikatorService if not exists
+        $indOrg = $this->indikatorService->findIndikatorOrgUnit($id);
+        $indOrg->update(['ami_te_isi' => $request->validated()['ami_te_isi']]);
 
         return jsonSuccess('Tinjauan Efektivitas (TE) berhasil disimpan.');
     }

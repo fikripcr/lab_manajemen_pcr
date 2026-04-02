@@ -2,6 +2,6 @@
     'class' => ''
 ])
 
-<div {{ $attributes->merge(['class' => 'card overflow-hidden ' . $class]) }}>
+<div {{ $attributes->merge(['class' => 'card ' . $class]) }}>
     {{ $slot }}
 </div>

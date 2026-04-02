@@ -3,11 +3,27 @@
     @if($jenis)
     <span class="badge bg-primary-lt text-uppercase">{{ $jenis }}</span>
     @endif
-    <span class="text-muted ms-2"><i class="ti ti-target me-1"></i> {{ $indicators->count() }} Indikator Ditemukan</span>
+    <span class="text-muted ms-2"><i class="ti ti-target me-1"></i> {{ $indicators->count() }} Indikator</span>
 </div>
 
+{{-- Overall Achievement Summary --}}
 <div class="row row-cards mb-4">
-    <div class="col-sm-4">
+    <div class="col-sm-3">
+        <x-tabler.card class="card-sm h-100">
+            <x-tabler.card-body>
+                <div class="d-flex align-items-center">
+                    <span class="avatar bg-primary text-white me-3">
+                        <i class="ti ti-percentage fs-2"></i>
+                    </span>
+                    <div>
+                        <div class="h2 mb-0 text-primary">{{ $overallRate }}%</div>
+                        <div class="text-muted small">Ketercapaian</div>
+                    </div>
+                </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
+    </div>
+    <div class="col-sm-3">
         <x-tabler.card class="card-sm h-100">
             <x-tabler.card-body>
                 <div class="d-flex align-items-center">
@@ -15,14 +31,14 @@
                         <i class="ti ti-checks fs-2"></i>
                     </span>
                     <div>
-                        <div class="fw-bold text-success">{{ $percentages['terpenuhi'] }}% ({{ $amiCounts['terpenuhi'] }})</div>
+                        <div class="fw-bold text-success">{{ $globalAmi['terpenuhi'] }}</div>
                         <div class="text-muted small">Terpenuhi</div>
                     </div>
                 </div>
             </x-tabler.card-body>
         </x-tabler.card>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3">
         <x-tabler.card class="card-sm h-100">
             <x-tabler.card-body>
                 <div class="d-flex align-items-center">
@@ -30,14 +46,14 @@
                         <i class="ti ti-rocket fs-2"></i>
                     </span>
                     <div>
-                        <div class="fw-bold text-azure">{{ $percentages['melampaui'] }}% ({{ $amiCounts['melampaui'] }})</div>
+                        <div class="fw-bold text-azure">{{ $globalAmi['melampaui'] }}</div>
                         <div class="text-muted small">Melampaui</div>
                     </div>
                 </div>
             </x-tabler.card-body>
         </x-tabler.card>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3">
         <x-tabler.card class="card-sm h-100">
             <x-tabler.card-body>
                 <div class="d-flex align-items-center">
@@ -45,8 +61,8 @@
                         <i class="ti ti-alert-triangle fs-2"></i>
                     </span>
                     <div>
-                        <div class="fw-bold text-danger">{{ $percentages['kts'] }}% ({{ $amiCounts['kts'] }})</div>
-                        <div class="text-muted small">KTS (Tidak Terpenuhi)</div>
+                        <div class="fw-bold text-danger">{{ $globalAmi['kts'] }}</div>
+                        <div class="text-muted small">KTS</div>
                     </div>
                 </div>
             </x-tabler.card-body>
@@ -54,55 +70,72 @@
     </div>
 </div>
 
-<h4 class="mb-3">Detail Capaian Unit ({{ $unitsEvaluated->count() }} Unit)</h4>
+{{-- Indicator List --}}
+<h4 class="mb-3"><i class="ti ti-list-details me-1"></i> Daftar Indikator ({{ count($indicatorDetails) }})</h4>
 
-@if(empty($detailUnits))
+@if(empty($indicatorDetails))
 <div class="text-center text-muted p-4 border rounded bg-light">
     <i class="ti ti-info-circle fs-2 mb-2 d-block"></i>
-    Belum ada data evaluasi unit untuk struktur turunan ini.
+    Belum ada indikator yang terpetakan pada struktur turunan ini.
 </div>
 @else
-<div class="accordion" id="accordion-units">
-    @foreach($detailUnits as $unitName => $data)
+<div class="accordion" id="accordion-indicators">
+    @foreach($indicatorDetails as $idx => $ind)
+    @php
+        $collapseId = 'ind-' . Str::slug($ind['no'] . '-' . $idx);
+        $achieved = $ind['ami']['terpenuhi'] + $ind['ami']['melampaui'];
+        $rateColor = $ind['achievement_rate'] >= 80 ? 'success' : ($ind['achievement_rate'] >= 50 ? 'warning' : 'danger');
+    @endphp
     <div class="accordion-item">
-        <h2 class="accordion-header" id="heading-{{ Str::slug($unitName) }}">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-toggle="collapse" data-bs-target="#collapse-{{ Str::slug($unitName) }}" aria-expanded="false">
+        <h2 class="accordion-header" id="heading-{{ $collapseId }}">
+            <button class="accordion-button collapsed py-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $collapseId }}" aria-expanded="false">
                 <div class="w-100 d-flex justify-content-between align-items-center pe-3">
-                    <span class="fw-bold">{{ $unitName }}</span>
-                    <div class="d-flex gap-2 text-center" style="font-size: 0.8rem;">
-                        <span class="badge bg-success-lt" title="Terpenuhi">{{ $data['terpenuhi'] }} <i class="ti ti-check"></i></span>
-                        <span class="badge bg-azure-lt" title="Melampaui">{{ $data['melampaui'] }} <i class="ti ti-rocket"></i></span>
-                        <span class="badge bg-danger-lt" title="KTS">{{ $data['kts'] }} <i class="ti ti-alert-triangle"></i></span>
+                    <div class="d-flex align-items-center gap-2" style="min-width: 0;">
+                        <span class="badge bg-secondary-lt text-nowrap small">{{ $ind['no'] }}</span>
+                        <span class="text-truncate small">{{ $ind['nama'] }}</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 ms-3 flex-shrink-0 small">
+                        <span class="badge bg-{{ $rateColor }}-lt text-nowrap">
+                            <i class="ti ti-chart-pie me-1"></i>{{ $ind['achievement_rate'] }}%
+                        </span>
+                        <span class="text-muted text-nowrap">{{ $achieved }}/{{ $ind['total_units'] }}</span>
+                        <span class="text-success text-nowrap"><i class="ti ti-check"></i> {{ $ind['ami']['terpenuhi'] }}</span>
+                        <span class="text-azure text-nowrap"><i class="ti ti-rocket"></i> {{ $ind['ami']['melampaui'] }}</span>
+                        <span class="text-danger text-nowrap"><i class="ti ti-alert-triangle"></i> {{ $ind['ami']['kts'] }}</span>
+                        @if($ind['ami']['none'] > 0)
+                            <span class="text-muted text-nowrap"><i class="ti ti-clock"></i> {{ $ind['ami']['none'] }}</span>
+                        @endif
                     </div>
                 </div>
             </button>
         </h2>
-        <div id="collapse-{{ Str::slug($unitName) }}" class="accordion-collapse collapse" data-bs-parent="#accordion-units">
+        <div id="collapse-{{ $collapseId }}" class="accordion-collapse collapse" data-bs-parent="#accordion-indicators">
             <div class="accordion-body p-0">
+
+
+                {{-- Unit detail table --}}
                 <div class="table-responsive">
                     <table class="table table-vcenter table-sm m-0">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>Indikator</th>
+                                <th >Unit</th>
                                 <th>Target</th>
                                 <th>Capaian</th>
-                                <th>AMI</th>
+                                <th >Hasil AMI</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($data['indicators'] as $ind)
+                            @foreach($ind['units'] as $unit)
                             <tr>
-                                <td class="text-muted">{{ $ind['no'] }}</td>
-                                <td>{{ $ind['nama'] }}</td>
-                                <td>{{ $ind['target'] }}</td>
-                                <td>{{ $ind['capaian'] ?: '-' }}</td>
+                                <td class="fw-medium">{{ $unit['name'] }}</td>
+                                <td>{{ $unit['target'] ?: '-' }}</td>
+                                <td>{{ $unit['capaian'] ?: '-' }}</td>
                                 <td>
-                                    @if($ind['ami'] === 1)
+                                    @if($unit['ami'] === 1)
                                         <span class="badge bg-success-lt text-nowrap"><i class="ti ti-check me-1"></i> Terpenuhi</span>
-                                    @elseif($ind['ami'] === 2)
+                                    @elseif($unit['ami'] === 2)
                                         <span class="badge bg-azure-lt text-nowrap"><i class="ti ti-rocket me-1"></i> Melampaui</span>
-                                    @elseif($ind['ami'] === 0)
+                                    @elseif($unit['ami'] === 0)
                                         <span class="badge bg-danger-lt text-nowrap"><i class="ti ti-alert-triangle me-1"></i> KTS</span>
                                     @else
                                         <span class="badge bg-secondary-lt text-nowrap">Belum Evaluasi</span>

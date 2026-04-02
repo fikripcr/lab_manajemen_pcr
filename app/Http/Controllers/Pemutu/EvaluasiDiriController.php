@@ -1,54 +1,57 @@
 <?php
+
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\EvaluasiDiriRequest;
 use App\Http\Requests\Pemutu\PtpRequest;
-use App\Models\Hr\StrukturOrganisasi;
-use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
-use App\Models\Pemutu\TimMutu;
 use App\Services\Hr\StrukturOrganisasiService;
+use App\Services\Pemutu\DokumenService;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\PeriodeSpmiService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class EvaluasiDiriController extends Controller
 {
     public function __construct(
-        protected PeriodeSpmiService $PeriodeSpmiService,
-        protected IndikatorService $IndikatorService,
-        protected StrukturOrganisasiService $StrukturOrganisasiService,
+        protected PeriodeSpmiService $periodeSpmiService,
+        protected IndikatorService $indikatorService,
+        protected StrukturOrganisasiService $strukturOrganisasiService,
+        protected DokumenService $dokumenService,
     ) {}
 
     public function index()
     {
         // Bypass old period selection — use global siklus from session
-        $siklus = $this->PeriodeSpmiService->getSiklusData();
-        $user   = auth()->user();
+        $siklus = $this->periodeSpmiService->getSiklusData();
 
-        // Fetch ONLY Standar documents for filter (not Visi, Misi, etc.)
-        $rootDoks = \App\Models\Pemutu\Dokumen::whereNull('parent_id')
-            ->where('periode', $siklus['tahun'])
-            ->where('jenis', 'standar') // ← FIX: Only Standar documents
-            ->orderBy('seq')
-            ->get();
+        // Active Kelompok (Akademik / Non Akademik) from session
+        $activeKelompok = session('pemutu_active_kelompok', 'akademik');
+        $periode = $siklus[$activeKelompok] ?? null;
+
+        // Fetch ONLY Standar documents for filter via DokumenService
+        $rootDoks = $this->dokumenService->getRootsByPeriode($siklus['tahun']);
 
         $data = [
-            'pageTitle' => 'Evaluasi Diri',
-            'siklus'    => $siklus,
-            'units'     => $this->StrukturOrganisasiService->getHierarchicalList(),
-            'rootDoks'  => $rootDoks,
+            'pageTitle'      => 'Evaluasi Diri',
+            'siklus'         => $siklus,
+            'activeKelompok' => $activeKelompok,
+            'periode'        => $periode,
+            'units'          => $this->strukturOrganisasiService->getHierarchicalList(),
+            'rootDoks'       => $rootDoks,
         ];
 
         return view('pages.pemutu.evaluasi-diri.index', $data);
     }
 
-    public function data(Request $request, PeriodeSpmi $periode)
+    public function data(Request $request, string $periode)
     {
+        $periodeModel = $this->periodeSpmiService->getById($periode);
+
         $filters = [];
         foreach ($request->only(['unit_id', 'ed_status', 'dok_id']) as $key => $value) {
             if ($value !== null && $value !== '' && $value !== 'all') {
@@ -59,7 +62,7 @@ class EvaluasiDiriController extends Controller
         // Simpan unitId untuk digunakan di kolom action
         $unitId = $filters['unit_id'] ?? null;
 
-        $query = $this->IndikatorService->getUnifiedSpmiQuery($periode, $filters);
+        $query = $this->indikatorService->getUnifiedSpmiQuery($periodeModel, $filters);
 
         return DataTables::of($query)
             ->addColumn('no', function ($row) {
@@ -72,12 +75,12 @@ class EvaluasiDiriController extends Controller
                 return pemutuDtColTarget($row);
             })
             ->addColumn('capaian', function ($row) {
-                return $row->orgUnits->first()->pivot->ed_capaian ?? '<span class="text-muted fst-italic">Belum diisi</span>';
+                return pemutuDtColCapaianSkalaEd($row);
             })
             ->addColumn('analisis', function ($row) {
                 return pemutuDtColAnalisisEd($row);
             })
-            ->addColumn('action', function ($row) use ($unitId, $periode) {
+            ->addColumn('action', function ($row) use ($unitId, $periodeModel) {
                 // If a specific unit is filtered, pass it. Otherwise try to get it from the pivot.
                 $targetUnit = $unitId ?? ($row->orgUnits->first()->pivot->org_unit_id ?? '');
                 $url        = route('pemutu.evaluasi-diri.edit', $row->encrypted_indikator_id);
@@ -85,7 +88,7 @@ class EvaluasiDiriController extends Controller
                     $url .= '?unit_id=' . $targetUnit;
                 }
 
-                $periodeInfo = pemutuPeriodeStatus($periode->ed_awal, $periode->ed_akhir);
+                $periodeInfo = pemutuPeriodeStatus($periodeModel->ed_awal, $periodeModel->ed_akhir);
                 if ($periodeInfo['is_active']) {
                     return '<button type="button" class="btn btn-sm btn-primary ajax-modal-btn"
                         data-url="' . $url . '"
@@ -108,184 +111,56 @@ class EvaluasiDiriController extends Controller
             ->make(true);
     }
 
-    public function edit(Request $request, Indikator $indikator)
+    public function edit(Request $request, string $id)
     {
-        $user = auth()->user();
+        $targetUnitId = $this->indikatorService->getTargetUnitId(auth()->user(), $request->input('unit_id'));
+        $editData     = $this->indikatorService->getEdDetail($id, $targetUnitId);
+        $editData['targetUnitId'] = $targetUnitId; // Add this to fix the view error
 
-        if ($request->filled('unit_id')) {
-            $targetUnitId = decryptIdIfEncrypted($request->input('unit_id'));
-        } else {
-            $userUnitIds = [];
-            if ($user->pegawai) {
-                $userUnitIds = TimMutu::where('pegawai_id', $user->pegawai->pegawai_id)->pluck('org_unit_id')->toArray();
-            }
-
-            if (! empty($userUnitIds)) {
-                $targetUnitId = $userUnitIds[0];
-            } else {
-                $targetUnitId = StrukturOrganisasi::first()->orgunit_id ?? 0;
-            }
-        }
-
-        $pivot = IndikatorOrgUnit::where('indikator_id', $indikator->indikator_id)
-            ->where('org_unit_id', $targetUnitId)
-            ->first();
-
-        $breadcrumbs = [];
-        $current     = $indikator;
-        while ($current) {
-            array_unshift($breadcrumbs, compact('current'));
-            $current = $current->parent;
-        }
-
-        // Get Induk Dokumen Tree
-        $indukDokumenTree = [];
-        $firstDokSub      = $indikator->dokSubs()->with('dokumen')->first();
-
-        if (! $firstDokSub) {
-            $parent = $indikator->parent;
-            while ($parent && ! $firstDokSub) {
-                $firstDokSub = $parent->dokSubs()->with('dokumen')->first();
-                $parent      = $parent->parent;
-            }
-        }
-
-        if ($firstDokSub) {
-            array_unshift($indukDokumenTree, [
-                'judul' => $firstDokSub->judul,
-                'kode'  => '',
-                'type'  => 'dok_sub',
-            ]);
-            $currDok = $firstDokSub->dokumen;
-            while ($currDok) {
-                array_unshift($indukDokumenTree, [
-                    'judul' => $currDok->judul,
-                    'kode'  => $currDok->kode,
-                    'type'  => 'dokumen',
-                ]);
-                $currDok = $currDok->parent;
-            }
-        }
-
-        $edLinks = [];
-        if ($pivot && ! empty($pivot->ed_links)) {
-            $edLinks = json_decode($pivot->ed_links, true) ?? [];
-        }
-
-        return view('pages.pemutu.evaluasi-diri.edit-ajax', compact('indikator', 'pivot', 'targetUnitId', 'breadcrumbs', 'edLinks', 'indukDokumenTree'));
+        return view('pages.pemutu.evaluasi-diri.edit-ajax', $editData);
     }
 
-    public function update(EvaluasiDiriRequest $request, Indikator $indikator)
+    public function update(EvaluasiDiriRequest $request, string $id): JsonResponse
     {
-        $validated = $request->validated();
+        $targetUnitId = $this->indikatorService->getTargetUnitId(auth()->user(), $request->input('target_unit_id'));
 
-        if ($request->filled('target_unit_id')) {
-            $targetUnitId = decryptIdIfEncrypted($request->target_unit_id);
-        } else {
-            $user = auth()->user();
-            if ($user->pegawai && $timMutu = TimMutu::where('pegawai_id', $user->pegawai->pegawai_id)->first()) {
-                $targetUnitId = $timMutu->org_unit_id;
-            } else {
-                $targetUnitId = StrukturOrganisasi::first()->orgunit_id ?? 0;
-            }
-        }
+        $this->indikatorService->saveEvaluasiDiri(
+            $id,
+            $targetUnitId,
+            $request->validated() + $request->only(['ed_links_name', 'ed_links_url']),
+            $request->file('filepond')
+        );
 
-        $pivot = DB::table('pemutu_indikator_orgunit')
-            ->where('indikator_id', $indikator->indikator_id)
-            ->where('org_unit_id', $targetUnitId)
-            ->first();
-
-        $data = [
-            'ed_capaian'  => $request->ed_capaian,
-            'ed_analisis' => $request->ed_analisis,
-            'ed_skala'    => $request->filled('ed_skala') ? (int) $request->ed_skala : null,
-            'updated_at'  => now(),
-        ];
-
-        // Handle Links JSON
-        $linksArray = [];
-        if ($request->has('ed_links_name') && is_array($request->ed_links_name)) {
-            $names = $request->ed_links_name;
-            $urls  = $request->ed_links_url ?? [];
-            foreach ($names as $index => $name) {
-                $url = $urls[$index] ?? null;
-                if (! empty($name) && ! empty($url)) {
-                    $linksArray[] = [
-                        'name' => $name,
-                        'url'  => $url,
-                    ];
-                }
-            }
-        }
-        $data['ed_links'] = ! empty($linksArray) ? json_encode($linksArray) : null;
-
-        if ($pivot) {
-            DB::table('pemutu_indikator_orgunit')
-                ->where('indikorgunit_id', $pivot->indikorgunit_id)
-                ->update($data);
-            $indikatorOrgUnitId = $pivot->indikorgunit_id;
-        } else {
-            $data['indikator_id'] = $indikator->indikator_id;
-            $data['org_unit_id']  = $targetUnitId;
-            $data['target']       = '-';
-            $data['created_at']   = now();
-            $indikatorOrgUnitId   = DB::table('pemutu_indikator_orgunit')->insertGetId($data);
-        }
-
-        if ($request->hasFile('filepond')) {
-            $model = IndikatorOrgUnit::find($indikatorOrgUnitId);
-            if ($model) {
-                foreach ($request->file('filepond') as $file) {
-                    $model->addMedia($file)->toMediaCollection('ed_attachments');
-                }
-            }
-        }
-
-        logActivity('pemutu', "Mengisi Evaluasi Diri untuk indikator ID: {$indikator->indikator_id}");
-
-        return jsonSuccess('Evaluasi Diri berhasil disimpan.', url()->previous());
+        return jsonSuccess('Evaluasi Diri berhasil disimpan.');
     }
 
-    public function uploadFile(Request $request, $id)
+    public function uploadFile(Request $request, string $id): JsonResponse
     {
         $request->validate([
             'files'   => 'required|array',
             'files.*' => 'file|max:20480',
         ]);
 
-        $model = IndikatorOrgUnit::findOrFail(decryptIdIfEncrypted($id));
-
-        foreach ($request->file('files') as $file) {
-            $model->addMedia($file)->toMediaCollection('ed_attachments');
-        }
-
-        logActivity('pemutu', 'Mengunggah ' . count($request->file('files')) . " file ke Evaluasi Diri ID: {$model->indikorgunit_id}");
+        $this->indikatorService->uploadEdAttachment($id, $request->file('files'));
 
         return jsonSuccess('File berhasil diunggah.', url()->previous());
     }
 
-    public function deleteFile(Request $request, $id, $mediaId)
+    public function deleteFile(Request $request, string $id, int $mediaId): JsonResponse
     {
-        $model = IndikatorOrgUnit::findOrFail(decryptIdIfEncrypted($id));
-        $media = $model->getMedia('ed_attachments')->firstWhere('id', $mediaId);
+        $success = $this->indikatorService->deleteEdAttachment($id, $mediaId);
 
-        if (! $media) {
+        if (! $success) {
             return jsonError('File tidak ditemukan.');
         }
-
-        $media->delete();
-        logActivity('pemutu', "Menghapus file dari Evaluasi Diri ID: {$model->indikorgunit_id}");
 
         return jsonSuccess('File berhasil dihapus.', url()->previous());
     }
 
-    public function ptpData(Request $request, PeriodeSpmi $periode)
+    public function ptpData(Request $request, string $periode)
     {
-        // Cari periode tahun lalu dengan jenis yang sama
-        $prevYear   = (int) $periode->periode - 1;
-        $prevPeriod = PeriodeSpmi::where('periode', $prevYear)
-            ->where('jenis_periode', $periode->jenis_periode)
-            ->first();
+        $periodeModel = $this->periodeSpmiService->getById($periode);
+        $prevPeriod   = $this->periodeSpmiService->getPreviousPeriod($periodeModel);
 
         if (! $prevPeriod) {
             return DataTables::of(collect([]))->make(true);
@@ -298,7 +173,7 @@ class EvaluasiDiriController extends Controller
                 $filters[$key] = ($key === 'unit_id' || $key === 'dok_id') ? decryptIdIfEncrypted($value) : $value;
             }
         }
-        $query = $this->IndikatorService->getUnifiedSpmiQuery($prevPeriod, $filters);
+        $query = $this->indikatorService->getUnifiedSpmiQuery($prevPeriod, $filters);
 
         return DataTables::of($query)
             ->addColumn('no', function ($row) {
@@ -308,10 +183,10 @@ class EvaluasiDiriController extends Controller
                 return pemutuDtColIndikator($row);
             })
             ->addColumn('rtp_isi', function ($row) {
-                return $row->orgUnits->first()->pivot->ami_rtp_isi ?? '<span class="text-muted fst-italic">Tidak ada RTP</span>';
+                return pemutuTextScroll($row->orgUnits->first()->pivot->ami_rtp_isi);
             })
             ->addColumn('ptp_isi', function ($row) {
-                return $row->orgUnits->first()->pivot->ed_ptp_isi ?? '<span class="text-muted fst-italic">Belum diisi</span>';
+                return pemutuTextScroll($row->orgUnits->first()->pivot->ed_ptp_isi);
             })
             ->addColumn('action', function ($row) {
                 $indOrgId = $row->orgUnits->first()->pivot->indikorgunit_id;
@@ -320,6 +195,7 @@ class EvaluasiDiriController extends Controller
                     data-url="' . route('pemutu.evaluasi-diri.ptp-edit', encryptId($indOrgId)) . '"
                     data-modal-title="Isi Pelaksanaan Tindakan Perbaikan (PTP)"
                     data-modal-size="modal-lg">
+                    <i class="ti ti-edit me-1"></i>
                     Isi
                 </button>';
             })
@@ -327,24 +203,17 @@ class EvaluasiDiriController extends Controller
             ->make(true);
     }
 
-    /**
-     * Modal Form: Isi Pelaksanaan Tindakan Perbaikan (PTP).
-     */
-    public function editPtp(IndikatorOrgUnit $indOrg)
+    public function editPtp(string $id)
     {
+        // Still accepting encrypted ID for IndikatorOrgUnit
+        $indOrg = $this->indikatorService->findIndikatorOrgUnit($id);
+
         return view('pages.pemutu.evaluasi-diri._ptp_form', compact('indOrg'));
     }
 
-    /**
-     * Simpan Pelaksanaan Tindakan Perbaikan (PTP).
-     */
-    public function updatePtp(PtpRequest $request, IndikatorOrgUnit $indOrg)
+    public function updatePtp(PtpRequest $request, string $id): JsonResponse
     {
-        $indOrg->update([
-            'ed_ptp_isi' => $request->ed_ptp_isi,
-        ]);
-
-        logActivity('pemutu', "Mengisi Pelaksanaan Tindakan Perbaikan (PTP) untuk indikorgunit ID: {$indOrg->indikorgunit_id}");
+        $this->indikatorService->updatePtp($id, $request->validated());
 
         return jsonSuccess('Pelaksanaan Tindakan Perbaikan (PTP) berhasil disimpan.');
     }

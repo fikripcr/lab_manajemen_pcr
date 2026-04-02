@@ -58,9 +58,17 @@
         </div>
 
         {{-- 2. Pelaksanaan --}}
+        <div class="col-12">
+            <label class="form-label fw-bold text-teal mb-2">
+                <i class="ti ti-player-play me-1"></i> 2. Pelaksanaan
+            </label>
+            <div class="text-muted small fst-italic ms-3">Sepanjang Tahun</div>
+        </div>
+
+        {{-- 3. Evaluasi Diri (ED) & Pelaksanaan Tindakan Perbaikan (PTP) --}}
          <div class="col-12">
             <label class="form-label fw-bold text-success mb-2">
-                <i class="ti ti-player-play me-1"></i> 2. Pelaksanaan / Evaluasi Diri
+                <i class="ti ti-clipboard-check me-1"></i> 3. Evaluasi Diri (ED) & Pelaksanaan Tindakan Perbaikan (PTP)
             </label>
             <div class="row g-2">
                 <div class="col-6">
@@ -72,10 +80,10 @@
             </div>
         </div>
 
-        {{-- 3. Evaluasi --}}
+        {{-- 4. AMI & Tinjauan Efektivitas (TE) & Rencana Tindakan Perbaikan (RTP) --}}
          <div class="col-12">
             <label class="form-label fw-bold text-info mb-2">
-                <i class="ti ti-search me-1"></i> 3. Evaluasi / AMI
+                <i class="ti ti-search me-1"></i> 4. AMI & Tinjauan Efektivitas (TE) & Rencana Tindakan Perbaikan (RTP)
             </label>
             <div class="row g-2">
                 <div class="col-6">
@@ -87,10 +95,10 @@
             </div>
         </div>
 
-        {{-- 4. Pengendalian --}}
+        {{-- 5. Pengendalian (RTM) --}}
          <div class="col-12">
             <label class="form-label fw-bold text-warning mb-2">
-                <i class="ti ti-shield-check me-1"></i> 4. Pengendalian (RTM)
+                <i class="ti ti-shield-check me-1"></i> 5. Pengendalian (RTM)
             </label>
             <div class="row g-2">
                 <div class="col-6">
@@ -102,10 +110,10 @@
             </div>
         </div>
 
-        {{-- 5. Peningkatan --}}
+        {{-- 6. Peningkatan --}}
          <div class="col-12">
             <label class="form-label fw-bold text-danger mb-2">
-                <i class="ti ti-trending-up me-1"></i> 5. Peningkatan
+                <i class="ti ti-trending-up me-1"></i> 6. Peningkatan
             </label>
             <div class="row g-2">
                 <div class="col-6">

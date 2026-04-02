@@ -22,13 +22,13 @@
                 <div class="position-absolute top-0 start-0 h-100 border-start border-4 border-{{ $themeColor }}"></div>
                 
                 {{-- Card Stamp for Depth --}}
-                <div class="card-stamp card-stamp-lg z-0">
+                <div class="card-stamp card-stamp-lg">
                     <div class="card-stamp-icon bg-{{ $themeColor }} opacity-10">
                         <i class="ti ti-leaf"></i>
                     </div>
                 </div>
 
-                <x-tabler.card-header title="{{ $periode->nama }}" class="border-0 pb-0 z-1">
+                <x-tabler.card-header title="{{ $periode->nama }}" class="border-0 pb-0">
                     <span class="ms-3 d-flex align-items-center gap-2">
                          @if($isOngoing)
                             <span class="status-dot status-dot-animated status-{{ $themeColor }}"></span>
@@ -43,7 +43,7 @@
                             @if(!$periode->is_active)
                                 <x-tabler.dropdown-item 
                                     type="button" 
-                                    class="text-success activate-periode border-top" 
+                                    class="text-success activate-periode" 
                                     icon="ti ti-check-double"
                                     label="Aktifkan Sekarang"
                                     url="{{ route('pemutu.periode-kpi.activate', $periode->encrypted_periode_kpi_id) }}" 
@@ -61,7 +61,7 @@
                     </x-slot:actions>
                 </x-tabler.card-header>
 
-                <x-tabler.card-body class="p-4 pt-4 z-1">
+                <x-tabler.card-body class="p-4 pt-4">
 
                     <div class="p-3 rounded-3 bg-{{ $themeColor }}-lt border border-{{ $themeColor }} border-opacity-10">
                         <div class="text-{{ $themeColor }} small fw-bold text-uppercase mb-2 tracking-wider">Durasi Periode</div>

@@ -5,6 +5,7 @@ use App\Http\Controllers\Pemutu\DashboardController;
 use App\Http\Controllers\Pemutu\DokumenApprovalController;
 use App\Http\Controllers\Pemutu\DokumenController;
 use App\Http\Controllers\Pemutu\DokumenSpmiController;
+use App\Http\Controllers\Pemutu\FiveYearSummaryController;
 use App\Http\Controllers\Pemutu\IndikatorController;
 use App\Http\Controllers\Pemutu\IndikatorSummaryController;
 use App\Http\Controllers\Pemutu\LabelController;
@@ -30,6 +31,12 @@ Route::prefix('pemutu')->name('pemutu.')->group(function () {
 Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/hierarchy/{id}', [DashboardController::class, 'hierarchyNode'])->name('dashboard.hierarchy');
+
+    // 5-Year Historical Summary (PPEPP Timeline)
+    Route::get('/five-year-summary', [FiveYearSummaryController::class, 'index'])->name('five-year-summary.index');
+    Route::get('/five-year-summary/detail/{rootIndikatorId}', [FiveYearSummaryController::class, 'detail'])->name('five-year-summary.detail');
+    Route::get('/five-year-summary/chart-data', [FiveYearSummaryController::class, 'chartData'])->name('five-year-summary.chart-data');
 
     // Global Siklus SPMI Year Selector (session)
     Route::post('set-siklus', function (\Illuminate\Http\Request $request) {
@@ -38,6 +45,16 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
 
         return back();
     })->name('set-siklus');
+
+    // Global Kelompok SPMI Selector (session: akademik, non_akademik)
+    Route::get('set-kelompok/{kelompok}', function (string $kelompok) {
+        if (!in_array($kelompok, ['akademik', 'non_akademik'])) {
+            abort(400);
+        }
+        session(['pemutu_active_kelompok' => $kelompok]);
+
+        return back();
+    })->name('set-kelompok');
 
     // Periode KPI
     Route::get('periode-kpi/data', [PeriodeKpiController::class, 'data'])->name('periode-kpi.data');

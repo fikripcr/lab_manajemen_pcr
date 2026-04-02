@@ -100,7 +100,7 @@ class DokumenSpmiController extends Controller
         $allowedTypes = ['standar' => 'Standar', 'manual_prosedur' => 'Manual Prosedur', 'formulir' => 'Formulir'];
 
         if ($request->tabs === 'kebijakan') {
-            $allowedTypes = ['kebijakan' => 'Kebijakan', 'visi' => 'Visi', 'misi' => 'Misi', 'rjp' => 'RPJP', 'renstra' => 'Renstra', 'renop' => 'Renop'];
+            $allowedTypes = ['kebijakan' => 'Kebijakan', 'visi' => 'Visi', 'misi' => 'Misi', 'rjp' => 'RPJP', 'renstra' => 'Renstra'];
         }
 
         $fixedJenis = $request->fixed_jenis;
@@ -608,27 +608,33 @@ class DokumenSpmiController extends Controller
         $activeJenis = $request->query('jenis', 'visi');
         $siklus = $this->PeriodeSpmiService->getSiklusData();
 
+        // Standardize session-based active kelompok
+        $activeKelompok = session('pemutu_active_kelompok', 'akademik');
+        $kelompokLabel = $activeKelompok === 'akademik' ? 'Akademik' : 'Non Akademik';
+
         $data = [
             'pageTitle' => $pageTitle,
             'activeJenis' => $activeJenis,
-            'kebijakanTypes' => ['visi', 'misi', 'rjp', 'renstra', 'renop'],
+            'activeKelompok' => $activeKelompok,
+            'kelompokLabel' => $kelompokLabel,
+            'kebijakanTypes' => ['visi', 'misi', 'rjp', 'renstra'],
             'siklus' => $siklus,
         ];
 
-        foreach (['akademik', 'non_akademik'] as $type) {
-            $periode = $siklus[$type];
-            $dokumentByJenis = [];
+        // Only fetch data for the active kelompok to match standardized pattern
+        $periode = $siklus[$activeKelompok];
+        $dokumentByJenis = [];
 
-            if ($periode) {
-                // We only care about Kebijakan docs for the Summary tree
-                $docsArr = $this->dokumenService->getKebijakanByPeriode($periode->periodespmi_id);
-                foreach ($docsArr as $j => $doc) {
-                    $dokumentByJenis[$j] = $doc ? collect([$doc]) : collect();
-                }
+        if ($periode) {
+            // We only care about Kebijakan docs for the Summary tree
+            $docsArr = $this->dokumenService->getKebijakanByPeriode($periode->periode);
+            foreach ($docsArr as $j => $doc) {
+                $dokumentByJenis[$j] = $doc ? collect([$doc]) : collect();
             }
-
-            $data[$type.'DokumentByJenis'] = $dokumentByJenis;
         }
+
+        $data['dokumentByJenis'] = $dokumentByJenis;
+        $data['activePeriode'] = $periode;
 
         return view('pages.pemutu.summary.summary', $data);
     }
@@ -648,7 +654,7 @@ class DokumenSpmiController extends Controller
             $doc = Dokumen::with('dokSubs')->findOrFail(decryptIdIfEncrypted($id));
             $title = $doc->judul;
             $jenis = strtolower(trim($doc->jenis));
-            $periode = $doc->periode;
+            // DO NOT override $periode from request, as it represents the target cycle year
 
             $startIndex = array_search($jenis, $kebijakanChain);
 
@@ -656,10 +662,8 @@ class DokumenSpmiController extends Controller
             foreach ($doc->dokSubs as $poin) {
                 // If it's already renop, get indicators directly
                 if ($jenis === 'renop') {
-                    if ($poin->is_hasilkan_indikator) {
-                        $inds = $poin->indikators()->with(['orgUnits', 'parent.orgUnits'])->get();
-                        $indicators = $indicators->merge($inds);
-                    }
+                    $inds = $poin->indikators()->with(['orgUnits', 'parent.orgUnits'])->get();
+                    $indicators = $indicators->merge($inds);
                 } else {
                     $chain = $this->traceChainDown($poin, $kebijakanChain, $startIndex, $periode);
                     $indicators = $indicators->merge($this->collectIndicatorsFromChain($chain));
@@ -674,10 +678,8 @@ class DokumenSpmiController extends Controller
             $startIndex = array_search($jenis, $kebijakanChain);
 
             if ($jenis === 'renop') {
-                if ($poin->is_hasilkan_indikator) {
-                    $inds = $poin->indikators()->with(['orgUnits', 'parent.orgUnits'])->get();
-                    $indicators = $indicators->merge($inds);
-                }
+                $inds = $poin->indikators()->with(['orgUnits', 'parent.orgUnits'])->get();
+                $indicators = $indicators->merge($inds);
             } else {
                 $chain = $this->traceChainDown($poin, $kebijakanChain, $startIndex, $periode);
                 $indicators = $indicators->merge($this->collectIndicatorsFromChain($chain));
@@ -687,80 +689,53 @@ class DokumenSpmiController extends Controller
         // Unique indicators by ID
         $indicators = $indicators->unique('indikator_id')->values();
 
-        // Aggregate AMI Results
-        $unitsEvaluated = collect();
-        $amiCounts = [
-            'total' => 0,
-            'terpenuhi' => 0,
-            'melampaui' => 0,
-            'kts' => 0,
-            'none' => 0,
-        ];
-
-        $detailUnits = []; // Store specific scores per unit to show in the UI
+        // Build indicator-centric data with unit breakdown
+        $indicatorDetails = [];
+        $globalAmi = ['total_assessments' => 0, 'terpenuhi' => 0, 'melampaui' => 0, 'kts' => 0, 'none' => 0];
 
         foreach ($indicators as $ind) {
+            $units = [];
+            $indAmi = ['terpenuhi' => 0, 'melampaui' => 0, 'kts' => 0, 'none' => 0];
+
             foreach ($ind->orgUnits as $ou) {
-                $unitsEvaluated->push($ou->name);
                 $amiResult = $ou->pivot->ami_hasil_akhir;
-                $edCapaian = $ou->pivot->ed_capaian;
-                $target = $ou->pivot->target;
-
-                $amiCounts['total']++;
-                if ($amiResult === 1) {
-                    $amiCounts['terpenuhi']++;
-                } elseif ($amiResult === 2) {
-                    $amiCounts['melampaui']++;
-                } elseif ($amiResult === 0) {
-                    $amiCounts['kts']++;
-                } else {
-                    $amiCounts['none']++;
-                }
-
-                // Collect breakdown per unit
-                if (! isset($detailUnits[$ou->name])) {
-                    $detailUnits[$ou->name] = [
-                        'name' => $ou->name,
-                        'total_indikator' => 0,
-                        'terpenuhi' => 0,
-                        'melampaui' => 0,
-                        'kts' => 0,
-                        'indicators' => [],
-                    ];
-                }
-
-                $detailUnits[$ou->name]['total_indikator']++;
-                if ($amiResult === 1) {
-                    $detailUnits[$ou->name]['terpenuhi']++;
-                } elseif ($amiResult === 2) {
-                    $detailUnits[$ou->name]['melampaui']++;
-                } elseif ($amiResult === 0) {
-                    $detailUnits[$ou->name]['kts']++;
-                }
-
-                $detailUnits[$ou->name]['indicators'][] = [
-                    'no' => $ind->no_indikator,
-                    'nama' => $ind->indikator,
-                    'target' => $target,
-                    'capaian' => $edCapaian,
+                $units[] = [
+                    'name' => $ou->name,
+                    'target' => $ou->pivot->target,
+                    'capaian' => $ou->pivot->ed_capaian,
                     'ami' => $amiResult,
                 ];
+
+                $globalAmi['total_assessments']++;
+                if ($amiResult === 1) { $indAmi['terpenuhi']++; $globalAmi['terpenuhi']++; }
+                elseif ($amiResult === 2) { $indAmi['melampaui']++; $globalAmi['melampaui']++; }
+                elseif ($amiResult === 0) { $indAmi['kts']++; $globalAmi['kts']++; }
+                else { $indAmi['none']++; $globalAmi['none']++; }
             }
+
+            $totalUnits = count($units);
+            $achieved = $indAmi['terpenuhi'] + $indAmi['melampaui'];
+            $achievementRate = $totalUnits > 0 ? round(($achieved / $totalUnits) * 100, 1) : 0;
+
+            $indicatorDetails[] = [
+                'no' => $ind->no_indikator,
+                'nama' => $ind->indikator,
+                'total_units' => $totalUnits,
+                'ami' => $indAmi,
+                'achievement_rate' => $achievementRate,
+                'units' => $units,
+            ];
         }
 
-        $unitsEvaluated = $unitsEvaluated->unique()->values();
-
-        // Calculate Percentages
-        $total = $amiCounts['total'];
-        $percentages = [
-            'terpenuhi' => $total > 0 ? round(($amiCounts['terpenuhi'] / $total) * 100, 1) : 0,
-            'melampaui' => $total > 0 ? round(($amiCounts['melampaui'] / $total) * 100, 1) : 0,
-            'kts' => $total > 0 ? round(($amiCounts['kts'] / $total) * 100, 1) : 0,
-        ];
+        // Overall achievement
+        $totalAssessments = $globalAmi['total_assessments'];
+        $overallAchieved = $globalAmi['terpenuhi'] + $globalAmi['melampaui'];
+        $overallRate = $totalAssessments > 0 ? round(($overallAchieved / $totalAssessments) * 100, 1) : 0;
 
         return view('pages.pemutu.summary._summary_data', compact(
-            'title', 'jenis', 'indicators', 'unitsEvaluated', 'amiCounts', 'percentages', 'detailUnits'
+            'title', 'jenis', 'indicators', 'indicatorDetails', 'globalAmi', 'overallRate'
         ));
+
     }
 
     /**
@@ -777,9 +752,9 @@ class DokumenSpmiController extends Controller
 
         // Find poin that map TO this poin (i.e. the children in the chain)
         $children = $poin->mappedFrom()
-            ->whereHas('dokumen', function ($q) use ($kebijakanChain, $nextLevel, $periode) {
-                $q->where('jenis', $kebijakanChain[$nextLevel])
-                    ->where('periode', $periode);
+            ->whereHas('dokumen', function ($q) use ($kebijakanChain, $nextLevel) {
+                $q->where('jenis', $kebijakanChain[$nextLevel]);
+                // Removed strict periode check to allow tracing across years if mappings are valid
             })
             ->with(['dokumen', 'indikators.orgUnits', 'indikators.parent.orgUnits'])
             ->get();
@@ -793,7 +768,7 @@ class DokumenSpmiController extends Controller
             ];
 
             // If this is a Renop poin with indicators, collect them
-            if ($kebijakanChain[$nextLevel] === 'renop' && $child->is_hasilkan_indikator) {
+            if ($kebijakanChain[$nextLevel] === 'renop') {
                 $childData['indicators'] = $child->indikators()
                     ->with(['orgUnits', 'parent.orgUnits'])
                     ->get();

@@ -21,6 +21,16 @@ class SiklusSpmiComposer
      */
     public function compose(View $view)
     {
-        $view->with('globalSiklus', $this->periodeSpmiService->getSiklusData());
+        try {
+            $view->with('globalSiklus', $this->periodeSpmiService->getSiklusData());
+        } catch (\Exception $e) {
+            // Fallback data if error occurs
+            $view->with('globalSiklus', [
+                'tahun' => (int) date('Y'),
+                'years' => collect([(int) date('Y')]),
+                'akademik' => null,
+                'non_akademik' => null,
+            ]);
+        }
     }
 }

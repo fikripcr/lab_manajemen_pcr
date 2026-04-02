@@ -137,8 +137,33 @@
     </div>
     @endif
 
-    {{-- TOP ROW: 8 KPI CARDS (2 rows of 4) --}}
-    <div class="row g-3 mb-3">
+    {{-- NAV TABS FOR DASHBOARD --}}
+    <div class="mb-3 border-bottom">
+        <ul class="nav nav-tabs nav-tabs-alt" data-bs-toggle="tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a href="#tab-overview" class="nav-link active" data-bs-toggle="tab" aria-selected="true" role="tab">
+                    <i class="ti ti-activity me-2"></i> Overview Kinerja
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="#tab-hirarki" class="nav-link" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">
+                    <i class="ti ti-sitemap me-2"></i> Peta Hirarki Ketercapaian
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="#tab-unit" class="nav-link" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">
+                    <i class="ti ti-chart-bar me-2"></i> Analisis Per Unit Kerja
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="tab-content">
+        {{-- TAB 1: OVERVIEW KINERJA --}}
+        <div class="tab-pane active show" id="tab-overview" role="tabpanel">
+
+            {{-- TOP ROW: 8 KPI CARDS (2 rows of 4) --}}
+            <div class="row g-3 mb-3">
         {{-- Row 1: Totals & Primary Metrics --}}
         <div class="col-md-3">
             <x-tabler.card class="metric-card">
@@ -334,12 +359,96 @@
                                         <div class="subtitle">Indikator Terdeteksi</div>
                                     </div>
                                 </div>
+                            </div>
                         </div>
                     </div>
                 </x-tabler.card-body>
             </x-tabler.card>
         </div>
     </div>
+    </div> {{-- END TAB 1: OVERVIEW --}}
+
+        {{-- TAB 2: PETA HIRARKI --}}
+        <div class="tab-pane fade" id="tab-hirarki" role="tabpanel">
+            <x-tabler.card>
+                <x-tabler.card-header title="<i class='ti ti-sitemap me-2'></i>Peta Hirarki (Top Level)" />
+                <x-tabler.card-body>
+                    @if(count($hierarchyData) > 0)
+                        <div class="row g-3">
+                        @foreach($hierarchyData as $doc)
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="avatar bg-blue-lt me-3"><i class="ti ti-file-text"></i></div>
+                                        <div>
+                                            <div class="text-uppercase text-muted small fw-bold">{{ $doc['kode'] }}</div>
+                                            <div class="fw-bold fs-4">{{ $doc['judul'] }}</div>
+                                        </div>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="row text-center">
+                                        <div class="col-4 border-end">
+                                            <div class="text-muted small">Total Indikator</div>
+                                            <div class="fw-bold">{{ number_format($doc['stats']['total_indikator']) }}</div>
+                                        </div>
+                                        <div class="col-4 border-end">
+                                            <div class="text-muted small">Rata-rata ED</div>
+                                            <div class="fw-bold">{{ $doc['stats']['avg_ed'] }}</div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="text-muted small">Tercapai AMI</div>
+                                            <div class="fw-bold text-{{ $doc['stats']['ami_pct'] >= 80 ? 'success' : 'warning' }}">{{ $doc['stats']['ami_pct'] }}%</div>
+                                        </div>
+                                    </div>
+                                    
+                                    {{-- Container for Hierarchy Content --}}
+                                    <div class="mt-3 hierarchy-ajax-container d-none" id="hierarchy-container-{{ $doc['id'] }}">
+                                        <div class="text-center py-4 text-muted border border-dashed rounded bg-light">
+                                            <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                                            Memuat struktur dokumen...
+                                        </div>
+                                    </div>
+                                    
+                                    {{-- Toggle Button --}}
+                                    <div class="mt-1 pt-2 border-top text-center bg-light mx-n3 mb-n3 rounded-bottom">
+                                        <button type="button" class="btn btn-sm btn-ghost-primary w-100 btn-load-hierarchy rounded-0" data-id="{{ $doc['id'] }}">
+                                            Tampilkan Rincian Hirarki <i class="ti ti-chevron-down ms-1 mt-1"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                        </div>
+                    @else
+                        <div class="text-center text-muted py-5">Belum ada data dokumen tingkat Visi/Misi.</div>
+                    @endif
+                </x-tabler.card-body>
+            </x-tabler.card>
+        </div>
+
+        {{-- TAB 3: ANALISIS UNIT --}}
+        <div class="tab-pane fade" id="tab-unit" role="tabpanel">
+            <div class="row g-3">
+                <div class="col-lg-6">
+                    <x-tabler.card>
+                        <x-tabler.card-header title="<i class='ti ti-report-analytics me-2'></i>Rata-Rata Skala Ketercapaian (Evaluasi Diri)" />
+                        <x-tabler.card-body>
+                            <div id="chart-unit-ed" style="min-height: 400px;"></div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
+                </div>
+                <div class="col-lg-6">
+                    <x-tabler.card>
+                        <x-tabler.card-header title="<i class='ti ti-circle-check me-2'></i>Persentase Ketercapaian Indikator (Hasil Audit)" />
+                        <x-tabler.card-body>
+                            <div id="chart-unit-ami" style="min-height: 400px;"></div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
+                </div>
+            </div>
+        </div>
+
+    </div> {{-- END TAB CONTENT --}}
 
 @endsection
 
@@ -347,6 +456,38 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // Tab 2: Hierarchy Tree Loader via Ajax
+    document.querySelectorAll('.btn-load-hierarchy').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            var docId = this.getAttribute('data-id');
+            var container = document.getElementById('hierarchy-container-' + docId);
+            
+            // Toggle visibility
+            if(!container.classList.contains('d-none') && container.getAttribute('data-loaded')) {
+                container.classList.add('d-none');
+                this.innerHTML = 'Tampilkan Rincian Hirarki <i class="ti ti-chevron-down ms-1 mt-1"></i>';
+                return;
+            }
+            
+            container.classList.remove('d-none');
+            this.innerHTML = 'Sembunyikan Rincian Hirarki <i class="ti ti-chevron-up ms-1 mt-1"></i>';
+            
+            if(container.getAttribute('data-loaded')) return;
+
+            // Fetch Data
+            fetch("{{ url('pemutu/dashboard/hierarchy') }}/" + docId)
+                .then(response => response.text())
+                .then(html => {
+                    container.innerHTML = `<div class="p-3 border-top bg-white rounded-bottom" style="margin: -1rem -1rem -1rem -1rem;">${html}</div>`;
+                    container.setAttribute('data-loaded', 'true');
+                })
+                .catch(err => {
+                    container.innerHTML = '<div class="text-danger p-3 text-center border rounded">Gagal memuat struktur. Silakan coba lagi.</div>';
+                });
+        });
+    });
+
     // Sparkline Indikator
     var trendData = @json($trendData);
     if(trendData.years.length > 0) {
@@ -399,6 +540,135 @@ document.addEventListener('DOMContentLoaded', function () {
         }).render();
     } else {
         document.getElementById('chart-kriteria').innerHTML = '<div class="text-center text-muted py-5">Belum ada data kriteria</div>';
+    }
+
+    // Tab 3: Unit Analysis Chart
+    var unitChartData = @json($unitChartData ?? null);
+    if (unitChartData && unitChartData.categories.length > 0) {
+        
+        // 1. Chart Skala ED (Column)
+        var optionsEd = {
+            series: [{
+                name: 'Rata-rata Skala ED',
+                data: unitChartData.ed_series
+            }],
+            chart: {
+                height: 400,
+                type: 'bar',
+                toolbar: { show: false }
+            },
+            colors: ['#206bc4'],
+            plotOptions: {
+                bar: {
+                    borderRadius: 4,
+                    dataLabels: { position: 'top' }
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                offsetY: -20,
+                style: { fontSize: '12px', colors: ["#304758"] }
+            },
+            labels: unitChartData.categories,
+            xaxis: {
+                labels: { rotate: -45, trim: true, minHeight: 80 }
+            },
+            yaxis: {
+                title: { text: 'Skala ED (0-4)' },
+                min: 0,
+                max: 4,
+                tickAmount: 4
+            }
+        };
+
+        // 2. Chart AMI (Stacked Columns for Status + Line for %)
+        var optionsAmi = {
+            series: [{
+                name: 'KTS (Tidak Tercapai)',
+                type: 'column',
+                data: unitChartData.ami_kts
+            }, {
+                name: 'Terpenuhi',
+                type: 'column',
+                data: unitChartData.ami_terpenuhi
+            }, {
+                name: 'Terlampaui',
+                type: 'column',
+                data: unitChartData.ami_terlampaui
+            }, {
+                name: 'Total Ketercapaian (%)',
+                type: 'line',
+                data: unitChartData.ami_series
+            }],
+            chart: {
+                height: 400,
+                type: 'line',
+                stacked: true,
+                toolbar: { show: false }
+            },
+            colors: ['#d63939', '#2fb344', '#1d48b5', '#f59f00'], // Red, Green, Blue, Orange
+            stroke: {
+                width: [0, 0, 0, 3],
+                curve: 'smooth'
+            },
+            plotOptions: {
+                bar: {
+                    columnWidth: '50%',
+                    borderRadius: 2
+                }
+            },
+            markers: { size: [0, 0, 0, 4] },
+            dataLabels: {
+                enabled: true,
+                enabledOnSeries: [3],
+                formatter: function (val) { return val + "%" }
+            },
+            labels: unitChartData.categories,
+            xaxis: {
+                labels: { rotate: -45, trim: true, minHeight: 80 }
+            },
+            yaxis: [{
+                title: { text: 'Jumlah Indikator' },
+                min: 0,
+                decimalsInFloat: 0
+            }, {
+                opposite: true,
+                title: { text: '% Ketercapaian' },
+                min: 0,
+                max: 100,
+                tickAmount: 5
+            }],
+            legend: {
+                position: 'top',
+                horizontalAlign: 'center'
+            },
+            tooltip: {
+                shared: true,
+                intersect: false,
+                y: {
+                    formatter: function (y, { series, seriesIndex, dataPointIndex, w }) {
+                        if (seriesIndex === 3) return y.toFixed(1) + "%";
+                        return y + " Indikator";
+                    }
+                }
+            }
+        };
+
+        var chartEd = new ApexCharts(document.querySelector("#chart-unit-ed"), optionsEd);
+        var chartAmi = new ApexCharts(document.querySelector("#chart-unit-ami"), optionsAmi);
+        
+        var unitTabEl = document.querySelector('a[href="#tab-unit"]');
+        if (unitTabEl) {
+            unitTabEl.addEventListener('shown.bs.tab', function (event) {
+                if (!chartEd.rendered) {
+                    chartEd.render();
+                    chartAmi.render();
+                    chartEd.rendered = true;
+                }
+            });
+        }
+    } else {
+        document.getElementById('tab-unit').innerHTML = '<div class="text-center text-muted py-5">Belum ada data unit yang tersedia.</div>';
     }
 });
 </script>

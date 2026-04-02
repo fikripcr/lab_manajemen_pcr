@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pemutu;
 use App\Http\Controllers\Controller;
 use App\Models\Pemutu\IndikatorSummary;
 use App\Services\Hr\StrukturOrganisasiService;
+use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -13,7 +14,8 @@ use Yajra\DataTables\Facades\DataTables;
 class IndikatorSummaryController extends Controller
 {
     public function __construct(
-        protected StrukturOrganisasiService $strukturOrganisasiService
+        protected StrukturOrganisasiService $strukturOrganisasiService,
+        protected PeriodeSpmiService $periodeSpmiService
     ) {}
 
     /**
@@ -30,62 +32,136 @@ class IndikatorSummaryController extends Controller
     public function standar()
     {
         $pageTitle = 'Summary Indikator Standar';
+        $siklus = $this->periodeSpmiService->getSiklusData();
+
+        // Active Kelompok from session
+        $activeKelompok = session('pemutu_active_kelompok', 'akademik');
+        $kelompokLabel = $activeKelompok === 'akademik' ? 'Akademik' : 'Non Akademik';
+
+        // Filtering initial counts by cycle
+        $tahun = $siklus['tahun'];
 
         // Global summary statistics untuk Standar
-        $totalIndikator = DB::table('pemutu_indikator')->where('type', 'standar')->count();
-        $totalIndikatorActive = DB::table('pemutu_indikator')->where('type', 'standar')->whereNull('deleted_at')->count();
+        $totalIndikator = DB::table('pemutu_indikator')
+            ->where('type', 'standar')
+            ->where('kelompok_indikator', $kelompokLabel)
+            ->whereNull('deleted_at')
+            ->count();
+            
+        $totalIndikatorActive = $totalIndikator;
 
-        // Summary ED (hanya untuk standar)
+        // Summary ED (hanya untuk standar & siklus & kelompok ini)
         $edTotalUnits = DB::table('pemutu_indikator_orgunit')
             ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
+            ->join('pemutu_indikator_doksub as ids', function($join) {
+                $join->on('pemutu_indikator.indikator_id', '=', 'ids.source_id')->where('ids.source_type', 'App\Models\Pemutu\Indikator');
+            })
+            ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
+            ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
             ->where('pemutu_indikator.type', 'standar')
+            ->where('pemutu_indikator.kelompok_indikator', $kelompokLabel)
+            ->where('d.periode', $tahun)
             ->count();
 
         $uniqueAssignedStandar = DB::table('pemutu_indikator_orgunit')
             ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
+            ->join('pemutu_indikator_doksub as ids', function($join) {
+                $join->on('pemutu_indikator.indikator_id', '=', 'ids.source_id')->where('ids.source_type', 'App\Models\Pemutu\Indikator');
+            })
+            ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
+            ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
             ->where('pemutu_indikator.type', 'standar')
+            ->where('pemutu_indikator.kelompok_indikator', $kelompokLabel)
+            ->where('d.periode', $tahun)
             ->distinct('pemutu_indikator_orgunit.indikator_id')
             ->count('pemutu_indikator_orgunit.indikator_id');
 
         $edFilledUnits = DB::table('pemutu_indikator_orgunit')
             ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
+            ->join('pemutu_indikator_doksub as ids', function($join) {
+                $join->on('pemutu_indikator.indikator_id', '=', 'ids.source_id')->where('ids.source_type', 'App\Models\Pemutu\Indikator');
+            })
+            ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
+            ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
             ->where('pemutu_indikator.type', 'standar')
+            ->where('pemutu_indikator.kelompok_indikator', $kelompokLabel)
+            ->where('d.periode', $tahun)
             ->whereNotNull('pemutu_indikator_orgunit.ed_capaian')
             ->where('pemutu_indikator_orgunit.ed_capaian', '!=', '')
             ->count();
 
-        // Summary AMI (hanya untuk standar)
+        // Summary AMI (hanya untuk standar & siklus & kelompok ini)
         $amiAssessed = DB::table('pemutu_indikator_orgunit')
             ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
+            ->join('pemutu_indikator_doksub as ids', function($join) {
+                $join->on('pemutu_indikator.indikator_id', '=', 'ids.source_id')->where('ids.source_type', 'App\Models\Pemutu\Indikator');
+            })
+            ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
+            ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
             ->where('pemutu_indikator.type', 'standar')
+            ->where('pemutu_indikator.kelompok_indikator', $kelompokLabel)
+            ->where('d.periode', $tahun)
             ->whereNotNull('pemutu_indikator_orgunit.ami_hasil_akhir')
             ->count();
+
         $amiKts = DB::table('pemutu_indikator_orgunit')
             ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
+            ->join('pemutu_indikator_doksub as ids', function($join) {
+                $join->on('pemutu_indikator.indikator_id', '=', 'ids.source_id')->where('ids.source_type', 'App\Models\Pemutu\Indikator');
+            })
+            ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
+            ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
             ->where('pemutu_indikator.type', 'standar')
+            ->where('pemutu_indikator.kelompok_indikator', $kelompokLabel)
+            ->where('d.periode', $tahun)
             ->where('pemutu_indikator_orgunit.ami_hasil_akhir', 0)
             ->count();
+
         $amiTerpenuhi = DB::table('pemutu_indikator_orgunit')
             ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
+            ->join('pemutu_indikator_doksub as ids', function($join) {
+                $join->on('pemutu_indikator.indikator_id', '=', 'ids.source_id')->where('ids.source_type', 'App\Models\Pemutu\Indikator');
+            })
+            ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
+            ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
             ->where('pemutu_indikator.type', 'standar')
+            ->where('pemutu_indikator.kelompok_indikator', $kelompokLabel)
+            ->where('d.periode', $tahun)
             ->where('pemutu_indikator_orgunit.ami_hasil_akhir', 1)
             ->count();
+
         $amiTerlampaui = DB::table('pemutu_indikator_orgunit')
             ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
+            ->join('pemutu_indikator_doksub as ids', function($join) {
+                $join->on('pemutu_indikator.indikator_id', '=', 'ids.source_id')->where('ids.source_type', 'App\Models\Pemutu\Indikator');
+            })
+            ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
+            ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
             ->where('pemutu_indikator.type', 'standar')
+            ->where('pemutu_indikator.kelompok_indikator', $kelompokLabel)
+            ->where('d.periode', $tahun)
             ->where('pemutu_indikator_orgunit.ami_hasil_akhir', 2)
             ->count();
 
-        // Summary Pengendalian (hanya untuk standar)
+        // Summary Pengendalian (hanya untuk standar & siklus & kelompok ini)
         $pengendFilled = DB::table('pemutu_indikator_orgunit')
             ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
+            ->join('pemutu_indikator_doksub as ids', function($join) {
+                $join->on('pemutu_indikator.indikator_id', '=', 'ids.source_id')->where('ids.source_type', 'App\Models\Pemutu\Indikator');
+            })
+            ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
+            ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
             ->where('pemutu_indikator.type', 'standar')
+            ->where('pemutu_indikator.kelompok_indikator', $kelompokLabel)
+            ->where('d.periode', $tahun)
             ->whereNotNull('pemutu_indikator_orgunit.pengend_status')
             ->where('pemutu_indikator_orgunit.pengend_status', '!=', '')
             ->count();
 
         return view('pages.pemutu.indikator-summary.standar', compact(
             'pageTitle',
+            'siklus',
+            'activeKelompok',
             'totalIndikator',
             'totalIndikatorActive',
             'edTotalUnits',
@@ -106,30 +182,40 @@ class IndikatorSummaryController extends Controller
     {
         $pageTitle = 'Summary Indikator Performa (KPI)';
 
-        // Global summary statistics untuk Performa
-        $totalIndikator = DB::table('pemutu_indikator')->where('type', 'performa')->count();
-        $totalIndikatorActive = DB::table('pemutu_indikator')->where('type', 'performa')->whereNull('deleted_at')->count();
+        $activeKelompok = session('pemutu_active_kelompok', 'akademik');
+        $kelompok = $activeKelompok === 'akademik' ? 'Akademik' : 'Non Akademik';
+
+        // Global summary statistics untuk Performa (Filtered by Kelompok)
+        $queryBase = DB::table('pemutu_indikator')
+            ->where('type', 'performa')
+            ->where('kelompok_indikator', $kelompok);
+
+        $totalIndikator = (clone $queryBase)->count();
+        $totalIndikatorActive = (clone $queryBase)->whereNull('deleted_at')->count();
 
         // Summary KPI
-        $kpiTotalPegawai = DB::table('pemutu_indikator_pegawai')
+        $kpiQueryBase = DB::table('pemutu_indikator_pegawai')
             ->join('pemutu_indikator', 'pemutu_indikator_pegawai.indikator_id', '=', 'pemutu_indikator.indikator_id')
             ->where('pemutu_indikator.type', 'performa')
+            ->where('pemutu_indikator.kelompok_indikator', $kelompok);
+
+        $kpiTotalPegawai = (clone $kpiQueryBase)
             ->distinct('pegawai_id')
             ->count('pegawai_id');
 
-        $kpiAvgScore = DB::table('pemutu_indikator_pegawai')
-            ->join('pemutu_indikator', 'pemutu_indikator_pegawai.indikator_id', '=', 'pemutu_indikator.indikator_id')
-            ->where('pemutu_indikator.type', 'performa')
+        $kpiAvgScore = (clone $kpiQueryBase)
             ->avg('pemutu_indikator_pegawai.score');
 
         $pegawais = \App\Models\Hr\Pegawai::whereHas('latestDataDiri')->get()->sortBy(function ($pegawai) {
             return $pegawai->nama;
         });
 
-        $units = $this->strukturOrganisasiService->getHierarchicalList();
+        $units = \App\Models\Hr\OrgUnit::allWithIndentedName();
 
         return view('pages.pemutu.indikator-summary.performa', compact(
             'pageTitle',
+            'kelompok',
+            'activeKelompok',
             'totalIndikator',
             'totalIndikatorActive',
             'kpiTotalPegawai',
@@ -149,13 +235,40 @@ class IndikatorSummaryController extends Controller
             ->leftJoin('hr_struktur_organisasi as so', 'io.org_unit_id', '=', 'so.orgunit_id')
             ->select(
                 'io.indikorgunit_id', 'io.indikator_id', 'io.org_unit_id', 'io.target', 'io.ed_capaian', 'io.ed_analisis',
-                'io.ami_hasil_akhir', 'io.ami_rtp_isi', 'io.ed_ptp_isi', 'io.ami_te_isi', 'io.pengend_status',
+                'io.ami_hasil_akhir',
+                'io.ami_hasil_temuan',
+                'io.ami_hasil_temuan_sebab',
+                'io.ami_hasil_temuan_akibat',
+                'io.ami_hasil_temuan_rekom',
+                'io.ami_rtp_isi', 'io.ed_ptp_isi', 'io.ami_te_isi', 'io.pengend_status',
                 'v.*', 'so.name as unit_name', 'so.code as unit_code'
             );
 
-        // Filter by Kelompok (skip if 'all')
-        if ($request->filled('kelompok_indikator') && $request->kelompok_indikator !== '') {
-            $query->where('v.kelompok_indikator', $request->kelompok_indikator);
+        // Filter by Kelompok (Context Fallback)
+        $kelompok = $request->query('kelompok_indikator');
+        if (empty($kelompok) || $kelompok === 'all') {
+            $activeKelompok = session('pemutu_active_kelompok', 'akademik');
+            $kelompok = $activeKelompok === 'akademik' ? 'Akademik' : 'Non Akademik';
+        }
+        $query->where('v.kelompok_indikator', $kelompok);
+
+        // Filter by Tahun (Cycle Fallback)
+        $tahun = $request->query('tahun');
+        if (empty($tahun)) {
+            $siklus = $this->periodeSpmiService->getSiklusData();
+            $tahun = $siklus['tahun'];
+        }
+
+        if ($tahun) {
+            $query->whereExists(function ($q) use ($tahun) {
+                $q->select(DB::raw(1))
+                    ->from('pemutu_indikator_doksub as ids_year')
+                    ->join('pemutu_dok_sub as ds_year', 'ids_year.doksub_id', '=', 'ds_year.doksub_id')
+                    ->join('pemutu_dokumen as d_year', 'ds_year.dok_id', '=', 'd_year.dok_id')
+                    ->whereColumn('ids_year.source_id', 'v.indikator_id')
+                    ->where('ids_year.source_type', 'App\Models\Pemutu\Indikator')
+                    ->where('d_year.periode', $tahun);
+            });
         }
 
         // Filter by ED Status (skip if 'all')
@@ -220,26 +333,30 @@ class IndikatorSummaryController extends Controller
             ->addColumn('status_ami', function ($row) {
                 return pemutuDtColStatusAmi($row);
             })
-            ->addColumn('rtp', function ($row) {
-                if (empty($row->ami_rtp_isi)) {
-                    return '<span class="text-muted small">-</span>';
+            ->addColumn('temuan_sebab_akibat', function ($row) {
+                $html = '';
+                if (!empty($row->ami_hasil_temuan)) {
+                    $html .= '<div><strong>Temuan:</strong> '.nl2br(e($row->ami_hasil_temuan)).'</div>';
                 }
-
-                return '<span class="badge bg-warning-lt" title="'.e($row->ami_rtp_isi).'">RTP</span>';
+                if (!empty($row->ami_hasil_temuan_sebab)) {
+                    $html .= '<div class="mt-3"><strong>Sebab:</strong> '.nl2br(e($row->ami_hasil_temuan_sebab)).'</div>';
+                }
+                if (!empty($row->ami_hasil_temuan_akibat)) {
+                    $html .= '<div class="mt-3"><strong>Akibat:</strong> '.nl2br(e($row->ami_hasil_temuan_akibat)).'</div>';
+                }
+                return pemutuTextScroll($html ?: null);
+            })
+            ->addColumn('auditor_recom', function ($row) {
+                return pemutuTextScroll($row->ami_hasil_temuan_rekom ? nl2br(e($row->ami_hasil_temuan_rekom)) : null);
+            })
+            ->addColumn('rtp', function ($row) {
+                return pemutuTextScroll($row->ami_rtp_isi);
             })
             ->addColumn('ptp', function ($row) {
-                if (empty($row->ed_ptp_isi)) {
-                    return '<span class="text-muted small">-</span>';
-                }
-
-                return '<span class="badge bg-purple-lt" title="'.e($row->ed_ptp_isi).'">PTP</span>';
+                return pemutuTextScroll($row->ed_ptp_isi);
             })
             ->addColumn('te', function ($row) {
-                if (empty($row->ami_te_isi)) {
-                    return '<span class="text-muted small">-</span>';
-                }
-
-                return '<span class="badge bg-azure-lt" title="'.e($row->ami_te_isi).'">TE</span>';
+                return pemutuTextScroll($row->ami_te_isi);
             })
             ->addColumn('pengend_detail', function ($row) {
                 if (! $row->pengend_status) {
@@ -266,6 +383,8 @@ class IndikatorSummaryController extends Controller
                 'target',
                 'status_ed',
                 'status_ami',
+                'temuan_sebab_akibat',
+                'auditor_recom',
                 'rtp',
                 'ptp',
                 'te',
@@ -543,9 +662,31 @@ class IndikatorSummaryController extends Controller
             ->join('vw_pemutu_summary_indikator_standar as v', 'io.indikator_id', '=', 'v.indikator_id')
             ->leftJoin('hr_struktur_organisasi as so', 'io.org_unit_id', '=', 'so.orgunit_id');
 
-        // Apply same filters as dataStandar
-        if ($request->filled('kelompok_indikator') && $request->kelompok_indikator !== '') {
-            $query->where('v.kelompok_indikator', $request->kelompok_indikator);
+        // Apply same filters as dataStandar (Context Fallback)
+        $kelompok = $request->query('kelompok_indikator');
+        if (empty($kelompok) || $kelompok === 'all') {
+            $activeKelompok = session('pemutu_active_kelompok', 'akademik');
+            $kelompok = $activeKelompok === 'akademik' ? 'Akademik' : 'Non Akademik';
+        }
+        $query->where('v.kelompok_indikator', $kelompok);
+
+        // Filter by Tahun (Cycle Fallback)
+        $tahun = $request->query('tahun');
+        if (empty($tahun)) {
+            $siklus = $this->periodeSpmiService->getSiklusData();
+            $tahun = $siklus['tahun'];
+        }
+
+        if ($tahun) {
+            $query->whereExists(function ($q) use ($tahun) {
+                $q->select(DB::raw(1))
+                    ->from('pemutu_indikator_doksub as ids_year')
+                    ->join('pemutu_dok_sub as ds_year', 'ids_year.doksub_id', '=', 'ds_year.doksub_id')
+                    ->join('pemutu_dokumen as d_year', 'ds_year.dok_id', '=', 'd_year.dok_id')
+                    ->whereColumn('ids_year.source_id', 'v.indikator_id')
+                    ->where('ids_year.source_type', 'App\Models\Pemutu\Indikator')
+                    ->where('d_year.periode', $tahun);
+            });
         }
 
         if ($request->filled('ed_status') && $request->ed_status !== '') {

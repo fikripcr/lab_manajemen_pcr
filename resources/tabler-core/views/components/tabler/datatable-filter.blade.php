@@ -9,48 +9,30 @@
 @endphp
 
 @if($type === 'button')
-    <!-- Button Only Mode -->
-    <button type="button" {{ $attributes->merge(['class' => 'btn btn-outline-primary']) }} data-bs-toggle="collapse" data-bs-target="{{ $effectiveTarget }}" aria-expanded="false">
+    <button type="button" class="btn" data-bs-toggle="collapse" data-bs-target="{{ $effectiveTarget }}" aria-expanded="false">
         <i class="ti ti-filter me-1"></i> Filter
         <span id="{{ $dataTableId }}-filter-count" class="badge bg-primary text-white ms-1" style="display: none;">0</span>
     </button>
 @elseif($type === 'bare')
-    <!-- Bare Form Mode: To be used inside a collapsible container -->
-    <div {{ $attributes->merge(['class' => 'card card-body border-0 border-bottom rounded-0 mb-0']) }}>
-        <form id="{{ $dataTableId }}-filter">
-            <div class="row g-3">
-                {{$slot}}
-                <div class="col-12 mt-2 d-flex justify-content-end align-items-center">
-                    <button type="button" class="btn btn-link btn-sm text-muted text-decoration-none" id="{{ $dataTableId }}-reset-filter">
-                        <i class="ti ti-x me-1"></i> Reset Filter
-                    </button>
-                </div>
+    <form id="{{ $dataTableId }}-filter" class="px-4 py-3 bg-secondary-lt">
+        <div class="row g-3">
+            {{$slot}}
+            <div class="col-12 mt-2 px-3 d-flex justify-content-end align-items-center">
+                <button type="button" class="btn btn-link btn-sm text-muted text-decoration-none" id="{{ $dataTableId }}-reset-filter">
+                    <i class="ti ti-x me-1"></i> Reset Filter
+                </button>
             </div>
-        </form>
-    </div>
-
-    <style>
-        #{{ $dataTableId }}-filter .form-label {
-            font-weight: 600;
-            color: var(--tblr-emphasis-color);
-            margin-bottom: 0.25rem;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-        }
-    </style>
+        </div>
+    </form>
 @endif
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const dataTableId = '{{ $dataTableId }}';
-    // Small delay to ensure DataTable is initialized
-    setTimeout(() => {
-        if (typeof initDatatableFilter === 'function') {
-            initDatatableFilter(dataTableId);
-        }
-    }, 200);
+    if (typeof initDatatableFilter === 'function') {
+        initDatatableFilter(dataTableId);
+    }
 });
 
 if (typeof initDatatableFilter !== 'function') {

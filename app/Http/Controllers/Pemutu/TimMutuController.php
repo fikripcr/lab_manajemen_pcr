@@ -29,15 +29,10 @@ class TimMutuController extends Controller
     public function index()
     {
         $siklus = $this->PeriodeSpmiService->getSiklusData();
-
-        $data = [
-            'pageTitle' => 'Tim Mutu',
-            'siklus' => $siklus,
-            'units' => $this->strukturOrganisasiService->getHierarchicalList(),
-        ];
+        $unitTypes = StrukturOrganisasi::whereNotNull('type')->where('type', '!=', '')->distinct()->orderBy('type')->pluck('type');
+        $units = $this->strukturOrganisasiService->getHierarchicalList();
 
         $assignmentMap = [];
-        $units = $this->strukturOrganisasiService->getHierarchicalList();
 
         foreach (['akademik', 'non_akademik'] as $type) {
             $periode = $siklus[$type];
@@ -77,6 +72,7 @@ class TimMutuController extends Controller
             'pageTitle' => 'Tim Mutu',
             'siklus' => $siklus,
             'units' => $units,
+            'unitTypes' => $unitTypes,
             'assignmentMap' => $assignmentMap,
         ];
 

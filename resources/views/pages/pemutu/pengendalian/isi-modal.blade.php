@@ -1,37 +1,15 @@
 @php $isReadonly = request('readonly') == 1; @endphp
 <x-tabler.form-modal 
-    :title="($isReadonly ? 'Detail Pengendalian — ' : 'Pengendalian — ') . ($indOrg->indikator->no_indikator ?? '')" 
+    :title="($isReadonly ? 'Detail Pengendalian' : 'Pengendalian Indikator')" 
     :route="route('pemutu.pengendalian.update', $indOrg->encrypted_indorgunit_id)" 
     :method="$isReadonly ? 'none' : 'POST'" 
     data-redirect="false">
     <fieldset {{ $isReadonly ? 'disabled' : '' }}>
-        {{-- Info Singkat Indikator --}}
-        <div class="alert alert-info p-2 mb-3">
-            <div class="fw-bold">{{ $indOrg->indikator->no_indikator }}</div>
-            <div class="small text-muted">{{ $indOrg->indikator->indikator }}</div>
-            <div class="mt-1">
-                {!! pemutuDtColLabelsList($indOrg->indikator) !!}
-            </div>
-        </div>
-
-        {{-- Hasil AMI --}}
-        @php
-            $hasilAmi = $indOrg->ami_hasil_akhir !== null ? ($hasilMap[$indOrg->ami_hasil_akhir] ?? null) : null;
-        @endphp
-        @if($hasilAmi)
-        <div class="mb-3 d-flex align-items-center gap-2">
-            <span class="text-muted small">Hasil AMI:</span>
-            <span class="badge bg-{{ $hasilAmi['color'] }}-lt text-{{ $hasilAmi['color'] }}">{{ $hasilAmi['label'] }}</span>
-        </div>
-        @endif
-
         {{-- Status Pengendalian (Usulan Unit) --}}
-        <div class="card mb-0 border-primary">
-            <div class="card-status-top bg-primary"></div>
-            <div class="card-body p-3">
+            <div class="">
                 <div class="d-flex align-items-center mb-2">
                     <span class="avatar avatar-sm bg-blue-lt me-2"><i class="ti ti-user"></i></span>
-                    <h4 class="card-title mb-0">Isi Pengendalian — Usulan Unit</h4>
+                    <h4 class="card-title mb-0">Isi Pengendalian — Usulan Auditee</h4>
                 </div>
                 
                 <div class="mb-3">
@@ -103,6 +81,5 @@
                     </div>
                 </div>
             </div>
-        </div>
     </fieldset>
 </x-tabler.form-modal>

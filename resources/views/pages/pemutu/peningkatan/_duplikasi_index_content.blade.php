@@ -12,17 +12,17 @@
             <span class="badge bg-blue-lt me-2 p-2">
                 <i class="ti ti-calendar-share me-1"></i> Target Duplikasi: <strong>{{ $periode->periode + 1 }}</strong>
             </span>
-            <input type="hidden" id="input-target-periode-{{ $typeId }}" value="{{ $periode->periode + 1 }}">
-            <span id="duplikasi-status-{{ $typeId }}" class="text-muted small ms-2"></span>
+            <input type="hidden" id="input-target-periode" value="{{ $periode->periode + 1 }}">
+            <span id="duplikasi-status" class="text-muted small ms-2"></span>
         </div>
     </div>
     <div class="col-md-6 text-end">
-        <x-tabler.button type="button" class="btn-primary" id="btn-duplikasi-{{ $typeId }}"
+        <x-tabler.button type="button" class="btn-primary" id="btn-duplikasi"
             icon="ti ti-copy" text="Duplikasi Terpilih" disabled="true" />
     </div>
 </div>
 
-<div class="row panel-standar-container" data-type="{{ $typeId }}" data-periode-id="{{ $periode->encrypted_periodespmi_id }}">
+<div class="row panel-standar-container" data-periode-id="{{ $periode->encrypted_periodespmi_id }}">
     {{-- Panel Kiri: STANDAR SEBELUMNYA --}}
     <div class="col-md-6">
         <x-tabler.card class="border-2 border-secondary shadow-none">
@@ -33,16 +33,15 @@
                         <div class="dropdown">
                             <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Aksi</button>
                             <div class="dropdown-menu dropdown-menu-end">
-                                <a href="javascript:void(0)" class="dropdown-item btn-check-all-lama" data-type="{{ $typeId }}"><i class="ti ti-check me-2"></i>Pilih Semua</a>
-                                <a href="javascript:void(0)" class="dropdown-item btn-uncheck-all-lama" data-type="{{ $typeId }}"><i class="ti ti-square me-2"></i>Bersihkan</a>
+                                <a href="javascript:void(0)" class="dropdown-item btn-check-all-lama"><i class="ti ti-check me-2"></i>Pilih Semua</a>
+                                <a href="javascript:void(0)" class="dropdown-item btn-uncheck-all-lama"><i class="ti ti-square me-2"></i>Bersihkan</a>
                             </div>
                         </div>
-                        <input type="text" class="form-control form-control-sm search-standar-lama" data-type="{{ $typeId }}"
-                            placeholder="Search..." style="width: 120px">
+                        <input type="text" class="form-control form-control-sm search-standar-lama" placeholder="Search..." style="width: 120px">
                     </div>
                 </div>
             </x-tabler.card-header>
-            <x-tabler.card-body class="p-0 list-standar-lama" id="list-standar-lama-{{ $typeId }}" style="min-height: 200px; max-height: 500px; overflow-y: auto;">
+            <x-tabler.card-body class="p-0 list-standar-lama" id="list-standar-lama" style="min-height: 200px; max-height: 500px; overflow-y: auto;">
                 <div class="text-center py-5 text-muted">
                     <i class="ti ti-loader ti-spin fs-2 d-block mb-2"></i> Memuat...
                 </div>
@@ -61,18 +60,17 @@
                         <div class="dropdown">
                             <button class="btn btn-sm btn-outline-success dropdown-toggle" data-bs-toggle="dropdown">Aksi</button>
                             <div class="dropdown-menu dropdown-menu-end">
-                                <a href="javascript:void(0)" class="dropdown-item btn-check-all-baru" data-type="{{ $typeId }}"><i class="ti ti-check me-2"></i>Pilih Semua</a>
-                                <a href="javascript:void(0)" class="dropdown-item btn-uncheck-all-baru" data-type="{{ $typeId }}"><i class="ti ti-square me-2"></i>Bersihkan</a>
+                                <a href="javascript:void(0)" class="dropdown-item btn-check-all-baru"><i class="ti ti-check me-2"></i>Pilih Semua</a>
+                                <a href="javascript:void(0)" class="dropdown-item btn-uncheck-all-baru"><i class="ti ti-square me-2"></i>Bersihkan</a>
                                 <div class="dropdown-divider"></div>
-                                <a href="javascript:void(0)" class="dropdown-item text-danger disabled btn-hapus-bulk" data-type="{{ $typeId }}"><i class="ti ti-trash me-2 text-red"></i>Hapus Terpilih</a>
+                                <a href="javascript:void(0)" class="dropdown-item text-danger disabled btn-hapus-bulk"><i class="ti ti-trash me-2 text-red"></i>Hapus Terpilih</a>
                             </div>
                         </div>
-                        <input type="text" class="form-control form-control-sm search-standar-baru" data-type="{{ $typeId }}"
-                            placeholder="Search..." style="width: 120px">
+                        <input type="text" class="form-control form-control-sm search-standar-baru" placeholder="Search..." style="width: 120px">
                     </div>
                 </div>
             </x-tabler.card-header>
-            <x-tabler.card-body class="p-0 list-standar-baru" id="list-standar-baru-{{ $typeId }}" style="min-height: 200px; max-height: 500px; overflow-y: auto;">
+            <x-tabler.card-body class="p-0 list-standar-baru" id="list-standar-baru" style="min-height: 200px; max-height: 500px; overflow-y: auto;">
                 <div class="text-center py-5 text-muted">
                     <i class="ti ti-loader ti-spin fs-2 d-block mb-2"></i> Memuat...
                 </div>
@@ -85,13 +83,10 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const managers = {};
-
     class DuplikasiManager {
-        constructor(typeId, periodeEncId) {
-            this.typeId = typeId;
+        constructor(periodeEncId) {
             this.periodeEncId = periodeEncId;
-            this.targetPeriode = document.getElementById(`input-target-periode-${typeId}`).value;
+            this.targetPeriode = document.getElementById('input-target-periode').value;
             this.selectedLama = new Set();
             this.selectedBaru = new Set();
             this.allLama = [];
@@ -102,7 +97,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         bindEvents() {
-            const container = document.querySelector(`.panel-standar-container[data-type="${this.typeId}"]`);
+            const container = document.querySelector('.panel-standar-container');
+            if (!container) return;
             
             container.querySelector('.search-standar-lama').addEventListener('input', (e) => this.renderLama(e.target.value));
             container.querySelector('.search-standar-baru').addEventListener('input', (e) => this.renderBaru(e.target.value));
@@ -125,9 +121,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 this.renderBaru();
             });
 
-            document.getElementById(`btn-duplikasi-${this.typeId}`).addEventListener('click', () => this.executeDuplikasi());
+            document.getElementById('btn-duplikasi').addEventListener('click', () => this.executeDuplikasi());
             container.querySelector('.btn-hapus-bulk').addEventListener('click', (e) => {
-                if(!e.target.classList.contains('disabled')) this.executeDeleteBulk();
+                if(!e.currentTarget.classList.contains('disabled')) this.executeDeleteBulk();
             });
         }
 
@@ -143,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         renderLama(search = '') {
-            const container = document.getElementById(`list-standar-lama-${this.typeId}`);
+            const container = document.getElementById('list-standar-lama');
             container.innerHTML = '';
             const filtered = search ? this.allLama.filter(d => d.judul.toLowerCase().includes(search.toLowerCase())) : this.allLama;
             
@@ -178,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         renderBaru(search = '') {
-            const container = document.getElementById(`list-standar-baru-${this.typeId}`);
+            const container = document.getElementById('list-standar-baru');
             container.innerHTML = '';
             const filtered = search ? this.allBaru.filter(d => d.judul.toLowerCase().includes(search.toLowerCase())) : this.allBaru;
             
@@ -211,20 +207,24 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         updateButtons() {
-            const btnDup = document.getElementById(`btn-duplikasi-${this.typeId}`);
-            const btnHapus = document.querySelector(`.panel-standar-container[data-type="${this.typeId}"] .btn-hapus-bulk`);
-            const status = document.getElementById(`duplikasi-status-${this.typeId}`);
+            const btnDup = document.getElementById('btn-duplikasi');
+            const btnHapus = document.querySelector('.btn-hapus-bulk');
+            const status = document.getElementById('duplikasi-status');
             
-            btnDup.disabled = this.selectedLama.size === 0;
-            btnDup.innerHTML = `<i class="ti ti-copy me-1"></i> Duplikasi (${this.selectedLama.size})`;
-            status.textContent = this.selectedLama.size > 0 ? `${this.selectedLama.size} dipilih` : '';
+            if (btnDup) {
+                btnDup.disabled = this.selectedLama.size === 0;
+                btnDup.innerHTML = `<i class="ti ti-copy me-1"></i> Duplikasi (${this.selectedLama.size})`;
+            }
+            if (status) status.textContent = this.selectedLama.size > 0 ? `${this.selectedLama.size} dipilih` : '';
             
-            if(this.selectedBaru.size > 0) {
-                btnHapus.classList.remove('disabled');
-                btnHapus.innerHTML = `<i class="ti ti-trash me-2 text-red"></i>Hapus Terpilih (${this.selectedBaru.size})`;
-            } else {
-                btnHapus.classList.add('disabled');
-                btnHapus.innerHTML = `<i class="ti ti-trash me-2 text-red"></i>Hapus Terpilih`;
+            if (btnHapus) {
+                if(this.selectedBaru.size > 0) {
+                    btnHapus.classList.remove('disabled');
+                    btnHapus.innerHTML = `<i class="ti ti-trash me-2 text-red"></i>Hapus Terpilih (${this.selectedBaru.size})`;
+                } else {
+                    btnHapus.classList.add('disabled');
+                    btnHapus.innerHTML = `<i class="ti ti-trash me-2 text-red"></i>Hapus Terpilih`;
+                }
             }
         }
 
@@ -294,11 +294,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    document.querySelectorAll('.panel-standar-container').forEach(el => {
-        const typeId = el.dataset.type;
-        const periodeEncId = el.dataset.periodeId;
-        managers[typeId] = new DuplikasiManager(typeId, periodeEncId);
-    });
+    const dupContainer = document.querySelector('.panel-standar-container');
+    if (dupContainer) {
+        const periodeEncId = dupContainer.dataset.periodeId;
+        new DuplikasiManager(periodeEncId);
+    }
 });
 </script>
 @endpush

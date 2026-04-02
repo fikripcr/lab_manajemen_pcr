@@ -44,7 +44,7 @@
                             </div>
                             <div class="timeline-event-card shadow-none border">
                                 <x-tabler.card-body class="p-2">
-                                    <div class="fw-bold">Penetapan</div>
+                                    <div class="fw-bold">1. Penetapan</div>
                                     <div class="text-muted small">
                                         {{ formatTanggalIndo($periode->penetapan_awal) }} 
                                         s/d 
@@ -61,42 +61,60 @@
                             </div>
                             <div class="timeline-event-card shadow-none border">
                                 <x-tabler.card-body class="p-2">
-                                    <div class="fw-bold">Pelaksanaan</div>
+                                    <div class="fw-bold">2. Pelaksanaan</div>
                                     <div class="text-muted small">
-                                        Sepanjang Periode {{ $periode->periode }}
+                                        Sepanjang Tahun
                                     </div>
                                 </x-tabler.card-body>
                             </div>
                         </li>
 
-                        {{-- 3. EVALUASI --}}
+                        {{-- 3. EVALUASI DIRI (ED) & PTP --}}
                         <li class="timeline-event">
-                            <div class="timeline-event-icon bg-warning-lt">
+                            <div class="timeline-event-icon bg-success-lt">
                                 <i class="ti ti-clipboard-check"></i>
                             </div>
                             <div class="timeline-event-card shadow-none border">
                                 <x-tabler.card-body class="p-2">
-                                    <div class="fw-bold">Evaluasi (ED & AMI)</div>
+                                    <div class="fw-bold">3. Evaluasi Diri (ED) & Pelaksanaan Tindakan Perbaikan (PTP)</div>
                                     <div class="text-muted small">
                                         @if($periode->ed_awal)
-                                            <div><span class="text-warning">ED:</span> {{ formatTanggalIndo($periode->ed_awal) }} - {{ formatTanggalIndo($periode->ed_akhir) }}</div>
-                                        @endif
-                                        @if($periode->ami_awal)
-                                            <div><span class="text-warning">AMI:</span> {{ formatTanggalIndo($periode->ami_awal) }} - {{ formatTanggalIndo($periode->ami_akhir) }}</div>
+                                            {{ formatTanggalIndo($periode->ed_awal) }} s/d {{ formatTanggalIndo($periode->ed_akhir) }}
+                                        @else
+                                            <span class="fst-italic">Belum diatur</span>
                                         @endif
                                     </div>
                                 </x-tabler.card-body>
                             </div>
                         </li>
 
-                        {{-- 4. PENGENDALIAN --}}
+                        {{-- 4. AMI & TE & RTP --}}
                         <li class="timeline-event">
-                            <div class="timeline-event-icon bg-danger-lt">
+                            <div class="timeline-event-icon bg-info-lt">
+                                <i class="ti ti-search"></i>
+                            </div>
+                            <div class="timeline-event-card shadow-none border">
+                                <x-tabler.card-body class="p-2">
+                                    <div class="fw-bold">4. AMI & Tinjauan Efektivitas (TE) & Rencana Tindakan Perbaikan (RTP)</div>
+                                    <div class="text-muted small">
+                                        @if($periode->ami_awal)
+                                            {{ formatTanggalIndo($periode->ami_awal) }} s/d {{ formatTanggalIndo($periode->ami_akhir) }}
+                                        @else
+                                            <span class="fst-italic">Belum diatur</span>
+                                        @endif
+                                    </div>
+                                </x-tabler.card-body>
+                            </div>
+                        </li>
+
+                        {{-- 5. PENGENDALIAN --}}
+                        <li class="timeline-event">
+                            <div class="timeline-event-icon bg-warning-lt">
                                 <i class="ti ti-settings-exclamation"></i>
                             </div>
                             <div class="timeline-event-card shadow-none border">
                                 <x-tabler.card-body class="p-2">
-                                    <div class="fw-bold">Pengendalian</div>
+                                    <div class="fw-bold">5. Pengendalian (RTM)</div>
                                     <div class="text-muted small">
                                         {{ formatTanggalIndo($periode->pengendalian_awal) }}
                                         s/d
@@ -106,14 +124,14 @@
                             </div>
                         </li>
 
-                        {{-- 5. PENINGKATAN --}}
+                        {{-- 6. PENINGKATAN --}}
                         <li class="timeline-event">
-                            <div class="timeline-event-icon bg-success-lt">
+                            <div class="timeline-event-icon bg-danger-lt">
                                 <i class="ti ti-trending-up"></i>
                             </div>
                             <div class="timeline-event-card shadow-none border">
                                 <x-tabler.card-body class="p-2">
-                                    <div class="fw-bold">Peningkatan</div>
+                                    <div class="fw-bold">6. Peningkatan</div>
                                     <div class="text-muted small">
                                         {{ formatTanggalIndo($periode->peningkatan_awal) }}
                                         s/d

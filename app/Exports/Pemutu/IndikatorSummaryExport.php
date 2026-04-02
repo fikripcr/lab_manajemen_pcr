@@ -3,6 +3,7 @@
 namespace App\Exports\Pemutu;
 
 use App\Models\Pemutu\IndikatorSummaryStandar;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -24,8 +25,22 @@ class IndikatorSummaryExport implements FromCollection, ShouldAutoSize, WithHead
         $query = IndikatorSummaryStandar::query();
 
         // Filter by kelompok indikator
-        if (! empty($this->filters['kelompok_indikator'])) {
+        if (! empty($this->filters['kelompok_indikator']) && $this->filters['kelompok_indikator'] !== 'all') {
             $query->where('kelompok_indikator', $this->filters['kelompok_indikator']);
+        }
+
+        // Filter by Tahun (Cycle)
+        if (! empty($this->filters['tahun'])) {
+            $tahun = $this->filters['tahun'];
+            $query->whereExists(function ($q) use ($tahun) {
+                $q->select(DB::raw(1))
+                    ->from('pemutu_indikator_doksub as ids_year')
+                    ->join('pemutu_dok_sub as ds_year', 'ids_year.doksub_id', '=', 'ds_year.doksub_id')
+                    ->join('pemutu_dokumen as d_year', 'ds_year.dok_id', '=', 'd_year.dok_id')
+                    ->whereColumn('ids_year.source_id', 'vw_pemutu_summary_indikator_standar.indikator_id')
+                    ->where('ids_year.source_type', 'App\Models\Pemutu\Indikator')
+                    ->where('d_year.periode', $tahun);
+            });
         }
 
         // Filter by ED Status

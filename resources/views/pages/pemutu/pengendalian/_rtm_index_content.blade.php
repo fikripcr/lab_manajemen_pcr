@@ -1,19 +1,16 @@
-{{-- Partial for RTM Content (Loaded from Pengendalian Index) --}}
-@php $idSuffix = $typeId; @endphp
-
 <div class="row row-cards">
     {{-- ══ KIRI: Tabs Data Umum + Peserta ══ --}}
     <div class="col-md-6">
         <x-tabler.card>
             <x-tabler.card-header>
-                <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" id="rtm-tabs-{{ $idSuffix }}">
+                <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" id="rtm-tabs">
                     <li class="nav-item">
-                        <a href="#rtm-tab-umum-{{ $idSuffix }}" class="nav-link active" data-bs-toggle="tab">
+                        <a href="#rtm-tab-umum" class="nav-link active" data-bs-toggle="tab">
                             <i class="ti ti-info-circle me-1"></i> Data Umum
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#rtm-tab-peserta-{{ $idSuffix }}" class="nav-link" data-bs-toggle="tab">
+                        <a href="#rtm-tab-peserta" class="nav-link" data-bs-toggle="tab">
                             <i class="ti ti-users me-1"></i> Peserta
                             <span class="badge bg-green-lt ms-1">{{ $rapat->pesertas->count() }}</span>
                         </a>
@@ -23,7 +20,7 @@
             <x-tabler.card-body>
                 <div class="tab-content">
                     {{-- ── TAB: Data Umum ── --}}
-                    <div class="tab-pane active show" id="rtm-tab-umum-{{ $idSuffix }}">
+                    <div class="tab-pane active show" id="rtm-tab-umum">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h3 class="mb-0"><i class="ti ti-calendar-event me-2 text-teal"></i>Info Rapat</h3>
                             <div class="d-flex align-items-center gap-2">
@@ -91,7 +88,7 @@
                     </div>
 
                     {{-- ── TAB: Peserta ── --}}
-                    <div class="tab-pane" id="rtm-tab-peserta-{{ $idSuffix }}">
+                    <div class="tab-pane" id="rtm-tab-peserta">
                         <x-tabler.card class="bg-light mb-3 shadow-none border">
                             <x-tabler.card-body class="p-3">
                             <h4 class="mb-3"><i class="ti ti-user-plus me-1"></i>Tambah Peserta</h4>
@@ -177,7 +174,7 @@
                 </x-slot:actions>
             </x-tabler.card-header>
             <x-tabler.card-body>
-                <div class="accordion" id="accordion-agenda-{{ $idSuffix }}">
+                <div class="accordion" id="accordion-agenda">
                     @forelse($rapat->agendas as $index => $agenda)
                     <div class="accordion-item">
                         <h4 class="accordion-header d-flex align-items-center">
@@ -194,7 +191,7 @@
                                 </div>
                             </div>
                         </h4>
-                        <div id="ac-{{ $agenda->encrypted_rapatagenda_id }}" class="accordion-collapse collapse {{ $index === 0 ? 'show' : '' }}" data-bs-parent="#accordion-agenda-{{ $idSuffix }}">
+                        <div id="ac-{{ $agenda->encrypted_rapatagenda_id }}" class="accordion-collapse collapse {{ $index === 0 ? 'show' : '' }}" data-bs-parent="#accordion-agenda">
                             <div class="accordion-body p-0">
                                 <textarea name="agendas[{{ $agenda->encrypted_rapatagenda_id }}][isi]" data-agenda-id="{{ $agenda->encrypted_rapatagenda_id }}" data-rapat-id="{{ $rapat->encrypted_rapat_id }}" class="form-control border-0">{{ $agenda->isi }}</textarea>
                             </div>

@@ -11,12 +11,28 @@
 <div class="row row-cards">
     <div class="col-12">
         <x-tabler.card>
-            <x-tabler.card-header title="Daftar Approval Dokumen">
-                <div class="d-flex gap-2">
+            <x-tabler.card-header>
+                <div class="col-auto d-flex gap-2">
                     <x-tabler.datatable-page-length dataTableId="table-approval" />
+                    <x-tabler.datatable-filter dataTableId="table-approval" type="button" target="#table-approval-filter-area" />
                     <x-tabler.datatable-search dataTableId="table-approval" />
                 </div>
             </x-tabler.card-header>
+
+            <div class="collapse" id="table-approval-filter-area">
+                <x-tabler.datatable-filter dataTableId="table-approval" type="bare">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <x-tabler.form-select name="status" id="status" label="Status Approval" placeholder="">
+                                <option value="all">Semua Status</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Rejected">Rejected</option>
+                            </x-tabler.form-select>
+                        </div>
+                    </div>
+                </x-tabler.datatable-filter>
+            </div>
             
             <div class="table-responsive">
                 <x-tabler.datatable
@@ -25,7 +41,6 @@
                     :columns="[
                         ['data' => 'created_at', 'name' => 'created_at', 'title' => 'Tanggal Masuk', 'width' => '15%'],
                         ['data' => 'tipe_approval', 'name' => 'model', 'title' => 'Tipe Dokumen', 'width' => '15%'],
-                        ['data' => 'dokumen_kode', 'name' => 'dokumen_kode', 'title' => 'Kode', 'width' => '15%', 'orderable' => false, 'searchable' => false],
                         ['data' => 'dokumen_judul', 'name' => 'dokumen_judul', 'title' => 'Judul Dokumen', 'orderable' => false, 'searchable' => false],
                         ['data' => 'status_badge', 'name' => 'status', 'title' => 'Status', 'width' => '10%', 'class' => 'text-center'],
                         ['data' => 'oleh', 'name' => 'pejabat', 'title' => 'Oleh', 'width' => '15%'],

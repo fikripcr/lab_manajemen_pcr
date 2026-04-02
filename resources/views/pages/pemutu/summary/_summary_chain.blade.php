@@ -91,11 +91,7 @@
                             <td>{{ $ou->pivot->target ?? '-' }}</td>
                             <td>{{ $ou->pivot->ed_capaian ?? '-' }}</td>
                             <td>
-                                @if($skalaLabel !== '-')
-                                <span class="badge bg-{{ $scoreColor }}-lt text-{{ $scoreColor }}">{{ $skalaLabel }}</span>
-                                @else
-                                <span class="text-muted">-</span>
-                                @endif
+                                <x-pemutu.skala-indicator :skala="$edSkala" size="sm" />
                             </td>
                             <td class="text-end">
                                 @if($score !== null)

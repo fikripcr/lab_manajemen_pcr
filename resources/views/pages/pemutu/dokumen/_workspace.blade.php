@@ -16,7 +16,7 @@ $columns = [
     'children' => [
         ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
         ['data' => 'kode', 'title' => 'Kode'],
-        ['data' => 'judul', 'title' => 'Judul / Nama'],
+        ['data' => 'judul', 'title' => 'Judul'],
         ['data' => 'jumlah_turunan', 'title' => 'Jumlah Turunan'],
         ['data' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false],
     ],
@@ -47,6 +47,9 @@ $columns = [
             <div>
                 <span class="badge bg-{{ $type === 'dokumen' ? 'primary' : 'secondary' }}-lt">
                     {{ $type === 'dokumen' ? 'DOKUMEN' : 'POIN' }} {{ strtoupper($config->label()) }}
+                </span>
+                <span class="badge bg-secondary-lt">
+                    {{ $item->kode ?? '' }}
                 </span>
             </div>
             <div class="d-flex gap-2 flex-shrink-0">
@@ -126,7 +129,7 @@ $columns = [
                 </div>
             </div>
         </div>
-        <h2>{{ ($item->kode ?? '') . ' ' . $item->judul }}</h2>
+        <h2>{{ $item->judul }}</h2>
         <div class="p-2">
             <ul class="nav nav-tabs card-header-tabs my-2" id="workspace-tabs-{{ $item->encrypted_doksub_id ?? ($item->encrypted_dok_id ?? 'root') }}" role="tablist">
                 {{-- Overview Tab (Always shown) --}}

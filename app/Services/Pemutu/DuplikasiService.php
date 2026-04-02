@@ -186,7 +186,8 @@ class DuplikasiService
         // Ambil semua indikator_id yang terhubung ke doksub lama
         $indikatorIds = DB::table('pemutu_indikator_doksub')
             ->whereIn('doksub_id', $oldDoksubIds)
-            ->pluck('indikator_id')
+            ->where('source_type', Indikator::class)
+            ->pluck('source_id')
             ->unique()
             ->toArray();
 
@@ -257,7 +258,8 @@ class DuplikasiService
             foreach ($oldIndik->dokSubs as $oldDokSub) {
                 if (isset($this->doksubMap[$oldDokSub->doksub_id])) {
                     DB::table('pemutu_indikator_doksub')->insert([
-                        'indikator_id' => $newIndik->indikator_id,
+                        'source_id' => $newIndik->indikator_id,
+                        'source_type' => Indikator::class,
                         'doksub_id' => $this->doksubMap[$oldDokSub->doksub_id],
                         'is_hasilkan_indikator' => $oldDokSub->pivot->is_hasilkan_indikator ?? false,
                         'created_at' => now(),
@@ -344,15 +346,16 @@ class DuplikasiService
             // 3. Kumpulkan semua indikator_id yang terhubung hanya ke doksub_id ini
             // dan memiliki prefix origin_from 'peningkatan_' (sebagai pengaman tambahan supaya tidak hapus indikator master)
             if (! empty($allDoksubIds)) {
-                $indikatorIds = DB::table('pemutu_indikator_doksub')
+                $sourceIds = DB::table('pemutu_indikator_doksub')
                     ->whereIn('doksub_id', $allDoksubIds)
-                    ->pluck('indikator_id')
+                    ->where('source_type', Indikator::class)
+                    ->pluck('source_id')
                     ->unique()
                     ->toArray();
 
-                if (! empty($indikatorIds)) {
+                if (! empty($sourceIds)) {
                     // Filter indikator yang benar-benar hasil duplikasi peningkatan
-                    $indikatorsToDelete = Indikator::whereIn('indikator_id', $indikatorIds)
+                    $indikatorsToDelete = Indikator::whereIn('indikator_id', $sourceIds)
                         ->where('origin_from', 'like', 'peningkatan_%')
                         ->pluck('indikator_id')
                         ->toArray();
@@ -360,7 +363,7 @@ class DuplikasiService
                     if (! empty($indikatorsToDelete)) {
                         // Hapus pivot dan relasi indikator
                         DB::table('pemutu_indikator_orgunit')->whereIn('indikator_id', $indikatorsToDelete)->delete();
-                        DB::table('pemutu_indikator_doksub')->whereIn('source_id', $indikatorsToDelete)->delete();
+                        DB::table('pemutu_indikator_doksub')->whereIn('source_id', $indikatorsToDelete)->where('source_type', Indikator::class)->delete();
                         DB::table('pemutu_indikator_label')->whereIn('indikator_id', $indikatorsToDelete)->delete();
 
                         // Hapus indikatornya (force delete)

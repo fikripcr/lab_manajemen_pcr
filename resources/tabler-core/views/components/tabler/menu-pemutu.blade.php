@@ -22,13 +22,19 @@
             'title'         => 'Master Data',
             'id'            => 'navbar-master-data',
             'icon'          => 'ti ti-database',
-            'active_routes' => ['pemutu.label.*', 'pemutu.label-type.*', 'pemutu.periode-spmi.*', 'pemutu.periode-kpi.*', 'pemutu.tim-mutu.*', 'hr.pegawai.*'],
+            'active_routes' => ['pemutu.label.*', 'pemutu.label-type.*', 'pemutu.periode-spmi.*', 'pemutu.periode-kpi.*', 'pemutu.tim-mutu.*', 'hr.pegawai.*', 'hr.struktur-organisasi.*'],
             'children'      => [
                 [
                     'title' => 'Data Pegawai',
                     'route' => 'hr.pegawai.index',
                     'active_routes' => ['hr.pegawai.*'],
-                    'icon' => 'ti ti-user-circle',
+                    'icon' => 'ti ti-id-card',
+                ],
+                [
+                    'title' => 'Struktur Organisasi',
+                    'route' => 'hr.struktur-organisasi.index',
+                    'active_routes' => ['hr.struktur-organisasi.*'],
+                    'icon' => 'ti ti-hierarchy-2',
                 ],
                 [
                     'title' => 'Label',
@@ -88,19 +94,11 @@
             ],
         ],
         [
-            'title'         => 'Pelaksanaan',
-            'type'          => 'dropdown',
-            'id'            => 'navbar-pelaksanaan',
-            'icon'          => 'ti ti-broadcast',
+            'type'          => 'item',
+            'title'         => 'Pelaksanaan/Pemantauan',
+            'route'         => 'pemutu.pemantauan.index',
             'active_routes' => ['pemutu.pemantauan.*'],
-            'children'      => [
-                [
-                    'title'         => 'Pemantauan',
-                    'route'         => 'pemutu.pemantauan.index',
-                    'active_routes' => ['pemutu.pemantauan.*'],
-                    'icon'          => 'ti ti-device-heart-monitor',
-                ],
-            ],
+            'icon'          => 'ti ti-broadcast',
         ],
         [
             'title'         => 'Evaluasi',
@@ -147,7 +145,7 @@
             'title'         => 'Summary',
             'id'            => 'navbar-summary-new',
             'icon'          => 'ti ti-chart-pie',
-            'active_routes' => ['pemutu.indikator-summary.*', 'pemutu.dokumen-spmi.summary'],
+            'active_routes' => ['pemutu.indikator-summary.*', 'pemutu.dokumen-spmi.summary', 'pemutu.five-year-summary.*'],
             'type'          => 'dropdown',
             'children'      => [
                 [
@@ -167,6 +165,12 @@
                     'route'         => 'pemutu.indikator-summary.performa',
                     'active_routes' => ['pemutu.indikator-summary.performa', 'pemutu.indikator-summary.data-performa'],
                     'icon'          => 'ti ti-chart-line',
+                ],
+                [
+                    'title'         => 'Histori PPEPP 5 Tahun',
+                    'route'         => 'pemutu.five-year-summary.index',
+                    'active_routes' => ['pemutu.five-year-summary.*'],
+                    'icon'          => 'ti ti-timeline',
                 ],
             ],
         ],

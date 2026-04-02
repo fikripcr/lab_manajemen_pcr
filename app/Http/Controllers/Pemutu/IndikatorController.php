@@ -33,7 +33,12 @@ class IndikatorController extends Controller
             $activeType = 'standar';
         }
 
-        $siklus = $this->PeriodeSpmiService->getSiklusData();
+        // Active Kelompok (Akademik / Non Akademik) from session
+        $activeKelompok = session('pemutu_active_kelompok', 'akademik');
+        $siklus         = $this->PeriodeSpmiService->getSiklusData();
+
+        // Single Active Periode
+        $periode = $siklus[$activeKelompok] ?? null;
 
         // Filters data
         $siklusData   = $this->PeriodeSpmiService->getSiklusData();
@@ -55,18 +60,39 @@ class IndikatorController extends Controller
             return [$item->encrypted_doksub_id => '[' . ($item->dokumen?->periode ?? 'RENSTRA') . '] ' . $item->judul];
         })->toArray();
 
-        return view('pages.pemutu.indikator.index', compact('dokumens', 'labelParents', 'types', 'activeType', 'siklus', 'renstraOptions'));
+        return view('pages.pemutu.indikator.index', compact(
+            'dokumens', 'labelParents', 'types', 'activeType', 'siklus', 'renstraOptions',
+            'activeKelompok', 'periode'
+        ));
     }
 
     public function data(Request $request)
     {
-        // SIMPLE LOGIC: If not 'all', add to filters
-        $filters = [];
-        foreach ($request->only(['dokumen_id', 'renstra_poin_id', 'label_ids', 'kelompok_indikator', 'jenis_data', 'type', 'periode']) as $key => $value) {
-            if (!empty($value) && $value !== 'all') {
+        $filters     = [];
+        $requestData = $request->only(['dokumen_id', 'renstra_poin_id', 'label_ids', 'kelompok_indikator', 'jenis_data', 'type', 'periode']);
+
+        foreach ($requestData as $key => $value) {
+            if (! empty($value) && $value !== 'all') {
                 $filters[$key] = $value;
             }
         }
+
+        // Context Fallbacks (Session/Cycle)
+        if (empty($filters['type'])) {
+            $filters['type'] = $request->query('type', 'standar');
+        }
+        
+        if (empty($filters['periode'])) {
+            $siklus             = $this->PeriodeSpmiService->getSiklusData();
+            $filters['periode'] = $siklus['tahun'];
+        }
+
+        if (empty($filters['kelompok_indikator'])) {
+            $activeKelompok = session('pemutu_active_kelompok', 'akademik');
+            $filters['kelompok_indikator'] = str_replace('_', ' ', ucwords($activeKelompok, '_'));
+        }
+
+        \Log::info("Datatable Filters applied", $filters);
 
         $query = $this->indikatorService->getFilteredQuery($filters);
 
@@ -75,7 +101,10 @@ class IndikatorController extends Controller
                 return pemutuDtColNo($row);
             })
             ->addColumn('indikator', function ($row) {
-                return pemutuDtColIndikator($row);
+                $html  = '<span class="text-primary fw-bold me-1">[' . e($row->no_indikator) . ']</span>';
+                $html .= '<span class="fw-medium lh-base">' . e($row->indikator) . '</span>';
+
+                return $html;
             })
             ->addColumn('dokumen_judul', function ($row) {
                 $html = '';
@@ -95,24 +124,15 @@ class IndikatorController extends Controller
             ->addColumn('doksub_judul', function ($row) {
                 return $row->dokSubs->pluck('judul')->implode(', ') ?: '-';
             })
-            ->addColumn('kelompok_indikator', function ($row) {
-                $color = $row->kelompok_indikator == 'Akademik' ? 'green' : 'orange';
-
-                return '<span class="badge bg-' . $color . '-lt text-' . $color . '">' . e($row->kelompok_indikator) . '</span>';
-            })
-            ->addColumn('jenis_data', function ($row) {
-                $color = $row->jenis_data == 'Kualitatif' ? 'blue' : 'purple';
-
-                return '<span class="badge bg-' . $color . '-lt text-' . $color . '">' . e($row->jenis_data) . '</span>';
-            })
             ->addColumn('renstra_poin', function ($row) {
-                if ($row->renstraPoin) {
+                $renstraPoin = $row->getResolvedRenstraPoin();
+                if ($renstraPoin) {
                     $url = route('pemutu.dokumen.index', [
-                        'jenis' => $row->renstraPoin->dokumen?->jenis ?? 'renstra',
-                        'id'    => $row->renstraPoin->encrypted_doksub_id,
+                        'jenis' => $renstraPoin->dokumen?->jenis ?? 'renstra',
+                        'id'    => $renstraPoin->encrypted_doksub_id,
                         'type'  => 'doksub',
                     ]);
-                    $text = ($row->renstraPoin->dokumen?->judul ?? 'Renstra') . ': ' . $row->renstraPoin->judul;
+                    $text = ($renstraPoin->dokumen?->judul ?? 'Renstra') . ': ' . $renstraPoin->judul;
 
                     return '<a href="' . $url . '" class="text-inherit">' . e($text) . '</a>';
                 }
@@ -130,7 +150,7 @@ class IndikatorController extends Controller
                     'deleteUrl' => route('pemutu.indikator.destroy', $row->encrypted_indikator_id),
                 ])->render();
             })
-            ->rawColumns(['no', 'indikator', 'labels', 'action', 'renstra_poin', 'dokumen_judul', 'kelompok_indikator', 'jenis_data'])
+            ->rawColumns(['no', 'indikator', 'labels', 'action', 'renstra_poin', 'dokumen_judul'])
             ->make(true);
     }
 

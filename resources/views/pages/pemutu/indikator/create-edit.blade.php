@@ -104,6 +104,34 @@
                                             :selected="old('jenis_data', $indikator->jenis_data)"
                                         />
                                     </div>
+
+                                    <div class="col-md-3">
+                                        <x-tabler.form-select
+                                            name="level_risk"
+                                            label="Level Risiko"
+                                            :required="false"
+                                            :options="[
+                                                'LOW RISK' => 'Low Risk',
+                                                'MEDIUM RISK' => 'Medium Risk',
+                                                'HIGH RISK' => 'High Risk'
+                                            ]"
+                                            :selected="old('level_risk', $indikator->level_risk ?? 'LOW RISK')"
+                                        />
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label text-muted small">Sumber / Origin</label>
+                                        @if($isEdit && $indikator->prevIndikator)
+                                            <div class="form-control-plaintext">
+                                                <a href="{{ route('pemutu.indikator.edit', $indikator->prevIndikator->encrypted_indikator_id) }}" target="_blank" class="badge bg-purple-lt border border-purple px-2 py-1 text-decoration-none fs-6" title="Buka Indikator Tahun Sebelumnya">
+                                                    <i class="ti ti-external-link me-1"></i> {{ $indikator->prevIndikator->no_indikator ?: 'Tahun Lalu' }}
+                                                </a>
+                                            </div>
+                                            <input type="hidden" name="origin_from" value="{{ $indikator->origin_from }}">
+                                        @else
+                                            <input type="text" class="form-control" name="origin_from" value="{{ old('origin_from', $indikator->origin_from) }}" placeholder="-">
+                                        @endif
+                                    </div>
                                 </div>
 
                                 <x-tabler.form-textarea name="indikator" label="Nama Indikator" rows="2" placeholder="Masukkan nama indikator..." value="{{ old('indikator', $indikator->indikator) }}" />
@@ -126,7 +154,7 @@
                                 <x-tabler.form-select name="renstra_poin_id" type="select2" label="Mapping ke Poin Renstra" class="mb-3" data-placeholder="Pilih poin Renstra...">
                                     <option value="">-- Tidak Dipetakan --</option>
                                     @foreach($renstraOptions as $ro)
-                                        <option value="{{ $ro->encrypted_doksub_id }}" {{ decryptIdIfEncrypted(old('renstra_poin_id', $indikator->renstra_poin_id)) == $ro->doksub_id ? 'selected' : '' }}>
+                                        <option value="{{ $ro->encrypted_doksub_id }}" {{ old('renstra_poin_id', $indikator->encrypted_renstra_poin_id) == $ro->encrypted_doksub_id ? 'selected' : '' }}>
                                             [{{ $ro->dokumen?->periode ?? 'RENSTRA' }}] {{ $ro->judul }} {{ $ro->kode ? '('.$ro->kode.')' : '' }}
                                         </option>
                                     @endforeach
@@ -138,18 +166,21 @@
                                         <x-tabler.form-select name="labels" id="label-selector" type="select2" label="Label" multiple="true" data-placeholder="Pilih Label (bisa pilih banyak)...">
                                             @php
                                                 $selectedLabelIds = $isEdit ? $indikator->labels->pluck('label_id')->toArray() : [];
+                                                $oldLabels = old('labels', []);
+                                                $oldLabelIds = array_filter(array_map('decryptIdIfEncrypted', is_array($oldLabels) ? $oldLabels : [$oldLabels]));
+                                                $mergedSelectedIds = array_unique(array_merge($selectedLabelIds, $oldLabelIds));
                                             @endphp
                                             @foreach($labelParents as $parent)
                                                 @if($parent->children->count() > 0)
                                                     <optgroup label="{{ $parent->name }}">
                                                         @foreach($parent->children as $child)
-                                                            <option value="{{ $child->encrypted_label_id }}" {{ in_array($child->label_id, $selectedLabelIds) ? 'selected' : '' }}>
+                                                            <option value="{{ $child->encrypted_label_id }}" {{ in_array($child->label_id, $mergedSelectedIds) ? 'selected' : '' }}>
                                                                 {{ $parent->name }} - {{ $child->name }}
                                                             </option>
                                                         @endforeach
                                                     </optgroup>
                                                 @else
-                                                    <option value="{{ $parent->encrypted_label_id }}" {{ in_array($parent->label_id, $selectedLabelIds) ? 'selected' : '' }}>
+                                                    <option value="{{ $parent->encrypted_label_id }}" {{ in_array($parent->label_id, $mergedSelectedIds) ? 'selected' : '' }}>
                                                         {{ $parent->name }}
                                                     </option>
                                                 @endif
@@ -187,21 +218,24 @@
                                 </div>
 
                                 <div id="skala-container" style="{{ $hasSkala ? '' : 'display: none;' }}">
-                                    <div class="row g-2">
+                                    <div class="row row-cols-1 row-cols-md-2 g-3">
                                     @foreach([0,1,2,3,4] as $level)
-                                    <div class="col-12 mb-2">
-                                        <x-tabler.card class="card-sm border-blue-lt mb-0">
-                                            <x-tabler.card-header class="bg-blue-lt py-2" title="Level Skala {{ $level }}" />
-                                            <x-tabler.card-body class="p-2">
-                                                <x-tabler.form-textarea
-                                                    id="skala-{{ $level }}"
-                                                    name="skala[{{ $level }}]"
-                                                    label=""
-                                                    height="180"
-                                                    :value="old('skala.' . $level, ($indikator->skala[$level] ?? ($indikator->skala ? ($indikator->skala[$level] ?? '') : '')))"
-                                                />
-                                            </x-tabler.card-body>
-                                        </x-tabler.card>
+                                    <div class="col">
+                                        <div class="p-3 border rounded-3 bg-light-lt h-100 shadow-sm border-blue-lt">
+                                            <div class="d-flex align-items-center mb-2 gap-2">
+                                                <div class="avatar avatar-sm bg-blue-lt fw-bold border border-blue">
+                                                    {{ $level }}
+                                                </div>
+                                                <div class="fw-bold text-primary">Level Skala {{ $level }}</div>
+                                            </div>
+                                            <x-tabler.form-textarea
+                                                id="skala-{{ $level }}"
+                                                name="skala[{{ $level }}]"
+                                                label=""
+                                                height="180"
+                                                :value="old('skala.' . $level, ($indikator->skala[$level] ?? ($indikator->skala ? ($indikator->skala[$level] ?? '') : '')))"
+                                            />
+                                        </div>
                                     </div>
                                     @endforeach
                                     </div>

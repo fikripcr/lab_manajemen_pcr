@@ -174,6 +174,33 @@ if (! function_exists('pemutuIndikatorGenerators')) {
 // HELPER FUNCTIONS THAT ARE STILL NEEDED (Not in Config)
 // ─────────────────────────────────────────────────────────
 
+if (! function_exists('pemutuSkalaBadge')) {
+    /**
+     * Render a standardized color-coded scale badge.
+     */
+    function pemutuSkalaBadge($skala, $size = 'md', $showText = true): string
+    {
+        if ($skala === null || $skala === '') {
+            return '<span class="text-muted-light small fst-italic">n/a</span>';
+        }
+
+        $score = (int) $skala;
+        $color = match (true) {
+            $score >= 4 => 'green',
+            $score >= 3 => 'blue',
+            $score >= 2 => 'orange',
+            $score >= 1 => 'red',
+            default     => 'secondary',
+        };
+
+        $fontSize   = $size === 'sm' ? 'font-size: 10px;' : 'font-size: 11px;';
+        $badgeClass = $size === 'sm' ? 'badge-sm' : '';
+        $text       = $showText ? 'Skala ' . $score : $score;
+
+        return '<span class="badge bg-' . $color . '-lt text-' . $color . ' ' . $badgeClass . ' border border-' . $color . ' border-opacity-10 fw-bold px-2" style="' . $fontSize . '" data-bs-toggle="tooltip" title="Skala Capaian: ' . $score . '">' . e($text) . '</span>';
+    }
+}
+
 if (! function_exists('pemutuLabelBadge')) {
     /**
      * Render a single label badge HTML with correct color from its LabelType.
@@ -208,61 +235,18 @@ if (! function_exists('pemutuLabelBadges')) {
 if (! function_exists('pemutuDtColNo')) {
     /**
      * Render the first column (# / No) for Indikator DataTables.
-     * Contains No, Level/Type, Kelompok, Quality, Risk, ID, and Search Icon.
      */
     function pemutuDtColNo($row)
     {
-        $origin = $row->origin_from ?? '';
-        $type   = $row->type ? ucfirst($row->type) : 'Standar';
-        $kel    = $row->kelompok_indikator ?? null;
-        $risk   = strtoupper($row->level_risk ?? 'NO RISK');
-        $jd     = $row->jenis_data ?? '-';
-        $base   = $row->parent_no_indikator ?? ($row->parent?->no_indikator ?? null);
+        $kel  = $row->kelompok_indikator ?? null;
+        $jd   = $row->jenis_data ?? '-';
+        $base = $row->parent_no_indikator ?? ($row->parent?->no_indikator ?? null);
 
-        // Matrix Data Extraction
-        $important = $row->prev_important ?? null;
-        $urgent    = $row->prev_urgent ?? null;
-
-        if (! $important && ! $urgent && isset($row->orgUnits) && ! is_string($row->orgUnits) && $row->orgUnits->isNotEmpty()) {
-            $pivot     = $row->orgUnits->first()->pivot;
-            $important = $pivot->pengend_important_matrix ?? null;
-            $urgent    = $pivot->pengend_urgent_matrix ?? null;
-        }
-
-        $riskColor = match ($risk) {
-            'HIGH RISK'   => 'danger',
-            'MEDIUM RISK' => 'warning',
-            'LOW RISK'    => 'info',
-            default       => 'secondary',
-        };
-
-        $html = '<div class="text-center small d-flex flex-column gap-1 align-items-center" style="min-width: 70px;">';
-
-        $html .= $kel ? '<div class="text-muted mt-1" style="font-size: 9px;">' . e($kel) . '</div>' : '';
-
-        // Show Matrix if available, otherwise show Risk
-        if ($important || $urgent) {
-            if ($important === 'important') {
-                $html .= '<span class="badge bg-red-lt text-red px-1 mt-1" style="font-size: 9px;">IMPORTANT</span>';
-            }
-            if ($urgent === 'urgent') {
-                $html .= '<span class="badge bg-orange-lt text-orange px-1 mt-0" style="font-size: 9px;">URGENT</span>';
-            }
-            if ($important === 'not_important' && $urgent === 'not_urgent') {
-                $html .= '<span class="badge bg-secondary-lt text-secondary px-1 mt-1" style="font-size: 9px;">LOW PRIO</span>';
-            }
-        } else {
-            $html .= '<span class="badge bg-' . $riskColor . ' text-white px-1 mt-1" style="font-size: 9px;">' . e($risk) . '</span>';
-        }
-
-        if ($jd !== '-') {
-            $html .= '<span class="status status-blue status-lite py-0 px-1 fw-bold mt-1" style="font-size: 10px;">' . e($jd) . '</span>';
-        }
-
-        if ($base) {
-            $html .= '<div class="text-muted mt-1" style="font-size: 9px; line-height: 1;">Base: [' . e($base) . ']</div>';
-        }
-
+        $html  = '<div class="text-center small d-flex flex-column gap-1 align-items-center">';
+        $html .= $kel ? '<div class="text-muted mt-1">' . e($kel) . '</div>' : '';
+        $html .= pemutuDtColEisenhower($row);
+        $html .= $jd !== '-' ? '<span class="badge ">' . e($jd) . '</span>' : '';
+        $html .= $base ? '<div class="text-muted mt-1">Base: [' . e($base) . ']</div>' : '';
         $html .= '</div>';
 
         return $html;
@@ -272,7 +256,6 @@ if (! function_exists('pemutuDtColNo')) {
 if (! function_exists('pemutuDtColIndikator')) {
     /**
      * Render the second column (Indikator Content) for Indikator DataTables.
-     * Contains Standar Header, Indikator Text, Labels, and Responsible Unit/Person.
      */
     function pemutuDtColIndikator($row)
     {
@@ -284,7 +267,7 @@ if (! function_exists('pemutuDtColIndikator')) {
             // Get root/parent doc if exists (e.g. Formulir -> Standar)
             $induk = ($doc && $doc->parent) ? $doc->parent : $doc;
             if ($induk) {
-                $standar = trim(($induk->kode ?? '') . ' ' . ($induk->judul ?? ''));
+                $standar = $induk->judul;
             }
         } elseif (isset($row->dokumen_judul)) {
             $standar = $row->dokumen_judul;
@@ -294,14 +277,14 @@ if (! function_exists('pemutuDtColIndikator')) {
             // Find root/main document
             $induk = ($doc && $doc->parent) ? $doc->parent : $doc;
             if ($induk) {
-                $standar = trim(($induk->kode ?? '') . ' ' . ($induk->judul ?? ''));
+                $standar = $induk->judul;
             } else {
                 // If no document found, fallback to sub-document title
-                $standar = trim(($ds->kode ?? '') . ' ' . ($ds->judul ?? ''));
+                $standar = $ds->judul;
             }
         }
 
-        if (isset($doc) && $doc && $doc->periode) {
+        if (isset($doc) && $doc) {
             $standar .= ' (' . $doc->periode . ')';
         }
 
@@ -323,7 +306,7 @@ if (! function_exists('pemutuDtColIndikator')) {
         }
 
         // 4. Responsible
-        $resp = $row->unit_name ?? ($row->unit_code ?? null);
+        $resp  = $row->unit_name ?? ($row->unit_code ?? null);
         if (! $resp && isset($row->orgUnits) && ! is_string($row->orgUnits) && $row->orgUnits->isNotEmpty()) {
             $resp = $row->orgUnits->first()->name ?? $row->orgUnits->first()->code;
         }
@@ -332,29 +315,21 @@ if (! function_exists('pemutuDtColIndikator')) {
         }
 
         $html = '<div class="d-flex flex-column gap-1">';
-        $html .= '<div class="text-muted small fw-bold opacity-75 mb-1"><i class="ti ti-bell-ringing me-1"></i>' . e($standar) . '</div>';
+        $html .= '<div class="text-muted small fw-bold opacity-75">' . e($standar) . '</div>';
 
-        // Inline No + Text with Scroll
         $no    = $row->no_indikator ?? '-';
-        $id    = $row->indikator_id ?? null;
-        $html .= '<div style="max-height: 20vh; overflow-y: auto; scrollbar-width: thin;" class="pe-2 mb-1">';
-        if ($id) {
-            $url   = route('pemutu.indikator.show', encryptId($id));
-            $html .= '<a href="' . $url . '" class="text-primary fw-bold me-1" title="Lihat Detail Indikator">[' . e($no) . ']</a>';
-        } else {
-            $html .= '<strong class="me-1">[' . e($no) . ']</strong>';
-        }
+        $html .= '<div>';
+        $html .= '<span class="text-primary fw-bold me-1">[' . e($no) . ']</span>';
         $html .= '<span class="fw-medium lh-base">' . e($text) . '</span>';
         $html .= '</div>';
 
         if ($labelHtml) {
-            $html .= '<div class="mb-1">' . $labelHtml . '</div>';
+            $html .= '<div class="mb-1 small">' . $labelHtml . '</div>';
         }
 
         if ($resp) {
             $html .= '<div class="small text-muted d-flex align-items-center gap-1 opacity-75">';
-            $html .= '<i class="ti ti-user fs-3"></i>';
-            $html .= '<span class="fw-bold">' . e($resp) . '</span>';
+            $html .= '<i class="ti ti-building"></i>' . e($resp);
             $html .= '</div>';
         }
 
@@ -378,20 +353,11 @@ if (! function_exists('pemutuDtColTarget')) {
             }
         }
 
-        $html = '<div class="d-flex flex-column">';
-        $html .= '<div class="fw-bold">' . e($target) . '</div>';
-        $html .= '</div>';
+        $html = '<div class="fw-bold">' . e($target) . '</div>';
 
         return $html;
     }
 }
-
-// ─────────────────────────────────────────────────────────
-// DATA TABLES COLUMN RENDERERS (Still needed, not in Config)
-
-// ─────────────────────────────────────────────────────────
-// DATA TABLES COLUMN RENDERERS (Still needed, not in Config)
-// ─────────────────────────────────────────────────────────
 
 if (! function_exists('pemutuDtColAnalisisEd')) {
     /**
@@ -407,7 +373,7 @@ if (! function_exists('pemutuDtColAnalisisEd')) {
         }
 
         $text = $pivot->ed_analisis ?? '-';
-        $html = '<div style="max-height: 200px; overflow-y: auto;" class="mb-2">' . $text . '</div>';
+        $html = pemutuTextScroll($text);
 
         // Evidence items
         $evidenceHtml = '';
@@ -426,24 +392,14 @@ if (! function_exists('pemutuDtColAnalisisEd')) {
                 }
             }
 
-            // 1. Show Skala first
-            if (isset($pivot->ed_skala) && $pivot->ed_skala !== null && $pivot->ed_skala !== '') {
-                $evidenceHtml .= '<span class="badge bg-primary text-white me-2 mb-1" title="Nilai Skala Capaian" data-bs-toggle="tooltip">Skala [' . e($pivot->ed_skala) . ']</span>';
-
-                // Add pipeline if there are subsequent attachments/links
-                if ($hasFile || $hasLinks) {
-                    $evidenceHtml .= '<span class="text-muted mx-1 mb-1">|</span>';
-                }
-            }
-
-            // 2. Show File Attachment
+            // 1. Show File Attachment
             if ($hasFile && isset($indModel)) {
                 foreach ($indModel->getMedia('ed_attachments') as $media) {
                     $evidenceHtml .= '<a href="' . $media->getUrl() . '" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1" title="Unduh: ' . e($media->file_name) . '" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
                 }
             }
 
-            // 3. Show External Links
+            // 2. Show External Links
             if ($hasLinks) {
                 foreach ($linksArray as $link) {
                     $name          = htmlspecialchars($link['name'] ?? 'Tautan');
@@ -454,8 +410,40 @@ if (! function_exists('pemutuDtColAnalisisEd')) {
         }
 
         if ($evidenceHtml) {
-            $html .= '<div class="d-flex flex-wrap align-items-center border-top pt-2">' . $evidenceHtml . '</div>';
+            $html .= '<div class="d-flex flex-wrap align-items-center border-top pt-2 mt-2">' . $evidenceHtml . '</div>';
         }
+
+        return $html;
+    }
+}
+
+if (! function_exists('pemutuDtColCapaianSkalaEd')) {
+    /**
+     * Render the Capaian + Skala grouped result column for ED.
+     */
+    function pemutuDtColCapaianSkalaEd($row)
+    {
+        $pivot = null;
+        if (isset($row->orgUnits) && ! is_string($row->orgUnits) && $row->orgUnits->isNotEmpty()) {
+            $pivot = $row->orgUnits->first()->pivot;
+        } elseif (isset($row->ed_capaian) || isset($row->indikorgunit_id)) {
+            $pivot = $row;
+        }
+
+        if (! $pivot) {
+            return '<span class="text-muted fst-italic">Belum diisi</span>';
+        }
+
+        $capaian = $pivot->ed_capaian ?? '-';
+        $skala   = $pivot->ed_skala ?? null;
+
+        $html  = '<div class="text-center">';
+        $html .= '<div class="fw-bold mb-1">' . e($capaian) . '</div>';
+
+        if ($skala !== null && $skala !== '') {
+            $html .= '<div>' . pemutuSkalaBadge($skala) . '</div>';
+        }
+        $html .= '</div>';
 
         return $html;
     }
@@ -606,15 +594,30 @@ if (! function_exists('pemutuDtColStatusEd')) {
             $pivot = $row->orgUnits->first()?->pivot;
         }
 
-        $edCapaian = $pivot->ed_capaian ?? $row->ed_capaian ?? null;
-        $edSkala   = $pivot->ed_skala ?? $row->ed_skala ?? null;
+        $edCapaian  = $pivot->ed_capaian ?? $row->ed_capaian ?? null;
+        $edAnalisis = $pivot->ed_analisis ?? $row->ed_analisis ?? null;
+        $edSkala    = $pivot->ed_skala ?? $row->ed_skala ?? null;
 
-        if ($edCapaian) {
-            $skalaLabel = $edSkala !== null
-                ? '<span class="badge bg-blue-lt text-blue ms-1">Skala ' . e($edSkala) . '</span>'
-                : '';
+        if ($edCapaian || $edAnalisis) {
+            $html = '';
+            if ($edSkala !== null && $edSkala !== '') {
+                $html .= '<div>' . pemutuSkalaBadge($edSkala, 'sm') . '</div>';
+            }
 
-            return '<span class="badge bg-success-lt text-success"><i class="ti ti-check me-1"></i>ED Diisi</span>' . $skalaLabel;
+            $content = '';
+            if ($edCapaian) {
+                $content .= '<strong>Capaian:</strong><br>' . nl2br(e($edCapaian));
+            }
+            if ($edAnalisis) {
+                if ($content) {
+                    $content .= '<div class="mt-2 text-muted-dark opacity-50 ms-n1">-------------------</div>';
+                }
+                $content .= '<strong>Analisis Capaian:</strong><br>' . nl2br(e($edAnalisis));
+            }
+
+            $html .= pemutuTextScroll($content, '150px');
+
+            return $html;
         }
 
         return '<span class="badge bg-secondary-lt text-secondary">Belum Diisi</span>';
@@ -629,16 +632,14 @@ if (! function_exists('pemutuDtColStatusAmi')) {
             $pivot = $row->orgUnits->first()?->pivot;
         }
 
-        $amiHasil  = $pivot->ami_hasil_akhir ?? $row->ami_hasil_akhir ?? null;
-        $label     = $row->ami_hasil_label ?? $row->ami_hasil_akhir_label ?? null;
-        $amiTemuan = $pivot->ami_hasil_temuan ?? $row->ami_hasil_temuan ?? null;
-        $amiSebab  = $pivot->ami_hasil_temuan_sebab ?? $row->ami_hasil_temuan_sebab ?? null;
-        $amiAkibat = $pivot->ami_hasil_temuan_akibat ?? $row->ami_hasil_temuan_akibat ?? null;
-        $amiRekom  = $pivot->ami_hasil_temuan_rekom ?? $row->ami_hasil_temuan_rekom ?? null;
+        $amiHasil = $pivot->ami_hasil_akhir ?? $row->ami_hasil_akhir ?? null;
+        $label    = $row->ami_hasil_label ?? $row->ami_hasil_akhir_label ?? null;
 
         if ($amiHasil !== null) {
             $colors = [0 => 'danger', 1 => 'success', 2 => 'info', 'KTS' => 'danger', 'Terpenuhi' => 'success', 'Terlampaui' => 'info'];
+            $icons  = [0 => 'ti-alert-triangle', 1 => 'ti-check', 2 => 'ti-rocket', 'KTS' => 'ti-alert-triangle', 'Terpenuhi' => 'ti-check', 'Terlampaui' => 'ti-rocket'];
             $color  = $colors[$amiHasil] ?? 'secondary';
+            $icon   = $icons[$amiHasil] ?? 'ti-help';
 
             if (! $label) {
                 if (is_numeric($amiHasil)) {
@@ -649,44 +650,7 @@ if (! function_exists('pemutuDtColStatusAmi')) {
                 }
             }
 
-            $html = '<div class="d-flex flex-column gap-1">';
-            $html .= '<div><span class="badge bg-' . $color . '-lt text-' . $color . ' fs-6 px-2">' . e($label) . '</span></div>';
-
-            // Jika KTS, tampilkan semua detail jika ada
-            if ($amiHasil == 0) {
-                $html .= '<div style="max-height: 150px; overflow-y: auto; scrollbar-width: thin;" class="text-muted pe-1 mt-1">';
-
-                if ($amiTemuan && $amiTemuan !== '-') {
-                    $html .= '<span class="fw-bold d-block text-uppercase text-danger mb-0" style="font-size: 9px; opacity: 0.8;">Temuan Umum:</span>';
-                    $html .= '<div class="small lh-sm mb-2">' . e(\Str::limit(strip_tags($amiTemuan), 100)) . '</div>';
-                }
-
-                if ($amiSebab && $amiSebab !== '-') {
-                    $html .= '<span class="fw-bold d-block text-uppercase text-danger mb-0" style="font-size: 9px; opacity: 0.8;">Sebab:</span>';
-                    $html .= '<div class="small lh-sm mb-2">' . e(\Str::limit(strip_tags($amiSebab), 100)) . '</div>';
-                }
-
-                if ($amiAkibat && $amiAkibat !== '-') {
-                    $html .= '<span class="fw-bold d-block text-uppercase text-danger mb-0" style="font-size: 9px; opacity: 0.8;">Akibat:</span>';
-                    $html .= '<div class="small lh-sm mb-2">' . e(\Str::limit(strip_tags($amiAkibat), 100)) . '</div>';
-                }
-
-                if ($amiRekom && $amiRekom !== '-') {
-                    $html .= '<span class="fw-bold d-block text-uppercase text-danger mb-0" style="font-size: 9px; opacity: 0.8;">Rekomendasi Auditor:</span>';
-                    $html .= '<div class="small lh-sm mb-1">' . e(\Str::limit(strip_tags($amiRekom), 100)) . '</div>';
-                }
-
-                $html .= '</div>';
-            } elseif ($amiTemuan && $amiTemuan !== '-') {
-                // Untuk Terpenuhi/Terlampaui yang punya temuan umum
-                $plainText  = strip_tags($amiTemuan);
-                $excerpt    = \Str::limit($plainText, 100);
-                $html      .= '<div class="text-muted small italic mt-1" title="' . e($plainText) . '">' . e($excerpt) . '</div>';
-            }
-
-            $html .= '</div>';
-
-            return $html;
+            return '<span class="badge bg-' . $color . '-lt text-' . $color . ' fs-6 px-2"><i class="' . $icon . ' me-1"></i>' . e($label) . '</span>';
         }
 
         return '<span class="badge bg-warning-lt text-warning"><i class="ti ti-clock me-1"></i>Belum Dinilai</span>';
@@ -733,7 +697,7 @@ if (! function_exists('pemutuDtColRtp')) {
         $tgl  = $pivot->ami_rtp_tgl_pelaksanaan ? formatTanggalIndo($pivot->ami_rtp_tgl_pelaksanaan) : '-';
 
         $html  = '<div class="d-flex flex-column gap-2">';
-        $html .= '<div style="max-height: 150px; overflow-y: auto; scrollbar-width: thin;" class="pe-1 small lh-base">' . $text . '</div>';
+        $html .= pemutuTextScroll($text);
         $html .= '<div class="mt-auto pt-1 border-top" style="font-size: 10px;">';
         $html .= '<span class="text-muted text-uppercase fw-bold"><i class="ti ti-calendar-event me-1"></i>Pelaksanaan:</span>';
         $html .= '<span class="ms-1 fw-semibold text-primary">' . e($tgl) . '</span>';
@@ -768,34 +732,42 @@ if (! function_exists('pemutuPeriodeStatus')) {
 
         if ($now->lt($start)) {
             $diffDays = $now->diffInDays($start);
-            $timeInfo = $diffDays > 0 ? "Dimulai dalam {$diffDays} hari" : 'Dimulai hari ini (segera)';
 
             return [
                 'is_active'   => false,
                 'status_text' => 'Belum Mulai',
-                'time_info'   => $timeInfo,
                 'color'       => 'secondary',
             ];
         } elseif ($now->gt($end)) {
             $diffDays = $end->copy()->startOfDay()->diffInDays($now);
-            $timeInfo = $diffDays > 0 ? '' : 'Berakhir kemarin';
 
             return [
                 'is_active'   => false,
                 'status_text' => 'Telah Berakhir',
-                'time_info'   => $timeInfo,
                 'color'       => 'danger',
             ];
         } else {
             $diffDays = $now->diffInDays($end->copy()->startOfDay());
-            $timeInfo = $diffDays == 0 ? 'Berakhir hari ini' : "Sisa {$diffDays} hari lagi";
 
             return [
                 'is_active'   => true,
                 'status_text' => 'Sedang Berjalan',
-                'time_info'   => $timeInfo,
                 'color'       => 'success',
             ];
         }
+    }
+}
+
+if (! function_exists('pemutuTextScroll')) {
+    /**
+     * Standardized scrollable text container for DataTables.
+     */
+    function pemutuTextScroll($text, $maxHeight = '120px'): string
+    {
+        if (empty($text) || $text === '-') {
+            return '<span class="text-muted small fst-italic">-</span>';
+        }
+
+        return '<div style="max-height: ' . $maxHeight . '; overflow-y: auto; scrollbar-width: thin; line-height: 1.5;" class="pe-1 small">' . $text . '</div>';
     }
 }

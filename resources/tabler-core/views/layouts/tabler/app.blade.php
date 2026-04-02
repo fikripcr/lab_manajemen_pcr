@@ -184,6 +184,7 @@
         'resources/tabler-core/js/tabler.js'
     ])
 
+    @stack('modals')
     @stack('scripts')
     
 </body>

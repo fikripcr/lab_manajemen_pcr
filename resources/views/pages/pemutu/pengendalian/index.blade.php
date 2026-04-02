@@ -2,78 +2,102 @@
 @section('title', 'Pengendalian Indikator - Siklus ' . $siklus['tahun'])
 
 @section('header')
-<x-tabler.page-header title="Pengendalian Indikator  SPMI {{ $siklus['tahun'] }}" pretitle="Pengendalian">
+<x-tabler.page-header title="Pengendalian Indikator SPMI {{ $siklus['tahun'] }}" pretitle="Pengendalian">
     <x-slot:actions>
-        <nav class="nav nav-segmented" id="top-tabs" role="tablist">
-            <a href="#tab-akademik" class="nav-link active" data-bs-toggle="tab" role="tab">
-                <i class="ti ti-school"></i>Akademik
+        <div class="btn-group p-1 bg-light rounded-pill shadow-sm" style="border: 1px solid #e6e8e9;">
+            <a href="{{ route('pemutu.set-kelompok', 'akademik') }}" 
+               class="btn {{ $activeKelompok === 'akademik' ? 'btn-white shadow-sm fw-bold border-0 active text-primary' : 'btn-ghost-secondary border-0 opacity-75' }} rounded-pill px-4 transition-all duration-200">
+                <i class="ti ti-school me-2"></i>Akademik
             </a>
-            <a href="#tab-non-akademik" class="nav-link" data-bs-toggle="tab" role="tab" tabindex="-1">
-                <i class="ti ti-building-community"></i>Non Akademik
+            <a href="{{ route('pemutu.set-kelompok', 'non_akademik') }}" 
+               class="btn {{ $activeKelompok === 'non_akademik' ? 'btn-white shadow-sm fw-bold border-0 active text-primary' : 'btn-ghost-secondary border-0 opacity-75' }} rounded-pill px-4 transition-all duration-200">
+                <i class="ti ti-building-community me-2"></i>Non Akademik
             </a>
-        </nav>
+        </div>
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
 
 @section('content')
-<div class="tab-content">
-    @foreach(['akademik', 'non_akademik'] as $type)
-        @php 
-            $periode = $siklus[$type]; 
-            $rapat = ${$type . 'Rapat'};
-            $rootDoks = ${$type . 'RootDoks'};
-            $typeId = str_replace('_', '-', $type);
-        @endphp
-        <div class="tab-pane {{ $type == 'akademik' ? 'active show' : '' }}" id="tab-{{ $typeId }}" role="tabpanel">
-            @if($periode)
-                @php $jadwalTersedia = $periode->pengendalian_awal && $periode->pengendalian_akhir; @endphp
-                
-                <x-tabler.card>
-                    <x-tabler.card-header class="border-bottom-0 pt-4">
-                        <ul class="nav nav-pills card-header-pills" id="pengendalian-tabs-{{ $typeId }}" data-bs-toggle="tabs" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <a href="#tab-pengendalian-{{ $typeId }}" class="nav-link active" data-bs-toggle="tab" role="tab">
-                                    <i class="ti ti-settings-check me-2"></i> Pengendalian Standar
-                                </a>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <a href="#tab-rtm-{{ $typeId }}" class="nav-link" data-bs-toggle="tab" role="tab" tabindex="-1">
-                                    <i class="ti ti-calendar-event me-2"></i> Rapat Tinjauan Manajemen (RTM)
-                                </a>
-                            </li>
-                        </ul>
-                    </x-tabler.card-header>
+    @if($periode)
+        @php $jadwalTersedia = $periode->pengendalian_awal && $periode->pengendalian_akhir; @endphp
+        
+        <x-tabler.card>
+            <x-tabler.card-header class="border-bottom-0 pt-4">
+                <ul class="nav nav-pills card-header-pills" id="pengendalian-tabs" data-bs-toggle="tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a href="#tab-rtm" class="nav-link active" data-bs-toggle="tab" role="tab" tabindex="-1">
+                            <i class="ti ti-calendar-event me-2"></i> Rapat Tinjauan Manajemen (RTM)
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a href="#tab-pengendalian" class="nav-link" data-bs-toggle="tab" role="tab">
+                            <i class="ti ti-settings-check me-2"></i> Pengendalian Standar
+                        </a>
+                    </li>
+                </ul>
+            </x-tabler.card-header>
 
-                    <div class="tab-content">
-                        {{-- SUB-TAB: PENGENDALIAN --}}
-                        <div class="tab-pane active show" id="tab-pengendalian-{{ $typeId }}" role="tabpanel">
-                            <x-tabler.card-body class="border-top">
-                                <div class="row align-items-center">
-                                    <div class="col">
-                                        <h3 class="mb-1">Periode {{ $periode->jenis_periode }} {{ $periode->periode }}</h3>
-                                        <div class="text-muted small mt-1">
-                                            @php $periodeInfo = pemutuPeriodeStatus($periode->pengendalian_awal, $periode->pengendalian_akhir); @endphp
-                                            @if($periode->pengendalian_awal && $periode->pengendalian_akhir)
-                                                <i class="ti ti-calendar me-1"></i>
-                                                Jadwal: {{ $periode->pengendalian_awal->format('d M Y') }} s.d. {{ $periode->pengendalian_akhir->format('d M Y') }}
-                                            @endif
-                                            <span class="badge bg-{{ $periodeInfo['color'] }}-lt ms-2">{{ $periodeInfo['status_text'] }}</span>
-                                            <span class="text-{{ $periodeInfo['color'] }} ms-1 fw-bold" style="font-size: 0.85em;">({{ $periodeInfo['time_info'] }})</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto d-flex gap-2">
-                                        <x-tabler.datatable-page-length :dataTableId="'table-pengend-' . $typeId" />
-                                        <x-tabler.datatable-filter :dataTableId="'table-pengend-' . $typeId" type="button" :target="'#table-pengend-' . $typeId . '-filter-area'" />
-                                        <x-tabler.datatable-search :dataTableId="'table-pengend-' . $typeId" />
-                                    </div>
+            <div class="tab-content">
+                {{-- SUB-TAB: RTM --}}
+                <div class="tab-pane active show" id="tab-rtm" role="tabpanel">
+                    @if(!$rapat)
+                        <x-tabler.card-body class="text-center py-5 border-top">
+                            <div class="mb-3">
+                                <span class="avatar avatar-xl rounded bg-teal-lt">
+                                    <i class="ti ti-calendar-plus fs-1"></i>
+                                </span>
+                            </div>
+                            <h3>Belum Ada RTM</h3>
+                            <p class="text-muted">Buat Rapat Tinjauan Manajemen untuk memulai proses pengendalian periode ini.</p>
+                            @php 
+                                $rtmAgendas = 'Pembukaan,Laporan Perkembangan SPMI,Analisis Data Indikator (Eisenhower Matrix),Tanya Jawab & Diskusi,Kesepakatan & Rekomendasi RTM,Penutup';
+                                $rtmUrl = route('Kegiatan.rapat.create', [
+                                    'jenis_rapat' => 'RTM Pengendalian',
+                                    'entitas_type' => 'PeriodeSpmi',
+                                    'entitas_id' => $periode->encrypted_periodespmi_id,
+                                    'pre_agendas' => $rtmAgendas
+                                ]);
+                            @endphp
+                            <x-tabler.button type="create" class="ajax-modal-btn"
+                                data-url="{{ $rtmUrl }}"
+                                data-modal-title="Buat RTM Pengendalian"
+                                data-modal-size="modal-xl"
+                                text="Buat RTM" />
+                        </x-tabler.card-body>
+                    @else
+                        <x-tabler.card-body class="border-top">
+                            @include('pages.pemutu.pengendalian._rtm_index_content', ['rapat' => $rapat, 'periode' => $periode])
+                        </x-tabler.card-body>
+                    @endif
+                </div>
+                {{-- SUB-TAB: PENGENDALIAN --}}
+                <div class="tab-pane" id="tab-pengendalian" role="tabpanel">
+                    <x-tabler.card-body class="border-top">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 class="mb-1">List Indikator - {{ ucfirst(str_replace('_', ' ', $activeKelompok)) }}</h3>
+                                <div class="text-muted small mt-1">
+                                    @php $periodeInfo = pemutuPeriodeStatus($periode->pengendalian_awal, $periode->pengendalian_akhir); @endphp
+                                    @if($periode->pengendalian_awal && $periode->pengendalian_akhir)
+                                        <i class="ti ti-calendar me-1"></i>
+                                        Jadwal: {{ $periode->pengendalian_awal->format('d M Y') }} s.d. {{ $periode->pengendalian_akhir->format('d M Y') }}
+                                    @endif
+                                    <span class="badge bg-{{ $periodeInfo['color'] }}-lt ms-2">{{ $periodeInfo['status_text'] }}</span>
                                 </div>
-                            </x-tabler.card-body>
-                            <div class="collapse" id="table-pengend-{{ $typeId }}-filter-area">
-                                <x-tabler.datatable-filter :dataTableId="'table-pengend-' . $typeId" type="bare">
+                            </div>
+                            <div class="col-auto d-flex gap-2">
+                                <x-tabler.datatable-page-length dataTableId="table-pengend" />
+                                <x-tabler.datatable-filter dataTableId="table-pengend" type="button" target="#table-pengend-filter-area" />
+                                <x-tabler.datatable-search dataTableId="table-pengend" />
+                            </div>
+                        </div>
+                    </x-tabler.card-body>
+                    <div class="collapse" id="table-pengend-filter-area">
+                        <x-tabler.datatable-filter dataTableId="table-pengend" type="bare">
                             <div class="row g-3">
                                 <div class="col-md-3">
-                                    <x-tabler.form-select name="unit_id" id="unit_id_{{ $typeId }}" label="Unit / Area" placeholder="">
+                                    <x-tabler.form-select name="unit_id" id="unit_id" label="Unit / Area" placeholder="">
                                         <option value="all">Semua Unit</option>
                                         @foreach($units as $unit)
                                             <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
@@ -81,7 +105,7 @@
                                     </x-tabler.form-select>
                                 </div>
                                 <div class="col-md-3">
-                                    <x-tabler.form-select name="dok_id" id="dok_id_{{ $typeId }}" label="Standar / Dokumen" placeholder="">
+                                    <x-tabler.form-select name="dok_id" id="dok_id" label="Standar / Dokumen" placeholder="">
                                         <option value="all">Semua Standar</option>
                                         @foreach($rootDoks as $dok)
                                             <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->judul }}</option>
@@ -89,98 +113,63 @@
                                     </x-tabler.form-select>
                                 </div>
                                 <div class="col-md-2">
-                                    <x-tabler.form-select name="pengend_status" id="pengend_status_{{ $typeId }}" label="Status Pengendalian" placeholder="">
+                                    <x-tabler.form-select name="pengend_status" id="pengend_status" label="Status Pengendalian" placeholder="">
                                         <option value="all">Semua</option>
-                                        <option value="tetap">Tetap</option>
-                                        <option value="penyesuaian">Penyesuaian</option>
-                                        <option value="nonaktif">Nonaktif</option>
-                                        <option value="filled">Sudah Diisi (Ada Status)</option>
-                                        <option value="empty">Belum Diisi (Tanpa Status)</option>
+                                            <option value="tetap">Tetap</option>
+                                            <option value="penyesuaian">Penyesuaian</option>
+                                            <option value="nonaktif">Nonaktif</option>
+                                            <option value="filled">Sudah Diisi (Ada Status)</option>
+                                            <option value="empty">Belum Diisi (Tanpa Status)</option>
                                     </x-tabler.form-select>
                                 </div>
                                 <div class="col-md-2">
-                                    <x-tabler.form-select name="pengend_important_matrix" id="pengend_important_matrix_{{ $typeId }}" label="Kepentingan" placeholder="">
+                                    <x-tabler.form-select name="pengend_important_matrix" id="pengend_important_matrix" label="Kepentingan" placeholder="">
                                         <option value="all">Semua</option>
                                         <option value="important">Important</option>
                                         <option value="not_important">Not Important</option>
                                     </x-tabler.form-select>
                                 </div>
                                 <div class="col-md-2">
-                                    <x-tabler.form-select name="pengend_urgent_matrix" id="pengend_urgent_matrix_{{ $typeId }}" label="Urgensi" placeholder="">
+                                    <x-tabler.form-select name="pengend_urgent_matrix" id="pengend_urgent_matrix" label="Urgensi" placeholder="">
                                         <option value="all">Semua</option>
                                         <option value="urgent">Urgent</option>
                                         <option value="not_urgent">Not Urgent</option>
                                     </x-tabler.form-select>
                                 </div>
                             </div>
-                                </x-tabler.datatable-filter>
-                            </div>
-                            <div class="table-responsive border-top">
-                                <x-tabler.datatable
-                                    id="table-pengend-{{ $typeId }}"
-                                    route="{{ route('pemutu.pengendalian.data', $periode->encrypted_periodespmi_id) }}"
-                                    :columns="[
-                                        ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                                        ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator'],
-                                        ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%'],
-                                        ['data' => 'analisis', 'name' => 'analisis', 'title' => 'Analisis', 'orderable' => false, 'searchable' => false],
-                                        ['data' => 'status_ami', 'name' => 'status_ami', 'title' => 'AMI', 'width' => '8%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                                        ['data' => 'status_pengend', 'name' => 'status_pengend', 'title' => 'Status', 'width' => '9%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                                        ['data' => 'eisenhower_matrix', 'name' => 'eisenhower_matrix', 'title' => 'Matrix', 'width' => '9%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '7%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                                    ]"
-                                />
-                            </div>
-                        </div>
-
-                        {{-- SUB-TAB: RTM --}}
-                        <div class="tab-pane" id="tab-rtm-{{ $typeId }}" role="tabpanel">
-                            @if(!$rapat)
-                                <x-tabler.card-body class="text-center py-5 border-top">
-                                    <div class="mb-3">
-                                        <span class="avatar avatar-xl rounded bg-teal-lt">
-                                            <i class="ti ti-calendar-plus fs-1"></i>
-                                        </span>
-                                    </div>
-                                    <h3>Belum Ada RTM</h3>
-                                    <p class="text-muted">Buat Rapat Tinjauan Manajemen untuk memulai proses pengendalian periode ini.</p>
-                                    @php 
-                                        $rtmAgendas = 'Pembukaan,Laporan Perkembangan SPMI,Analisis Data Indikator (Eisenhower Matrix),Tanya Jawab & Diskusi,Kesepakatan & Rekomendasi RTM,Penutup';
-                                        $rtmUrl = route('Kegiatan.rapat.create', [
-                                            'jenis_rapat' => 'RTM Pengendalian',
-                                            'entitas_type' => 'PeriodeSpmi',
-                                            'entitas_id' => $periode->encrypted_periodespmi_id,
-                                            'pre_agendas' => $rtmAgendas
-                                        ]);
-                                    @endphp
-                                    <x-tabler.button type="create" class="ajax-modal-btn"
-                                        data-url="{{ $rtmUrl }}"
-                                        data-modal-title="Buat RTM Pengendalian"
-                                        data-modal-size="modal-xl"
-                                        text="Buat RTM" />
-                                </x-tabler.card-body>
-                            @else
-                                <x-tabler.card-body class="border-top">
-                                    @include('pages.pemutu.pengendalian._rtm_index_content', ['rapat' => $rapat, 'periode' => $periode, 'typeId' => $typeId])
-                                </x-tabler.card-body>
-                            @endif
-                        </div>
+                        </x-tabler.datatable-filter>
                     </div>
-                </x-tabler.card>
-            @else
-                <x-tabler.card>
-                    <x-tabler.card-body class="py-5">
-                        <x-tabler.empty-state 
-                            title="Periode Belum Tersedia" 
-                            text="Data periode {{ str_replace('_', ' ', $type) }} untuk tahun {{ $siklus['tahun'] }} belum dibuat."
-                            icon="ti ti-calendar-off" 
+                    <div class="table-responsive border-top">
+                        <x-tabler.datatable
+                            id="table-pengend"
+                            route="{{ route('pemutu.pengendalian.data', $periode->encrypted_periodespmi_id) }}"
+                            :columns="[
+                                ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                                ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator'],
+                                ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%'],
+                                ['data' => 'analisis', 'name' => 'analisis', 'title' => 'Analisis', 'orderable' => false, 'searchable' => false],
+                                ['data' => 'status_ami', 'name' => 'status_ami', 'title' => 'AMI', 'width' => '8%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                                ['data' => 'status_pengend', 'name' => 'status_pengend', 'title' => 'Status', 'width' => '9%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '7%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                            ]"
                         />
-                    </x-tabler.card-body>
-                </x-tabler.card>
-            @endif
-        </div>
-    @endforeach
-</div>
+                    </div>
+                </div>
+
+                
+            </div>
+        </x-tabler.card>
+    @else
+        <x-tabler.card>
+            <x-tabler.card-body class="py-5 text-center">
+                <x-tabler.empty-state 
+                    title="Periode Belum Tersedia" 
+                    text="Data periode {{ str_replace('_', ' ', $activeKelompok) }} untuk tahun {{ $siklus['tahun'] }} belum dibuat."
+                    icon="ti ti-calendar-off" 
+                />
+            </x-tabler.card-body>
+        </x-tabler.card>
+    @endif
 @endsection
 
 @push('scripts')

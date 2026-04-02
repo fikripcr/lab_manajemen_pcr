@@ -49,6 +49,8 @@ class IndikatorRequest extends BaseRequest
             'kpi_assignments' => 'Penugasan KPI',
             'skala' => 'Skala',
             'skala.*' => 'Skala',
+            'level_risk' => 'Level Risiko',
+            'origin_from' => 'Sumber / Origin',
             'keterangan' => 'Keterangan',
         ];
     }

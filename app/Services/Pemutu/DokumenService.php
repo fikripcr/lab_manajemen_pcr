@@ -8,6 +8,18 @@ use Illuminate\Database\Eloquent\Builder;
 class DokumenService
 {
     /**
+     * Ambil dokumen standar utama (root) untuk filter.
+     */
+    public function getRootsByPeriode(int|string $tahun, string $jenis = 'standar'): \Illuminate\Support\Collection
+    {
+        return \App\Models\Pemutu\Dokumen::whereNull('parent_id')
+            ->where('periode', $tahun)
+            ->where('jenis', $jenis)
+            ->orderBy('seq')
+            ->get();
+    }
+
+    /**
      * Search for document sub-items (DokSub) based on query string.
      *
      * @return \Illuminate\Pagination\LengthAwarePaginator
@@ -64,13 +76,13 @@ class DokumenService
     /**
      * Get array of Kebijakan Dokumens (Visi, Misi, RJP, Renstra, Renop) by Periode
      */
-    public function getKebijakanByPeriode(int $periode): array
+    public function getKebijakanByPeriode(int $year): array
     {
         $jenisList = pemutuKebijakanJenisList();
 
         $dokumens = \App\Models\Pemutu\Dokumen::with(['dokSubs.childDokumens', 'dokSubs.mappedTo.dokumen'])
             ->whereIn('jenis', $jenisList)
-            ->where('periode', $periode)
+            ->where('periode', $year)
             ->get()
             ->keyBy('jenis');
 
@@ -85,7 +97,7 @@ class DokumenService
     /**
      * Get Mappable Poin Options for a given Jenis Kebijakan
      */
-    public function getMappablePoinOptions(string $sourceJenis, int $periode): \Illuminate\Support\Collection
+    public function getMappablePoinOptions(string $sourceJenis, int $year): \Illuminate\Support\Collection
     {
         $targetJenis = pemutuMappableJenis($sourceJenis);
 
@@ -94,7 +106,7 @@ class DokumenService
         }
 
         $targetDokumens = \App\Models\Pemutu\Dokumen::whereIn('jenis', $targetJenis)
-            ->where('periode', $periode)
+            ->where('periode', $year)
             ->pluck('dok_id');
 
         if ($targetDokumens->isEmpty()) {
@@ -109,7 +121,7 @@ class DokumenService
     /**
      * Get Mappable Parent Dokumen Options for a given Jenis (e.g. Formulir mapping to Standar/Manual)
      */
-    public function getMappableDokumenOptions(string $sourceJenis, int $periode): \Illuminate\Support\Collection
+    public function getMappableDokumenOptions(string $sourceJenis, int $year): \Illuminate\Support\Collection
     {
         $targetJenis = pemutuMappableJenis($sourceJenis);
 
@@ -118,7 +130,7 @@ class DokumenService
         }
 
         return \App\Models\Pemutu\Dokumen::whereIn('jenis', $targetJenis)
-            ->where('periode', $periode)
+            ->where('periode', $year)
             ->orderBy('kode')
             ->orderBy('judul')
             ->get();

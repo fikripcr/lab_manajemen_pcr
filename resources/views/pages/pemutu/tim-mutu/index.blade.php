@@ -9,17 +9,27 @@
 @section('content')
 <div class="mb-3">
     <x-tabler.card>
-        <x-tabler.card-body class="p-3">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <div class="input-icon">
-                        <span class="input-icon-addon">
-                            <i class="ti ti-search"></i>
-                        </span>
-                        <input type="text" id="search-unit" class="form-control" placeholder="Cari Unit...">
+        <x-tabler.card-body class="p-4">
+            <form id="filter-form">
+                <div class="row g-3">
+                    <div class="col-md-7">
+                        <div class="input-icon">
+                            <span class="input-icon-addon">
+                                <i class="ti ti-search"></i>
+                            </span>
+                            <input type="text" name="unit-name" class="form-control" placeholder="Cari Unit...">
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <select name="unit-type" class="form-select">
+                            <option value="">Semua Jenis Unit</option>
+                            @foreach($unitTypes as $type)
+                                <option value="{{ $type }}">{{ ucfirst(str_replace(['_', '-'], ' ', $type)) }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
-            </div>
+            </form>
         </x-tabler.card-body>
     </x-tabler.card>
 </div>
@@ -35,7 +45,7 @@
             $currentAuditor = $current['auditor'] ?? collect();
             $periodeId = $current['periode_id'] ?? null;
         @endphp
-        <div class="col-md-6 col-lg-4 unit-card" data-unit-name="{{ strtolower($unit->name) }}">
+        <div class="col-md-6 col-lg-4 unit-card" data-unit-name="{{ strtolower($unit->name) }}" data-unit-type="{{ $unit->type }}">
             <x-tabler.card class="h-100">
                 <x-tabler.card-header :title="$unit->indented_name">
                     @if($periodeId)
@@ -134,23 +144,77 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('search-unit');
-        
-        if (searchInput) {
-            searchInput.addEventListener('input', function (e) {
-                const term = e.target.value.toLowerCase();
-                const unitCards = document.querySelectorAll('.unit-card');
+        const filterForm = document.getElementById('filter-form');
+        const unitCards = document.querySelectorAll('.unit-card');
+        const STORAGE_KEY = 'tim_mutu_filters';
 
-                unitCards.forEach(card => {
-                    const unitName = card.dataset.unitName;
-                    if (unitName.includes(term)) {
-                        card.style.display = '';
+        function filterUnits() {
+            if (!filterForm) return;
+
+            const formData = new FormData(filterForm);
+            const filters = Object.fromEntries(formData.entries());
+
+            // Save to localStorage
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(filters));
+
+            unitCards.forEach(card => {
+                let isMatch = true;
+                
+                for (const [key, value] of Object.entries(filters)) {
+                    if (!value) continue;
+                    
+                    const cardValue = (card.getAttribute('data-' + key) || '').toLowerCase();
+                    const filterValue = value.toLowerCase();
+
+                    // If it's a text search field (contains 'name' or 'search' in key), use partial match
+                    if (key.includes('name') || key.includes('search')) {
+                        if (!cardValue.includes(filterValue)) {
+                            isMatch = false;
+                            break;
+                        }
                     } else {
-                        card.style.display = 'none';
+                        // Otherwise use exact match
+                        if (cardValue !== filterValue) {
+                            isMatch = false;
+                            break;
+                        }
                     }
-                });
+                }
+
+                card.style.display = isMatch ? '' : 'none';
             });
         }
+
+        // Initialize from localStorage
+        function initFilters() {
+            if (!filterForm) return;
+
+            const savedFilters = localStorage.getItem(STORAGE_KEY);
+            if (savedFilters) {
+                try {
+                    const filters = JSON.parse(savedFilters);
+                    for (const [key, value] of Object.entries(filters)) {
+                        const input = filterForm.querySelector(`[name="${key}"]`);
+                        if (input) {
+                            input.value = value;
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error parsing saved filters', e);
+                }
+            }
+
+            // Bind events to all inputs
+            filterForm.querySelectorAll('input, select').forEach(input => {
+                input.addEventListener('input', filterUnits);
+                input.addEventListener('change', filterUnits);
+            });
+
+            // Initial filter run
+            filterUnits();
+        }
+
+        initFilters();
 
     });
 </script>

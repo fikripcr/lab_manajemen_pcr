@@ -2,12 +2,38 @@
 
 namespace App\Services\Pemutu;
 
+use App\Models\Event\Rapat;
+use App\Models\Event\RapatEntitas;
 use App\Models\Pemutu\PeriodeSpmi;
+use App\Services\Event\RapatService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class PeriodeSpmiService
 {
+    public function __construct(
+        protected RapatService $rapatService,
+    ) {}
+    /**
+     * Resolve PeriodeSpmi by ID.
+     */
+    public function getById(string|int $id): PeriodeSpmi
+    {
+        return PeriodeSpmi::findOrFail(decryptIdIfEncrypted($id));
+    }
+
+    /**
+     * Cari periode tahun lalu dengan jenis yang sama.
+     */
+    public function getPreviousPeriod(PeriodeSpmi $periode): ?PeriodeSpmi
+    {
+        $prevYear = (int) $periode->periode - 1;
+
+        return PeriodeSpmi::where('periode', $prevYear)
+            ->where('jenis_periode', $periode->jenis_periode)
+            ->first();
+    }
+
     /**
      * Ambil semua periode SPMI dengan pagination (untuk halaman index).
      */
@@ -48,6 +74,24 @@ class PeriodeSpmiService
         }
 
         return collect($years);
+    }
+
+    /**
+     * Get available years from database (for dropdown/filter).
+     */
+    public function getAvailableYearsFromDatabase()
+    {
+        try {
+            return DB::table('pemutu_dokumen')
+                ->where('jenis', 'standar')
+                ->whereNotNull('periode')
+                ->distinct()
+                ->orderBy('periode', 'desc')
+                ->pluck('periode');
+        } catch (\Exception $e) {
+            // Fallback to current year if table doesn't exist or empty
+            return collect([(int) date('Y')]);
+        }
     }
 
     /**
@@ -96,32 +140,106 @@ class PeriodeSpmiService
      */
     public function getSiklusData(): array
     {
-        $years = $this->getAvailableYears();
+        try {
+            $years = $this->getAvailableYears();
 
-        if ($years->isEmpty()) {
+            if ($years->isEmpty()) {
+                return [
+                    'tahun' => (int) date('Y'),
+                    'years' => collect(),
+                    'akademik' => null,
+                    'non_akademik' => null,
+                ];
+            }
+
+            $tahun = (int) (session('siklus_spmi_tahun') ?? $years->first());
+
+            // Ensure the session year is valid
+            if (! $years->contains($tahun)) {
+                $tahun = $years->first();
+                session(['siklus_spmi_tahun' => $tahun]);
+            }
+
+            $periodes = PeriodeSpmi::where('periode', $tahun)->get();
+
+            return [
+                'tahun' => $tahun,
+                'years' => $years,
+                'akademik' => $periodes->firstWhere('jenis_periode', 'Akademik'),
+                'non_akademik' => $periodes->firstWhere('jenis_periode', 'Non Akademik'),
+            ];
+        } catch (\Exception $e) {
+            // Fallback if any error occurs
             return [
                 'tahun' => (int) date('Y'),
-                'years' => collect(),
+                'years' => collect([(int) date('Y')]),
                 'akademik' => null,
                 'non_akademik' => null,
             ];
         }
+    }
 
-        $tahun = (int) (session('siklus_spmi_tahun') ?? $years->first());
+    /**
+     * Buat RTM (Rapat Tinjauan Manajemen) baru untuk satu Periode SPMI.
+     */
+    public function createRtm(PeriodeSpmi $periode, string $type, array $data): Rapat
+    {
+        return DB::transaction(function () use ($periode, $type, $data) {
+            // 1. Buat rapat baru
+            $rapat = $this->rapatService->store([
+                'jenis_rapat' => "RTM {$type}",
+                'judul_kegiatan' => "RTM {$type} Periode " . $periode->periode,
+                'tgl_rapat' => $data['tgl_rapat'],
+                'waktu_mulai' => $data['waktu_mulai'],
+                'waktu_selesai' => $data['waktu_selesai'],
+                'tempat_rapat' => $data['tempat_rapat'],
+                'ketua_user_id' => isset($data['ketua_user_id']) ? decryptIdIfEncrypted($data['ketua_user_id']) : null,
+                'notulen_user_id' => isset($data['notulen_user_id']) ? decryptIdIfEncrypted($data['notulen_user_id']) : null,
+                'author_user_id' => auth()->id(),
+            ]);
 
-        // Ensure the session year is valid
-        if (! $years->contains($tahun)) {
-            $tahun = $years->first();
-            session(['siklus_spmi_tahun' => $tahun]);
-        }
+            // 2. Link ke PeriodeSpmi via event_rapat_entitas
+            RapatEntitas::create([
+                'rapat_id' => $rapat->rapat_id,
+                'model' => 'PeriodeSpmi',
+                'model_id' => $periode->periodespmi_id,
+                'keterangan' => "RTM {$type} Periode " . $periode->periode,
+            ]);
 
-        $periodes = PeriodeSpmi::where('periode', $tahun)->get();
+            // 3. Agendas Default (berdasarkan tipe)
+            $agendas = [];
+            if ($type === 'Pengendalian') {
+                $agendas = [
+                    'Hasil AMI',
+                    'Umpan Balik',
+                    'Kinerja Proses dan Kesesuaian Produk',
+                    'Status Tindakan Pencegahan dan Perbaikan',
+                    'Tindak Lanjut dari Tinjauan Sebelumnya',
+                    'Perubahan yang Dapat Mempengaruhi Sistem Manajemen Mutu',
+                ];
+            } elseif ($type === 'Peningkatan') {
+                $agendas = ['Rangkuman', 'Penggunaan Budget'];
+            }
 
-        return [
-            'tahun' => $tahun,
-            'years' => $years,
-            'akademik' => $periodes->firstWhere('jenis_periode', 'Akademik'),
-            'non_akademik' => $periodes->firstWhere('jenis_periode', 'Non Akademik'),
-        ];
+            foreach ($agendas as $i => $judul) {
+                $this->rapatService->addAgenda($rapat, [
+                    'judul_agenda' => $judul,
+                    'isi' => '',
+                    'seq' => $i + 1,
+                ]);
+            }
+
+            logActivity('pemutu', "Membuat RTM {$type} untuk Periode {$periode->periode}");
+
+            return $rapat;
+        });
+    }
+
+    /**
+     * Update data umum RTM.
+     */
+    public function updateRtm(Rapat $rapat, array $data): Rapat
+    {
+        return $this->rapatService->update($rapat, $data);
     }
 }

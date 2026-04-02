@@ -197,13 +197,7 @@
                                     </td>
                                     <td>{{ $ed->ed_capaian ?? '-' }}</td>
                                     <td>
-                                        @if($ed->ed_skala)
-                                            <span class="badge bg-{{ $ed->ed_skala >= 3 ? 'success' : ($ed->ed_skala >= 2 ? 'warning' : 'danger') }}-lt">
-                                                {{ $ed->ed_skala }}
-                                            </span>
-                                        @else
-                                            -
-                                        @endif
+                                        <x-pemutu.skala-indicator :skala="$ed->ed_skala" />
                                     </td>
                                     <td>
                                         {!! pemutuDtColAnalisisEd($ed) !!}

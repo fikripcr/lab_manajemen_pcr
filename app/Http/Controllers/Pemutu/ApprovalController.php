@@ -18,6 +18,10 @@ class ApprovalController extends Controller
         if ($request->ajax()) {
             $query = $this->approvalService->getApprovalsByTypeQuery(\App\Models\Pemutu\Dokumen::class);
 
+            if ($request->filled('status') && $request->status !== 'all') {
+                $query->where('status', (string) $request->status);
+            }
+
             return DataTables::of($query)
                 ->addColumn('dokumen_judul', function ($row) {
                     if ($row->model == \App\Models\Pemutu\Dokumen::class) {

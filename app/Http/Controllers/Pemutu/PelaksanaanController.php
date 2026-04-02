@@ -5,14 +5,15 @@ namespace App\Http\Controllers\Pemutu;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\PemantauanRequest;
 use App\Models\Event\Rapat;
-use App\Services\Pemutu\PelaksanaanService;
+use App\Services\Pemutu\IndikatorService;
+use App\Services\Pemutu\PeriodeSpmiService;
 use Yajra\DataTables\Facades\DataTables;
 
 class PelaksanaanController extends Controller
 {
     public function __construct(
-        protected PelaksanaanService $PelaksanaanService,
-        protected \App\Services\Pemutu\PeriodeSpmiService $PeriodeSpmiService,
+        protected IndikatorService $indikatorService,
+        protected PeriodeSpmiService $periodeSpmiService,
     ) {}
 
     /**
@@ -20,7 +21,7 @@ class PelaksanaanController extends Controller
      */
     public function pemantauanIndex()
     {
-        $siklus = $this->PeriodeSpmiService->getSiklusData();
+        $siklus = $this->periodeSpmiService->getSiklusData();
 
         return view('pages.pemutu.pemantauan.index', compact('siklus'));
     }
@@ -30,7 +31,7 @@ class PelaksanaanController extends Controller
      */
     public function pemantauanData()
     {
-        $query = $this->PelaksanaanService->getPemantauanQuery();
+        $query = $this->indikatorService->getPemantauanQuery();
 
         return DataTables::of($query)
             ->addColumn('no', function ($row) {
@@ -70,7 +71,7 @@ class PelaksanaanController extends Controller
      */
     public function pemantauanCreate()
     {
-        $users = $this->PelaksanaanService->getUsersForSelect();
+        $users = \App\Models\User::with('pegawai.latestDataDiri')->get();
 
         return view('pages.pemutu.pemantauan.form', compact('users'));
     }
@@ -80,7 +81,7 @@ class PelaksanaanController extends Controller
      */
     public function pemantauanStore(PemantauanRequest $request)
     {
-        $this->PelaksanaanService->createPemantauan($request->validated());
+        $this->indikatorService->savePemantauan($request->validated());
 
         return jsonSuccess('Jadwal pemantauan berhasil dibuat.', url()->previous());
     }
@@ -90,7 +91,7 @@ class PelaksanaanController extends Controller
      */
     public function pemantauanEdit(Rapat $rapat)
     {
-        $users = $this->PelaksanaanService->getUsersForSelect();
+        $users = \App\Models\User::with('pegawai.latestDataDiri')->get();
 
         return view('pages.pemutu.pemantauan.form', compact('rapat', 'users'));
     }
@@ -100,7 +101,7 @@ class PelaksanaanController extends Controller
      */
     public function pemantauanUpdate(PemantauanRequest $request, Rapat $rapat)
     {
-        $this->PelaksanaanService->updatePemantauan($rapat, $request->validated());
+        $this->indikatorService->updatePemantauan($rapat, $request->validated());
 
         return jsonSuccess('Jadwal pemantauan berhasil diperbarui.', url()->previous());
     }

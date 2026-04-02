@@ -23,7 +23,7 @@ class DashboardController extends Controller
         }
 
         // Use global siklus year from session
-        $periodeSpmiService = new \App\Services\Pemutu\PeriodeSpmiService();
+        $periodeSpmiService = app(\App\Services\Pemutu\PeriodeSpmiService::class);
         $siklusData = $periodeSpmiService->getSiklusData();
         $currentYear = $siklusData['tahun'];
         
@@ -131,8 +131,8 @@ class DashboardController extends Controller
             ->join('pemutu_indikator_doksub as ids', 'pemutu_indikator.indikator_id', '=', 'ids.source_id')
             ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
             ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
-            ->selectRaw('d.judul as dokumen_name, AVG(pemutu_indikator_orgunit.ed_skala) as avg_skala')
-            ->groupBy('d.judul')
+            ->selectRaw('COALESCE(d.kode, d.judul) as dokumen_name, AVG(pemutu_indikator_orgunit.ed_skala) as avg_skala')
+            ->groupBy('dokumen_name')
             ->havingRaw('avg_skala IS NOT NULL')
             ->orderByDesc('avg_skala')
             ->get();
@@ -156,13 +156,131 @@ class DashboardController extends Controller
             'not_important_not_urgent' => (clone $baseCurr)->where('pengend_important_matrix', '<', 5)->where('pengend_urgent_matrix', '<', 5)->count(),
         ];
 
+        // Analisis Unit Kerja (ED vs AMI Bar Chart)
+        $unitAnalysisRaw = (clone $baseCurr)
+            ->join('hr_struktur_organisasi as so', 'pemutu_indikator_orgunit.org_unit_id', '=', 'so.orgunit_id')
+            ->selectRaw('
+                so.code as unit_name, 
+                AVG(pemutu_indikator_orgunit.ed_skala) as avg_ed,
+                AVG(CASE 
+                    WHEN pemutu_indikator_orgunit.ami_hasil_akhir = 2 THEN 100 
+                    WHEN pemutu_indikator_orgunit.ami_hasil_akhir = 1 THEN 100 
+                    WHEN pemutu_indikator_orgunit.ami_hasil_akhir = 0 THEN 0 
+                    ELSE NULL END) as avg_ami_pct,
+                SUM(CASE WHEN pemutu_indikator_orgunit.ami_hasil_akhir = 0 THEN 1 ELSE 0 END) as count_kts,
+                SUM(CASE WHEN pemutu_indikator_orgunit.ami_hasil_akhir = 1 THEN 1 ELSE 0 END) as count_terpenuhi,
+                SUM(CASE WHEN pemutu_indikator_orgunit.ami_hasil_akhir = 2 THEN 1 ELSE 0 END) as count_terlampaui
+            ')
+            ->groupBy('so.code')
+            ->orderBy('so.code')
+            ->get();
+
+        $unitChartData = [
+            'categories' => $unitAnalysisRaw->pluck('unit_name')->toArray(),
+            'ed_series' => $unitAnalysisRaw->map(fn ($item) => round((float) $item->avg_ed, 2))->toArray(),
+            'ami_series' => $unitAnalysisRaw->map(fn ($item) => round((float) $item->avg_ami_pct, 1))->toArray(),
+            'ami_kts' => $unitAnalysisRaw->pluck('count_kts')->toArray(),
+            'ami_terpenuhi' => $unitAnalysisRaw->pluck('count_terpenuhi')->toArray(),
+            'ami_terlampaui' => $unitAnalysisRaw->pluck('count_terlampaui')->toArray(),
+        ];
+
+        // Hirarki Peta Ketercapaian
+        // Ambil hanya Dokumen Root (Visi atau Standar Utama)
+        $hierarchyDataRaw = \App\Models\Pemutu\Dokumen::where('periode', $currentYear)
+            ->whereNull('parent_id')
+            ->orderBy('seq')
+            ->get();
+            
+        // Map Hierarchy Data
+        $hierarchyData = [];
+        // Kita butuh fungsi helper atau query broad untuk aggregate semua indikator di bawah Dokumen root
+        foreach ($hierarchyDataRaw as $doc) {
+            // Find all descendant documents if any (e.g. Visi -> Misi -> Renop)
+            $descendantIds = [$doc->dok_id];
+            $children = \App\Models\Pemutu\Dokumen::where('parent_id', $doc->dok_id)->pluck('dok_id')->toArray();
+            if(!empty($children)) {
+                $descendantIds = array_merge($descendantIds, $children);
+                $grands = \App\Models\Pemutu\Dokumen::whereIn('parent_id', $children)->pluck('dok_id')->toArray();
+                if(!empty($grands)) {
+                    $descendantIds = array_merge($descendantIds, $grands);
+                    $greats = \App\Models\Pemutu\Dokumen::whereIn('parent_id', $grands)->pluck('dok_id')->toArray();
+                    if(!empty($greats)) $descendantIds = array_merge($descendantIds, $greats);
+                }
+            }
+
+            // Aggregate stats for all descendant documents
+            $stats = \DB::table('pemutu_indikator_orgunit as pio')
+                ->join('pemutu_indikator_doksub as pid', 'pio.indikator_id', '=', 'pid.source_id')
+                ->join('pemutu_dok_sub as pds', 'pid.doksub_id', '=', 'pds.doksub_id')
+                ->where('pid.source_type', \App\Models\Pemutu\Indikator::class)
+                ->whereIn('pds.dok_id', $descendantIds)
+                ->selectRaw('
+                    COUNT(pio.indikorgunit_id) as total_indikator,
+                    AVG(pio.ed_skala) as avg_ed,
+                    SUM(CASE WHEN pio.ami_hasil_akhir IN (1,2) THEN 1 ELSE 0 END) as tercapai,
+                    SUM(CASE WHEN pio.ami_hasil_akhir = 0 THEN 1 ELSE 0 END) as tidak_tercapai,
+                    COUNT(CASE WHEN pio.ami_hasil_akhir IS NOT NULL THEN 1 END) as total_dinilai
+                ')
+                ->first();
+
+            $ami_pct = $stats->total_dinilai > 0 ? round(($stats->tercapai / $stats->total_dinilai) * 100, 1) : 0;
+            
+            // Skip roots that have absolutely no indicators (like some manual templates) to keep dashboard clean
+            if ($stats->total_indikator == 0) continue;
+
+            $hierarchyData[] = [
+                'id' => $doc->dok_id,
+                'judul' => $doc->judul,
+                'kode' => $doc->kode ?? 'ROOT',
+                'stats' => [
+                    'total_indikator' => $stats->total_indikator ?? 0,
+                    'avg_ed' => round((float) ($stats->avg_ed ?? 0), 2),
+                    'ami_pct' => $ami_pct,
+                ]
+            ];
+        }
+
         // Update page title with year
         $pageTitle = "Dashboard SPMI - {$currentYear}";
 
         return view('pages.pemutu.dashboard.index', compact(
             'pageTitle', 'currentYear',
             'metrics', 'trendData', 'top3Units', 'bottom3Units', 'top3Standar', 'bottom3Standar',
-            'jenisKriteriaRaw', 'eisenhowerCount', 'pendingApprovalsCount'
+            'jenisKriteriaRaw', 'eisenhowerCount', 'pendingApprovalsCount',
+            'unitChartData', 'hierarchyData', 'currentYear'
         ));
+    }
+
+    /**
+     * AJAX Endpoint to fetch nested hierarchy for a specific Root Dokumen
+     */
+    public function hierarchyNode(Request $request, $id)
+    {
+        $currentYear = session('siklus_spmi_tahun', date('Y'));
+        
+        // Find root
+        $root = \App\Models\Pemutu\Dokumen::findOrFail($id);
+        
+        // Eager load everything needed for the tree below this root
+        // 1. Its direct DokSubs and their Indicators and target Units
+        // 2. Its child Dokumens (Standar) and their DokSubs and Indicators and target Units
+        $children = \App\Models\Pemutu\Dokumen::with([
+            'dokSubs',
+            'dokSubs.indikators.orgUnits'
+        ])
+        ->where('parent_id', $root->dok_id)
+        ->where('periode', $currentYear)
+        ->orderBy('seq')
+        ->get();
+
+        // Plus any direct DokSubs on the root itself
+        $rootDokSubs = \App\Models\Pemutu\DokSub::with([
+            'indikators.orgUnits'
+        ])
+        ->where('dok_id', $root->dok_id)
+        ->orderBy('seq')
+        ->get();
+
+        return view('pages.pemutu.dashboard._hierarchy_tree', compact('root', 'children', 'rootDokSubs'));
     }
 }

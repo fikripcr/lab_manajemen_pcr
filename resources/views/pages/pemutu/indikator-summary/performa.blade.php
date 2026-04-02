@@ -1,11 +1,28 @@
 @extends('layouts.tabler.app')
 @section('title', $pageTitle)
 
+@section('header')
+<x-tabler.page-header title="Summary Indikator Performa (KPI)" pretitle="Pemutu">
+    <x-slot:actions>
+        <div class="btn-group p-1 bg-light rounded-pill shadow-sm" style="border: 1px solid #e6e8e9;">
+            <a href="{{ route('pemutu.set-kelompok', 'akademik') }}" 
+               class="btn {{ $activeKelompok === 'akademik' ? 'btn-white shadow-sm fw-bold border-0 active text-primary' : 'btn-ghost-secondary border-0 opacity-75' }} rounded-pill px-4 transition-all duration-200">
+                <i class="ti ti-school me-2"></i>Akademik
+            </a>
+            <a href="{{ route('pemutu.set-kelompok', 'non_akademik') }}" 
+               class="btn {{ $activeKelompok === 'non_akademik' ? 'btn-white shadow-sm fw-bold border-0 active text-primary' : 'btn-ghost-secondary border-0 opacity-75' }} rounded-pill px-4 transition-all duration-200">
+                <i class="ti ti-building-community me-2"></i>Non Akademik
+            </a>
+        </div>
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
+
 @section('content')
     <x-tabler.card>
         <x-tabler.card-header>
             <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
-                <h3 class="card-title mb-0">List Indikator Performa (KPI)</h3>
+                <h3 class="card-title mb-0">List Indikator Performa (KPI) - {{ $kelompok }}</h3>
                 <div class="d-flex flex-wrap gap-2">
                     <x-tabler.datatable-page-length dataTableId="table-performa" />
                     <x-tabler.datatable-search dataTableId="table-performa" />
@@ -19,14 +36,7 @@
             <div class="collapse" id="table-performa-filter-area">
                 <x-tabler.datatable-filter dataTableId="table-performa" type="bare">
                     <div class="row g-3">
-                        <div class="col-md-3">
-                            <x-tabler.form-select name="kelompok_indikator" label="Kelompok" placeholder="">
-                                <option value="all">Semua Kelompok</option>
-                                <option value="Akademik">Akademik</option>
-                                <option value="Non Akademik">Non Akademik</option>
-                            </x-tabler.form-select>
-                        </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <x-tabler.form-select name="pegawai_id" id="performa-filter-pegawai" label="Pegawai" placeholder="">
                                 <option value="all">Semua Pegawai</option>
                                 @foreach($pegawais as $pegawai)
@@ -34,7 +44,7 @@
                                 @endforeach
                             </x-tabler.form-select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <x-tabler.form-select name="unit_id" id="performa-filter-unit" label="Unit" placeholder="">
                                 <option value="all">Semua Unit</option>
                                 @foreach($units as $unit)
