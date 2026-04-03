@@ -313,12 +313,7 @@
                                                     <tr class="kpi-row">
                                                         <td>
                                                             <input type="hidden" name="kpi_assign[{{$index}}][selected]" value="1">
-                                                            <select class="form-select select2-kpi" name="kpi_assign[{{$index}}][pegawai_id]" required data-placeholder="Pilih pegawai...">
-                                                                <option value="">Pilih pegawai...</option>
-                                                                @foreach($pegawais as $p)
-                                                                    <option value="{{ $p->encrypted_pegawai_id }}" {{ $p->pegawai_id == $kpi->pegawai_id ? 'selected' : '' }}>{{ $p->nama }}</option>
-                                                                @endforeach
-                                                            </select>
+
                                                         </td>
                                                         <td>
                                                             <x-tabler.form-input class="mb-2" name="kpi_assign[{{$index}}][target_value]" placeholder="Nilai Target" value="{{ $kpi->target_value }}" />
@@ -424,10 +419,7 @@
     @endsection
     @push('scripts')
     <script type="module">
-    window.initPemutuIndikatorForm({
-        kpiInitialIndex: {{ isset($indikator) && $indikator->pegawai ? $indikator->pegawai->count() : 0 }},
-        pegawaiOptionsHtml: `@foreach($pegawais as $p)<option value="{{ $p->encrypted_pegawai_id }}">{{ $p->nama }}</option>@endforeach`
-    });
+
 
     if (window.loadHugeRTE) {
         window.loadHugeRTE('#keterangan', { 

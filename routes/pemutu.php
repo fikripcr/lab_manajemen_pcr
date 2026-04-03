@@ -54,6 +54,10 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
         }
         session(['pemutu_active_kelompok' => $kelompok]);
 
+        if (request()->has('redirect')) {
+            return redirect(request('redirect'));
+        }
+
         return back();
     })->name('set-kelompok');
 

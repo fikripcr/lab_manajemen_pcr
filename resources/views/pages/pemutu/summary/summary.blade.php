@@ -5,14 +5,7 @@
 @section('header')
 <x-tabler.page-header title="Rekap Capaian" pretitle="Summary Penetapan Siklus {{ $siklus['tahun'] }}">
     <x-slot:actions>
-        <x-tabler.segmented-control 
-            name="activeKelompok"
-            :active="$activeKelompok"
-            :items="[
-                ['id' => 'akademik', 'label' => 'Akademik', 'icon' => 'ti ti-school', 'href' => route('pemutu.set-kelompok', 'akademik')],
-                ['id' => 'non_akademik', 'label' => 'Non Akademik', 'icon' => 'ti ti-building-community', 'href' => route('pemutu.set-kelompok', 'non_akademik')],
-            ]"
-        />
+        <x-pemutu.kelompok-selector :active-kelompok="$activeKelompok" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

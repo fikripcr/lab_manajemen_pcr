@@ -36,7 +36,7 @@
                             <strong>{{ $appr->pejabat }}</strong>
                             <span class="text-muted ms-2">({{ $appr->jabatan }})</span>
                         </div>
-                        <span class="badge bg-green-lt">Disetujui pada {{ $appr->updated_at->format('d/m/Y H:i') }}</span>
+                        <span class="badge bg-green-lt">Disetujui pada {{ formatTanggalIndo($appr->updated_at) }}</span>
                     </div>
                 </div>
                 @endforeach
@@ -58,14 +58,7 @@
                     
                     <div class="flex-grow-1" style="flex: 1;">
                         <label class="form-label required mb-1">Approver (Pegawai)</label>
-                        <select name="approvers[{{ $index }}][pegawai_id]" class="form-select select2-approval" required data-dropdown-parent="#modalAction" {{ $approval->status !== 'Pending' ? 'disabled' : '' }}>
-                            <option value="">Pilih Pegawai...</option>
-                            @foreach($pegawais as $p)
-                                <option value="{{ $p->encrypted_pegawai_id }}" {{ $p->pegawai_id == $approval->pegawai_id ? 'selected' : '' }}>
-                                    {{ $p->nama }}
-                                </option>
-                            @endforeach
-                        </select>
+
                         @if($approval->status !== 'Pending')
                             <small class="text-muted">Tidak dapat diubah karena sudah diproses</small>
                         @endif
@@ -86,7 +79,7 @@
                     <div class="mt-2 p-2 bg-light rounded border">
                         <small class="text-muted"><strong>Catatan:</strong> {{ $approval->catatan }}</small>
                         <br>
-                        <small class="text-muted">Diproses pada {{ $approval->updated_at->format('d/m/Y H:i') }}</small>
+                        <small class="text-muted">Diproses pada {{ formatTanggalIndo($approval->updated_at) }}</small>
                     </div>
                 @endif
             </div>
@@ -98,12 +91,7 @@
                     
                     <div class="flex-grow-1" style="flex: 1;">
                         <label class="form-label required mb-1">Approver (Pegawai)</label>
-                        <select name="approvers[0][pegawai_id]" class="form-select select2-approval" required data-dropdown-parent="#modalAction">
-                            <option value="">Pilih Pegawai...</option>
-                            @foreach($pegawais as $p)
-                                <option value="{{ $p->encrypted_pegawai_id }}">{{ $p->nama }}</option>
-                            @endforeach
-                        </select>
+
                     </div>
                     <div class="flex-grow-1" style="flex: 1;">
                         <label class="form-label required mb-1">Posisi / Jabatan</label>
@@ -226,30 +214,7 @@
                 rowIndex = rows.length;
             }
 
-            function initSelect2InRow(row) {
-                const select = row.querySelector('.select2-approval');
-                if (!select) return;
 
-                const $select = $(select);
-
-                // Skip if already initialized
-                if ($select.hasClass('select2-hidden-accessible')) return;
-                
-                // Ensure Select2 library is loaded
-                if (typeof $.fn.select2 === 'undefined') {
-                    console.warn('Select2 not loaded yet, skipping initialization');
-                    return;
-                }
-
-                // Initialize Select2 with Bootstrap 5 theme
-                $select.select2({
-                    dropdownParent: $('#modalAction'),
-                    placeholder: "Pilih Pegawai...",
-                    allowClear: true,
-                    width: '100%',
-                    theme: 'bootstrap-5'
-                });
-            }
         }
 
         // Wait for Select2 to be FULLY loaded before initializing

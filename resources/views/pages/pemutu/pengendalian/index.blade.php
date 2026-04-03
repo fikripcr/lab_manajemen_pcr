@@ -4,23 +4,14 @@
 @section('header')
 <x-tabler.page-header title="Pengendalian Indikator SPMI {{ $siklus['tahun'] }}" pretitle="Pengendalian">
     <x-slot:actions>
-        <div class="btn-group p-1 bg-light rounded-pill shadow-sm" style="border: 1px solid #e6e8e9;">
-            <a href="{{ route('pemutu.set-kelompok', 'akademik') }}" 
-               class="btn {{ $activeKelompok === 'akademik' ? 'btn-white shadow-sm fw-bold border-0 active text-primary' : 'btn-ghost-secondary border-0 opacity-75' }} rounded-pill px-4 transition-all duration-200">
-                <i class="ti ti-school me-2"></i>Akademik
-            </a>
-            <a href="{{ route('pemutu.set-kelompok', 'non_akademik') }}" 
-               class="btn {{ $activeKelompok === 'non_akademik' ? 'btn-white shadow-sm fw-bold border-0 active text-primary' : 'btn-ghost-secondary border-0 opacity-75' }} rounded-pill px-4 transition-all duration-200">
-                <i class="ti ti-building-community me-2"></i>Non Akademik
-            </a>
-        </div>
+        <x-pemutu.kelompok-selector :active-kelompok="$activeKelompok" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
 
 @section('content')
     @if($periode)
-        @php $jadwalTersedia = $periode->pengendalian_awal && $periode->pengendalian_akhir; @endphp
+        <x-pemutu.active-period :periode="$periode" type="pengendalian" />
         
         <x-tabler.card>
             <x-tabler.card-header class="border-bottom-0 pt-4">
@@ -81,7 +72,7 @@
                                     @php $periodeInfo = pemutuPeriodeStatus($periode->pengendalian_awal, $periode->pengendalian_akhir); @endphp
                                     @if($periode->pengendalian_awal && $periode->pengendalian_akhir)
                                         <i class="ti ti-calendar me-1"></i>
-                                        Jadwal: {{ $periode->pengendalian_awal->format('d M Y') }} s.d. {{ $periode->pengendalian_akhir->format('d M Y') }}
+                                        Jadwal: {{ formatTanggalIndo($periode->pengendalian_awal) }} s.d. {{ formatTanggalIndo($periode->pengendalian_akhir) }}
                                     @endif
                                     <span class="badge bg-{{ $periodeInfo['color'] }}-lt ms-2">{{ $periodeInfo['status_text'] }}</span>
                                 </div>

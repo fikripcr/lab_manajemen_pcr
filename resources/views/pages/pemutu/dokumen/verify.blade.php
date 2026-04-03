@@ -49,7 +49,7 @@
                                 <div class="col-auto text-end">
                                     @if($approval->status == 'Approved')
                                         <span class="badge bg-green-lt"><i class="ti ti-check me-1"></i> Disetujui</span>
-                                        <div class="text-success small mt-1">{{ $approval->updated_at->format('d/m/Y H:i') }}</div>
+                                        <div class="text-success small mt-1">{{ formatTanggalIndo($approval->updated_at) }}</div>
                                     @elseif($approval->status == 'Rejected')
                                         <span class="badge bg-red-lt"><i class="ti ti-x me-1"></i> Ditolak</span>
                                     @else

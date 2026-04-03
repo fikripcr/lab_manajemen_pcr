@@ -40,22 +40,8 @@ $rootDoc = $isTreeBased ? null : $dokData->first();
 @endsection
 
 @section('content')
-@php
-    $canModify = pemutu_can_modify($selectedPeriode);
-@endphp
+<x-pemutu.active-period :periode="$periode" type="penetapan" />
 
-@if(!$canModify)
-    <div class="row mb-3 mt-n2">
-        <div class="col-12">
-            <div class="alert alert-warning mb-0 py-1 px-3 border-0 shadow-none d-flex align-items-center" role="alert" style="font-size: 0.75rem; background: #fffbeb; color: #92400e; border-left: 3px solid #f59e0b !important;">
-                <i class="ti ti-info-circle-filled me-2" style="font-size: 1rem; color: #f59e0b;"></i>
-                <div>
-                    Masa penetapan periode <strong>{{ $selectedPeriode }}</strong> sedang tidak aktif. Penambahan dan pengeditan dokumen dibatasi.
-                </div>
-            </div>
-        </div>
-    </div>
-@endif
 
 <div class="row row-cards">
     <!-- Tree View Sidebar -->

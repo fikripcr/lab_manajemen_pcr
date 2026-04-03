@@ -19,13 +19,7 @@
             />
 
             {{-- Kelompok Switcher: Akademik vs Non Akademik --}}
-            <x-tabler.segmented-control 
-                :items="[
-                    ['id' => 'akademik', 'label' => 'Akademik', 'icon' => 'ti ti-school', 'href' => route('pemutu.set-kelompok', ['kelompok' => 'akademik', 'redirect' => url()->full()])],
-                    ['id' => 'non_akademik', 'label' => 'Non Akademik', 'icon' => 'ti ti-building-community', 'href' => route('pemutu.set-kelompok', ['kelompok' => 'non_akademik', 'redirect' => url()->full()])]
-                ]"
-                :active="$kelompok === 'akademik' ? 'akademik' : 'non_akademik'"
-            />
+            <x-pemutu.kelompok-selector :active-kelompok="$kelompok" :redirect="url()->full()" />
         </div>
     </x-slot:actions>
 </x-tabler.page-header>

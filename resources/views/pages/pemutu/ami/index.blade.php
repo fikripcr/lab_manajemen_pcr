@@ -4,16 +4,7 @@
 @section('header')
 <x-tabler.page-header title="Audit Mutu Internal (AMI) {{ $siklus['tahun'] }}" pretitle="Evaluasi">
     <x-slot:actions>
-        <div class="btn-group p-1 bg-light rounded-pill shadow-sm" style="border: 1px solid #e6e8e9;">
-            <a href="{{ route('pemutu.set-kelompok', 'akademik') }}" 
-               class="btn {{ $activeKelompok === 'akademik' ? 'btn-white shadow-sm fw-bold border-0 active text-primary' : 'btn-ghost-secondary border-0 opacity-75' }} rounded-pill px-4 transition-all duration-200">
-                <i class="ti ti-school me-2"></i>Akademik
-            </a>
-            <a href="{{ route('pemutu.set-kelompok', 'non_akademik') }}" 
-               class="btn {{ $activeKelompok === 'non_akademik' ? 'btn-white shadow-sm fw-bold border-0 active text-primary' : 'btn-ghost-secondary border-0 opacity-75' }} rounded-pill px-4 transition-all duration-200">
-                <i class="ti ti-building-community me-2"></i>Non Akademik
-            </a>
-        </div>
+        <x-pemutu.kelompok-selector :active-kelompok="$activeKelompok" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -24,74 +15,73 @@
     @endphp
     
     @if($periode)
-        @php $jadwalTersedia = $periode->ami_awal && $periode->ami_akhir; @endphp
-        
-        <x-tabler.card>
-            <x-tabler.card-header class="border-bottom-0 pt-4">
+        <x-pemutu.active-period :periode="$periode" type="ami" />
+
+            <x-tabler.card x-data="{ activeTab: 'ami' }">
+            <x-tabler.card-header class="border-bottom px-4 pt-3 pb-3 d-flex justify-content-between align-items-center">
                 <ul class="nav nav-pills card-header-pills" id="ami-tabs" data-bs-toggle="tabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a href="#tab-ami" class="nav-link active" data-bs-toggle="tab" role="tab">
+                        <a href="#tab-ami" class="nav-link active" data-bs-toggle="tab" role="tab" @click="activeTab = 'ami'; $dispatch('tab-changed', { phase: 'ami' })">
                             <i class="ti ti-shield-check me-2"></i>Audit Mutu Internal
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a href="#tab-te" class="nav-link" data-bs-toggle="tab" role="tab" tabindex="-1">
+                        <a href="#tab-te" class="nav-link" data-bs-toggle="tab" role="tab" @click="activeTab = 'te'; $dispatch('tab-changed', { phase: 'te' })">
                             <i class="ti ti-search me-2"></i>Tinjauan Efektivitas ({{ $prevYear }})
+                            <span class="text-muted ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Daftar temuan KTS dari periode AMI {{ $prevYear }} yang harus ditinjau perbaikannya."><i class="ti ti-info-circle"></i></span>
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a href="#tab-rtp" class="nav-link" data-bs-toggle="tab" role="tab" tabindex="-1">
+                        <a href="#tab-rtp" class="nav-link" data-bs-toggle="tab" role="tab" @click="activeTab = 'rtp'; $dispatch('tab-changed', { phase: 'rtp' })">
                             <i class="ti ti-pennant me-2"></i>Rencana Tindakan Perbaikan (RTP)
+                            <span class="text-muted ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Indikator dengan temuan Audit (KTS) yang memerlukan rencana perbaikan."><i class="ti ti-info-circle"></i></span>
                         </a>
                     </li>
                 </ul>
+                <div class="card-actions mb-0">
+                    <div class="d-flex gap-2" x-show="activeTab === 'ami'">
+                        <x-tabler.datatable-page-length dataTableId="table-ami" />
+                        <x-tabler.datatable-search dataTableId="table-ami" />
+                        <x-tabler.datatable-filter dataTableId="table-ami" type="button" target="#table-ami-filter-area" />
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="ti ti-file-export me-1"></i> Export
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a href="#" class="dropdown-item export-btn" data-export-type="ptk" data-periode="{{ $periode->encrypted_periodespmi_id }}" data-type="{{ $activeKelompok }}">
+                                        <i class="ti ti-file-text me-2"></i>PTK (.docx)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="dropdown-item export-btn" data-export-type="temuan-audit" data-periode="{{ $periode->encrypted_periodespmi_id }}" data-type="{{ $activeKelompok }}">
+                                        <i class="ti ti-file-x me-2"></i>Temuan Audit - KTS (.xlsx)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="dropdown-item export-btn" data-export-type="temuan-positif" data-periode="{{ $periode->encrypted_periodespmi_id }}" data-type="{{ $activeKelompok }}">
+                                        <i class="ti ti-file-check me-2"></i>Temuan Positif (.xlsx)
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2" x-show="activeTab === 'te'" style="display: none;">
+                        <x-tabler.datatable-page-length dataTableId="table-te" />
+                        <x-tabler.datatable-search dataTableId="table-te" />
+                        <x-tabler.datatable-filter dataTableId="table-te" type="button" target="#table-te-filter-area" />
+                    </div>
+                    <div class="d-flex gap-2" x-show="activeTab === 'rtp'" style="display: none;">
+                        <x-tabler.datatable-page-length dataTableId="table-rtp-only" />
+                        <x-tabler.datatable-search dataTableId="table-rtp-only" />
+                        <x-tabler.datatable-filter dataTableId="table-rtp-only" type="button" target="#table-rtp-only-filter-area" />
+                    </div>
+                </div>
             </x-tabler.card-header>
 
             <div class="tab-content">
                 {{-- SUB-TAB: AMI --}}
                 <div class="tab-pane active show" id="tab-ami" role="tabpanel">
-                    <x-tabler.card-body class="border-top">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h3 class="mb-1">Periode {{ $periode->jenis_periode }} {{ $periode->periode }}</h3>
-                                <div class="text-muted small mt-1">
-                                    @php $periodeInfo = pemutuPeriodeStatus($periode->ami_awal, $periode->ami_akhir); @endphp
-                                    @if($periode->ami_awal && $periode->ami_akhir)
-                                        <i class="ti ti-calendar me-1"></i>
-                                        Jadwal: {{ $periode->ami_awal->format('d M Y') }} s.d. {{ $periode->ami_akhir->format('d M Y') }}
-                                    @endif
-                                    <span class="badge bg-{{ $periodeInfo['color'] }}-lt ms-2">{{ $periodeInfo['status_text'] }}</span>
-                                </div>
-                            </div>
-                            <div class="col-auto d-flex gap-2">
-                                <x-tabler.datatable-page-length dataTableId="table-ami" />
-                                <x-tabler.datatable-search dataTableId="table-ami" />
-                                <x-tabler.datatable-filter dataTableId="table-ami" type="button" target="#table-ami-filter-area" />
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="ti ti-file-export me-1"></i> Export
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a href="#" class="dropdown-item export-btn" data-export-type="ptk" data-periode="{{ $periode->encrypted_periodespmi_id }}" data-type="{{ $activeKelompok }}">
-                                                <i class="ti ti-file-text me-2"></i>PTK (.docx)
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="dropdown-item export-btn" data-export-type="temuan-audit" data-periode="{{ $periode->encrypted_periodespmi_id }}" data-type="{{ $activeKelompok }}">
-                                                <i class="ti ti-file-x me-2"></i>Temuan Audit - KTS (.xlsx)
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="dropdown-item export-btn" data-export-type="temuan-positif" data-periode="{{ $periode->encrypted_periodespmi_id }}" data-type="{{ $activeKelompok }}">
-                                                <i class="ti ti-file-check me-2"></i>Temuan Positif (.xlsx)
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </x-tabler.card-body>
                     <div class="collapse" id="table-ami-filter-area">
                         <x-tabler.datatable-filter dataTableId="table-ami" type="bare">
                             <div class="row g-3">
@@ -150,19 +140,6 @@
 
                 {{-- SUB-TAB: TE --}}
                 <div class="tab-pane" id="tab-te" role="tabpanel">
-                    <x-tabler.card-body class="border-top">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h3 class="mb-1">Tinjauan Efektivitas (Hasil AMI {{ $prevYear }})</h3>
-                                <p class="text-muted mb-0 small">Daftar temuan KTS dari periode <span class="badge bg-purple-lt text-purple small">AMI {{ $prevYear }}</span> yang harus ditinjau perbaikannya.</p>
-                            </div>
-                            <div class="col-auto d-flex gap-2">
-                                <x-tabler.datatable-page-length dataTableId="table-te" />
-                                <x-tabler.datatable-search dataTableId="table-te" />
-                                <x-tabler.datatable-filter dataTableId="table-te" type="button" target="#table-te-filter-area" />
-                            </div>
-                        </div>
-                    </x-tabler.card-body>
                     <div class="collapse" id="table-te-filter-area">
                         <x-tabler.datatable-filter dataTableId="table-te" type="bare">
                             <div class="row g-3">
@@ -211,19 +188,6 @@
 
                 {{-- SUB-TAB: RTP ONLY (Findings) --}}
                 <div class="tab-pane" id="tab-rtp" role="tabpanel">
-                    <x-tabler.card-body class="border-top">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h3 class="mb-1">Rencana Tindakan Perbaikan (RTP)</h3>
-                                <p class="text-muted mb-0 small">Indikator dengan temuan Audit (KTS) yang memerlukan rencana perbaikan.</p>
-                            </div>
-                            <div class="col-auto d-flex gap-2">
-                                <x-tabler.datatable-page-length dataTableId="table-rtp-only" />
-                                <x-tabler.datatable-search dataTableId="table-rtp-only" />
-                                <x-tabler.datatable-filter dataTableId="table-rtp-only" type="button" target="#table-rtp-only-filter-area" />
-                            </div>
-                        </div>
-                    </x-tabler.card-body>
                     <div class="collapse" id="table-rtp-only-filter-area">
                         <x-tabler.datatable-filter dataTableId="table-rtp-only" type="bare">
                             <div class="row g-3">
@@ -270,7 +234,8 @@
                     </div>
                 </div>
             </div>
-        </x-tabler.card>
+            </x-tabler.card>
+        </div>
     @else
         <x-tabler.card>
             <x-tabler.card-body class="py-5 text-center">

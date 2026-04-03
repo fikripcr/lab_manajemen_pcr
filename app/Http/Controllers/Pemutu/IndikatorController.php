@@ -3,11 +3,14 @@ namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\IndikatorRequest;
+use App\Models\Event\RapatEntitas;
 use App\Models\Hr\Pegawai;
 use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Pemutu\DokSub;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
+use App\Models\Pemutu\IndikatorOrgUnit;
+use App\Models\Pemutu\Label;
 use App\Services\Pemutu\DokumenService;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\PelaksanaanService;
@@ -19,9 +22,9 @@ class IndikatorController extends Controller
 {
     public function __construct(
         protected IndikatorService $indikatorService,
-        protected PelaksanaanService $PelaksanaanService,
+        protected PelaksanaanService $pelaksanaanService,
         protected DokumenService $dokumenService,
-        protected PeriodeSpmiService $PeriodeSpmiService
+        protected PeriodeSpmiService $periodeSpmiService
     ) {}
 
     public function index(Request $request)
@@ -35,15 +38,16 @@ class IndikatorController extends Controller
 
         // Active Kelompok (Akademik / Non Akademik) from session
         $activeKelompok = session('pemutu_active_kelompok', 'akademik');
-        $siklus         = $this->PeriodeSpmiService->getSiklusData();
+        $siklus         = $this->periodeSpmiService->getSiklusData();
 
         // Single Active Periode
         $periode = $siklus[$activeKelompok] ?? null;
 
         // Filters data
-        $siklusData   = $this->PeriodeSpmiService->getSiklusData();
+        $siklusData   = $this->periodeSpmiService->getSiklusData();
         $dokumens     = $this->dokumenService->getStandardDocumentsByYear($siklusData['tahun']);
-        $labelOptions = \App\Models\Pemutu\Label::with('children')->whereNull('parent_id')->orderBy('name')->get();
+
+        $labelOptions = \App\Models\Pemutu\Label::with('children')->whereNull('parent_id')->get();
         $labelParents = [];
         foreach ($labelOptions as $label) {
             if ($label->children->count() > 0) {
@@ -83,7 +87,7 @@ class IndikatorController extends Controller
         }
         
         if (empty($filters['periode'])) {
-            $siklus             = $this->PeriodeSpmiService->getSiklusData();
+            $siklus             = $this->periodeSpmiService->getSiklusData();
             $filters['periode'] = $siklus['tahun'];
         }
 
@@ -185,7 +189,7 @@ class IndikatorController extends Controller
         $selectedDokSubs = collect();
         $title           = 'Tambah Indikator';
 
-        $siklus = $this->PeriodeSpmiService->getSiklusData();
+        $siklus = $this->periodeSpmiService->getSiklusData();
         $tahun  = $siklus['tahun'];
 
         $standardOptions = DokSub::whereHas('dokumen', function ($q) use ($tahun) {
@@ -322,9 +326,13 @@ class IndikatorController extends Controller
         // Fetch monitorings for related org units
         $monitorings = collect();
         foreach ($indikator->orgUnits as $orgUnit) {
-            $indOrg = \App\Models\Pemutu\IndikatorOrgUnit::find($orgUnit->pivot->indikorgunit_id);
+            $indOrg = IndikatorOrgUnit::find($orgUnit->pivot->indikorgunit_id);
             if ($indOrg) {
-                $mon         = $this->PelaksanaanService->getMonitoringForIndikator($indOrg);
+                $mon = RapatEntitas::where('model', IndikatorOrgUnit::class)
+                    ->where('model_id', $indOrg->indikorgunit_id)
+                    ->with('rapat')
+                    ->get();
+
                 $monitorings = $monitorings->merge($mon);
             }
         }
@@ -336,7 +344,7 @@ class IndikatorController extends Controller
     public function edit(Indikator $indikator)
     {
         $title        = 'Edit Indikator';
-        $labelParents = \App\Models\Pemutu\Label::whereNull('parent_id')->with(['children' => function ($q) {
+        $labelParents = Label::whereNull('parent_id')->with(['children' => function ($q) {
             $q->orderBy('name');
         }])->orderBy('name')->get();
 
@@ -361,15 +369,21 @@ class IndikatorController extends Controller
             }
         }
 
-        $siklus = $this->PeriodeSpmiService->getSiklusData();
-        $tahun  = $siklus['tahun'];
+
+        $tahun  = $targetYear ?? session('siklus_spmi_tahun');
 
         $standardOptions = DokSub::whereHas('dokumen', function ($q) use ($tahun) {
-            $q->where('jenis', 'standar')->where('periode', 'like', '%' . $tahun . '%');
+            $q->where('jenis', 'standar');
+            if ($tahun) {
+                $q->where('periode', 'like', '%' . $tahun . '%');
+            }
         })->with('dokumen')->get();
 
         $renstraOptions = DokSub::whereHas('dokumen', function ($q) use ($tahun) {
-            $q->where('jenis', 'renstra')->where('periode', 'like', '%' . $tahun . '%');
+            $q->where('jenis', 'renstra');
+            if ($tahun) {
+                $q->where('periode', 'like', '%' . $tahun . '%');
+            }
         })->with('dokumen')->get();
 
         // Staging and Previous Context for Peningkatan Review
@@ -402,10 +416,16 @@ class IndikatorController extends Controller
         $data = $request->validated();
 
         // --- GUARD: Periode Penetapan ---
-        $year = $data['periode'] ?? $indikator->periode ?? session('siklus_spmi_tahun');
-        $kelompok = $data['kelompok_indikator'] ?? $indikator->kelompok_indikator ?? session('pemutu_active_kelompok', 'akademik');
-        if (! pemutu_can_modify($year, $kelompok)) {
-            return jsonError('Aksi dibatasi. Masa penetapan periode ini belum dibuka atau sudah berakhir.');
+        $isStaging = $indikator->dokSubs()->whereHas('dokumen', function ($q) {
+            $q->where('std_is_staging', true);
+        })->exists();
+
+        if (! $isStaging) {
+            $year = $data['periode'] ?? $indikator->periode ?? session('siklus_spmi_tahun');
+            $kelompok = $data['kelompok_indikator'] ?? $indikator->kelompok_indikator ?? session('pemutu_active_kelompok', 'akademik');
+            if (! pemutu_can_modify($year, $kelompok)) {
+                return jsonError('Aksi dibatasi. Masa penetapan periode ini belum dibuka atau sudah berakhir.');
+            }
         }
         // ---------------------------------
 

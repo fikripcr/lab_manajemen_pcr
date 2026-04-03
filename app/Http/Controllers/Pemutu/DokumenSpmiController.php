@@ -17,7 +17,7 @@ class DokumenSpmiController extends Controller
     public function __construct(
         protected DokumenSpmiService $dokumenSpmiService,
         protected DokumenService $dokumenService,
-        protected PeriodeSpmiService $PeriodeSpmiService
+        protected PeriodeSpmiService $periodeSpmiService
     ) {}
 
     /**
@@ -28,8 +28,10 @@ class DokumenSpmiController extends Controller
         $pageTitle = 'Workspace Dokumen SPMI';
         $activeJenis = $request->query('jenis', 'kebijakan');
 
-        // Use Global Cycle from Session (Handled by PeriodeSpmiService fallback)
-        $siklusData = $this->PeriodeSpmiService->getSiklusData();
+        // Active Context
+        $activeKelompok = session('pemutu_active_kelompok', 'akademik');
+        $siklusData = $this->periodeSpmiService->getSiklusData();
+        $periode = $siklusData[$activeKelompok] ?? null;
         $selectedYe = $siklusData['tahun'];
 
         // Tree-based: Multiple documents allowed (Standar, Formulir, Manual, and Generic Kebijakan)
@@ -46,6 +48,7 @@ class DokumenSpmiController extends Controller
             'selectedPeriode' => $selectedYe,
             'dokumentByJenis' => $dokumentByJenis,
             'activeTab' => $isTreeBased ? 'standar' : 'kebijakan',
+            'periode' => $periode,
         ]);
     }
 
@@ -133,7 +136,7 @@ class DokumenSpmiController extends Controller
 
         // Fallback to Global Cycle if not provided
         if (! $currentPeriode) {
-            $siklusData = $this->PeriodeSpmiService->getSiklusData();
+            $siklusData = $this->periodeSpmiService->getSiklusData();
             // We only need the year as an indicator if no specific PeriodeSpmi record exists for it yet
             // But we can create a dummy object or just use the year
             $currentPeriode = (object) [
@@ -201,7 +204,7 @@ class DokumenSpmiController extends Controller
 
             // Dual insurance: if still empty or fallback to current Year, use Global Cycle instead of server date('Y')
             if (empty($data['periode'])) {
-                $siklusData = $this->PeriodeSpmiService->getSiklusData();
+                $siklusData = $this->periodeSpmiService->getSiklusData();
                 $data['periode'] = $siklusData['tahun'];
             }
 
@@ -666,7 +669,7 @@ class DokumenSpmiController extends Controller
     {
         $pageTitle = 'Rekap Capaian';
         $activeJenis = $request->query('jenis', 'visi');
-        $siklus = $this->PeriodeSpmiService->getSiklusData();
+        $siklus = $this->periodeSpmiService->getSiklusData();
 
         // Standardize session-based active kelompok
         $activeKelompok = session('pemutu_active_kelompok', 'akademik');

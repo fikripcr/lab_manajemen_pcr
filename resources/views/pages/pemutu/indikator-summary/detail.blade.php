@@ -206,7 +206,7 @@
                                         {{-- Bukti buttons are already part of pemutuDtColAnalisisEd --}}
                                         <span class="text-muted small">Sudah termasuk di Analisis</span>
                                     </td>
-                                    <td>{{ \Carbon\Carbon::parse($ed->updated_at)->format('d/m/Y H:i') }}</td>
+                                    <td>{{ formatTanggalIndo($ed->updated_at) }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -303,7 +303,7 @@
                                             <span class="text-muted">-</span>
                                         @endif
                                     </td>
-                                    <td>{{ \Carbon\Carbon::parse($ami->updated_at)->format('d/m/Y H:i') }}</td>
+                                    <td>{{ formatTanggalIndo($ami->updated_at) }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -379,7 +379,7 @@
                                             <span class="text-muted small">-</span>
                                         @endif
                                     </td>
-                                    <td>{{ \Carbon\Carbon::parse($pengend->updated_at)->format('d/m/Y H:i') }}</td>
+                                    <td>{{ formatTanggalIndo($pengend->updated_at) }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>

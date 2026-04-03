@@ -395,13 +395,32 @@ class IndikatorOrgUnitService
      */
     public function getUnitComparisonData(IndikatorOrgUnit $indikOrg): array
     {
-        $prevIndikOrg = $indikOrg->prevIndikorgunit_id ? IndikatorOrgUnit::find($indikOrg->prev_indikorgunit_id) : null;
+        $indikOrg->loadMissing(['indikator', 'orgUnit']);
+        $prevIndikOrg = $indikOrg->prev_indikorgunit_id ? IndikatorOrgUnit::with(['indikator', 'orgUnit'])->find($indikOrg->prev_indikorgunit_id) : null;
+
+        $current = [
+            'text'      => $indikOrg->indikator->indikator ?? '',
+            'target'    => $indikOrg->target ?? '',
+            'unit_name' => $indikOrg->orgUnit->name ?? '',
+            'unit_code' => $indikOrg->orgUnit->kode_orgunit ?? '',
+        ];
+
+        $prev = null;
+        if ($prevIndikOrg) {
+            $prev = [
+                'text'          => $prevIndikOrg->indikator->indikator ?? '',
+                'target'        => $prevIndikOrg->target ?? '',
+                'status'        => $prevIndikOrg->pengend_status_atsn ?? '',
+                'analisis_atsn' => $prevIndikOrg->pengend_analisis_atsn ?? '',
+            ];
+        }
+
         $otherUnitsValue = IndikatorOrgUnit::where('indikator_id', $indikOrg->indikator_id)
             ->where('org_unit_id', '!=', $indikOrg->org_unit_id)
             ->whereNotNull('ed_capaian')
             ->get();
 
-        return compact('prevIndikOrg', 'otherUnitsValue');
+        return compact('current', 'prev', 'prevIndikOrg', 'otherUnitsValue');
     }
 
     /**

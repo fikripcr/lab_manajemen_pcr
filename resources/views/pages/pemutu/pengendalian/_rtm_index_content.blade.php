@@ -44,7 +44,7 @@
                             <div class="datagrid-item">
                                 <div class="datagrid-title">Waktu</div>
                                 <div class="datagrid-content">
-                                    {{ $rapat->waktu_mulai->format('H:i') }} – {{ $rapat->waktu_selesai->format('H:i') }}
+                                    {{ formatWaktuSaja($rapat->waktu_mulai) }} – {{ formatWaktuSaja($rapat->waktu_selesai) }}
                                 </div>
                             </div>
                             <div class="datagrid-item">
@@ -141,7 +141,7 @@
                                                 <div>
                                                     <div class="fw-medium">{{ $peserta->nama_display }}</div>
                                                     <div class="text-muted x-small waktu-hadir-{{ $peserta->encrypted_rapatpeserta_id }} {{ $peserta->status !== 'hadir' ? 'd-none' : '' }}">
-                                                        <i class="ti ti-clock me-1"></i> <span class="text-green fw-semibold">Hadir {{ $peserta->waktu_hadir?->format('H:i') }}</span>
+                                                        <i class="ti ti-clock me-1"></i> <span class="text-green fw-semibold">Hadir {{ formatWaktuSaja($peserta->waktu_hadir) }}</span>
                                                     </div>
                                                 </div>
                                             </div>

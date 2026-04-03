@@ -16,7 +16,7 @@ class TimMutuController extends Controller
 {
     public function __construct(
         protected TimMutuService $timMutuService,
-        protected PeriodeSpmiService $PeriodeSpmiService,
+        protected PeriodeSpmiService $periodeSpmiService,
         protected StrukturOrganisasiService $strukturOrganisasiService,
     ) {
         // $this->authorizeResourcePermissions('pemutu.tim-mutu');
@@ -28,7 +28,7 @@ class TimMutuController extends Controller
      */
     public function index()
     {
-        $siklus = $this->PeriodeSpmiService->getSiklusData();
+        $siklus = $this->periodeSpmiService->getSiklusData();
         $unitTypes = StrukturOrganisasi::whereNotNull('type')->where('type', '!=', '')->distinct()->orderBy('type')->pluck('type');
         $units = $this->strukturOrganisasiService->getHierarchicalList();
 

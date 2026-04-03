@@ -5,16 +5,7 @@
 <x-tabler.page-header title="Indikator SPMI {{ $siklus['tahun'] }}" pretitle="Penetapan">
     <x-slot:actions>
         <div class="d-flex align-items-center gap-3">
-            <div class="btn-group p-1 bg-light rounded-pill shadow-sm" style="border: 1px solid #e6e8e9;">
-                <a href="{{ route('pemutu.set-kelompok', 'akademik') }}" 
-                   class="btn {{ $activeKelompok === 'akademik' ? 'btn-white shadow-sm fw-bold border-0 active text-primary' : 'btn-ghost-secondary border-0 opacity-75' }} rounded-pill px-4 transition-all duration-200">
-                    <i class="ti ti-school me-2"></i>Akademik
-                </a>
-                <a href="{{ route('pemutu.set-kelompok', 'non_akademik') }}" 
-                   class="btn {{ $activeKelompok === 'non_akademik' ? 'btn-white shadow-sm fw-bold border-0 active text-primary' : 'btn-ghost-secondary border-0 opacity-75' }} rounded-pill px-4 transition-all duration-200">
-                    <i class="ti ti-building-community me-2"></i>Non Akademik
-                </a>
-            </div>
+            <x-pemutu.kelompok-selector :active-kelompok="$activeKelompok" />
 
             <x-tabler.button href="{{ route('pemutu.indikator.create', ['type' => $activeType]) }}"  type="create" text="{{ $activeType === 'performa' ? 'Indikator KPI' : 'Indikator ' . ucfirst($activeType) }}" />
         </div>
@@ -24,9 +15,10 @@
 
 @section('content')
     @if($periode)
+        <x-pemutu.active-period :periode="$periode" type="penetapan" />
         <x-tabler.card>
-            <x-tabler.card-body class="border-bottom p-2 bg-transparent">
-                <ul class="nav nav-pills nav-fill gap-2 text-uppercase fw-bold" id="indikator-types" role="tablist">
+            <x-tabler.card-header class="border-bottom px-4 pt-3 pb-3 d-flex justify-content-between align-items-center">
+                <ul class="nav nav-pills nav-fill gap-2 text-uppercase fw-bold m-0" style="min-width: 400px;" id="indikator-types" role="tablist">
                     @foreach($types as $key => $label)
                     <li class="nav-item">
                         <a href="{{ route('pemutu.indikator.index', ['type' => $key]) }}" 
@@ -36,12 +28,12 @@
                     </li>
                     @endforeach
                 </ul>
-            </x-tabler.card-body>
-            <x-tabler.card-header>
-                <div class="ms-auto d-flex gap-2 align-items-center">
-                    <x-tabler.datatable-page-length dataTableId="indikator-table" />
-                    <x-tabler.datatable-search dataTableId="indikator-table" />
-                    <x-tabler.datatable-filter dataTableId="indikator-table" type="button" target="#indikator-table-filter-area" />
+                <div class="card-actions mb-0">
+                    <div class="d-flex gap-2 align-items-center">
+                        <x-tabler.datatable-page-length dataTableId="indikator-table" />
+                        <x-tabler.datatable-search dataTableId="indikator-table" />
+                        <x-tabler.datatable-filter dataTableId="indikator-table" type="button" target="#indikator-table-filter-area" />
+                    </div>
                 </div>
             </x-tabler.card-header>
             <div class="collapse" id="indikator-table-filter-area">

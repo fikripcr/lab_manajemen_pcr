@@ -56,13 +56,13 @@ class RapatEntitasService
             $rawJson = null;
 
             if ($model === IndikatorOrgUnit::class) {
-                $item = IndikatorOrgUnit::with('indikator', 'unitKerja')->find($modelId);
+                $item = IndikatorOrgUnit::with(['indikator', 'orgUnit'])->find($modelId);
                 if ($item) {
                     $rawJson = [
                         'type' => 'Indikator Unit',
                         'no_indikator' => $item->indikator?->no_indikator,
                         'indikator' => $item->indikator?->indikator,
-                        'unit_kerja' => $item->unitKerja?->name,
+                        'unit_kerja' => $item->orgUnit?->name,
                     ];
                 }
             } elseif ($model === StrukturOrganisasi::class) {
@@ -113,9 +113,10 @@ class RapatEntitasService
         }
 
         if ($entitas->model === IndikatorOrgUnit::class) {
-            $item = IndikatorOrgUnit::with('indikator')->find($entitas->model_id);
+            $item = IndikatorOrgUnit::with(['indikator', 'orgUnit'])->find($entitas->model_id);
             if ($item && $item->indikator) {
-                $selectedEntityText = '[Indikator Unit] '.$item->indikator->no_indikator.' - '.$item->indikator->indikator;
+                $unitName = $item->orgUnit?->name ?? 'Unknown';
+                $selectedEntityText = '[Indikator Unit] '.$item->indikator->no_indikator.' - '.$item->indikator->indikator.' ('.$unitName.')';
                 $selectedEntityId = 'IndikatorOrgUnit:'.$item->indikorgunit_id;
             }
         } elseif ($entitas->model === StrukturOrganisasi::class) {
@@ -143,9 +144,10 @@ class RapatEntitasService
         $modelName = class_basename($row->model);
 
         if ($row->model === IndikatorOrgUnit::class) {
-            $item = IndikatorOrgUnit::with('indikator')->find($row->model_id);
+            $item = IndikatorOrgUnit::with(['indikator', 'orgUnit'])->find($row->model_id);
             if ($item && $item->indikator) {
-                return '[Indikator Unit] '.$item->indikator->no_indikator.' - '.\Illuminate\Support\Str::limit($item->indikator->indikator, 30);
+                $unitName = $item->orgUnit?->name ?? 'Unknown';
+                return '[Indikator Unit] '.$item->indikator->no_indikator.' - '.\Illuminate\Support\Str::limit($item->indikator, 30).' ('.$unitName.')';
             }
         }
 

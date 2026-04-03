@@ -445,7 +445,56 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    window.initPegawaiSelect2 = function (selector, config = {}) {
+        const elements = document.querySelectorAll(selector || '.select2-pegawai');
+        if (elements.length > 0) {
+            window.loadSelect2().then(() => {
+                $(selector || '.select2-pegawai').each(function () {
+                    const $el = $(this);
+                    if ($el.data('select2')) return;
+
+                    const baseConfig = {
+                        theme: 'bootstrap-5',
+                        width: '100%',
+                        placeholder: $el.data('placeholder') || config.placeholder || 'Cari Pegawai...',
+                        allowClear: true,
+                        minimumInputLength: 3,
+                        ajax: {
+                            url: config.url || '/pemutu/tim-mutu/search-pegawai',
+                            dataType: 'json',
+                            delay: 300,
+                            data: function (params) {
+                                return { q: params.term };
+                            },
+                            processResults: function (data) {
+                                return { results: data.results };
+                            },
+                            cache: true
+                        },
+                        ...config
+                    };
+
+                    // Auto-detect modal parent if not provided
+                    const $parent = $el.closest('.modal, .dropdown-menu');
+                    if ($parent.length && !baseConfig.dropdownParent) {
+                        baseConfig.dropdownParent = $parent;
+                    }
+
+                    $el.select2(baseConfig);
+
+                    // Forward select2 events to native change events for compatibility
+                    $el.on('select2:select select2:unselect', function (e) {
+                        this.dispatchEvent(new Event('change', { bubbles: true }));
+                    });
+                });
+            }).catch((error) => {
+                console.error('Failed to initialize Pegawai Select2:', error);
+            });
+        }
+    };
+
     window.initOfflineSelect2();
+    window.initPegawaiSelect2();
     window.initFlatpickr();
     window.initFilePond();
     window.initHugeRTE();

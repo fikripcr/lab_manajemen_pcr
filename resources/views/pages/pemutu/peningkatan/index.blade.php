@@ -4,26 +4,17 @@
 @section('header')
 <x-tabler.page-header title="Peningkatan Indikator SPMI {{ $siklus['tahun'] }}" pretitle="Peningkatan">
     <x-slot:actions>
-        <div class="btn-group p-1 bg-light rounded-pill shadow-sm" style="border: 1px solid #e6e8e9;">
-            <a href="{{ route('pemutu.set-kelompok', 'akademik') }}" 
-               class="btn {{ $activeKelompok === 'akademik' ? 'btn-white shadow-sm fw-bold border-0 active text-primary' : 'btn-ghost-secondary border-0 opacity-75' }} rounded-pill px-4 transition-all duration-200">
-                <i class="ti ti-school me-2"></i>Akademik
-            </a>
-            <a href="{{ route('pemutu.set-kelompok', 'non_akademik') }}" 
-               class="btn {{ $activeKelompok === 'non_akademik' ? 'btn-white shadow-sm fw-bold border-0 active text-primary' : 'btn-ghost-secondary border-0 opacity-75' }} rounded-pill px-4 transition-all duration-200">
-                <i class="ti ti-building-community me-2"></i>Non Akademik
-            </a>
-        </div>
+        <x-pemutu.kelompok-selector :active-kelompok="$activeKelompok" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
 
 @section('content')
     @if($periode)
-        @php $jadwalTersedia = $periode->peningkatan_awal && $periode->peningkatan_akhir; @endphp
+        <x-pemutu.active-period :periode="$periode" type="peningkatan" />
         
         <x-tabler.card>
-            <x-tabler.card-header class="border-bottom-0 pt-4">
+            <x-tabler.card-header class="border-bottom px-4 pt-3 pb-3 d-flex justify-content-between align-items-center">
                 <ul class="nav nav-pills card-header-pills" id="peningkatan-tabs" data-bs-toggle="tabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <a href="#tab-rtm" class="nav-link active" data-bs-toggle="tab" role="tab">
@@ -41,31 +32,18 @@
                         </a>
                     </li>
                 </ul>
+                <div class="card-actions mb-0" id="review-toolbar" style="display: none;">
+                    <div class="d-flex gap-2">
+                        <x-tabler.datatable-page-length dataTableId="table-review" />
+                        <x-tabler.datatable-search dataTableId="table-review" />
+                        <x-tabler.datatable-filter dataTableId="table-review" type="button" target="#table-review-filter-area" />
+                    </div>
+                </div>
             </x-tabler.card-header>
 
             <div class="tab-content">
                 {{-- SUB-TAB: REVIEW --}}
                 <div class="tab-pane" id="tab-review" role="tabpanel">
-                    <x-tabler.card-body class="border-top">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h3 class="mb-1">Review Indikator - {{ ucfirst(str_replace('_', ' ', $activeKelompok)) }}</h3>
-                                <div class="text-muted small mt-1">
-                                    @php $periodeInfo = pemutuPeriodeStatus($periode->peningkatan_awal, $periode->peningkatan_akhir); @endphp
-                                    @if($periode->peningkatan_awal && $periode->peningkatan_akhir)
-                                        <i class="ti ti-calendar me-1"></i> 
-                                        Jadwal: {{ $periode->peningkatan_awal->format('d M Y') }} s.d. {{ $periode->peningkatan_akhir->format('d M Y') }}
-                                    @endif
-                                    <span class="badge bg-{{ $periodeInfo['color'] }}-lt ms-2">{{ $periodeInfo['status_text'] }}</span>
-                                </div>
-                            </div>
-                            <div class="col-auto d-flex gap-2">
-                                <x-tabler.datatable-page-length dataTableId="table-review" />
-                                <x-tabler.datatable-search dataTableId="table-review" />
-                                <x-tabler.datatable-filter dataTableId="table-review" type="button" target="#table-review-filter-area" />
-                            </div>
-                        </div>
-                    </x-tabler.card-body>
                     <div class="collapse" id="table-review-filter-area">
                         <x-tabler.datatable-filter dataTableId="table-review" type="bare">
                             <div class="row g-3">
@@ -204,6 +182,17 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    const reviewToolbar = document.getElementById('review-toolbar');
+    document.querySelectorAll('#peningkatan-tabs .nav-link').forEach(t => {
+        t.addEventListener('shown.bs.tab', function(e) {
+            if (e.target.getAttribute('href') === '#tab-review') {
+                reviewToolbar.style.display = 'block';
+            } else {
+                reviewToolbar.style.display = 'none';
+            }
+        });
+    });
+
     window.switchSubTab = function(targetSelector) {
         const triggerEl = document.querySelector(`a[href="${targetSelector}"]`);
         if (triggerEl) {

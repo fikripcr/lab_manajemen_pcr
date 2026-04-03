@@ -34,7 +34,7 @@
                                 @if($periode->tanggal_mulai && $periode->tanggal_selesai)
                                     <span class="badge bg-azure-lt me-1">
                                         <i class="ti ti-calendar me-1"></i>
-                                        {{ $periode->tanggal_mulai->format('d M') }} s.d. {{ $periode->tanggal_selesai->format('d M Y') }}
+                                        {{ formatTanggalIndo($periode->tanggal_mulai) }} s.d. {{ formatTanggalIndo($periode->tanggal_selesai) }}
                                     </span>
                                 @endif
                                 @php

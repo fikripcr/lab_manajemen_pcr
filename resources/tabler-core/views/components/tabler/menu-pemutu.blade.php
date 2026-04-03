@@ -70,7 +70,7 @@
 
         [
             'type'  => 'header',
-            'title' => 'Siklus SPMI',
+            'title' => 'Siklus PPEPP',
         ],
         [
             'title'         => 'Penetapan',

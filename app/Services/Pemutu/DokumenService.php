@@ -150,4 +150,143 @@ class DokumenService
             ->pluck('judul', 'dok_id')
             ->toArray();
     }
+
+    /**
+     * Get distinct periods (years) across all documents.
+     */
+    public function getDistinctPeriods(): \Illuminate\Support\Collection
+    {
+        return \App\Models\Pemutu\Dokumen::select('periode')
+            ->whereNotNull('periode')
+            ->distinct()
+            ->orderBy('periode', 'desc')
+            ->pluck('periode');
+    }
+
+    /**
+     * Get documents by type and optionally by period.
+     */
+    public function getDokumenByJenis(string $jenis, ?int $periode = null): \Illuminate\Database\Eloquent\Collection
+    {
+        $query = \App\Models\Pemutu\Dokumen::where('jenis', $jenis)
+            ->whereNull('parent_id')
+            ->orderBy('seq');
+
+        if ($periode) {
+            $query->where('periode', $periode);
+        }
+
+        return $query->get();
+    }
+
+    /**
+     * Get a single document by ID.
+     */
+    public function getDokumenById(int $id): ?\App\Models\Pemutu\Dokumen
+    {
+        return \App\Models\Pemutu\Dokumen::find($id);
+    }
+
+    /**
+     * Get a single DokSub by ID.
+     */
+    public function getDokSubById(int $id): ?DokSub
+    {
+        return DokSub::find($id);
+    }
+
+    /**
+     * Get hierarchical documents for dropdown selection.
+     */
+    public function getHierarchicalDokumens(): \Illuminate\Database\Eloquent\Collection
+    {
+        return \App\Models\Pemutu\Dokumen::with('children')
+            ->whereNull('parent_id')
+            ->orderBy('jenis')
+            ->orderBy('seq')
+            ->get();
+    }
+
+    /**
+     * Create a new document.
+     */
+    public function createDokumen(array $data): \App\Models\Pemutu\Dokumen
+    {
+        return \App\Models\Pemutu\Dokumen::create($data);
+    }
+
+    /**
+     * Update an existing document.
+     */
+    public function updateDokumen(int $id, array $data): bool
+    {
+        $dokumen = $this->getDokumenById($id);
+
+        return $dokumen ? $dokumen->update($data) : false;
+    }
+
+    /**
+     * Delete a document.
+     */
+    public function deleteDokumen(int $id): bool
+    {
+        $dokumen = $this->getDokumenById($id);
+
+        return $dokumen ? $dokumen->delete() : false;
+    }
+
+    /**
+     * Reorder documents based on nested hierarchy.
+     */
+    public function reorderDokumens(array $hierarchy, ?int $parentId = null): void
+    {
+        foreach ($hierarchy as $index => $item) {
+            $id = decryptIdIfEncrypted($item['id']);
+            \App\Models\Pemutu\Dokumen::where('dok_id', $id)->update([
+                'parent_id' => $parentId,
+                'seq' => $index + 1,
+            ]);
+
+            if (isset($item['children']) && count($item['children']) > 0) {
+                $this->reorderDokumens($item['children'], $id);
+            }
+        }
+    }
+
+    /**
+     * Get children query for DataTables (DokSub based).
+     */
+    public function getDokSubChildrenQuery(int $dokumenId): \Illuminate\Database\Eloquent\Builder
+    {
+        return DokSub::withCount(['childDokumens', 'indikators'])
+            ->where('dok_id', $dokumenId)
+            ->orderBy('seq');
+    }
+
+    /**
+     * Get children query for DataTables (Standard).
+     */
+    public function getChildrenQuery(int $parent_id): \Illuminate\Database\Eloquent\Builder
+    {
+        return \App\Models\Pemutu\Dokumen::withCount('children')
+            ->with(['dokSubs.indikators' => function ($q) {
+                $q->where('type', 'renop');
+            }])
+            ->where('parent_id', $parent_id)
+            ->orderBy('seq');
+    }
+
+    /**
+     * Get accumulated indicators for a Renop document.
+     */
+    public function getRenopIndicators(\App\Models\Pemutu\Dokumen $dokumen): \Illuminate\Support\Collection
+    {
+        $doksubs = $dokumen->dokSubs;
+        $indicators = collect();
+        foreach ($doksubs as $doksub) {
+            $indicators = $indicators->merge($doksub->indikators);
+        }
+
+        return $indicators;
+    }
 }

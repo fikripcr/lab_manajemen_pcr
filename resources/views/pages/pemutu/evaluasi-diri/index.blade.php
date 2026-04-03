@@ -4,63 +4,47 @@
 @section('header')
 <x-tabler.page-header title="Evaluasi Diri SPMI {{ $siklus['tahun'] }}" pretitle="Evaluasi">
     <x-slot:actions>
-        <div class="btn-group p-1 bg-light rounded-pill shadow-sm" style="border: 1px solid #e6e8e9;">
-            <a href="{{ route('pemutu.set-kelompok', 'akademik') }}" 
-               class="btn {{ $activeKelompok === 'akademik' ? 'btn-white shadow-sm fw-bold border-0 active text-primary' : 'btn-ghost-secondary border-0 opacity-75' }} rounded-pill px-4 transition-all duration-200">
-                <i class="ti ti-school me-2"></i>Akademik
-            </a>
-            <a href="{{ route('pemutu.set-kelompok', 'non_akademik') }}" 
-               class="btn {{ $activeKelompok === 'non_akademik' ? 'btn-white shadow-sm fw-bold border-0 active text-primary' : 'btn-ghost-secondary border-0 opacity-75' }} rounded-pill px-4 transition-all duration-200">
-                <i class="ti ti-building-community me-2"></i>Non Akademik
-            </a>
-        </div>
+        <x-pemutu.kelompok-selector :active-kelompok="$activeKelompok" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
 
 @section('content')
     @if($periode)
-        @php $jadwalTersedia = $periode->ed_awal && $periode->ed_akhir; @endphp
-        
-        <x-tabler.card>
-            <x-tabler.card-header class="border-bottom-0 pt-4">
+        <x-pemutu.active-period :periode="$periode" type="ed" />
+
+            <x-tabler.card x-data="{ activeTab: 'ed' }">
+            <x-tabler.card-header class="border-bottom px-4 pt-3 pb-3 d-flex justify-content-between align-items-center">
                 <ul class="nav nav-pills card-header-pills" id="ed-tabs" data-bs-toggle="tabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a href="#tab-ed" class="nav-link active" data-bs-toggle="tab" role="tab">
+                        <a href="#tab-ed" class="nav-link active" data-bs-toggle="tab" role="tab" @click="activeTab = 'ed'; $dispatch('tab-changed', { phase: 'ed' })">
                             <i class="ti ti-checklist me-2"></i>Evaluasi Diri
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a href="#tab-ptp" class="nav-link" data-bs-toggle="tab" role="tab" tabindex="-1">
+                        <a href="#tab-ptp" class="nav-link" data-bs-toggle="tab" role="tab" @click="activeTab = 'ptp'; $dispatch('tab-changed', { phase: 'ptp' })">
                             <i class="ti ti-history me-2"></i>Pelaksanaan Tindakan Perbaikan
+                            <span class="text-muted ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="KTS dari periode tahun lalu yang harus dilaporkan perbaikannya."><i class="ti ti-info-circle"></i></span>
                         </a>
                     </li>
                 </ul>
+                <div class="card-actions mb-0">
+                    <div class="d-flex gap-2" x-show="activeTab === 'ed'">
+                        <x-tabler.datatable-page-length dataTableId="table-ed" />
+                        <x-tabler.datatable-search dataTableId="table-ed" />
+                        <x-tabler.datatable-filter dataTableId="table-ed" type="button" target="#table-ed-filter-area" />
+                    </div>
+                    <div class="d-flex gap-2" x-show="activeTab === 'ptp'" style="display: none;">
+                        <x-tabler.datatable-page-length dataTableId="table-ptp" />
+                        <x-tabler.datatable-search dataTableId="table-ptp" />
+                        <x-tabler.datatable-filter dataTableId="table-ptp" type="button" target="#table-ptp-filter-area" />
+                    </div>
+                </div>
             </x-tabler.card-header>
 
             <div class="tab-content">
                 {{-- SUB-TAB: EVALUASI DIRI --}}
                 <div class="tab-pane active show" id="tab-ed" role="tabpanel">
-                    <x-tabler.card-body class="border-top">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h3 class="mb-1">Monitoring Pengisian - {{ ucfirst(str_replace('_', ' ', $activeKelompok)) }}</h3>
-                                <div class="text-muted small mt-1">
-                                    @php $periodeInfo = pemutuPeriodeStatus($periode->ed_awal, $periode->ed_akhir); @endphp
-                                    @if($periode->ed_awal && $periode->ed_akhir)
-                                        <i class="ti ti-calendar me-1"></i>
-                                        Jadwal: {{ $periode->ed_awal->format('d M Y') }} s.d. {{ $periode->ed_akhir->format('d M Y') }}
-                                    @endif
-                                    <span class="badge bg-{{ $periodeInfo['color'] }}-lt ms-2">{{ $periodeInfo['status_text'] }}</span>
-                                </div>
-                            </div>
-                            <div class="col-auto d-flex gap-2">
-                                <x-tabler.datatable-page-length dataTableId="table-ed" />
-                                <x-tabler.datatable-search dataTableId="table-ed" />
-                                <x-tabler.datatable-filter dataTableId="table-ed" type="button" target="#table-ed-filter-area" />
-                            </div>
-                        </div>
-                    </x-tabler.card-body>
                     <div class="collapse" id="table-ed-filter-area">
                         <x-tabler.datatable-filter dataTableId="table-ed" type="bare">
                             <div class="row g-3">
@@ -108,19 +92,6 @@
 
                 {{-- SUB-TAB: PTP --}}
                 <div class="tab-pane" id="tab-ptp" role="tabpanel">
-                    <x-tabler.card-body class="border-top">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h3 class="mb-1">Pelaksanaan Tindakan Perbaikan</h3>
-                                <p class="text-muted mb-0 small">KTS dari periode tahun lalu yang harus dilaporkan perbaikannya.</p>
-                            </div>
-                            <div class="col-auto d-flex gap-2">
-                                <x-tabler.datatable-page-length dataTableId="table-ptp" />
-                                <x-tabler.datatable-search dataTableId="table-ptp" />
-                                <x-tabler.datatable-filter dataTableId="table-ptp" type="button" target="#table-ptp-filter-area" />
-                            </div>
-                        </div>
-                    </x-tabler.card-body>
                     <div class="collapse" id="table-ptp-filter-area">
                         <x-tabler.datatable-filter dataTableId="table-ptp" type="bare">
                             <div class="row g-3">
@@ -165,7 +136,8 @@
                     </div>
                 </div>
             </div>
-        </x-tabler.card>
+            </x-tabler.card>
+        </div>
     @else
         <x-tabler.card>
             <x-tabler.card-body class="py-5 text-center">

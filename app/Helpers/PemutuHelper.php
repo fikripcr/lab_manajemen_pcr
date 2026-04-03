@@ -785,7 +785,7 @@ if (! function_exists('applySpmiDatatableSearch')) {
     {
         if ($request->filled('search')) {
             $searchValue = $request->input('search.value') ?? $request->input('search');
-            $search = is_array($searchValue) ? ($searchValue['value'] ?? '') : (string) $searchValue;
+            $search      = is_array($searchValue) ? ($searchValue['value'] ?? '') : (string) $searchValue;
             if ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('no_indikator', 'LIKE', "%{$search}%")
@@ -821,5 +821,61 @@ if (! function_exists('parseSpmiFilters')) {
         }
 
         return $filters;
+    }
+}
+
+if (! function_exists('pemutuPpeppConfig')) {
+    /**
+     * Get the standardized visual configuration for PPEPP stages.
+     *
+     * @param  string  $type  The specific phase or sub-phase (e.g. 'penetapan', 'ed', 'ami', 'te', 'rtp', 'ptp', 'pengendalian', 'peningkatan')
+     * @return array Configuration containing label, color, and icon.
+     */
+    function pemutuPpeppConfig(string $type): array
+    {
+        return match ($type) {
+            'penetapan', 'indikator', 'dokumen' => [
+                'ppepp'       => 'P',
+                'label'       => 'Penetapan',
+                'color'       => 'azure',
+                'icon'        => 'target',
+                'date_prefix' => 'penetapan',
+            ],
+            'pelaksanaan'  => [
+                'ppepp'       => 'P',
+                'label'       => 'Pelaksanaan',
+                'color'       => 'yellow',
+                'icon'        => 'tools',
+                'date_prefix' => 'penetapan', // Implementation usually follows the standard setting window
+            ],
+            'ed', 'ami', 'te', 'rtp', 'ptp', 'evaluasi' => [
+                'ppepp'       => 'E',
+                'label'       => 'Evaluasi',
+                'color'       => 'orange',
+                'icon'        => 'checklist',
+                'date_prefix' => 'ed', // PTP and AMI/TE usually share the ED/Evaluasi window in this project
+            ],
+            'pengendalian' => [
+                'ppepp'       => 'P',
+                'label'       => 'Pengendalian',
+                'color'       => 'red',
+                'icon'        => 'settings-check',
+                'date_prefix' => 'pengendalian',
+            ],
+            'peningkatan'  => [
+                'ppepp'       => 'P',
+                'label'       => 'Peningkatan',
+                'color'       => 'pink',
+                'icon'        => 'trending-up',
+                'date_prefix' => 'peningkatan',
+            ],
+            default        => [
+                'ppepp'       => '?',
+                'label'       => 'SPMI',
+                'color'       => 'azure',
+                'icon'        => 'calendar-event',
+                'date_prefix' => 'penetapan',
+            ],
+        };
     }
 }

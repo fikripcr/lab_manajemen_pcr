@@ -17,29 +17,63 @@
 @endsection
 
 @section('content')
-    <x-tabler.card class="mb-3">
-        <x-tabler.card-body class="p-2">
-            <ul class="nav nav-tabs bg-transparent border-bottom px-3" id="rapat-detail-tabs" data-bs-toggle="tabs">
-                <li class="nav-item">
-                    <a href="#section-info" class="nav-link active rounded-top" data-bs-toggle="tab">
-                        <i class="ti ti-info-circle me-2"></i> Info & Peserta
-                        <span class="badge bg-blue-lt ms-1">{{ $rapat->pesertas->count() }}</span>
+    {{-- Segmented Controls for Navigation --}}
+    <style>
+        .segmented-control-wrapper {
+            background: #f4f6fa;
+            padding: 4px;
+            border-radius: 12px;
+            display: inline-flex;
+            border: 1px solid #e6e8eb;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .segmented-control-wrapper .nav-link {
+            border: 0 !important;
+            border-radius: 10px !important;
+            padding: 8px 20px !important;
+            font-weight: 500;
+            color: #626976;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+        .segmented-control-wrapper .nav-link.active {
+            background: #fff !important;
+            color: #206bc4 !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .segmented-control-wrapper .nav-link:hover:not(.active) {
+            background: rgba(255,255,255,0.5);
+            color: #206bc4;
+        }
+        .segmented-control-wrapper .badge {
+            transition: all 0.2s ease;
+        }
+    </style>
+
+    <div class="d-flex justify-content-center mb-4 mt-n2">
+        <div class="segmented-control-wrapper">
+            <ul class="nav nav-pills border-0" id="rapat-detail-tabs" data-bs-toggle="tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a href="#section-info" class="nav-link active" data-bs-toggle="tab" role="tab">
+                        <i class="ti ti-info-circle me-2"></i> Info & Peserta 
+                        <span class="badge bg-blue-lt ms-2">{{ $rapat->pesertas->count() }}</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="#section-agenda" class="nav-link" data-bs-toggle="tab">
+                <li class="nav-item" role="presentation">
+                    <a href="#section-agenda" class="nav-link" data-bs-toggle="tab" role="tab">
                         <i class="ti ti-checklist me-2"></i> Agenda & Notulen
-                        <span class="badge bg-blue-lt ms-1">{{ $rapat->agendas->count() }}</span>
+                        <span class="badge bg-blue-lt ms-2">{{ $rapat->agendas->count() }}</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="#section-entitas" class="nav-link" data-bs-toggle="tab">
+                <li class="nav-item" role="presentation">
+                    <a href="#section-entitas" class="nav-link" data-bs-toggle="tab" role="tab">
                         <i class="ti ti-link me-2"></i> Entitas Terkait
                     </a>
                 </li>
             </ul>
-        </x-tabler.card-body>
-    </x-tabler.card>
+        </div>
+    </div>
 
 
     <div class="tab-content">

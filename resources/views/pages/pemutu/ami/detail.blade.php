@@ -48,10 +48,10 @@
                         <i class="ti ti-broadcast fs-3 me-2"></i>
                         <div>
                             <span class="fw-bold">Dalam Pemantauan:</span>
-                            {{ $mon->tgl_rapat->format('d M Y') }} — {{ $mon->judul_kegiatan }}
+                            {{ formatTanggalIndo($mon->rapat?->tgl_rapat) }} — {{ $mon->rapat?->judul_kegiatan }}
                         </div>
                     </div>
-                    <a href="{{ route('Kegiatan.rapat.show', $mon->encrypted_rapat_id) }}" class="btn btn-sm btn-white text-info fw-bold">
+                    <a href="{{ route('Kegiatan.rapat.show', $mon->rapat?->encrypted_rapat_id) }}" class="btn btn-sm btn-white text-info fw-bold">
                         <i class="ti ti-eye me-1"></i>Detail
                     </a>
                 </div>

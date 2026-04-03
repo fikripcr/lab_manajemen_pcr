@@ -45,6 +45,7 @@
                     placeholder: 'Cari Nomor atau Nama Indikator...',
                     allowClear: true,
                     width: '100%',
+                    minimumInputLength: 3,
                     ajax: {
                         url: '{{ route('Kegiatan.rapat.entitas.search', $rapat->encrypted_rapat_id) }}',
                         dataType: 'json',

@@ -17,6 +17,9 @@
 @endsection
 
 @section('content')
+
+<x-pemutu.active-period :periode="$periode" type="pelaksanaan" />
+
 <div class="row row-cards">
     <div class="col-12">
         <x-tabler.card>

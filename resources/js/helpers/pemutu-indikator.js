@@ -104,7 +104,7 @@ window.initPemutuIndikatorForm = function (config) {
                         },
                         cache: true
                     },
-                    minimumInputLength: 0,
+
                 });
             });
         }
@@ -123,12 +123,7 @@ window.initPemutuIndikatorForm = function (config) {
                 const tr = document.createElement('tr');
                 tr.className = 'kpi-row';
                 tr.innerHTML = `
-                    <td>
-                        <input type="hidden" name="kpi_assign[${kpiIndex}][selected]" value="1">
-                        <select class="form-select select2-offline" name="kpi_assign[${kpiIndex}][pegawai_id]" required data-placeholder="Pilih pegawai...">
-                            ${pegawaiOptionsHtml}
-                        </select>
-                    </td>
+
                     <td>
                         <input type="text" class="form-control mb-2" name="kpi_assign[${kpiIndex}][target_value]" placeholder="Nilai Target">
                         <input type="text" class="form-control" name="kpi_assign[${kpiIndex}][unit_ukuran]" placeholder="%, org, dll (Satuan)">
@@ -139,11 +134,7 @@ window.initPemutuIndikatorForm = function (config) {
                 `;
                 kpiBody.appendChild(tr);
 
-                if (typeof window.initOfflineSelect2 === 'function') {
-                    window.initOfflineSelect2();
-                }
 
-                initSelect2Ajax();
 
                 kpiIndex++;
             });

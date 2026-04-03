@@ -25,7 +25,11 @@ class PelaksanaanController extends Controller
     {
         $siklus = $this->periodeSpmiService->getSiklusData();
 
-        return view('pages.pemutu.pemantauan.index', compact('siklus'));
+        // Active Kelompok (Akademik / Non Akademik) from session
+        $activeKelompok = session('pemutu_active_kelompok', 'akademik');
+        $periode = $siklus[$activeKelompok] ?? null;
+
+        return view('pages.pemutu.pemantauan.index', compact('siklus', 'periode'));
     }
 
     /**
@@ -36,19 +40,37 @@ class PelaksanaanController extends Controller
         $query = $this->pemantauanService->getPemantauanQuery();
 
         return DataTables::of($query)
-            ->addColumn('no', function ($row) {
-                return pemutuDtColNo($row);
+            ->addIndexColumn()
+            ->editColumn('no', function ($row) {
+                return '<div class="text-center font-monospace text-muted">'.($row->DT_RowIndex ?? '-').'</div>';
             })
             ->addColumn('tgl_info', function ($row) {
                 return '<div>
-                    <div class="fw-bold">'.($row->tgl_rapat ? $row->tgl_rapat->format('d M Y') : '-').'</div>
-                    <div class="small text-muted">'.($row->waktu_mulai ? $row->waktu_mulai->format('H:i') : '').' - '.($row->waktu_selesai ? $row->waktu_selesai->format('H:i') : '').'</div>
+                    <div class="fw-bold"><i class="ti ti-calendar me-1 text-muted"></i>'.($row->tgl_rapat ? $row->tgl_rapat->format('d M Y') : '-').'</div>
+                    <div class="small text-muted"><i class="ti ti-clock me-1 text-muted"></i>'.($row->waktu_mulai ? $row->waktu_mulai->format('H:i') : '').' - '.($row->waktu_selesai ? $row->waktu_selesai->format('H:i') : '').'</div>
+                </div>';
+            })
+            ->editColumn('judul_kegiatan', function ($row) {
+                $ketua = $row->ketua_user?->name ?? '-';
+                return '<div>
+                    <div class="fw-bold">'.$row->judul_kegiatan.'</div>
+                    <div class="small text-muted d-flex align-items-center gap-1">
+                        <i class="ti ti-user-circle"></i> Ketua: '.$ketua.'
+                    </div>
                 </div>';
             })
             ->addColumn('indikator_count', function ($row) {
-                $count = $row->entitas()->where('model', 'IndikatorOrgUnit')->count();
+                // Support both short name and full class name for backward compatibility
+                $count = $row->entitas()
+                    ->whereIn('model', ['IndikatorOrgUnit', \App\Models\Pemutu\IndikatorOrgUnit::class])
+                    ->count();
 
-                return '<span class="badge bg-blue-lt">'.$count.' Indikator</span>';
+                $pesertaCount = $row->pesertas()->count();
+
+                return '<div class="d-flex flex-column gap-1 align-items-center">
+                    <span class="badge bg-blue-lt px-2">'.$count.' Indikator</span>
+                    <span class="small text-muted" style="font-size: 10px;"><i class="ti ti-users me-1"></i>'.$pesertaCount.' Peserta</span>
+                </div>';
             })
             ->addColumn('action', function ($row) {
                 $editUrl = route('pemutu.pemantauan.edit', $row->encrypted_rapat_id);
@@ -57,14 +79,14 @@ class PelaksanaanController extends Controller
                 return '<div class="btn-group">
                     <a href="'.$detailUrl.'" class="btn btn-sm btn-info" title="Detail Rapat"><i class="ti ti-eye"></i></a>
                     <a href="#" class="btn btn-sm btn-primary ajax-modal-btn"
-                        data-modal-size="modal-lg"
+                        data-modal-size="modal-xl"
                         data-modal-title="Edit Jadwal Pemantauan"
                         data-url="'.$editUrl.'">
                         <i class="ti ti-pencil"></i>
                     </a>
                 </div>';
             })
-            ->rawColumns(['no', 'tgl_info', 'indikator_count', 'action'])
+            ->rawColumns(['no', 'tgl_info', 'judul_kegiatan', 'indikator_count', 'action'])
             ->make(true);
     }
 
