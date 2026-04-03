@@ -61,8 +61,8 @@
                             </div>
                             <div class="col-auto d-flex gap-2">
                                 <x-tabler.datatable-page-length dataTableId="table-review" />
-                                <x-tabler.datatable-filter dataTableId="table-review" type="button" target="#table-review-filter-area" />
                                 <x-tabler.datatable-search dataTableId="table-review" />
+                                <x-tabler.datatable-filter dataTableId="table-review" type="button" target="#table-review-filter-area" />
                             </div>
                         </div>
                     </x-tabler.card-body>
@@ -108,6 +108,28 @@
                                 <p class="text-muted">Lakukan duplikasi standar terlebih dahulu di sub-tab <strong>"Duplikasi Standar"</strong> sebelum melakukan review.</p>
                             </x-tabler.card-body>
                         @else
+                            {{-- Staging Status Banner --}}
+                            @if($stagingCount > 0)
+                                <x-tabler.card-body class="border-top py-3">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="status-dot status-dot-animated bg-warning"></span>
+                                            <span class="text-warning fw-semibold">
+                                                <i class="ti ti-eye-off me-1"></i>
+                                                {{ $stagingCount }} standar masih dalam mode <strong>Staging</strong> — belum tampil di modul ED, AMI, dan Pengendalian.
+                                            </span>
+                                        </div>
+                                        <form method="POST" action="{{ route('pemutu.peningkatan.approve-staging', $periode->encrypted_periodespmi_id) }}" 
+                                              onsubmit="return confirm('Yakin ingin mempublish semua standar staging? Indikator akan langsung tampil di modul ED, AMI, dan Pengendalian.')">
+                                            @csrf
+                                            <button type="submit" class="btn btn-success btn-sm">
+                                                <i class="ti ti-check me-1"></i> Final Approve &amp; Publish
+                                            </button>
+                                        </form>
+                                    </div>
+                                </x-tabler.card-body>
+                            @endif
+
                             <div class="table-responsive border-top">
                                 <x-tabler.datatable
                                     id="table-review"
@@ -117,7 +139,8 @@
                                         ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator'],
                                         ['data' => 'target', 'name' => 'target', 'title' => 'Target Baru', 'width' => '10%', 'class' => 'text-center'],
                                         ['data' => 'status_badge', 'name' => 'status_badge', 'title' => 'Target & Status Thn Lalu', 'width' => '15%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                                        ['data' => 'keterangan_perubahan', 'name' => 'keterangan_perubahan', 'title' => 'Keterangan Perubahan', 'orderable' => false, 'searchable' => false]
+                                        ['data' => 'keterangan_perubahan', 'name' => 'keterangan_perubahan', 'title' => 'Keterangan Perubahan', 'orderable' => false, 'searchable' => false],
+                                        ['data' => 'action', 'name' => 'action', 'title' => '', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false]
                                     ]"
                                 />
                             </div>

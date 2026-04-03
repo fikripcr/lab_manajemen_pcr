@@ -26,7 +26,7 @@
     <x-tabler.card>
         <x-tabler.card-header>
             <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
-                <div class="d-flex flex-wrap gap-2">
+                <div class="ms-auto d-flex flex-wrap gap-2">
                     <x-tabler.datatable-page-length dataTableId="table-standar" />
                     <x-tabler.datatable-search dataTableId="table-standar" />
                     <x-tabler.datatable-filter dataTableId="table-standar" type="button" target="#table-standar-filter-area" />
@@ -128,7 +128,7 @@
                 route="{{ route('pemutu.indikator-summary.data-standar') }}"
                 :columns="[
                     ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                    ['data' => 'indikator_full', 'name' => 'indikator_full', 'title' => 'Indikator & Unit', 'width' => '15%', 'orderable' => false, 'searchable' => false],
+                    ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator & Unit', 'width' => '15%', 'orderable' => false, 'searchable' => false],
                     ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '7%', 'orderable' => false, 'searchable' => false],
                     ['data' => 'status_ed', 'name' => 'status_ed', 'title' => 'Evaluasi Diri', 'width' => '15%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                     ['data' => 'status_ami', 'name' => 'status_ami', 'title' => 'Status AMI', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],

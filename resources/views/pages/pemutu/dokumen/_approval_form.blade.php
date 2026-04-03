@@ -53,16 +53,6 @@
 
         @forelse($existingApprovals as $index => $approval)
             <div class="approver-row mb-3 pb-3 border-bottom">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <strong class="text-muted">Approver #<span class="row-number">{{ $index + 1 }}</span></strong>
-                    @if($approval->status === 'Approved')
-                        <span class="badge bg-green-lt">Sudah Disetujui</span>
-                    @elseif($approval->status === 'Rejected')
-                        <span class="badge bg-red-lt">Ditolak</span>
-                    @else
-                        <span class="badge bg-yellow-lt">Pending</span>
-                    @endif
-                </div>
                 <div class="d-flex align-items-start gap-3 w-100">
                     <input type="hidden" name="approvers[{{ $index }}][id]" value="{{ $approval->riwayatapproval_id }}">
                     
@@ -102,10 +92,7 @@
             </div>
         @empty
             <!-- Template Row if Empty -->
-            <div class="approver-row mb-3 pb-3 border-bottom">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <strong class="text-muted">Approver #<span class="row-number">1</span></strong>
-                </div>
+            <div class="approver-row mb-3 pb-3 ">
                 <div class="d-flex align-items-start gap-3 w-100">
                     <input type="hidden" name="approvers[0][id]" value="">
                     
@@ -133,7 +120,6 @@
     </div>
 
     <div class="mt-3 text-center">
-        <hr class="my-3">
         <button type="button" class="btn btn-outline-primary" id="btn-add-approver">
             <i class="ti ti-plus"></i> Tambah Approver Baru
         </button>
@@ -167,7 +153,6 @@
                 const hiddenId = newRow.querySelector('input[type="hidden"]');
                 const select = newRow.querySelector('select');
                 const input = newRow.querySelector('input[type="text"]');
-                const rowNo = newRow.querySelector('.row-number');
                 const btnRemove = newRow.querySelector('.btn-remove-approver');
 
                 // Remove garbage Select2 DOM containers that got cloned
@@ -192,7 +177,6 @@
                 input.name = `approvers[${rowIndex}][jabatan]`;
                 input.value = "";
 
-                rowNo.textContent = rowIndex + 1;
                 btnRemove.style.display = 'inline-flex';
 
                 container.appendChild(newRow);
@@ -223,8 +207,6 @@
             function reindexRows() {
                 const rows = container.querySelectorAll('.approver-row');
                 rows.forEach((row, index) => {
-                    row.querySelector('.row-number').textContent = index + 1;
-                    
                     const hiddenId = row.querySelector('input[type="hidden"]');
                     if (hiddenId) {
                         // Keep the ID if it exists (for existing approvals)

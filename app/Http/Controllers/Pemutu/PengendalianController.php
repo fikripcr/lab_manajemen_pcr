@@ -10,7 +10,9 @@ use App\Models\Event\Rapat;
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Services\Hr\StrukturOrganisasiService;
+use App\Services\Pemutu\DokumenService;
 use App\Services\Pemutu\IndikatorService;
+use App\Services\Pemutu\IndikatorOrgUnitService;
 use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
 
@@ -19,7 +21,10 @@ class PengendalianController extends Controller
     public function __construct(
         protected PeriodeSpmiService $periodeSpmiService,
         protected IndikatorService $indikatorService,
+        protected IndikatorOrgUnitService $indikatorOrgUnitService,
         protected StrukturOrganisasiService $strukturOrganisasiService,
+        protected DokumenService $dokumenService,
+        protected \App\Services\Pemutu\PegawaiService $pegawaiService,
     ) {}
 
     /**
@@ -43,10 +48,7 @@ class PengendalianController extends Controller
             }
         }
 
-        $rootDoks = \App\Models\Pemutu\Dokumen::whereNull('parent_id')
-            ->where('periode', $siklus['tahun'])
-            ->orderBy('seq')
-            ->get();
+        $rootDoks = $this->dokumenService->getRootsByPeriode($siklus['tahun']);
 
         $data = [
             'pageTitle'      => 'Pengendalian',
@@ -56,7 +58,7 @@ class PengendalianController extends Controller
             'rapat'          => $rapat,
             'rootDoks'       => $rootDoks,
             'units'          => $this->strukturOrganisasiService->getHierarchicalList(),
-            'users'          => \App\Models\User::with('pegawai.latestDataDiri')->get(),
+            'users'          => $this->pegawaiService->getUsersWithPegawaiData(),
         ];
 
         return view('pages.pemutu.pengendalian.index', $data);
@@ -67,14 +69,10 @@ class PengendalianController extends Controller
      */
     public function data(PeriodeSpmi $periode, Request $request)
     {
-        $filters = [];
-        foreach ($request->only(['unit_id', 'pengend_status', 'pengend_important_matrix', 'pengend_urgent_matrix', 'dok_id']) as $key => $value) {
-            if ($value !== null && $value !== '' && $value !== 'all') {
-                $filters[$key] = ($key === 'unit_id' || $key === 'dok_id') ? decryptIdIfEncrypted($value) : $value;
-            }
-        }
+        $filters = parseSpmiFilters($request, ['unit_id', 'pengend_status', 'pengend_important_matrix', 'pengend_urgent_matrix', 'dok_id']);
 
-        $query = $this->indikatorService->getUnifiedSpmiQuery($periode, $filters);
+        $query = $this->indikatorOrgUnitService->getUnifiedSpmiQuery($periode, $filters);
+        applySpmiDatatableSearch($query, $request);
 
         return datatables()->of($query)
             ->addColumn('no', function ($row) {
@@ -130,7 +128,7 @@ class PengendalianController extends Controller
                         . '</div>';
                 }
             })
-            ->filterColumn('indikator_info', function ($query, $keyword) {
+            ->filterColumn('indikator', function ($query, $keyword) {
                 $query->where(function ($q) use ($keyword) {
                     $q->where('indikator', 'like', "%{$keyword}%")
                         ->orWhere('no_indikator', 'like', "%{$keyword}%");
@@ -156,7 +154,7 @@ class PengendalianController extends Controller
      */
     public function update(PengendalianRequest $request, string $id)
     {
-        $this->indikatorService->savePengendalian($id, $request->validated());
+        $this->indikatorOrgUnitService->updatePivotData($id, $request->validated(), 'Submit pengendalian');
 
         return jsonSuccess('Data pengendalian berhasil disimpan.');
     }
@@ -183,7 +181,7 @@ class PengendalianController extends Controller
      */
     public function validasi(ValidasiPengendalianRequest $request, string $id)
     {
-        $this->indikatorService->saveValidasiPengendalian($id, $request->validated());
+        $this->indikatorOrgUnitService->updatePivotData($id, $request->validated(), 'Validasi pengendalian atasan');
 
         return jsonSuccess('Validasi pengendalian berhasil disimpan.');
     }
@@ -193,7 +191,7 @@ class PengendalianController extends Controller
      */
     public function updateMatrix(UpdateMatrixRequest $request, string $id)
     {
-        $this->indikatorService->updateMatrix($id, $request->only(['pengend_important_matrix', 'pengend_urgent_matrix']));
+        $this->indikatorOrgUnitService->updatePivotData($id, $request->only(['pengend_important_matrix', 'pengend_urgent_matrix']));
 
         return jsonSuccess('Matrix berhasil diperbarui.');
     }
@@ -202,7 +200,7 @@ class PengendalianController extends Controller
 
     public function createRtm(PeriodeSpmi $periode)
     {
-        $users = \App\Models\User::with('pegawai.latestDataDiri')->get();
+        $users = $this->pegawaiService->getUsersWithPegawaiData();
 
         return view('pages.pemutu.pengendalian.rtm-form', compact('periode', 'users'));
     }
@@ -222,7 +220,7 @@ class PengendalianController extends Controller
      */
     public function editRtm(PeriodeSpmi $periode, Rapat $rapat)
     {
-        $users = \App\Models\User::with('pegawai.latestDataDiri')->get();
+        $users = $this->pegawaiService->getUsersWithPegawaiData();
 
         return view('pages.pemutu.pengendalian.rtm-form', compact('periode', 'rapat', 'users'));
     }

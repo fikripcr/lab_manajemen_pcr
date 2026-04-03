@@ -3,121 +3,103 @@
 
 @push('styles')
 <style>
-    /* PowerBI Inspired Custom Utilities */
-    .metric-card {
-        border-radius: 8px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        border: 1px solid #eef2f6;
-        height: 100%;
-        transition: transform 0.2s;
+    /* Status Summary Card - Reference Image Style */
+    .status-summary-card {
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        border: none;
+        background: #ffffff;
     }
-    .metric-card:hover {
-        transform: translateY(-2px);
+    .status-summary-card .card-header .badge {
+        font-size: 0.65rem;
+        background: #f0fdf4 !important;
+        color: #15803d !important;
+        border: 1px solid #dcfce7;
     }
-    .metric-card .card-body {
-        padding: 0.85rem;
+    .status-segment {
+        padding: 0 1.5rem;
     }
-    .metric-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        line-height: 1.2;
-        color: #1e293b;
+    .status-segment:not(:last-child) {
+        border-right: 1px solid #f1f5f9;
     }
-    .metric-title {
-        font-size: 0.75rem;
-        color: #64748b;
-        font-weight: 600;
-        margin-bottom: 0.25rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .metric-trend {
-        font-size: 0.7rem;
-        margin-top: 0.25rem;
-    }
-    .eisenhower-box {
-        color: white;
-        text-align: center;
-        padding: 1.5rem 0.5rem;
-        height: 100%;
+    .status-icon-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
         display: flex;
-        flex-direction: column;
+        align-items: center;
         justify-content: center;
-        align-items: center;
-        border-radius: 4px;
+        font-size: 1.5rem;
     }
-    .eisenhower-box .title {
-        font-size: 0.85rem;
-        opacity: 0.9;
-        font-weight: 600;
-    }
-    .eisenhower-box .value {
-        font-size: 2.25rem;
-        font-weight: bold;
-        line-height: 1.2;
-    }
-    .eisenhower-box .subtitle {
-        font-size: 0.75rem;
-        opacity: 0.8;
-    }
-    .form-col-filter label {
-        font-size: 0.75rem;
-        font-weight: bold;
+    .status-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1;
         color: #1e293b;
     }
-    /* Horizontal Bar Row */
-    .hbar-row {
-        display: flex;
-        align-items: center;
-        margin-bottom: 0.4rem;
-        font-size: 0.75rem;
+    .status-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 0.25rem;
     }
-    .hbar-label {
-        width: 60px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        margin-right: 0.5rem;
-        font-weight: 500;
+    .status-delta {
+        font-size: 0.8rem;
+        font-weight: 600;
     }
-    .hbar-wrapper {
-        flex: 1;
-        display: flex;
-        height: 18px;
-        background-color: #f1f5f9;
-        border-radius: 3px;
-        overflow: hidden;
+
+
+
+    /* Hierarchy Connecting Lines & Roadmap */
+    .roadmap-container { 
+        padding-left: 24px; 
+        position: relative; 
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 24px;
     }
-    .hbar-fill {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        padding-right: 6px;
-        color: white;
+    .roadmap-item { position: relative; margin-bottom: 12px; }
+    .roadmap-branch {
+        position: absolute;
+        left: -32px;
+        top: 24px;
+        bottom: -15px;
+        width: 2px;
+        border-left: 2px solid #e2e8f0;
+    }
+    .roadmap-line-horizontal {
+        position: absolute;
+        left: -32px;
+        top: 24px;
+        width: 32px;
+        height: 2px;
+        border-top: 2px solid #e2e8f0;
+        border-top-left-radius: 8px;
+    }
+    .roadmap-card {
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        background: white;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .roadmap-card:hover {
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+        border-color: #cbd5e1;
+    }
+    .status-badge-premium {
         font-size: 0.7rem;
-        font-weight: bold;
-        line-height: 1;
+        font-weight: 700;
+        padding: 0.35rem 0.75rem;
+        border-radius: 9999px;
+        letter-spacing: 0.025em;
     }
-    /* Custom divider */
-    .v-divider {
-        width: 1px;
-        background-color: #eef2f6;
-        margin: 0 0.5rem;
-    }
+    /* SVG Connector Path for curved lines if desired, using simple border for now */
 </style>
 @endpush
 
 @section('header')
 <x-tabler.page-header title="Dashboard Pemutu">
-    <x-slot:actions>
-        <button type="button" class="btn btn-primary d-none d-sm-inline-block">Overview</button>
-        <button type="button" class="btn btn-outline-secondary">Penetapan</button>
-        <button type="button" class="btn btn-outline-secondary">Pelaksanaan</button>
-        <button type="button" class="btn btn-outline-secondary">Evaluasi</button>
-        <button type="button" class="btn btn-outline-secondary">Pengendalian</button>
-        <button type="button" class="btn btn-outline-secondary">Peningkatan</button>
-    </x-slot:actions>
 </x-tabler.page-header>
 @endsection
 
@@ -137,539 +119,297 @@
     </div>
     @endif
 
-    {{-- NAV TABS FOR DASHBOARD --}}
-    <div class="mb-3 border-bottom">
-        <ul class="nav nav-tabs nav-tabs-alt" data-bs-toggle="tabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <a href="#tab-overview" class="nav-link active" data-bs-toggle="tab" aria-selected="true" role="tab">
-                    <i class="ti ti-activity me-2"></i> Overview Kinerja
-                </a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a href="#tab-hirarki" class="nav-link" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">
-                    <i class="ti ti-sitemap me-2"></i> Peta Hirarki Ketercapaian
-                </a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a href="#tab-unit" class="nav-link" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">
-                    <i class="ti ti-chart-bar me-2"></i> Analisis Per Unit Kerja
-                </a>
-            </li>
-        </ul>
-    </div>
-
     <div class="tab-content">
         {{-- TAB 1: OVERVIEW KINERJA --}}
         <div class="tab-pane active show" id="tab-overview" role="tabpanel">
 
-            {{-- TOP ROW: 8 KPI CARDS (2 rows of 4) --}}
-            <div class="row g-3 mb-3">
-        {{-- Row 1: Totals & Primary Metrics --}}
-        <div class="col-md-3">
-            <x-tabler.card class="metric-card">
-                <x-tabler.card-body class="d-flex flex-column">
-                    <div class="metric-title">Total Indikator</div>
-                    <div class="d-flex align-items-center mb-1">
-                        <div class="metric-value me-3">{{ end($trendData['indikator']) }}</div>
-                    </div>
-                    <div class="mt-auto">
-                        <div id="sparkline-indikator" style="min-height: 35px;"></div>
-                    </div>
-                </x-tabler.card-body>
-            </x-tabler.card>
-        </div>
-        <div class="col-md-3">
-            <x-tabler.card class="metric-card">
-                <x-tabler.card-body class="d-flex flex-column">
-                    <div class="metric-title">Total Standar SPMI</div>
-                    <div class="d-flex align-items-center mb-1">
-                        <div class="metric-value me-3">{{ end($trendData['standar']) }}</div>
-                    </div>
-                    <div class="mt-auto">
-                        <div id="sparkline-standar" style="min-height: 35px;"></div>
-                    </div>
-                </x-tabler.card-body>
-            </x-tabler.card>
-        </div>
-        @php
-            $topMetrics = [
-                ['id' => 'tercapai', 'title' => 'Indikator Tercapai (1 Thn)'],
-                ['id' => 'tidak_tercapai', 'title' => 'Indikator Tidak Tercapai (1 Thn)'],
-            ];
-        @endphp
-        @foreach($topMetrics as $c)
-        @php $m = $metrics[$c['id']]; @endphp
-        <div class="col-md-3">
-            <x-tabler.card class="metric-card">
-                <x-tabler.card-body>
-                    <div class="metric-title">{{ $c['title'] }}</div>
-                    <div class="metric-value">{{ number_format($m['val']) }}</div>
-                    <div class="metric-trend text-{{ $m['color'] }}">
-                        @if($m['trend'] == 'up') <i class="ti ti-arrow-up"></i>
-                        @elseif($m['trend'] == 'down') <i class="ti ti-arrow-down"></i>
-                        @endif
-                        {{ $m['pct'] }}% <span class="text-muted ms-1">vs Last Year</span>
-                    </div>
-                </x-tabler.card-body>
-            </x-tabler.card>
-        </div>
-        @endforeach
-
-        {{-- Row 2: Status States --}}
-        @php
-            $statusMetrics = [
-                ['id' => 'tingkatkan', 'title' => 'Status Tingkatkan'],
-                ['id' => 'penyesuaian', 'title' => 'Status Penyesuaian'],
-                ['id' => 'tetap', 'title' => 'Status Tetap'],
-                ['id' => 'nonaktif', 'title' => 'Status Nonaktif'],
-            ];
-        @endphp
-        @foreach($statusMetrics as $c)
-        @php $m = $metrics[$c['id']]; @endphp
-        <div class="col-md-3">
-            <x-tabler.card class="metric-card">
-                <x-tabler.card-body>
-                    <div class="metric-title">{{ $c['title'] }}</div>
-                    <div class="metric-value">{{ number_format($m['val']) }}</div>
-                    <div class="metric-trend text-{{ $m['color'] }}">
-                        @if($m['trend'] == 'up') <i class="ti ti-arrow-up"></i>
-                        @elseif($m['trend'] == 'down') <i class="ti ti-arrow-down"></i>
-                        @endif
-                        {{ $m['pct'] }}% <span class="text-muted ms-1">vs Last Year</span>
-                    </div>
-                </x-tabler.card-body>
-            </x-tabler.card>
-        </div>
-        @endforeach
-    </div>
-
-    {{-- MIDDLE ROW: Charts & Rankings --}}
-    <div class="row g-3 mb-3">
-        {{-- Donut Chart Column --}}
-        <div class="col-lg-4">
-            <x-tabler.card class="metric-card">
-                <x-tabler.card-header title="Penetapan Jenis Kriteria" />
-                <x-tabler.card-body>
-                    <div id="chart-kriteria" style="min-height: 280px;"></div>
-                </x-tabler.card-body>
-            </x-tabler.card>
-        </div>
-
-        {{-- Unit Rankings Column --}}
-        <div class="col-lg-4">
-            <x-tabler.card class="metric-card">
-                <x-tabler.card-header title="Top 3 Unit/Prodi" />
-                <x-tabler.card-body>
-                    <div class="mb-4">
-                        <div class="text-success fw-bold mb-2" style="font-size: 0.7rem;">TERTINGGI</div>
-                        @foreach($top3Units as $u)
-                            <div class="hbar-row">
-                                <div class="hbar-label" title="{{ $u->unit_name }}">{{ $u->unit_name }}</div>
-                                <div class="hbar-wrapper">
-                                    <div class="hbar-fill" style="width: {{ ($u->avg_skala / 5) * 100 }}%; background-color: #0ca678;">{{ round($u->avg_skala, 1) }}</div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                    <div>
-                        <div class="text-danger fw-bold mb-2" style="font-size: 0.7rem;">TERENDAH</div>
-                        @foreach($bottom3Units as $u)
-                            <div class="hbar-row">
-                                <div class="hbar-label" title="{{ $u->unit_name }}">{{ $u->unit_name }}</div>
-                                <div class="hbar-wrapper">
-                                    <div class="hbar-fill" style="width: {{ ($u->avg_skala / 5) * 100 }}%; background-color: #d63939;">{{ round($u->avg_skala, 1) }}</div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </x-tabler.card-body>
-            </x-tabler.card>
-        </div>
-
-        {{-- Standar Rankings Column --}}
-        <div class="col-lg-4">
-            <x-tabler.card class="metric-card">
-                <x-tabler.card-header title="Top 3 Standar" />
-                <x-tabler.card-body>
-                    <div class="mb-4">
-                        <div class="text-success fw-bold mb-2" style="font-size: 0.7rem;">TERTINGGI</div>
-                        @foreach($top3Standar as $s)
-                            <div class="hbar-row">
-                                <div class="hbar-label" title="{{ $s->dokumen_name }}">{{ substr($s->dokumen_name, 0, 10) }}..</div>
-                                <div class="hbar-wrapper">
-                                    <div class="hbar-fill" style="width: {{ ($s->avg_skala / 5) * 100 }}%; background-color: #0ca678;">{{ round($s->avg_skala, 1) }}</div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                    <div>
-                        <div class="text-danger fw-bold mb-2" style="font-size: 0.7rem;">TERENDAH</div>
-                        @foreach($bottom3Standar as $s)
-                            <div class="hbar-row">
-                                <div class="hbar-label" title="{{ $s->dokumen_name }}">{{ substr($s->dokumen_name, 0, 10) }}..</div>
-                                <div class="hbar-wrapper">
-                                    <div class="hbar-fill" style="width: {{ ($s->avg_skala / 5) * 100 }}%; background-color: #d63939;">{{ round($s->avg_skala, 1) }}</div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </x-tabler.card-body>
-            </x-tabler.card>
-        </div>
-    </div>
-
-    {{-- BOTTOM ROW: Eisenhower Matrix --}}
-    <div class="row">
-        <div class="col-12">
-            <x-tabler.card class="metric-card">
-                <x-tabler.card-header title="Prioritas Pengendalian (Eisenhower Matrix)" />
-                <x-tabler.card-body>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <div class="eisenhower-box" style="background-color: #e63946;">
-                                        <div class="title">Important / Urgent</div>
-                                        <div class="value">{{ number_format($eisenhowerCount['important_urgent']) }}</div>
-                                        <div class="subtitle">Indikator Terdeteksi</div>
+            {{-- TOP ROW: KPI CARDS & AMI SUMMARY --}}
+            <div class="row g-3 mb-4">
+                {{-- Totals Combined --}}
+                <div class="col-md-4">
+                    <x-tabler.card class="status-summary-card h-100">
+                        <x-tabler.card-body class="d-flex flex-column justify-content-center">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="avatar bg-primary-lt me-4 avatar-xl shadow-sm"><i class="ti ti-target fs-1"></i></div>
+                                <div>
+                                    <div class="status-label">Ringkasan Penetapan (Standar & Indikator)</div>
+                                    <div class="d-flex align-items-baseline">
+                                        <span class="status-value me-2">{{ number_format(end($trendData['indikator'])) }}</span>
+                                        <span class="text-muted fw-normal">Indikator Unik</span>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="eisenhower-box" style="background-color: #457b9d;">
-                                        <div class="title">Important / Not Urgent</div>
-                                        <div class="value">{{ number_format($eisenhowerCount['important_not_urgent']) }}</div>
-                                        <div class="subtitle">Indikator Terdeteksi</div>
+                                    <div class="text-muted smaller">
+                                        <i class="ti ti-activity me-1"></i>
+                                        Siklus {{ $currentYear }} • {{ number_format(end($trendData['standar'])) }} Standar SPMI
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <div class="eisenhower-box" style="background-color: #fca311;">
-                                        <div class="title">Not Important / Urgent</div>
-                                        <div class="value">{{ number_format($eisenhowerCount['not_important_urgent']) }}</div>
-                                        <div class="subtitle">Indikator Terdeteksi</div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="eisenhower-box" style="background-color: #a8dadc; color: #1d3557;">
-                                        <div class="title">Not Important / Not Urgent</div>
-                                        <div class="value">{{ number_format($eisenhowerCount['not_important_not_urgent']) }}</div>
-                                        <div class="subtitle">Indikator Terdeteksi</div>
-                                    </div>
-                                </div>
+                            <div class="mt-auto py-2 px-3 bg-light rounded d-flex justify-content-between">
+                                <small class="fw-bold">Prioritas Pengendalian</small>
+                                <span class="badge bg-primary text-white">{{ $metrics['tingkatkan']['val'] + $metrics['penyesuaian']['val'] }} Item</span>
                             </div>
-                        </div>
-                    </div>
-                </x-tabler.card-body>
-            </x-tabler.card>
-        </div>
-    </div>
-    </div> {{-- END TAB 1: OVERVIEW --}}
-
-        {{-- TAB 2: PETA HIRARKI --}}
-        <div class="tab-pane fade" id="tab-hirarki" role="tabpanel">
-            <x-tabler.card>
-                <x-tabler.card-header title="<i class='ti ti-sitemap me-2'></i>Peta Hirarki (Top Level)" />
-                <x-tabler.card-body>
-                    @if(count($hierarchyData) > 0)
-                        <div class="row g-3">
-                        @foreach($hierarchyData as $doc)
-                            <div class="col-md-6">
-                                <div class="p-3 border rounded">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div class="avatar bg-blue-lt me-3"><i class="ti ti-file-text"></i></div>
-                                        <div>
-                                            <div class="text-uppercase text-muted small fw-bold">{{ $doc['kode'] }}</div>
-                                            <div class="fw-bold fs-4">{{ $doc['judul'] }}</div>
-                                        </div>
-                                    </div>
-                                    <hr class="my-2">
-                                    <div class="row text-center">
-                                        <div class="col-4 border-end">
-                                            <div class="text-muted small">Total Indikator</div>
-                                            <div class="fw-bold">{{ number_format($doc['stats']['total_indikator']) }}</div>
-                                        </div>
-                                        <div class="col-4 border-end">
-                                            <div class="text-muted small">Rata-rata ED</div>
-                                            <div class="fw-bold">{{ $doc['stats']['avg_ed'] }}</div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="text-muted small">Tercapai AMI</div>
-                                            <div class="fw-bold text-{{ $doc['stats']['ami_pct'] >= 80 ? 'success' : 'warning' }}">{{ $doc['stats']['ami_pct'] }}%</div>
-                                        </div>
-                                    </div>
-                                    
-                                    {{-- Container for Hierarchy Content --}}
-                                    <div class="mt-3 hierarchy-ajax-container d-none" id="hierarchy-container-{{ $doc['id'] }}">
-                                        <div class="text-center py-4 text-muted border border-dashed rounded bg-light">
-                                            <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
-                                            Memuat struktur dokumen...
-                                        </div>
-                                    </div>
-                                    
-                                    {{-- Toggle Button --}}
-                                    <div class="mt-1 pt-2 border-top text-center bg-light mx-n3 mb-n3 rounded-bottom">
-                                        <button type="button" class="btn btn-sm btn-ghost-primary w-100 btn-load-hierarchy rounded-0" data-id="{{ $doc['id'] }}">
-                                            Tampilkan Rincian Hirarki <i class="ti ti-chevron-down ms-1 mt-1"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                        </div>
-                    @else
-                        <div class="text-center text-muted py-5">Belum ada data dokumen tingkat Visi/Misi.</div>
-                    @endif
-                </x-tabler.card-body>
-            </x-tabler.card>
-        </div>
-
-        {{-- TAB 3: ANALISIS UNIT --}}
-        <div class="tab-pane fade" id="tab-unit" role="tabpanel">
-            <div class="row g-3">
-                <div class="col-lg-6">
-                    <x-tabler.card>
-                        <x-tabler.card-header title="<i class='ti ti-report-analytics me-2'></i>Rata-Rata Skala Ketercapaian (Evaluasi Diri)" />
-                        <x-tabler.card-body>
-                            <div id="chart-unit-ed" style="min-height: 400px;"></div>
                         </x-tabler.card-body>
                     </x-tabler.card>
                 </div>
-                <div class="col-lg-6">
-                    <x-tabler.card>
-                        <x-tabler.card-header title="<i class='ti ti-circle-check me-2'></i>Persentase Ketercapaian Indikator (Hasil Audit)" />
-                        <x-tabler.card-body>
-                            <div id="chart-unit-ami" style="min-height: 400px;"></div>
+
+                {{-- Status Audit Summary Reference Card --}}
+                <div class="col-md-8">
+                    <x-tabler.card class="status-summary-card h-100 overflow-hidden">
+                        <x-tabler.card-header class="d-flex justify-content-between align-items-center bg-white border-0 py-3">
+                            <div>
+                                <h3 class="card-title fw-bold mb-0">Ringkasan Status Audit Mutu Internal (AMI)</h3>
+                                <p class="text-muted smaller mb-0">Update Real-time Siklus Audit {{ $currentYear }}</p>
+                            </div>
+                            <span class="badge bg-success-lt text-success border border-success-lt px-3 py-1">
+                                <span class="p-1 bg-success rounded-circle me-2 d-inline-block"></span>LIVE MONITORING
+                            </span>
+                        </x-tabler.card-header>
+                        <x-tabler.card-body class="pt-2 pb-4">
+                            <div class="row align-items-center text-center text-md-start">
+                                {{-- Terpenuhi --}}
+                                <div class="col-md-4 status-segment">
+                                    <div class="d-flex flex-column flex-md-row align-items-center">
+                                        <div class="status-icon-box bg-success-lt text-success me-md-3 mb-3 mb-md-0 shadow-sm">
+                                            <i class="ti ti-circle-check"></i>
+                                        </div>
+                                        <div>
+                                            <div class="status-label">Jumlah Terpenuhi</div>
+                                            <div class="d-flex align-items-baseline justify-content-center justify-content-md-start">
+                                                <span class="status-value me-2">{{ number_format($metrics['tercapai']['val']) }}</span>
+                                                @php $diff = $metrics['tercapai']['diff']; @endphp
+                                                <span class="status-delta text-{{ $diff >= 0 ? 'success' : 'danger' }}">
+                                                    {{ $diff >= 0 ? '+' : '' }}{{ $diff }} <small>unit</small>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{-- Terlampaui --}}
+                                <div class="col-md-4 status-segment">
+                                    <div class="d-flex flex-column flex-md-row align-items-center">
+                                        <div class="status-icon-box bg-blue-lt text-primary me-md-3 mb-3 mb-md-0 shadow-sm">
+                                            <i class="ti ti-sparkles"></i>
+                                        </div>
+                                        <div>
+                                            <div class="status-label">Melampaui Standar</div>
+                                            <div class="d-flex align-items-baseline justify-content-center justify-content-md-start">
+                                                <span class="status-value me-2">{{ number_format($metrics['tetap']['val'] ?? 0) }}</span>
+                                                @php $diff = $metrics['tetap']['diff'] ?? 0; @endphp
+                                                <span class="status-delta text-{{ $diff >= 0 ? 'success' : 'danger' }}">
+                                                    {{ $diff >= 0 ? '+' : '' }}{{ $diff }} <small>unit</small>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{-- KTS --}}
+                                <div class="col-md-4 status-segment">
+                                    <div class="d-flex flex-column flex-md-row align-items-center">
+                                        <div class="status-icon-box bg-danger-lt text-danger me-md-3 mb-3 mb-md-0 shadow-sm">
+                                            <i class="ti ti-alert-triangle"></i>
+                                        </div>
+                                        <div>
+                                            <div class="status-label">Ketidaksesuaian (KTS)</div>
+                                            <div class="d-flex align-items-baseline justify-content-center justify-content-md-start">
+                                                <span class="status-value me-2">{{ number_format($metrics['tidak_tercapai']['val']) }}</span>
+                                                @php $diff = $metrics['tidak_tercapai']['diff']; @endphp
+                                                <span class="status-delta text-{{ $diff <= 0 ? 'success' : 'danger' }}">
+                                                    {{ $diff >= 0 ? '+' : '' }}{{ $diff }} <small>unit</small>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-3 border-top text-center">
+                                <a href="#" class="text-muted smaller fw-bold text-decoration-none">
+                                    Buka Portal AMI Untuk Analisis Lebih Dalam <i class="ti ti-external-link ms-1"></i>
+                                </a>
+                            </div>
                         </x-tabler.card-body>
                     </x-tabler.card>
                 </div>
             </div>
+
+            {{-- MIDDLE ROW: ANALISIS PER UNIT KERJA (Moved from Tab 3) --}}
+            <div class="row g-3 mb-3">
+                <div class="col-lg-12">
+                    <x-tabler.card class="metric-card">
+                        <x-tabler.card-header title="<i class='ti ti-report-analytics me-2'></i>Rata-Rata Skala Ketercapaian (Evaluasi Diri)" />
+                        <x-tabler.card-body>
+                            <div id="chart-unit-ed" style="min-height: 300px;"></div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
+                </div>
+                <div class="col-lg-12">
+                    <x-tabler.card class="metric-card">
+                        <x-tabler.card-header title="<i class='ti ti-circle-check me-2'></i>Persentase Ketercapaian Indikator (Hasil Audit)" />
+                        <x-tabler.card-body>
+                            <div id="chart-unit-ami" style="min-height: 300px;"></div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
+                </div>
+            </div>
+
+            {{-- MIDDLE ROW: Strategic Goals & Eisenhower Matrix --}}
+            <div class="row g-3 mb-4">
+                {{-- Strategic Goals (Visi & Misi) --}}
+                <div class="col-md-6">
+                    <x-tabler.card class="metric-card h-100">
+                        <x-tabler.card-header class="bg-white py-3 border-0">
+                            <div>
+                                <h3 class="card-title fw-bold mb-0">Capaian Dokumen Utama (Kebijakan)</h3>
+                                <p class="text-muted smaller mb-0">Klik kartu untuk melihat rincian di Rekap Capaian</p>
+                            </div>
+                        </x-tabler.card-header>
+                        <x-tabler.card-body class="pt-0">
+                            <div class="row g-3">
+                                {{-- AVG MISI --}}
+                                <div class="col-12">
+                                    <a href="{{ route('pemutu.dokumen-spmi.summary', ['jenis' => 'misi']) }}" class="text-decoration-none h-100 d-block">
+                                        <div class="p-3 border rounded roadmap-card d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar bg-blue-lt me-3 shadow-sm"><i class="ti ti-rocket"></i></div>
+                                                <div>
+                                                    <div class="text-uppercase text-muted smaller fw-bold ls-1">Rata-Rata MISI</div>
+                                                    <div class="fw-bold text-dark fs-3">Seluruh Misi Univ.</div>
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                <div class="fw-bold fs-2 text-{{ $avgMisiRate >= 80 ? 'success' : ($avgMisiRate >= 50 ? 'warning' : 'danger') }}">{{ $avgMisiRate }}%</div>
+                                                <div class="progress progress-xs mt-1" style="width: 80px;">
+                                                    <div class="progress-bar bg-{{ $avgMisiRate >= 80 ? 'success' : ($avgMisiRate >= 50 ? 'warning' : 'danger') }}" style="width: {{ $avgMisiRate }}%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                {{-- Individual VISI --}}
+                                @foreach($visiStats as $visi)
+                                <div class="col-12">
+                                    <a href="{{ route('pemutu.dokumen-spmi.summary', ['jenis' => 'visi', 'id' => $visi['id']]) }}" class="text-decoration-none h-100 d-block">
+                                        <div class="p-3 border rounded roadmap-card d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar bg-primary-lt me-3 shadow-sm"><i class="ti ti-eye"></i></div>
+                                                <div>
+                                                    <div class="text-uppercase text-muted smaller fw-bold ls-1">CAPAIAN VISI</div>
+                                                    <div class="fw-bold text-dark text-truncate" style="max-width: 250px;">{{ $visi['judul'] }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                <div class="fw-bold fs-2 text-{{ $visi['stats']['rate'] >= 80 ? 'success' : ($visi['stats']['rate'] >= 50 ? 'warning' : 'danger') }}">{{ $visi['stats']['rate'] }}%</div>
+                                                <div class="progress progress-xs mt-1" style="width: 80px;">
+                                                    <div class="progress-bar bg-{{ $visi['stats']['rate'] >= 80 ? 'success' : ($visi['stats']['rate'] >= 50 ? 'warning' : 'danger') }}" style="width: {{ $visi['stats']['rate'] }}%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                @endforeach
+                            </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
+                </div>
+
+                {{-- Eisenhower Matrix --}}
+                <div class="col-md-6">
+                    <x-tabler.card class="metric-card h-100">
+                        <x-tabler.card-header class="bg-white py-3 border-0">
+                            <div>
+                                <h3 class="card-title fw-bold mb-0">Prioritas Pengendalian (Matrix)</h3>
+                                <p class="text-muted smaller mb-0">Distribusi Urgensi & Signifikansi Strategis</p>
+                            </div>
+                        </x-tabler.card-header>
+                        <x-tabler.card-body class="pt-0">
+                            <div class="row g-3 h-100">
+                                <div class="col-sm-6">
+                                    <div class="p-3 border rounded roadmap-card d-flex flex-column align-items-center text-center h-100">
+                                        <div class="avatar bg-danger-lt mb-2"><i class="ti ti-alert-circle"></i></div>
+                                        <div class="fs-1 fw-bold text-dark">{{ number_format($eisenhowerCount['important_urgent']) }}</div>
+                                        <div class="text-uppercase text-muted smaller fw-bold ls-1 mt-1">Penting & Mendesak</div>
+                                        <div class="text-muted smaller mt-auto">Tindakan Segera</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="p-3 border rounded roadmap-card d-flex flex-column align-items-center text-center h-100">
+                                        <div class="avatar bg-blue-lt mb-2"><i class="ti ti-calendar"></i></div>
+                                        <div class="fs-1 fw-bold text-dark">{{ number_format($eisenhowerCount['important_not_urgent']) }}</div>
+                                        <div class="text-uppercase text-muted smaller fw-bold ls-1 mt-1">Penting, Tdk Mendesak</div>
+                                        <div class="text-muted smaller mt-auto">Penjadwalan</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="p-3 border rounded roadmap-card d-flex flex-column align-items-center text-center h-100">
+                                        <div class="avatar bg-warning-lt mb-2"><i class="ti ti-users"></i></div>
+                                        <div class="fs-1 fw-bold text-dark">{{ number_format($eisenhowerCount['not_important_urgent']) }}</div>
+                                        <div class="text-uppercase text-muted smaller fw-bold ls-1 mt-1">Tdk Penting, Mendesak</div>
+                                        <div class="text-muted smaller mt-auto">Delegasikan</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="p-3 border rounded roadmap-card d-flex flex-column align-items-center text-center h-100">
+                                        <div class="avatar bg-success-lt mb-2"><i class="ti ti-trash"></i></div>
+                                        <div class="fs-1 fw-bold text-dark">{{ number_format($eisenhowerCount['not_important_not_urgent']) }}</div>
+                                        <div class="text-uppercase text-muted smaller fw-bold ls-1 mt-1">Tdk Penting, Tdk Mendesak</div>
+                                        <div class="text-muted smaller mt-auto">Eliminasi</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </x-tabler.card-body>
+                    </x-tabler.card>
+                </div>
+            </div>
+
         </div>
-
-    </div> {{-- END TAB CONTENT --}}
-
+    </div>
 @endsection
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Tab 2: Hierarchy Tree Loader via Ajax
-    document.querySelectorAll('.btn-load-hierarchy').forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            var docId = this.getAttribute('data-id');
-            var container = document.getElementById('hierarchy-container-' + docId);
-            
-            // Toggle visibility
-            if(!container.classList.contains('d-none') && container.getAttribute('data-loaded')) {
-                container.classList.add('d-none');
-                this.innerHTML = 'Tampilkan Rincian Hirarki <i class="ti ti-chevron-down ms-1 mt-1"></i>';
-                return;
-            }
-            
-            container.classList.remove('d-none');
-            this.innerHTML = 'Sembunyikan Rincian Hirarki <i class="ti ti-chevron-up ms-1 mt-1"></i>';
-            
-            if(container.getAttribute('data-loaded')) return;
 
-            // Fetch Data
-            fetch("{{ url('pemutu/dashboard/hierarchy') }}/" + docId)
-                .then(response => response.text())
-                .then(html => {
-                    container.innerHTML = `<div class="p-3 border-top bg-white rounded-bottom" style="margin: -1rem -1rem -1rem -1rem;">${html}</div>`;
-                    container.setAttribute('data-loaded', 'true');
-                })
-                .catch(err => {
-                    container.innerHTML = '<div class="text-danger p-3 text-center border rounded">Gagal memuat struktur. Silakan coba lagi.</div>';
-                });
-        });
-    });
-
-    // Sparkline Indikator
-    var trendData = @json($trendData);
-    if(trendData.years.length > 0) {
-        new ApexCharts(document.getElementById('sparkline-indikator'), {
-            chart: { type: 'area', height: 80, sparkline: { enabled: true } },
-            stroke: { curve: 'smooth', width: 2 },
-            fill: { opacity: 0.3 },
-            series: [{ name: 'Total Indikator', data: trendData.indikator }],
-            labels: trendData.years,
-            colors: ['#a55eea']
-        }).render();
-
-        new ApexCharts(document.getElementById('sparkline-standar'), {
-            chart: { type: 'area', height: 80, sparkline: { enabled: true } },
-            stroke: { curve: 'step', width: 2 },
-            fill: { opacity: 0.3 },
-            series: [{ name: 'Total Standar SPMI', data: trendData.standar }],
-            labels: trendData.years,
-            colors: ['#457b9d']
-        }).render();
-    }
-
-    // Donut Chart Penetapan Jenis Kriteria
-    var kriteriaRaw = @json($jenisKriteriaRaw);
-    if(kriteriaRaw.length > 0) {
-        var labels = kriteriaRaw.map(v => v.label);
-        var series = kriteriaRaw.map(v => parseInt(v.total));
-        new ApexCharts(document.getElementById('chart-kriteria'), {
-            chart: { type: 'donut', height: 260 },
-            series: series,
-            labels: labels,
-            plotOptions: {
-                pie: {
-                    donut: { size: '55%' }
-                }
-            },
-            dataLabels: { 
-                enabled: true,
-                formatter: function (val) {
-                    return val.toFixed(2) + "%"
-                }
-            },
-            legend: {
-                position: 'top',
-                horizontalAlign: 'center',
-                show: true,
-                fontSize: '11px',
-                markers: { width: 8, height: 8 }
-            }
-        }).render();
-    } else {
-        document.getElementById('chart-kriteria').innerHTML = '<div class="text-center text-muted py-5">Belum ada data kriteria</div>';
-    }
-
-    // Tab 3: Unit Analysis Chart
+    // Rata-Rata Skala ED & AMI Ketercapaian
     var unitChartData = @json($unitChartData ?? null);
     if (unitChartData && unitChartData.categories.length > 0) {
-        
         // 1. Chart Skala ED (Column)
-        var optionsEd = {
-            series: [{
-                name: 'Rata-rata Skala ED',
-                data: unitChartData.ed_series
-            }],
-            chart: {
-                height: 400,
-                type: 'bar',
-                toolbar: { show: false }
-            },
+        new ApexCharts(document.querySelector("#chart-unit-ed"), {
+            series: [{ name: 'Rata-rata Skala ED', data: unitChartData.ed_series }],
+            chart: { height: 300, type: 'bar', toolbar: { show: false } },
             colors: ['#206bc4'],
-            plotOptions: {
-                bar: {
-                    borderRadius: 4,
-                    dataLabels: { position: 'top' }
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                offsetY: -20,
-                style: { fontSize: '12px', colors: ["#304758"] }
-            },
+            plotOptions: { bar: { borderRadius: 4, dataLabels: { position: 'top' } } },
+            dataLabels: { enabled: true, offsetY: -20, style: { fontSize: '12px', colors: ["#304758"] } },
             labels: unitChartData.categories,
-            xaxis: {
-                labels: { rotate: -45, trim: true, minHeight: 80 }
-            },
-            yaxis: {
-                title: { text: 'Skala ED (0-4)' },
-                min: 0,
-                max: 4,
-                tickAmount: 4
-            }
-        };
+            xaxis: { labels: { rotate: -45, trim: true, minHeight: 80 } },
+            yaxis: { title: { text: 'Skala ED (0-4)' }, min: 0, max: 4, tickAmount: 4 }
+        }).render();
 
-        // 2. Chart AMI (Stacked Columns for Status + Line for %)
-        var optionsAmi = {
-            series: [{
-                name: 'KTS (Tidak Tercapai)',
-                type: 'column',
-                data: unitChartData.ami_kts
-            }, {
-                name: 'Terpenuhi',
-                type: 'column',
-                data: unitChartData.ami_terpenuhi
-            }, {
-                name: 'Terlampaui',
-                type: 'column',
-                data: unitChartData.ami_terlampaui
-            }, {
-                name: 'Total Ketercapaian (%)',
-                type: 'line',
-                data: unitChartData.ami_series
-            }],
-            chart: {
-                height: 400,
-                type: 'line',
-                stacked: true,
-                toolbar: { show: false }
-            },
-            colors: ['#d63939', '#2fb344', '#1d48b5', '#f59f00'], // Red, Green, Blue, Orange
-            stroke: {
-                width: [0, 0, 0, 3],
-                curve: 'smooth'
-            },
-            plotOptions: {
-                bar: {
-                    columnWidth: '50%',
-                    borderRadius: 2
-                }
-            },
+        // 2. Chart AMI (Stacked)
+        new ApexCharts(document.querySelector("#chart-unit-ami"), {
+            series: [
+                { name: 'KTS (Tidak Tercapai)', type: 'column', data: unitChartData.ami_kts },
+                { name: 'Terpenuhi', type: 'column', data: unitChartData.ami_terpenuhi },
+                { name: 'Terlampaui', type: 'column', data: unitChartData.ami_terlampaui },
+                { name: 'Total Ketercapaian (%)', type: 'line', data: unitChartData.ami_series }
+            ],
+            chart: { height: 300, type: 'line', stacked: true, toolbar: { show: false } },
+            colors: ['#d63939', '#2fb344', '#1d48b5', '#f59f00'],
+            stroke: { width: [0, 0, 0, 3], curve: 'smooth' },
+            plotOptions: { bar: { columnWidth: '50%', borderRadius: 2 } },
             markers: { size: [0, 0, 0, 4] },
-            dataLabels: {
-                enabled: true,
-                enabledOnSeries: [3],
-                formatter: function (val) { return val + "%" }
-            },
+            dataLabels: { enabled: true, enabledOnSeries: [3], formatter: function (val) { return val + "%" } },
             labels: unitChartData.categories,
-            xaxis: {
-                labels: { rotate: -45, trim: true, minHeight: 80 }
+            xaxis: { labels: { rotate: -45, trim: true, minHeight: 80 } },
+            yaxis: [{ title: { text: 'Jumlah Indikator' }, min: 0 }, { opposite: true, title: { text: '% Ketercapaian' }, min: 0, max: 100, tickAmount: 5 }],
+            legend: { 
+                position: 'top', 
+                horizontalAlign: 'center',
+                fontSize: '12px',
+                itemMargin: { horizontal: 10, vertical: 0 }
             },
-            yaxis: [{
-                title: { text: 'Jumlah Indikator' },
-                min: 0,
-                decimalsInFloat: 0
-            }, {
-                opposite: true,
-                title: { text: '% Ketercapaian' },
-                min: 0,
-                max: 100,
-                tickAmount: 5
-            }],
-            legend: {
-                position: 'top',
-                horizontalAlign: 'center'
-            },
-            tooltip: {
-                shared: true,
-                intersect: false,
-                y: {
-                    formatter: function (y, { series, seriesIndex, dataPointIndex, w }) {
-                        if (seriesIndex === 3) return y.toFixed(1) + "%";
-                        return y + " Indikator";
-                    }
-                }
-            }
-        };
-
-        var chartEd = new ApexCharts(document.querySelector("#chart-unit-ed"), optionsEd);
-        var chartAmi = new ApexCharts(document.querySelector("#chart-unit-ami"), optionsAmi);
-        
-        var unitTabEl = document.querySelector('a[href="#tab-unit"]');
-        if (unitTabEl) {
-            unitTabEl.addEventListener('shown.bs.tab', function (event) {
-                if (!chartEd.rendered) {
-                    chartEd.render();
-                    chartAmi.render();
-                    chartEd.rendered = true;
-                }
-            });
-        }
-    } else {
-        document.getElementById('tab-unit').innerHTML = '<div class="text-center text-muted py-5">Belum ada data unit yang tersedia.</div>';
+            tooltip: { shared: true, intersect: false, y: { formatter: function (y, { seriesIndex }) { return seriesIndex === 3 ? y.toFixed(1) + "%" : y + " Indikator"; } } }
+        }).render();
     }
 });
 </script>
 @endpush
+

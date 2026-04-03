@@ -29,10 +29,6 @@ class LabelService
         return Label::count();
     }
 
-    public function getLabelById(int $id): ?Label
-    {
-        return Label::with('parent')->find($id);
-    }
 
     public function createLabel(array $data): Label
     {

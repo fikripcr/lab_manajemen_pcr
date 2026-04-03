@@ -65,7 +65,7 @@ class PeriodeSpmiService
      */
     public function getAvailableYears()
     {
-        $startYear = (int) env('SPMI_START_YEAR', 2021);
+        $startYear = (int) config('pemutu.spmi_start_year', 2021);
         $endYear = (int) date('Y') + 1;
 
         $years = [];
@@ -74,24 +74,6 @@ class PeriodeSpmiService
         }
 
         return collect($years);
-    }
-
-    /**
-     * Get available years from database (for dropdown/filter).
-     */
-    public function getAvailableYearsFromDatabase()
-    {
-        try {
-            return DB::table('pemutu_dokumen')
-                ->where('jenis', 'standar')
-                ->whereNotNull('periode')
-                ->distinct()
-                ->orderBy('periode', 'desc')
-                ->pluck('periode');
-        } catch (\Exception $e) {
-            // Fallback to current year if table doesn't exist or empty
-            return collect([(int) date('Y')]);
-        }
     }
 
     /**
@@ -241,5 +223,55 @@ class PeriodeSpmiService
     public function updateRtm(Rapat $rapat, array $data): Rapat
     {
         return $this->rapatService->update($rapat, $data);
+    }
+
+    /**
+     * Check if a specific phase is currently open for a given year and group.
+     * 
+     * @param  string  $phase  Phase name (e.g., 'penetapan', 'ed', 'ami', 'pengendalian', 'peningkatan')
+     * @param  int  $year  The cycle year (e.g., 2024)
+     * @param  string|null  $kelompok  'Akademik' or 'Non Akademik'. Default to current session.
+     * @return bool
+     */
+    public function isPhaseOpen(string $phase, int $year, ?string $kelompok = null): bool
+    {
+        if (! $kelompok) {
+            $kelompok = session('pemutu_active_kelompok', 'akademik');
+        }
+
+        // Normalize kelompok for database comparison
+        $kelompok = str_replace('_', ' ', ucwords($kelompok, '_'));
+        if ($kelompok === 'Akademik') { $kelompok = 'Akademik'; }
+        elseif ($kelompok === 'Non Akademik') { $kelompok = 'Non Akademik'; }
+
+        $periode = PeriodeSpmi::where('periode', $year)
+            ->where('jenis_periode', $kelompok)
+            ->first();
+
+        // Default to TRUE if no record is found, allowing flexibility if periods are not yet configured
+        if (! $periode) {
+            return true;
+        }
+
+        $startAttr = "{$phase}_awal";
+        $endAttr = "{$phase}_akhir";
+
+        $start = $periode->$startAttr;
+        $end = $periode->$endAttr;
+
+        if (! $start || ! $end) {
+            return true;
+        }
+
+        $now = now()->startOfDay();
+        return $now->between($start->startOfDay(), $end->endOfDay());
+    }
+
+    /**
+     * Specifically check if the 'Penetapan' phase is open.
+     */
+    public function isPenetapanOpen(int $year, ?string $kelompok = null): bool
+    {
+        return $this->isPhaseOpen('penetapan', $year, $kelompok);
     }
 }

@@ -87,14 +87,14 @@
         $rateColor = $ind['achievement_rate'] >= 80 ? 'success' : ($ind['achievement_rate'] >= 50 ? 'warning' : 'danger');
     @endphp
     <div class="accordion-item">
-        <h2 class="accordion-header" id="heading-{{ $collapseId }}">
+        <h2 class="accordion-header small" id="heading-{{ $collapseId }}">
             <button class="accordion-button collapsed py-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $collapseId }}" aria-expanded="false">
-                <div class="w-100 d-flex justify-content-between align-items-center pe-3">
-                    <div class="d-flex align-items-center gap-2" style="min-width: 0;">
-                        <span class="badge bg-secondary-lt text-nowrap small">{{ $ind['no'] }}</span>
-                        <span class="text-truncate small">{{ $ind['nama'] }}</span>
+                <div class="w-100 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-secondary-lt text-nowrap ">{{ $ind['no'] }}</span>
+                        <span class="text-truncate ">{{ $ind['nama'] }}</span>
                     </div>
-                    <div class="d-flex align-items-center gap-2 ms-3 flex-shrink-0 small">
+                    <div class="d-flex align-items-center gap-2 ms-3 flex-shrink-0 ">
                         <span class="badge bg-{{ $rateColor }}-lt text-nowrap">
                             <i class="ti ti-chart-pie me-1"></i>{{ $ind['achievement_rate'] }}%
                         </span>
@@ -110,23 +110,23 @@
             </button>
         </h2>
         <div id="collapse-{{ $collapseId }}" class="accordion-collapse collapse" data-bs-parent="#accordion-indicators">
-            <div class="accordion-body p-0">
+            <div class="accordion-body p-3  bg-secondary-lt">
 
 
                 {{-- Unit detail table --}}
                 <div class="table-responsive">
-                    <table class="table table-vcenter table-sm m-0">
+                    <table class="table table-vcenter rounded bg-white">
                         <thead>
                             <tr>
-                                <th >Unit</th>
-                                <th>Target</th>
-                                <th>Capaian</th>
-                                <th >Hasil AMI</th>
+                                <th class="small fw-bold">Unit</th>
+                                <th class="small fw-bold">Target</th>
+                                <th class="small fw-bold">Capaian</th>
+                                <th class="small fw-bold">Hasil AMI</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($ind['units'] as $unit)
-                            <tr>
+                            <tr class="small">
                                 <td class="fw-medium">{{ $unit['name'] }}</td>
                                 <td>{{ $unit['target'] ?: '-' }}</td>
                                 <td>{{ $unit['capaian'] ?: '-' }}</td>

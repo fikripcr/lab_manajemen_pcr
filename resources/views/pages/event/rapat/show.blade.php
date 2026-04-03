@@ -54,8 +54,8 @@
                     <x-tabler.card-header>
                         <h3 class="card-title"><i class="ti ti-calendar-event me-2 text-blue"></i>Informasi Meeting</h3>
                         <x-slot:actions>
-                            <x-tabler.button type="button" data-url="{{ route('Kegiatan.rapat.edit', $rapat->encrypted_rapat_id) }}"
-                                class="btn-primary btn-sm ajax-modal-btn" data-modal-size="modal-xl" icon="ti ti-edit" text="Edit" />
+                            <x-tabler.button type="edit" data-url="{{ route('Kegiatan.rapat.edit', $rapat->encrypted_rapat_id) }}"
+                                class="btn-primary btn-sm ajax-modal-btn" data-modal-size="modal-xl" icon="ti ti-edit" />
                         </x-slot:actions>
                     </x-tabler.card-header>
                     <x-tabler.card-body>
@@ -98,7 +98,8 @@
                     <x-tabler.card-header>
                         <h3 class="card-title"><i class="ti ti-user-star me-2 text-orange"></i>Pejabat Rapat</h3>
                         <x-slot:actions>
-                            <x-tabler.button type="warning" class="btn-sm ajax-modal-btn"
+                            <x-tabler.button 
+                                type="warning" class="btn-sm ajax-modal-btn"
                                 data-url="{{ route('Kegiatan.rapat.edit-officials', $rapat->hashid) }}"
                                 icon="ti ti-edit" text="Set" />
                         </x-slot:actions>

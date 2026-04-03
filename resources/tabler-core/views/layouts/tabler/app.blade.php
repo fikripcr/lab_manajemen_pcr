@@ -46,7 +46,7 @@
     @if(!empty($themeData['themeFont']) && $themeData['themeFont'] !== 'inter')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family={{ ucfirst($themeData['themeFont']) }}:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family={{ str_replace(' ', '+', ucwords(str_replace('-', ' ', $themeData['themeFont']))) }}:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     @endif
     
     {{-- Theme Custom Styles --}}
@@ -65,7 +65,7 @@
     @if(!empty($themeData['themeFont']) && $themeData['themeFont'] !== 'inter')
     <style>
         body, .form-control, .btn, .nav-link, .dropdown-item, .table, h1, h2, h3, h4, h5, h6 {
-            font-family: '{{ ucfirst($themeData['themeFont']) }}', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif !important;
+            font-family: '{{ ucwords(str_replace('-', ' ', $themeData['themeFont'])) }}', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif !important;
         }
     </style>
     @endif

@@ -133,6 +133,7 @@
                                     <option value="roboto" {{ ($themeData['themeFont'] ?? 'inter') === 'roboto' ? 'selected' : '' }}>Roboto</option>
                                     <option value="poppins" {{ ($themeData['themeFont'] ?? 'inter') === 'poppins' ? 'selected' : '' }}>Poppins</option>
                                     <option value="public-sans" {{ ($themeData['themeFont'] ?? 'inter') === 'public-sans' ? 'selected' : '' }}>Public Sans</option>
+                                    <option value="plus-jakarta-sans" {{ ($themeData['themeFont'] ?? 'inter') === 'plus-jakarta-sans' ? 'selected' : '' }}>Plus Jakarta Sans</option>
                                     <option value="nunito" {{ ($themeData['themeFont'] ?? 'inter') === 'nunito' ? 'selected' : '' }}>Nunito</option>
                                     <option value="sarabun" {{ ($themeData['themeFont'] ?? 'inter') === 'sarabun' ? 'selected' : '' }}>Sarabun</option>
                                 </x-tabler.form-select>

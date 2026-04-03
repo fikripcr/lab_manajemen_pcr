@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\AmiRequest;
+use App\Services\Pemutu\DokumenService;
 use App\Http\Requests\Pemutu\RtpRequest;
 use App\Http\Requests\Pemutu\TeRequest;
 use App\Models\Pemutu\IndikatorOrgUnit;
@@ -10,6 +11,7 @@ use App\Models\Pemutu\PeriodeSpmi;
 use App\Services\Hr\StrukturOrganisasiService;
 use App\Services\Pemutu\AmiExportService;
 use App\Services\Pemutu\IndikatorService;
+use App\Services\Pemutu\IndikatorOrgUnitService;
 use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -21,7 +23,9 @@ class AmiController extends Controller
         protected AmiExportService $amiExportService,
         protected PeriodeSpmiService $periodeSpmiService,
         protected IndikatorService $indikatorService,
+        protected IndikatorOrgUnitService $indikatorOrgUnitService,
         protected StrukturOrganisasiService $strukturOrganisasiService,
+        protected DokumenService $dokumenService,
     ) {}
 
     /**
@@ -37,10 +41,7 @@ class AmiController extends Controller
         $periode = $siklus[$activeKelompok] ?? null;
 
         // Fetch root documents for filter
-        $rootDoks = \App\Models\Pemutu\Dokumen::whereNull('parent_id')
-            ->where('periode', $siklus['tahun'])
-            ->orderBy('seq')
-            ->get();
+        $rootDoks = $this->dokumenService->getRootsByPeriode($siklus['tahun']);
 
         $data = [
             'pageTitle'      => 'Audit Mutu Internal (AMI)',
@@ -60,14 +61,10 @@ class AmiController extends Controller
      */
     public function data(PeriodeSpmi $periode, Request $request)
     {
-        $filters = [];
-        foreach ($request->only(['orgunit_id', 'ami_hasil_akhir', 'ed_status', 'dok_id', 'rtp_status', 'kelompok_indikator']) as $key => $value) {
-            if ($value !== null && $value !== '' && $value !== 'all') {
-                $filters[$key] = ($key === 'orgunit_id' || $key === 'dok_id') ? decryptIdIfEncrypted($value) : $value;
-            }
-        }
+        $filters = parseSpmiFilters($request, ['orgunit_id', 'ami_hasil_akhir', 'ed_status', 'dok_id', 'rtp_status', 'kelompok_indikator']);
 
-        $query = $this->indikatorService->getUnifiedSpmiQuery($periode, $filters);
+        $query = $this->indikatorOrgUnitService->getUnifiedSpmiQuery($periode, $filters);
+        applySpmiDatatableSearch($query, $request);
 
         return datatables()->of($query)
             ->addColumn('no', function ($row) {
@@ -166,7 +163,7 @@ class AmiController extends Controller
 
                 return '<span class="text-muted small">-</span>';
             })
-            ->filterColumn('indikator_info', function ($query, $keyword) {
+            ->filterColumn('indikator', function ($query, $keyword) {
                 $query->where(function ($q) use ($keyword) {
                     $q->where('indikator', 'like', "%{$keyword}%")
                         ->orWhere('no_indikator', 'like', "%{$keyword}%");
@@ -181,7 +178,7 @@ class AmiController extends Controller
      */
     public function detail(string $id)
     {
-        $data = $this->indikatorService->getAmiDetail($id);
+        $data = $this->indikatorOrgUnitService->getAmiDetail($id);
 
         return view('pages.pemutu.ami.detail', $data);
     }
@@ -191,7 +188,7 @@ class AmiController extends Controller
      */
     public function submitNilai(AmiRequest $request, string $id)
     {
-        $indOrg = $this->indikatorService->saveAmiResult($id, $request->validated());
+        $indOrg = $this->indikatorOrgUnitService->updatePivotData($id, $request->validated(), 'Submit penilaian AMI');
 
         return jsonSuccess('Penilaian AMI berhasil disimpan.', route('pemutu.ami.detail', $indOrg->encrypted_indorgunit_id));
     }
@@ -209,7 +206,7 @@ class AmiController extends Controller
      */
     public function updateRtp(RtpRequest $request, string $id)
     {
-        $this->indikatorService->updateRtp($id, $request->validated());
+        $this->indikatorOrgUnitService->updatePivotData($id, $request->validated(), 'Update RTP AMI');
 
         return jsonSuccess('Rencana Tindakan Perbaikan (RTP) berhasil disimpan.');
     }
@@ -226,14 +223,10 @@ class AmiController extends Controller
             return DataTables::of(collect([]))->make(true);
         }
 
-                                             // Ambil indikator KTS dari periode tahun lalu
-        $filters = ['ami_hasil_akhir' => 0]; // KTS
-        foreach ($request->only(['unit_id', 'dok_id', 'te_status']) as $key => $value) {
-            if ($value !== null && $value !== '' && $value !== 'all') {
-                $filters[$key] = ($key === 'unit_id' || $key === 'dok_id') ? decryptIdIfEncrypted($value) : $value;
-            }
-        }
-        $query = $this->indikatorService->getUnifiedSpmiQuery($prevPeriod, $filters);
+        // Ambil indikator KTS dari periode tahun lalu
+        $filters = parseSpmiFilters($request, ['unit_id', 'dok_id', 'te_status']);
+        $filters['ami_hasil_akhir'] = 0; // KTS
+        $query = $this->indikatorOrgUnitService->getUnifiedSpmiQuery($prevPeriod, $filters);
 
         return DataTables::of($query)
             ->addColumn('no', function ($row) {
@@ -282,7 +275,7 @@ class AmiController extends Controller
     public function updateTe(TeRequest $request, string $id)
     {
         // Add updateTe method to IndikatorService if not exists
-        $indOrg = $this->indikatorService->findIndikatorOrgUnit($id);
+        $indOrg = $this->indikatorOrgUnitService->findIndikatorOrgUnit($id);
         $indOrg->update(['ami_te_isi' => $request->validated()['ami_te_isi']]);
 
         return jsonSuccess('Tinjauan Efektivitas (TE) berhasil disimpan.');

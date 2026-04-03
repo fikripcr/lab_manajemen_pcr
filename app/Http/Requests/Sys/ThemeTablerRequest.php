@@ -17,7 +17,7 @@ class ThemeTablerRequest extends BaseRequest
             'mode' => 'required|in:sys,auth,tabler',
             'theme' => 'nullable|in:light,dark',
             'theme-primary' => 'nullable|string',
-            'theme-font' => 'nullable|in:inter,roboto,poppins,public-sans,nunito,sarabun',
+            'theme-font' => 'nullable|in:inter,roboto,poppins,public-sans,nunito,sarabun,plus-jakarta-sans',
             'theme-base' => 'nullable|string',
             'theme-radius' => 'nullable|string',
             'theme-card-style' => 'nullable|string',

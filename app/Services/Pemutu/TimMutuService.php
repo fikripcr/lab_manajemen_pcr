@@ -39,68 +39,6 @@ class TimMutuService
     }
 
     /**
-     * Sync all assignments for a periode.
-     * $data is an array keyed by org_unit_id:
-     * [
-     *   orgunit_id => [
-     *     'auditee'       => pegawai_id (single),
-     *     'ketua_auditor' => pegawai_id (single),
-     *     'auditor'       => [pegawai_id, ...],
-     *     'anggota'       => [pegawai_id, ...],
-     *   ],
-     * ]
-     */
-    public function syncAllAssignments($periodeId, array $data)
-    {
-        return DB::transaction(function () use ($periodeId, $data) {
-            // Delete all existing assignments for this periode
-            TimMutu::forPeriode($periodeId)->forceDelete();
-
-            $inserts = [];
-            foreach ($data as $unitId => $roles) {
-                // Helper to add insert
-                $addInsert = function ($pegawaiId, $role) use ($periodeId, $unitId) {
-                    return [
-                        'periodespmi_id' => $periodeId,
-                        'org_unit_id' => $unitId,
-                        'pegawai_id' => $pegawaiId,
-                        'role' => $role,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                        'created_by' => auth()->id(),
-                        'updated_by' => auth()->id(),
-                    ];
-                };
-
-                // Single Roles
-                if (! empty($roles['auditee'])) {
-                    $inserts[] = $addInsert($roles['auditee'], 'auditee');
-                }
-                if (! empty($roles['ketua_auditor'])) {
-                    $inserts[] = $addInsert($roles['ketua_auditor'], 'ketua_auditor');
-                }
-
-                // Multiple Roles
-                foreach (['anggota', 'auditor'] as $roleKey) {
-                    if (! empty($roles[$roleKey]) && is_array($roles[$roleKey])) {
-                        foreach ($roles[$roleKey] as $pegawaiId) {
-                            if ($pegawaiId) {
-                                $inserts[] = $addInsert($pegawaiId, $roleKey);
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (! empty($inserts)) {
-                TimMutu::insert($inserts);
-            }
-
-            return count($inserts);
-        });
-    }
-
-    /**
      * Update Tim Mutu for a single OrgUnit.
      */
     public function updateUnitTimMutu($periodeId, $unitId, $auditeeId, $ketuaAuditorId, array $auditorIds, array $anggotaIds)
@@ -109,52 +47,25 @@ class TimMutuService
             $periode = PeriodeSpmi::findOrFail($periodeId);
             $unit = StrukturOrganisasi::findOrFail($unitId);
 
-            // Delete existing
             TimMutu::forPeriode($periodeId)
                 ->forUnit($unitId)
                 ->forceDelete();
 
             $inserts = [];
-            $now = now();
-            $userId = auth()->id();
-
-            // Helper
-            $addInsert = function ($pegawaiId, $role) use ($periodeId, $unitId, $now, $userId) {
-                return [
-                    'periodespmi_id' => $periodeId,
-                    'org_unit_id' => $unitId,
-                    'pegawai_id' => $pegawaiId,
-                    'role' => $role,
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                    'created_by' => $userId,
-                    'updated_by' => $userId,
-                ];
-            };
 
             if ($auditeeId) {
-                $inserts[] = $addInsert($auditeeId, 'auditee');
+                $inserts[] = $this->buildInsertPayload($periodeId, $unitId, $auditeeId, 'auditee');
             }
             if ($ketuaAuditorId) {
-                $inserts[] = $addInsert($ketuaAuditorId, 'ketua_auditor');
+                $inserts[] = $this->buildInsertPayload($periodeId, $unitId, $ketuaAuditorId, 'ketua_auditor');
             }
-
-            foreach ($auditorIds as $pegawaiId) {
-                if ($pegawaiId) {
-                    $inserts[] = $addInsert($pegawaiId, 'auditor');
-                }
-            }
-            foreach ($anggotaIds as $pegawaiId) {
-                if ($pegawaiId) {
-                    $inserts[] = $addInsert($pegawaiId, 'anggota');
-                }
-            }
+            $inserts = array_merge($inserts, $this->buildBulkInserts($periodeId, $unitId, $auditorIds, 'auditor'));
+            $inserts = array_merge($inserts, $this->buildBulkInserts($periodeId, $unitId, $anggotaIds, 'anggota'));
 
             if (! empty($inserts)) {
                 TimMutu::insert($inserts);
             }
 
-            // Log Activity
             logActivity(
                 'Tim Mutu Updated',
                 "Mengupdate Tim Mutu untuk unit {$unit->name} pada periode {$periode->periode}",
@@ -174,39 +85,17 @@ class TimMutuService
             $periode = PeriodeSpmi::findOrFail($periodeId);
             $unit = StrukturOrganisasi::findOrFail($unitId);
 
-            // Delete existing auditee roles
             TimMutu::forPeriode($periodeId)
                 ->forUnit($unitId)
                 ->whereIn('role', ['auditee', 'anggota'])
                 ->forceDelete();
 
             $inserts = [];
-            $now = now();
-            $userId = auth()->id();
-
-            // Helper
-            $addInsert = function ($pegawaiId, $role) use ($periodeId, $unitId, $now, $userId) {
-                return [
-                    'periodespmi_id' => $periodeId,
-                    'org_unit_id' => $unitId,
-                    'pegawai_id' => $pegawaiId,
-                    'role' => $role,
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                    'created_by' => $userId,
-                    'updated_by' => $userId,
-                ];
-            };
 
             if ($auditeeId) {
-                $inserts[] = $addInsert($auditeeId, 'auditee');
+                $inserts[] = $this->buildInsertPayload($periodeId, $unitId, $auditeeId, 'auditee');
             }
-
-            foreach ($anggotaIds as $pegawaiId) {
-                if ($pegawaiId) {
-                    $inserts[] = $addInsert($pegawaiId, 'anggota');
-                }
-            }
+            $inserts = array_merge($inserts, $this->buildBulkInserts($periodeId, $unitId, $anggotaIds, 'anggota'));
 
             if (! empty($inserts)) {
                 TimMutu::insert($inserts);
@@ -227,39 +116,17 @@ class TimMutuService
             $periode = PeriodeSpmi::findOrFail($periodeId);
             $unit = StrukturOrganisasi::findOrFail($unitId);
 
-            // Delete existing auditor roles
             TimMutu::forPeriode($periodeId)
                 ->forUnit($unitId)
                 ->whereIn('role', ['ketua_auditor', 'auditor'])
                 ->forceDelete();
 
             $inserts = [];
-            $now = now();
-            $userId = auth()->id();
-
-            // Helper
-            $addInsert = function ($pegawaiId, $role) use ($periodeId, $unitId, $now, $userId) {
-                return [
-                    'periodespmi_id' => $periodeId,
-                    'org_unit_id' => $unitId,
-                    'pegawai_id' => $pegawaiId,
-                    'role' => $role,
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                    'created_by' => $userId,
-                    'updated_by' => $userId,
-                ];
-            };
 
             if ($ketuaAuditorId) {
-                $inserts[] = $addInsert($ketuaAuditorId, 'ketua_auditor');
+                $inserts[] = $this->buildInsertPayload($periodeId, $unitId, $ketuaAuditorId, 'ketua_auditor');
             }
-
-            foreach ($auditorIds as $pegawaiId) {
-                if ($pegawaiId) {
-                    $inserts[] = $addInsert($pegawaiId, 'auditor');
-                }
-            }
+            $inserts = array_merge($inserts, $this->buildBulkInserts($periodeId, $unitId, $auditorIds, 'auditor'));
 
             if (! empty($inserts)) {
                 TimMutu::insert($inserts);
@@ -293,21 +160,34 @@ class TimMutuService
     }
 
     /**
-     * Get all active pegawai for Select2 options (Legacy/Full list).
+     * Build a single insert payload for Tim Mutu assignment.
      */
-    public function getAvailablePegawai()
+    private function buildInsertPayload($periodeId, $unitId, $pegawaiId, string $role): array
     {
-        return $this->searchPegawai('');
+        return [
+            'periodespmi_id' => $periodeId,
+            'org_unit_id' => $unitId,
+            'pegawai_id' => $pegawaiId,
+            'role' => $role,
+            'created_at' => now(),
+            'updated_at' => now(),
+            'created_by' => auth()->id(),
+            'updated_by' => auth()->id(),
+        ];
     }
 
     /**
-     * Get OrgUnits as paginated list for manage page.
+     * Build bulk insert payloads for an array of pegawai IDs with the same role.
      */
-    public function getOrgUnitsPaginated($perPage = 9)
+    private function buildBulkInserts($periodeId, $unitId, array $pegawaiIds, string $role): array
     {
-        return StrukturOrganisasi::with('parent')
-            ->orderBy('level')
-            ->orderBy('seq')
-            ->paginate($perPage);
+        $inserts = [];
+        foreach ($pegawaiIds as $pegawaiId) {
+            if ($pegawaiId) {
+                $inserts[] = $this->buildInsertPayload($periodeId, $unitId, $pegawaiId, $role);
+            }
+        }
+
+        return $inserts;
     }
 }

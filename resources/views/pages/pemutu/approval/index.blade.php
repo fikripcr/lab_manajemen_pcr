@@ -12,10 +12,10 @@
     <div class="col-12">
         <x-tabler.card>
             <x-tabler.card-header>
-                <div class="col-auto d-flex gap-2">
+                <div class="ms-auto d-flex gap-2">
                     <x-tabler.datatable-page-length dataTableId="table-approval" />
-                    <x-tabler.datatable-filter dataTableId="table-approval" type="button" target="#table-approval-filter-area" />
                     <x-tabler.datatable-search dataTableId="table-approval" />
+                    <x-tabler.datatable-filter dataTableId="table-approval" type="button" target="#table-approval-filter-area" />
                 </div>
             </x-tabler.card-header>
 

@@ -167,6 +167,14 @@ class DokumenSpmiController extends Controller
         $data = $request->all();
 
         $data['judul'] = $data['judul'] ?? $data['indikator'] ?? null; // Normalizing field names
+        
+        // --- GUARD: Periode Penetapan ---
+        $year = (int) ($data['periode'] ?? session('siklus_spmi_tahun'));
+        $kelompok = session('pemutu_active_kelompok', 'akademik');
+        if (! pemutu_can_modify($year, $kelompok)) {
+            return jsonError('Aksi dibatasi. Masa penetapan periode ini belum dibuka atau sudah berakhir.');
+        }
+        // ---------------------------------
 
         // Validate required
         if (empty($data['judul'])) {
@@ -270,6 +278,26 @@ class DokumenSpmiController extends Controller
         $decryptedId = decryptIdIfEncrypted($id);
         $data = $request->all();
 
+        // --- GUARD: Periode Penetapan ---
+        $year = (int) ($data['periode'] ?? session('siklus_spmi_tahun')); // Document's existing year if editing
+        if ($type === 'dokumen') {
+            $dokumen = Dokumen::find($decryptedId);
+            $year = $dokumen->periode ?? $year;
+        } elseif ($type === 'poin') {
+            $dokSub = DokSub::with('dokumen')->find($decryptedId);
+            $year = $dokSub->dokumen->periode ?? $year;
+        } elseif ($type === 'indikator') {
+            $indikator = Indikator::find($decryptedId);
+            // Indikators might span across documents, but typically respect the session cycle
+            $year = session('siklus_spmi_tahun'); 
+        }
+
+        $kelompok = session('pemutu_active_kelompok', 'akademik');
+        if (! pemutu_can_modify($year, $kelompok)) {
+            return jsonError('Aksi dibatasi. Masa penetapan periode ini belum dibuka atau sudah berakhir.');
+        }
+        // ---------------------------------
+
         if ($type === 'dokumen') {
             if (! empty($data['parent_id'])) {
                 $data['parent_id'] = decryptIdIfEncrypted($data['parent_id']);
@@ -311,6 +339,22 @@ class DokumenSpmiController extends Controller
     {
         $decryptedId = decryptIdIfEncrypted($id);
         $redirect = url()->previous();
+
+        // --- GUARD: Periode Penetapan ---
+        $year = (int) session('siklus_spmi_tahun');
+        if ($type === 'dokumen') {
+            $item = Dokumen::withTrashed()->find($decryptedId);
+            $year = $item->periode ?? $year;
+        } elseif ($type === 'poin') {
+            $item = DokSub::withTrashed()->with('dokumen')->find($decryptedId);
+            $year = $item->dokumen->periode ?? $year;
+        }
+        
+        $kelompok = session('pemutu_active_kelompok', 'akademik');
+        if (! pemutu_can_modify($year, $kelompok)) {
+            return jsonError('Pengahapusan dibatasi. Masa penetapan periode ini belum dibuka atau sudah berakhir.');
+        }
+        // ---------------------------------
 
         if ($type === 'dokumen') {
             $item = Dokumen::withTrashed()->find($decryptedId);
@@ -367,6 +411,10 @@ class DokumenSpmiController extends Controller
                     return $html ?: '-';
                 })
                 ->addColumn('action', function ($row) {
+                    if (! pemutu_can_modify((int) ($row->periode ?? session('siklus_spmi_tahun')))) {
+                        return '';
+                    }
+
                     return view('components.tabler.datatables-actions', [
                         'editUrl' => route('pemutu.dokumen-spmi.edit', ['type' => 'poin', 'id' => $row->encrypted_doksub_id, 'mode' => 'title']),
                         'editModal' => true,
@@ -393,6 +441,10 @@ class DokumenSpmiController extends Controller
                     return '<span class="badge bg-blue-lt">'.strtoupper($row->jenis).'</span>';
                 })
                 ->addColumn('action', function ($row) {
+                    if (! pemutu_can_modify((int) ($row->periode ?? session('siklus_spmi_tahun')))) {
+                        return '';
+                    }
+                    
                     return view('components.tabler.datatables-actions', [
                         'editUrl' => route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $row->encrypted_dok_id, 'mode' => 'title']),
                         'editModal' => true,
@@ -419,11 +471,13 @@ class DokumenSpmiController extends Controller
                     return pemutuDtColTarget($row);
                 })
                 ->addColumn('action', function ($row) {
+                    $canModify = pemutu_can_modify((int) ($row->periode ?? session('siklus_spmi_tahun')));
+                    
                     return view('components.tabler.datatables-actions', [
                         'viewUrl' => route('pemutu.indikator.show', $row->encrypted_indikator_id),
-                        'editUrl' => route('pemutu.indikator.edit', ['indikator' => $row->encrypted_indikator_id, 'redirect_to' => url()->current()]),
+                        'editUrl' => $canModify ? route('pemutu.indikator.edit', ['indikator' => $row->encrypted_indikator_id, 'redirect_to' => url()->current()]) : null,
                         'editModal' => false,
-                        'deleteUrl' => route('pemutu.dokumen-spmi.destroy', ['type' => 'indikator', 'id' => $row->encrypted_indikator_id]),
+                        'deleteUrl' => $canModify ? route('pemutu.dokumen-spmi.destroy', ['type' => 'indikator', 'id' => $row->encrypted_indikator_id]) : null,
                     ])->render();
                 })
                 ->rawColumns(['no', 'indikator', 'target', 'action'])
@@ -457,9 +511,11 @@ class DokumenSpmiController extends Controller
                     return pemutuDtColTarget($row);
                 })
                 ->addColumn('action', function ($row) {
+                    $canModify = pemutu_can_modify((int) ($row->periode ?? session('siklus_spmi_tahun')));
+
                     return view('components.tabler.datatables-actions', [
                         'viewUrl' => route('pemutu.indikator.show', $row->encrypted_indikator_id),
-                        'editUrl' => route('pemutu.indikator.edit', ['indikator' => $row->encrypted_indikator_id, 'redirect_to' => url()->current()]),
+                        'editUrl' => $canModify ? route('pemutu.indikator.edit', ['indikator' => $row->encrypted_indikator_id, 'redirect_to' => url()->current()]) : null,
                         'editModal' => false,
                     ])->render();
                 })
@@ -482,6 +538,10 @@ class DokumenSpmiController extends Controller
                 })
                 ->addColumn('kode', fn ($row) => $row->kode ? '<span class="badge bg-secondary-lt">'.e($row->kode).'</span>' : '-')
                 ->addColumn('action', function ($row) use ($doksub) {
+                    if (! pemutu_can_modify((int) ($row->dokumen->periode ?? session('siklus_spmi_tahun')))) {
+                        return '';
+                    }
+
                     return '<button class="btn btn-sm btn-outline-danger btn-remove-mapping" '
                     .'data-doksub-id="'.$doksub->encrypted_doksub_id.'" '
                     .'data-mapped-id="'.$row->encrypted_doksub_id.'"'
@@ -660,11 +720,11 @@ class DokumenSpmiController extends Controller
 
             // Trace down for ALL poin in this document
             foreach ($doc->dokSubs as $poin) {
-                // If it's already renop, get indicators directly
-                if ($jenis === 'renop') {
-                    $inds = $poin->indikators()->with(['orgUnits', 'parent.orgUnits'])->get();
-                    $indicators = $indicators->merge($inds);
-                } else {
+                // Collect indicators directly attached to this point
+                $indicators = $indicators->merge($poin->indikators()->with(['orgUnits', 'parent.orgUnits'])->get());
+                
+                // Then trace children if it's not the bottom level
+                if ($jenis !== 'renop') {
                     $chain = $this->traceChainDown($poin, $kebijakanChain, $startIndex, $periode);
                     $indicators = $indicators->merge($this->collectIndicatorsFromChain($chain));
                 }
@@ -677,10 +737,10 @@ class DokumenSpmiController extends Controller
 
             $startIndex = array_search($jenis, $kebijakanChain);
 
-            if ($jenis === 'renop') {
-                $inds = $poin->indikators()->with(['orgUnits', 'parent.orgUnits'])->get();
-                $indicators = $indicators->merge($inds);
-            } else {
+            // Collect indicators directly attached to this point
+            $indicators = $indicators->merge($poin->indikators()->with(['orgUnits', 'parent.orgUnits'])->get());
+
+            if ($jenis !== 'renop') {
                 $chain = $this->traceChainDown($poin, $kebijakanChain, $startIndex, $periode);
                 $indicators = $indicators->merge($this->collectIndicatorsFromChain($chain));
             }

@@ -22,7 +22,7 @@
             @if($indOrg->ami_rtp_isi)
                 <div class="mt-2 pt-2 border-top border-warning-subtle">
                     <div class="small fw-bold text-dark mb-1">
-                        <i class="ti ti-bulb me-1"></i>Rencana Tindakan Perbaikan (RTP) Auditor:
+                        <i class="ti ti-bulb me-1"></i>Rencana Tindakan Perbaikan (RTP):
                     </div>
                     <div class="small text-muted fst-italic ps-1">
                         {!! $indOrg->ami_rtp_isi !!}

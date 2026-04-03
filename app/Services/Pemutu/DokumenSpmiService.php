@@ -243,4 +243,102 @@ class DokumenSpmiService
             return true;
         });
     }
+
+    // ==========================================
+    // AGGREGATION & SUMMARY LOGIC
+    // ==========================================
+
+    public function getAchievementByDokumen(Dokumen $doc, int|string $periode): array
+    {
+        $kebijakanChain = ['visi', 'misi', 'rjp', 'renstra', 'renop'];
+        $indicators = collect();
+        $jenis = strtolower(trim($doc->jenis));
+        $startIndex = array_search($jenis, $kebijakanChain);
+
+        foreach ($doc->dokSubs as $poin) {
+            // Collect indicators directly attached to this point
+            $indicators = $indicators->merge($poin->indikators()->with(['orgUnits', 'parent.orgUnits'])->get());
+
+            if ($jenis !== 'renop' && $startIndex !== false) {
+                $chain = $this->traceChainDown($poin, $kebijakanChain, $startIndex, $periode);
+                $indicators = $indicators->merge($this->collectIndicatorsFromChain(collect($chain)));
+            }
+        }
+
+        $indicators = $indicators->unique('indikator_id')->values();
+
+        $totalAssessments = 0;
+        $achievedCount = 0;
+
+        foreach ($indicators as $ind) {
+            foreach ($ind->orgUnits as $ou) {
+                $amiResult = $ou->pivot->ami_hasil_akhir;
+                $totalAssessments++;
+                if (in_array($amiResult, [1, 2])) {
+                    $achievedCount++;
+                }
+            }
+        }
+
+        $rate = $totalAssessments > 0 ? round(($achievedCount / $totalAssessments) * 100, 1) : 0;
+
+        return [
+            'rate' => $rate,
+            'total_indicators' => $indicators->count(),
+            'total_assessments' => $totalAssessments,
+            'achieved' => $achievedCount,
+        ];
+    }
+
+    /**
+     * Recursively trace the chain from a poin down through mappedFrom relations.
+     */
+    public function traceChainDown(DokSub $poin, array $kebijakanChain, int $currentLevel, $periode): array
+    {
+        $result = [];
+        $nextLevel = $currentLevel + 1;
+
+        if ($nextLevel >= count($kebijakanChain)) {
+            return $result;
+        }
+
+        $children = $poin->mappedFrom()
+            ->whereHas('dokumen', function ($q) use ($kebijakanChain, $nextLevel) {
+                $q->where('jenis', $kebijakanChain[$nextLevel]);
+            })
+            ->with(['dokumen', 'indikators.orgUnits', 'indikators.parent.orgUnits'])
+            ->get();
+
+        foreach ($children as $child) {
+            $childData = [
+                'poin' => $child,
+                'indicators' => $child->indikators()->with(['orgUnits', 'parent.orgUnits'])->get(),
+                'chain' => $this->traceChainDown($child, $kebijakanChain, $nextLevel, $periode),
+            ];
+
+            $result[] = $childData;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Collect all indicators from the whole chain tree.
+     */
+    private function collectIndicatorsFromChain(mixed $chain): Collection
+    {
+        $chain_collection = collect($chain);
+        $indicators = collect();
+
+        foreach ($chain_collection as $node) {
+            if (isset($node['indicators']) && $node['indicators'] instanceof Collection) {
+                $indicators = $indicators->merge($node['indicators']);
+            }
+            if (! empty($node['chain'])) {
+                $indicators = $indicators->merge($this->collectIndicatorsFromChain($node['chain']));
+            }
+        }
+
+        return $indicators;
+    }
 }

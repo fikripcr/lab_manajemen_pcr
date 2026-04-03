@@ -1,7 +1,7 @@
 <x-tabler.form-modal 
-    :title="'Persetujuan Dokumen — ' . ($approval->subject->kode ?? '')" 
-    :route="$approval->status == 'Pending' ? route('pemutu.approval.process', $approval->encrypted_sys_approval_id) : '#'" 
-    :method="$approval->status == 'Pending' ? 'POST' : 'none'" 
+    :title="'Persetujuan Dokumen'" 
+    :route="route('pemutu.approval.process', $approval->encrypted_sys_approval_id)" 
+    :method="'POST'" 
     data-redirect="true">
     
     <div class="alert alert-info py-2 px-3 mb-3 border-0">
@@ -17,12 +17,6 @@
             </div>
         </div>
     </div>
-
-    @if($approval->status !== 'Pending')
-        <div class="alert alert-warning mb-3">
-            <i class="ti ti-info-circle me-1"></i> Status saat ini: <strong>{{ $approval->status }}</strong>. Anda tidak dapat mengubah status yang telah dieksekusi.
-        </div>
-    @endif
 
     @if(isset($isSah) && $isSah && isset($qrCode))
         <div class="alert alert-success d-flex align-items-center mb-3 border-0 shadow-sm">
@@ -43,28 +37,9 @@
         </div>
     @endif
 
-    @if(isset($allApprovals) && $allApprovals->where('status', 'Approved')->count() > 0)
-        <div class="mb-3">
-            <label class="form-label fw-bold small text-uppercase mb-2 text-muted">Stempel Persetujuan Tersimpan (TTD)</label>
-            <div class="list-group list-group-flush border rounded border-bottom-0 small">
-                @foreach($allApprovals->where('status', 'Approved') as $appr)
-                <div class="list-group-item bg-light border-0 border-bottom py-2">
-                    <div class="d-flex w-100 justify-content-between align-items-center">
-                        <div class="d-flex align-items-center mb-0">
-                            <strong>{{ $appr->pejabat }}</strong>
-                            <span class="text-muted ms-2">({{ $appr->jabatan }})</span>
-                        </div>
-                        <span class="badge bg-green-lt"><i class="ti ti-check me-1"></i>{{ $appr->updated_at->format('d/m/y H:i') }}</span>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
-    @endif
-
     <hr class="my-3">
 
-    <fieldset {{ $approval->status !== 'Pending' ? 'disabled' : '' }}>
+    <fieldset>
         <div class="mb-3">
             <label class="form-label required small fw-bold text-uppercase">Tindakan Persetujuan</label>
             <div class="form-selectgroup">

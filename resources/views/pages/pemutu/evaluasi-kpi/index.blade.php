@@ -36,7 +36,6 @@
                                         <i class="ti ti-calendar me-1"></i>
                                         {{ $periode->tanggal_mulai->format('d M') }} s.d. {{ $periode->tanggal_selesai->format('d M Y') }}
                                     </span>
-                                    <span class="text-{{ $periodeInfo['color'] }} small fw-bold mt-1 d-inline-block">({{ $periodeInfo['time_info'] }})</span>
                                 @endif
                                 @php
                                     $total  = $totalCounts[$periode->periode_kpi_id] ?? 0;

@@ -40,6 +40,23 @@ $rootDoc = $isTreeBased ? null : $dokData->first();
 @endsection
 
 @section('content')
+@php
+    $canModify = pemutu_can_modify($selectedPeriode);
+@endphp
+
+@if(!$canModify)
+    <div class="row mb-3 mt-n2">
+        <div class="col-12">
+            <div class="alert alert-warning mb-0 py-1 px-3 border-0 shadow-none d-flex align-items-center" role="alert" style="font-size: 0.75rem; background: #fffbeb; color: #92400e; border-left: 3px solid #f59e0b !important;">
+                <i class="ti ti-info-circle-filled me-2" style="font-size: 1rem; color: #f59e0b;"></i>
+                <div>
+                    Masa penetapan periode <strong>{{ $selectedPeriode }}</strong> sedang tidak aktif. Penambahan dan pengeditan dokumen dibatasi.
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
 <div class="row row-cards">
     <!-- Tree View Sidebar -->
     <div class="col-lg-5">
@@ -74,17 +91,23 @@ $rootDoc = $isTreeBased ? null : $dokData->first();
                 {{-- Add Button (Tree-based only) --}}
                 @if($config->isTreeBased())
                 <div class="p-3 bg-light-lt">
-                    <x-tabler.button 
-                        type="create" 
-                        :text="'Tambah ' . $config->labelFull()" 
-                        class="btn-primary w-100 ajax-modal-btn"
-                        :data-url="route('pemutu.dokumen-spmi.create', [
-                            'type' => 'dokumen',
-                            'tabs' => $config->category(),
-                            'fixed_jenis' => $activeJenis
-                        ])"
-                        :data-modal-title="'Tambah Dokumen ' . $config->labelFull()" 
-                    />
+                    @if($canModify)
+                        <x-tabler.button 
+                            type="create" 
+                            :text="'Tambah ' . $config->labelFull()" 
+                            class="btn-primary w-100 ajax-modal-btn"
+                            :data-url="route('pemutu.dokumen-spmi.create', [
+                                'type' => 'dokumen',
+                                'tabs' => $config->category(),
+                                'fixed_jenis' => $activeJenis
+                            ])"
+                            :data-modal-title="'Tambah Dokumen ' . $config->labelFull()" 
+                        />
+                    @else
+                        <button class="btn btn-primary w-100 disabled" disabled>
+                            <i class="ti ti-plus me-1"></i> Tambah {{ $config->labelFull() }}
+                        </button>
+                    @endif
                 </div>
                 @endif
             </x-tabler.card-body>
@@ -103,17 +126,19 @@ $rootDoc = $isTreeBased ? null : $dokData->first();
                             @empty
                                 <li class="text-muted text-center py-3">
                                     <div>Tidak ada dokumen {{ $config->labelFull() }}.</div>
-                                    <x-tabler.button 
-                                        type="create" 
-                                        :text="'Tambah ' . $config->labelFull()" 
-                                        class="btn-sm btn-outline-primary ajax-modal-btn mt-2"
-                                        :data-url="route('pemutu.dokumen-spmi.create', [
-                                            'type' => 'dokumen',
-                                            'tabs' => $config->category(),
-                                            'fixed_jenis' => $activeJenis
-                                        ])"
-                                        :data-modal-title="$config->labelFull()" 
-                                    />
+                                    @if($canModify)
+                                        <x-tabler.button 
+                                            type="create" 
+                                            :text="'Tambah ' . $config->labelFull()" 
+                                            class="btn-sm btn-outline-primary ajax-modal-btn mt-2"
+                                            :data-url="route('pemutu.dokumen-spmi.create', [
+                                                'type' => 'dokumen',
+                                                'tabs' => $config->category(),
+                                                'fixed_jenis' => $activeJenis
+                                            ])"
+                                            :data-modal-title="$config->labelFull()" 
+                                        />
+                                    @endif
                                 </li>
                             @endforelse
                         </ul>
@@ -173,9 +198,11 @@ $rootDoc = $isTreeBased ? null : $dokData->first();
                             <div class="text-muted text-center py-3">
                                 <div class="mb-2"><i class="ti ti-file-off fs-1 opacity-25"></i></div>
                                 <div>Dokumen {{ $allTabs[$activeJenis] }} belum dibuat.</div>
-                                <x-tabler.button type="create" text="Tambah Dokumen Induk" class="btn-sm btn-outline-primary ajax-modal-btn mt-3" 
-                                    data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'tabs' => 'kebijakan', 'fixed_jenis' => $activeJenis]) }}" 
-                                    data-modal-title="Tambah Dokumen {{ $allTabs[$activeJenis] }}" />
+                                @if($canModify)
+                                    <x-tabler.button type="create" text="Tambah Dokumen Induk" class="btn-sm btn-outline-primary ajax-modal-btn mt-3" 
+                                        data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'tabs' => 'kebijakan', 'fixed_jenis' => $activeJenis]) }}" 
+                                        data-modal-title="Tambah Dokumen {{ $allTabs[$activeJenis] }}" />
+                                @endif
                             </div>
                         @endif
                     @endif

@@ -7,10 +7,15 @@ $hasChildren = $hasChildDocs || $hasDokSubs;
 
 // Get config for icon/color
 $config = App\Config\PemutuDokumenConfig::for($dok->jenis ?? 'standar');
+
+// --- GUARD: Periode Penetapan ---
+$itemYear = $dok->periode ?? session('siklus_spmi_tahun');
+$canModify = pemutu_can_modify($itemYear);
+// ---------------------------------
 @endphp
 
 <li data-id="{{ $dok->encrypted_dok_id }}" data-jenis="{{ $dok->jenis }}" id="tree-node-dok-{{ $dok->encrypted_dok_id }}">
-    <div class="d-flex align-items-start mb-2 tree-node-row" draggable="true">
+    <div class="d-flex align-items-start mb-2 tree-node-row" {{ $canModify ? 'draggable=true' : '' }}>
         @if($hasChildren)
             <span class="tree-toggle text-muted me-2 mt-1">
                 <i class="ti ti-chevron-{{ isset($collapsed) && $collapsed ? 'right' : 'down' }}"></i>

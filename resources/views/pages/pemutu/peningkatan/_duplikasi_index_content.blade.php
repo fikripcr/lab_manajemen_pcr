@@ -6,35 +6,25 @@
     </ul>
 </div>
 
-<div class="row mb-3 align-items-center">
-    <div class="col-md-6">
-        <div class="d-flex align-items-center">
-            <span class="badge bg-blue-lt me-2 p-2">
-                <i class="ti ti-calendar-share me-1"></i> Target Duplikasi: <strong>{{ $periode->periode + 1 }}</strong>
-            </span>
-            <input type="hidden" id="input-target-periode" value="{{ $periode->periode + 1 }}">
-            <span id="duplikasi-status" class="text-muted small ms-2"></span>
-        </div>
-    </div>
-    <div class="col-md-6 text-end">
-        <x-tabler.button type="button" class="btn-primary" id="btn-duplikasi"
-            icon="ti ti-copy" text="Duplikasi Terpilih" disabled="true" />
-    </div>
-</div>
+<div class="row panel-standar-container mt-3" data-periode-id="{{ $periode->encrypted_periodespmi_id }}">
+    <input type="hidden" id="input-target-periode" value="{{ $periode->periode + 1 }}">
 
-<div class="row panel-standar-container" data-periode-id="{{ $periode->encrypted_periodespmi_id }}">
     {{-- Panel Kiri: STANDAR SEBELUMNYA --}}
     <div class="col-md-6">
         <x-tabler.card class="border-2 border-secondary shadow-none">
             <x-tabler.card-header class="bg-secondary-lt">
                 <div class="d-flex w-100 align-items-center">
-                    <h4 class="card-title mb-0"><i class="ti ti-history me-2"></i>STANDAR SEBELUMNYA</h4>
+                    <h4 class="card-title mb-0"><i class="ti ti-history me-2"></i>STANDAR SEBELUMNYA </h4>
+                    <span class="status status-secondary ms-2">{{ $periode->periode }}</span>
                     <div class="ms-auto d-flex gap-2">
                         <div class="dropdown">
                             <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Aksi</button>
                             <div class="dropdown-menu dropdown-menu-end">
                                 <a href="javascript:void(0)" class="dropdown-item btn-check-all-lama"><i class="ti ti-check me-2"></i>Pilih Semua</a>
                                 <a href="javascript:void(0)" class="dropdown-item btn-uncheck-all-lama"><i class="ti ti-square me-2"></i>Bersihkan</a>
+                                <div class="dropdown-divider"></div>
+                                <a href="javascript:void(0)" class="dropdown-item disabled" id="btn-duplikasi"><i class="ti ti-copy me-2 text-blue"></i>Duplikasi Terpilih</a>
+
                             </div>
                         </div>
                         <input type="text" class="form-control form-control-sm search-standar-lama" placeholder="Search..." style="width: 120px">
@@ -55,7 +45,7 @@
             <x-tabler.card-header class="bg-green-lt">
                 <div class="d-flex w-100 align-items-center">
                     <h4 class="card-title mb-0"><i class="ti ti-sparkles me-2"></i>STANDAR BARU</h4>
-                    <span class="badge bg-green ms-2">{{ $periode->periode + 1 }}</span>
+                    <span class="status status-green ms-2">{{ $periode->periode + 1 }}</span>
                     <div class="ms-auto d-flex gap-2">
                         <div class="dropdown">
                             <button class="btn btn-sm btn-outline-success dropdown-toggle" data-bs-toggle="dropdown">Aksi</button>
@@ -152,8 +142,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 item.innerHTML = `
                     <input type="checkbox" class="form-check-input me-3" value="${d.dok_id}" ${this.selectedLama.has(d.dok_id) ? 'checked' : ''} ${isDuplicated ? 'disabled' : ''}>
                     <div class="flex-fill ${isDuplicated ? 'text-muted' : ''}">
-                        <div class="fw-medium small">${d.judul}</div>
-                        ${d.kode ? `<div class="extra-small text-muted">${d.kode}</div>` : ''}
+                        <div class="fw-medium">${d.judul}</div>
+                        ${d.kode ? `<div class="small text-muted">${d.kode}</div>` : ''}
                     </div>
                     <div class="ms-auto">
                         <span class="badge bg-blue-lt">${d.indikator_count} Ind.</span>
@@ -212,8 +202,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const status = document.getElementById('duplikasi-status');
             
             if (btnDup) {
-                btnDup.disabled = this.selectedLama.size === 0;
-                btnDup.innerHTML = `<i class="ti ti-copy me-1"></i> Duplikasi (${this.selectedLama.size})`;
+                if (this.selectedLama.size > 0) {
+                    btnDup.classList.remove('disabled');
+                    btnDup.innerHTML = `<i class="ti ti-copy me-2 text-blue"></i> Duplikasi Terpilih (${this.selectedLama.size})`;
+                } else {
+                    btnDup.classList.add('disabled');
+                    btnDup.innerHTML = `<i class="ti ti-copy me-2 text-blue"></i> Duplikasi Terpilih`;
+                }
             }
             if (status) status.textContent = this.selectedLama.size > 0 ? `${this.selectedLama.size} dipilih` : '';
             

@@ -10,6 +10,14 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class PegawaiService
 {
+    /**
+     * Get all users with their pegawai and latestDataDiri for dropdowns.
+     */
+    public function getUsersWithPegawaiData()
+    {
+        return \App\Models\User::with('pegawai.latestDataDiri')->get();
+    }
+
     public function getFilteredQuery(array $filters = [])
     {
         $query = Pegawai::with(['orgUnit', 'user']);
@@ -26,10 +34,6 @@ class PegawaiService
         return $query;
     }
 
-    public function getPegawaiById(int $id): ?Pegawai
-    {
-        return Pegawai::with(['orgUnit', 'user'])->find($id);
-    }
 
     public function createPegawai(array $data): Pegawai
     {

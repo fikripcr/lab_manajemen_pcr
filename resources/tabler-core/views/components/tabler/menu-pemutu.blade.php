@@ -9,13 +9,6 @@
             'route' => 'pemutu.dashboard',
             'icon'  => 'ti ti-layout-dashboard',
         ],
-        [
-            'type'          => 'item',
-            'title'         => 'Approval Dokumen',
-            'route'         => 'pemutu.approval.index',
-            'active_routes' => ['pemutu.approval.*'],
-            'icon'          => 'ti ti-file-check',
-        ],
 
         [
             'type'          => 'dropdown',
@@ -65,6 +58,14 @@
                     'can' => 'admin',
                 ],
             ],
+        ],
+        
+                [
+            'type'          => 'item',
+            'title'         => 'Approval Dokumen',
+            'route'         => 'pemutu.approval.index',
+            'active_routes' => ['pemutu.approval.*'],
+            'icon'          => 'ti ti-file-check',
         ],
 
         [
@@ -170,7 +171,7 @@
                     'title'         => 'Histori PPEPP 5 Tahun',
                     'route'         => 'pemutu.five-year-summary.index',
                     'active_routes' => ['pemutu.five-year-summary.*'],
-                    'icon'          => 'ti ti-timeline',
+                    'icon'          => 'ti ti-dot',
                 ],
             ],
         ],

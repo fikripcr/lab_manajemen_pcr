@@ -10,8 +10,10 @@ use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Services\Hr\StrukturOrganisasiService;
+use App\Services\Pemutu\DokumenService;
 use App\Services\Pemutu\DuplikasiService;
 use App\Services\Pemutu\IndikatorService;
+use App\Services\Pemutu\IndikatorOrgUnitService;
 use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -22,7 +24,10 @@ class PeningkatanController extends Controller
         protected PeriodeSpmiService $periodeSpmiService,
         protected DuplikasiService $duplikasiService,
         protected IndikatorService $indikatorService,
+        protected IndikatorOrgUnitService $indikatorOrgUnitService,
         protected StrukturOrganisasiService $strukturOrganisasiService,
+        protected DokumenService $dokumenService,
+        protected \App\Services\Pemutu\PegawaiService $pegawaiService,
     ) {}
 
     /**
@@ -31,7 +36,7 @@ class PeningkatanController extends Controller
     public function index()
     {
         $siklus = $this->periodeSpmiService->getSiklusData();
-        $users = \App\Models\User::with('pegawai.latestDataDiri')->get();
+        $users = $this->pegawaiService->getUsersWithPegawaiData();
 
         // Active Kelompok (Akademik / Non Akademik) from session
         $activeKelompok = session('pemutu_active_kelompok', 'akademik');
@@ -51,10 +56,16 @@ class PeningkatanController extends Controller
             $hasDuplicated = Indikator::where('origin_from', 'peningkatan_'.$periode->periode)->exists();
         }
 
-        $rootDoks = \App\Models\Pemutu\Dokumen::whereNull('parent_id')
-            ->where('periode', $siklus['tahun'])
-            ->orderBy('seq')
-            ->get();
+        $rootDoks = $this->dokumenService->getRootsByPeriode($siklus['tahun']);
+
+        // Staging count: how many target-period docs are still staging
+        $targetPeriode = $periode ? $periode->periode + 1 : null;
+        $stagingCount = 0;
+        if ($targetPeriode) {
+            $stagingCount = Dokumen::where('periode', $targetPeriode)
+                ->where('std_is_staging', true)
+                ->count();
+        }
 
         $data = [
             'pageTitle'      => 'Peningkatan',
@@ -66,6 +77,7 @@ class PeningkatanController extends Controller
             'rootDoks'       => $rootDoks,
             'users'          => $users,
             'units'          => $this->strukturOrganisasiService->getHierarchicalList(),
+            'stagingCount'   => $stagingCount,
         ];
 
         return view('pages.pemutu.peningkatan.index', $data);
@@ -75,7 +87,7 @@ class PeningkatanController extends Controller
 
     public function createRtm(PeriodeSpmi $periode)
     {
-        $users = \App\Models\User::with('pegawai.latestDataDiri')->get();
+        $users = $this->pegawaiService->getUsersWithPegawaiData();
 
         return view('pages.pemutu.peningkatan.rtm-form', compact('periode', 'users'));
     }
@@ -89,7 +101,7 @@ class PeningkatanController extends Controller
 
     public function editRtm(PeriodeSpmi $periode, Rapat $rapat)
     {
-        $users = \App\Models\User::with('pegawai.latestDataDiri')->get();
+        $users = $this->pegawaiService->getUsersWithPegawaiData();
 
         return view('pages.pemutu.peningkatan.rtm-form', compact('periode', 'rapat', 'users'));
     }
@@ -122,18 +134,10 @@ class PeningkatanController extends Controller
         $standarLama = collect();
         foreach ($rootDoks as $dok) {
             // Kumpulkan semua dok_id dalam tree ini (root + semua descendant)
-            $treeIds = $this->collectDokumenTreeIds($dok->dok_id);
+            $treeIds = $this->duplikasiService->collectDokumenTreeIds($dok->dok_id);
 
             // Hitung indikator kelompok yg terkait dgn DokSub di tree ini
-            $indikatorCount = \DB::table('pemutu_indikator_doksub as ids')
-                ->join('pemutu_dok_sub as ds', 'ds.doksub_id', '=', 'ids.doksub_id')
-                ->join('pemutu_indikator as i', 'i.indikator_id', '=', 'ids.source_id')
-                ->whereIn('ds.dok_id', $treeIds)
-                ->where('i.kelompok_indikator', $kelompok)
-                ->where('i.type', '!=', 'performa')
-                ->where('ids.source_type', \App\Models\Pemutu\Indikator::class)
-                ->distinct('ids.source_id')
-                ->count('ids.source_id');
+            $indikatorCount = $this->duplikasiService->countIndikatorByDokumenTree($treeIds, $kelompok);
 
             if ($indikatorCount === 0) {
                 continue;
@@ -167,16 +171,8 @@ class PeningkatanController extends Controller
 
         $standarBaru = collect();
         foreach ($newRootDoks as $dok) {
-            $treeIds = $this->collectDokumenTreeIds($dok->dok_id);
-            $indikatorCount = \DB::table('pemutu_indikator_doksub as ids')
-                ->join('pemutu_dok_sub as ds', 'ds.doksub_id', '=', 'ids.doksub_id')
-                ->join('pemutu_indikator as i', 'i.indikator_id', '=', 'ids.source_id')
-                ->whereIn('ds.dok_id', $treeIds)
-                ->where('i.kelompok_indikator', $kelompok)
-                ->where('i.type', '!=', 'performa')
-                ->where('ids.source_type', \App\Models\Pemutu\Indikator::class)
-                ->distinct('ids.source_id')
-                ->count('ids.source_id');
+            $treeIds = $this->duplikasiService->collectDokumenTreeIds($dok->dok_id);
+            $indikatorCount = $this->duplikasiService->countIndikatorByDokumenTree($treeIds, $kelompok);
 
             // Tampilkan juga yang belum punya indikator (dokumen sudah ada tapi indikator belum dicopy)
             $standarBaru->push([
@@ -201,20 +197,6 @@ class PeningkatanController extends Controller
         ]);
     }
 
-    /**
-     * Kumpulkan semua dok_id di bawah root (termasuk root itu sendiri).
-     */
-    protected function collectDokumenTreeIds(int $rootId): array
-    {
-        $ids = [$rootId];
-        $children = Dokumen::where('parent_id', $rootId)->pluck('dok_id');
-
-        foreach ($children as $childId) {
-            $ids = array_merge($ids, $this->collectDokumenTreeIds($childId));
-        }
-
-        return $ids;
-    }
 
     /**
      * Jalankan proses duplikasi standar tertentu ke periode baru.
@@ -238,13 +220,8 @@ class PeningkatanController extends Controller
 
     public function reviewData(Request $request, PeriodeSpmi $periode)
     {
-        $filters = [];
-        foreach ($request->only(['pengend_status', 'pengend_important_matrix', 'pengend_urgent_matrix', 'dok_id', 'unit_id']) as $key => $value) {
-            if ($value !== null && $value !== '' && $value !== 'all') {
-                $filters[$key] = $value;
-            }
-        }
-        $query = $this->indikatorService->getPeningkatanReviewQuery($periode, $filters);
+        $filters = parseSpmiFilters($request, ['pengend_status', 'pengend_important_matrix', 'pengend_urgent_matrix', 'dok_id', 'unit_id']);
+        $query = $this->indikatorOrgUnitService->getPeningkatanReviewQuery($periode, $filters);
 
         return DataTables::of($query)
             ->addColumn('no', function ($row) {
@@ -274,8 +251,129 @@ class PeningkatanController extends Controller
 
                 return pemutuTextScroll($parts ? implode('<br>', $parts) : null);
             })
-            ->rawColumns(['no', 'indikator_full', 'target', 'status_badge', 'dokumen_standar', 'keterangan_perubahan'])
+            ->filterColumn('indikator', function ($query, $keyword) {
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('indikator', 'like', "%{$keyword}%")
+                        ->orWhere('no_indikator', 'like', "%{$keyword}%")
+                        ->orWhereHas('orgUnit', function ($sq) use ($keyword) {
+                            $sq->where('name', 'like', "%{$keyword}%")
+                                ->orWhere('code', 'like', "%{$keyword}%");
+                        });
+                });
+            })
+            ->addColumn('action', function ($row) {
+                $editUrl = route('pemutu.indikator.edit', [
+                    'indikator'   => encryptId($row->indikator_id),
+                    'redirect_to' => url()->full(),
+                ]);
+
+                $historyUrl = route('pemutu.peningkatan.history', encryptId($row->indikorgunit_id));
+
+                $html = '<div class="d-flex gap-1">';
+                $html .= '<a href="' . $editUrl . '" class="btn btn-sm btn-ghost-primary" title="Edit Indikator">
+                            <i class="ti ti-pencil"></i>
+                          </a>';
+                $html .= '<button type="button" class="btn btn-sm btn-ghost-info ajax-modal-btn" 
+                            data-url="' . $historyUrl . '" 
+                            data-modal-title="Riwayat Perubahan Indikator"
+                            data-modal-size="modal-xl">
+                            <i class="ti ti-history"></i>
+                          </button>';
+                $html .= '</div>';
+
+                return $html;
+            })
+            ->rawColumns(['no', 'indikator_full', 'target', 'status_badge', 'dokumen_standar', 'keterangan_perubahan', 'action'])
             ->make(true);
+    }
+
+    // ─── Review Edit Methods ─────────────────────────────────────
+
+    /**
+     * View history/comparison of duplicated indicator (unit specific).
+     */
+    public function history(string $id)
+    {
+        $id = decryptIdIfEncrypted($id);
+        $indikOrg = $this->indikatorOrgUnitService->getIndikatorOrgUnitForHistory($id);
+        
+        $comparison = $this->indikatorOrgUnitService->getUnitComparisonData($indikOrg);
+
+        return view('pages.pemutu.peningkatan._history_comparison', compact('indikOrg', 'comparison'));
+    }
+
+    /**
+     * Form edit indikator review (modal AJAX).
+     */
+    public function editReviewItem(string $id)
+    {
+        $data = $this->indikatorOrgUnitService->getPeningkatanReviewEditData($id);
+
+        return view('pages.pemutu.peningkatan._review_edit_modal', $data);
+    }
+
+    /**
+     * Simpan perubahan indikator review (target & indikator text).
+     */
+    public function updateReviewItem(Request $request, string $id)
+    {
+        $request->validate([
+            'indikator' => 'nullable|string|max:1000',
+            'target'    => 'nullable|string|max:500',
+        ]);
+
+        $this->indikatorOrgUnitService->updatePeningkatanReviewItem($id, $request->only(['target', 'indikator']));
+
+        return jsonSuccess('Indikator berhasil diperbarui.');
+    }
+
+    // ─── Staging Approve Methods ─────────────────────────────────
+
+    /**
+     * Final Approve: publish semua standar staging untuk periode ini.
+     * Set std_is_staging = false pada semua dokumen staging di target periode.
+     */
+    public function approveStaging(Request $request, PeriodeSpmi $periode)
+    {
+        $targetPeriode = $periode->periode + 1;
+
+        $updated = Dokumen::where('periode', $targetPeriode)
+            ->where('std_is_staging', true)
+            ->update(['std_is_staging' => false]);
+
+        logActivity('pemutu', "Approve staging peningkatan: {$updated} dokumen dipublish ke periode {$targetPeriode}");
+
+        return jsonSuccess("{$updated} standar berhasil dipublish. Indikator kini tampil di seluruh modul PPEPP.", route('pemutu.peningkatan.index'));
+    }
+
+    /**
+     * API: Get staging status (berapa dokumen masih staging).
+     */
+    public function getStagingStatus(PeriodeSpmi $periode)
+    {
+        $targetPeriode = $periode->periode + 1;
+
+        $stagingCount = Dokumen::whereNull('parent_id')
+            ->where('periode', $targetPeriode)
+            ->where('std_is_staging', true)
+            ->count();
+
+        $publishedCount = Dokumen::whereNull('parent_id')
+            ->where('periode', $targetPeriode)
+            ->where(function ($q) {
+                $q->where('std_is_staging', false)
+                    ->orWhereNull('std_is_staging');
+            })
+            ->count();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'staging_count' => $stagingCount,
+                'published_count' => $publishedCount,
+                'target_periode' => $targetPeriode,
+            ],
+        ]);
     }
 
     public function deleteStandarTarget(Request $request, PeriodeSpmi $periode, Dokumen $dokumen)

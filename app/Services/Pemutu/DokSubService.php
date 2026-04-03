@@ -18,10 +18,6 @@ class DokSubService
         return $query->orderBy('seq');
     }
 
-    public function getDokSubById(int $id): ?DokSub
-    {
-        return DokSub::with(['dokumen.parent', 'childDokumens'])->find($id);
-    }
 
     public function createDokSub(array $data): DokSub
     {

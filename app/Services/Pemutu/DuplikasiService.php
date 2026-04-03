@@ -11,6 +11,22 @@ use Illuminate\Support\Facades\DB;
 class DuplikasiService
 {
     /**
+     * Count indicators attached to a document tree (used for Peningkatan/Duplikasi).
+     */
+    public function countIndikatorByDokumenTree(array $treeIds, string $kelompok): int
+    {
+        return DB::table('pemutu_indikator_doksub as ids')
+            ->join('pemutu_dok_sub as ds', 'ds.doksub_id', '=', 'ids.doksub_id')
+            ->join('pemutu_indikator as i', 'i.indikator_id', '=', 'ids.source_id')
+            ->whereIn('ds.dok_id', $treeIds)
+            ->where('i.kelompok_indikator', $kelompok)
+            ->where('i.type', '!=', 'performa')
+            ->where('ids.source_type', \App\Models\Pemutu\Indikator::class)
+            ->distinct('ids.source_id')
+            ->count('ids.source_id');
+    }
+
+    /**
      * Mapping lama → baru untuk setiap entity selama proses duplikasi.
      */
     protected array $dokMap = [];
@@ -130,7 +146,7 @@ class DuplikasiService
                 'isi' => $oldDok->isi,
                 'kode' => $oldDok->kode,
                 'periode' => $newPeriode,
-                'std_is_staging' => false,
+                'std_is_staging' => true,
                 'std_amirtn_id' => $oldDok->std_amirtn_id,
                 'std_jeniskriteria_id' => $oldDok->std_jeniskriteria_id,
             ]);
@@ -372,14 +388,21 @@ class DuplikasiService
                 }
             }
 
-            // 4. Hapus DokSub dan Dokumen dari bawah ke atas (reverse order untuk menghindari constraint issues jika DB punya FK strict)
-            // Walaupun Laravel biasanya cascade kalau didefinisikan, kita hapus manual untuk kepastian (force delete)
-            if (! empty($allDoksubIds)) {
-                DokSub::whereIn('doksub_id', $allDoksubIds)->forceDelete();
-            }
+            // 4. Hapus DokSub dan Dokumen. 
+            // Kita gunakan SET FOREIGN_KEY_CHECKS=0 karena ada self-referencing foreign key (parent_id) 
+            // pada tabel pemutu_dokumen yang bisa menghambat proses penghapusan massal.
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
+            
+            try {
+                if (! empty($allDoksubIds)) {
+                    DokSub::whereIn('doksub_id', $allDoksubIds)->forceDelete();
+                }
 
-            // Delete dokumen (force delete)
-            $deletedDokCount = Dokumen::whereIn('dok_id', $allDokIds)->forceDelete();
+                // Delete dokumen (force delete)
+                $deletedDokCount = Dokumen::whereIn('dok_id', $allDokIds)->forceDelete();
+            } finally {
+                DB::statement('SET FOREIGN_KEY_CHECKS=1');
+            }
 
             return $deletedDokCount;
         });
@@ -388,14 +411,17 @@ class DuplikasiService
     /**
      * Kumpulkan semua dok_id di bawah root (termasuk root itu sendiri).
      */
-    protected function collectDokumenTreeIds(int $rootId): array
+    public function collectDokumenTreeIds(int $rootId): array
     {
-        $ids = [$rootId];
+        $ids = [];
         $children = Dokumen::where('parent_id', $rootId)->pluck('dok_id');
 
         foreach ($children as $childId) {
             $ids = array_merge($ids, $this->collectDokumenTreeIds($childId));
         }
+
+        // Add myself after my children (bottom-up)
+        $ids[] = $rootId;
 
         return $ids;
     }

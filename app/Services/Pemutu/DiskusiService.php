@@ -41,13 +41,4 @@ class DiskusiService
         return $diskusi;
     }
 
-    /**
-     * Toggle status is_done pada sebuah diskusi.
-     */
-    public function toggleDone(Diskusi $diskusi): Diskusi
-    {
-        $diskusi->update(['is_done' => ! $diskusi->is_done]);
-
-        return $diskusi;
-    }
 }

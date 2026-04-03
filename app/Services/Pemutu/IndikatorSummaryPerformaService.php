@@ -9,6 +9,49 @@ use Illuminate\Http\Request;
 class IndikatorSummaryPerformaService
 {
     /**
+     * Get the base array of general stats for Performa.
+     */
+    public function getPerformaStats(string $kelompok): array
+    {
+        $queryBase = \Illuminate\Support\Facades\DB::table('pemutu_indikator')
+            ->where('type', 'performa')
+            ->where('kelompok_indikator', $kelompok);
+
+        $totalIndikator = (clone $queryBase)->count();
+        $totalIndikatorActive = (clone $queryBase)->whereNull('deleted_at')->count();
+
+        // Summary KPI
+        $kpiQueryBase = \Illuminate\Support\Facades\DB::table('pemutu_indikator_pegawai')
+            ->join('pemutu_indikator', 'pemutu_indikator_pegawai.indikator_id', '=', 'pemutu_indikator.indikator_id')
+            ->where('pemutu_indikator.type', 'performa')
+            ->where('pemutu_indikator.kelompok_indikator', $kelompok);
+
+        $kpiTotalPegawai = (clone $kpiQueryBase)
+            ->distinct('pegawai_id')
+            ->count('pegawai_id');
+
+        $kpiAvgScore = (clone $kpiQueryBase)
+            ->avg('pemutu_indikator_pegawai.score');
+
+        return [
+            'totalIndikator' => $totalIndikator,
+            'totalIndikatorActive' => $totalIndikatorActive,
+            'kpiTotalPegawai' => $kpiTotalPegawai,
+            'kpiAvgScore' => $kpiAvgScore,
+        ];
+    }
+
+    /**
+     * Get Pegawai data for filtering that have DataDiri.
+     */
+    public function getPegawais()
+    {
+        return \App\Models\Hr\Pegawai::whereHas('latestDataDiri')->get()->sortBy(function ($pegawai) {
+            return $pegawai->nama;
+        });
+    }
+
+    /**
      * Get the base query for Performa Summary DataTable and count.
      */
     public function getQuery(Request $request): Builder

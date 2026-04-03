@@ -116,8 +116,8 @@
                             </div>
                             <div class="col-auto d-flex gap-2">
                                 <x-tabler.datatable-page-length dataTableId="table-ptp" />
-                                <x-tabler.datatable-filter dataTableId="table-ptp" type="button" target="#table-ptp-filter-area" />
                                 <x-tabler.datatable-search dataTableId="table-ptp" />
+                                <x-tabler.datatable-filter dataTableId="table-ptp" type="button" target="#table-ptp-filter-area" />
                             </div>
                         </div>
                     </x-tabler.card-body>

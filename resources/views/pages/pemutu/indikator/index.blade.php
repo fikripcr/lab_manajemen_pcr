@@ -38,10 +38,10 @@
                 </ul>
             </x-tabler.card-body>
             <x-tabler.card-header>
-                <div class="d-flex gap-2 align-items-center">
+                <div class="ms-auto d-flex gap-2 align-items-center">
                     <x-tabler.datatable-page-length dataTableId="indikator-table" />
-                    <x-tabler.datatable-filter dataTableId="indikator-table" type="button" target="#indikator-table-filter-area" />
                     <x-tabler.datatable-search dataTableId="indikator-table" />
+                    <x-tabler.datatable-filter dataTableId="indikator-table" type="button" target="#indikator-table-filter-area" />
                 </div>
             </x-tabler.card-header>
             <div class="collapse" id="indikator-table-filter-area">

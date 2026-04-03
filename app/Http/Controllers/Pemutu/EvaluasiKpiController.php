@@ -5,19 +5,23 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\EvaluasiKpiRequest;
 use App\Models\Pemutu\IndikatorPegawai;
 use App\Models\Pemutu\PeriodeKpi;
-use App\Services\Pemutu\EvaluasiKpiService;
+use App\Services\Pemutu\IndikatorService;
+use App\Services\Pemutu\IndikatorPegawaiService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class EvaluasiKpiController extends Controller
 {
-    public function __construct(protected EvaluasiKpiService $EvaluasiKpiService)
+    public function __construct(
+        protected IndikatorService $indikatorService,
+        protected IndikatorPegawaiService $indikatorPegawaiService
+    )
     {}
 
     public function index()
     {
         $pageTitle = 'Evaluasi KPI';
-        $data      = $this->EvaluasiKpiService->getPeriodes();
+        $data      = $this->indikatorPegawaiService->getKpiPeriodes();
 
         return view('pages.pemutu.evaluasi-kpi.index', array_merge(compact('pageTitle'), $data));
     }
@@ -31,7 +35,7 @@ class EvaluasiKpiController extends Controller
 
     public function data(PeriodeKpi $periode)
     {
-        $query = $this->EvaluasiKpiService->getDataTableQuery($periode);
+        $query = $this->indikatorPegawaiService->getKpiDataTableQuery($periode);
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -86,20 +90,27 @@ class EvaluasiKpiController extends Controller
                     Isi
                     </button>';
             })
+            ->filterColumn('indikator', function ($query, $keyword) {
+                $query->whereHas('indikator', function ($q) use ($keyword) {
+                    $q->where('indikator', 'like', "%{$keyword}%")
+                        ->orWhere('no_indikator', 'like', "%{$keyword}%");
+                });
+            })
             ->rawColumns(['hr_pegawai', 'indikator_full', 'target', 'capaian', 'file', 'action', 'analisis'])
             ->make(true);
     }
 
     public function edit(IndikatorPegawai $indikatorPegawai)
     {
-        return view('pages.pemutu.evaluasi-kpi.edit-ajax', $this->EvaluasiKpiService->getEditData($indikatorPegawai));
+        return view('pages.pemutu.evaluasi-kpi.edit-ajax', $this->indikatorPegawaiService->getKpiEditData($indikatorPegawai, $this->indikatorService));
     }
 
     public function update(EvaluasiKpiRequest $request, IndikatorPegawai $indikatorPegawai)
     {
-        $this->EvaluasiKpiService->update(
+        $this->indikatorPegawaiService->updateKpi(
             $indikatorPegawai,
-            $request->validated()
+            $request->validated(),
+            $this->indikatorService
         );
 
         if ($request->hasFile('filepond')) {

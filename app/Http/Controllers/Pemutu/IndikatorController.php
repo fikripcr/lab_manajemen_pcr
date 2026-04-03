@@ -96,6 +96,8 @@ class IndikatorController extends Controller
 
         $query = $this->indikatorService->getFilteredQuery($filters);
 
+        applySpmiDatatableSearch($query, $request);
+
         return DataTables::of($query)
             ->addColumn('no', function ($row) {
                 return pemutuDtColNo($row);
@@ -142,13 +144,25 @@ class IndikatorController extends Controller
             ->addColumn('labels', function ($row) {
                 return pemutuLabelBadges($row->labels);
             })
-            ->addColumn('action', function ($row) {
+            ->addColumn('action', function ($row) use ($filters) {
+                if (! pemutu_can_modify((int) $filters['periode'])) {
+                    return view('components.tabler.datatables-actions', [
+                        'viewUrl'   => route('pemutu.indikator.show', $row->encrypted_indikator_id),
+                    ])->render();
+                }
+
                 return view('components.tabler.datatables-actions', [
                     'viewUrl'   => route('pemutu.indikator.show', $row->encrypted_indikator_id),
                     'editUrl'   => route('pemutu.indikator.edit', $row->encrypted_indikator_id),
                     'editModal' => false,
                     'deleteUrl' => route('pemutu.indikator.destroy', $row->encrypted_indikator_id),
                 ])->render();
+            })
+            ->filterColumn('indikator', function ($query, $keyword) {
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('indikator', 'like', "%{$keyword}%")
+                        ->orWhere('no_indikator', 'like', "%{$keyword}%");
+                });
             })
             ->rawColumns(['no', 'indikator', 'labels', 'action', 'renstra_poin', 'dokumen_judul'])
             ->make(true);
@@ -168,7 +182,8 @@ class IndikatorController extends Controller
 
         $isRenopContext  = $request->get('is_renop_context') == 1;
         $parentDok       = null;
-        $selectedDokSubs = [];
+        $selectedDokSubs = collect();
+        $title           = 'Tambah Indikator';
 
         $siklus = $this->PeriodeSpmiService->getSiklusData();
         $tahun  = $siklus['tahun'];
@@ -193,7 +208,7 @@ class IndikatorController extends Controller
                 $selectedDokSubs = $parentDok->dokSubs;
             }
 
-            if ($parentDok || ! empty($selectedDokSubs)) {
+            if ($parentDok || $selectedDokSubs->isNotEmpty()) {
                 $suggestedType = 'standar'; // All indicators are standar type
 
                 $request->merge([
@@ -209,7 +224,7 @@ class IndikatorController extends Controller
             if (preg_match('/\b(20\d{2})\b/', $parentDok->periode, $matches)) {
                 $targetYear = $matches[1];
             }
-        } elseif (! empty($selectedDokSubs)) {
+        } elseif ($selectedDokSubs->isNotEmpty()) {
             $ds = $selectedDokSubs->first();
             if ($ds && $ds->dokumen && $ds->dokumen->periode) {
                 if (preg_match('/\b(20\d{2})\b/', $ds->dokumen->periode, $matches)) {
@@ -228,7 +243,7 @@ class IndikatorController extends Controller
         $indikator = new Indikator; // Empty for create
 
         return view('pages.pemutu.indikator.create-edit', compact(
-            'labelParents', 'orgUnits', 'parents', 'pegawais',
+            'title', 'labelParents', 'orgUnits', 'parents', 'pegawais',
             'parentDok', 'selectedDokSubs', 'indikator', 'renstraOptions', 'standardOptions'
         ));
     }
@@ -236,6 +251,14 @@ class IndikatorController extends Controller
     public function store(IndikatorRequest $request)
     {
         $data = $request->validated();
+
+        // --- GUARD: Periode Penetapan ---
+        $year = $data['periode'] ?? session('siklus_spmi_tahun');
+        $kelompok = $data['kelompok_indikator'] ?? session('pemutu_active_kelompok', 'akademik');
+        if (! pemutu_can_modify($year, $kelompok)) {
+            return jsonError('Aksi dibatasi. Masa penetapan periode ini belum dibuka atau sudah berakhir.');
+        }
+        // ---------------------------------
 
         // Handle Assignments Parsing
         if ($request->has('assignments')) {
@@ -312,6 +335,7 @@ class IndikatorController extends Controller
 
     public function edit(Indikator $indikator)
     {
+        $title        = 'Edit Indikator';
         $labelParents = \App\Models\Pemutu\Label::whereNull('parent_id')->with(['children' => function ($q) {
             $q->orderBy('name');
         }])->orderBy('name')->get();
@@ -348,12 +372,42 @@ class IndikatorController extends Controller
             $q->where('jenis', 'renstra')->where('periode', 'like', '%' . $tahun . '%');
         })->with('dokumen')->get();
 
-        return view('pages.pemutu.indikator.create-edit', compact('indikator', 'labelParents', 'orgUnits', 'parents', 'pegawais', 'renstraOptions', 'selectedDokSubs', 'standardOptions'));
+        // Staging and Previous Context for Peningkatan Review
+        $isStaging = $indikator->dokSubs()->whereHas('dokumen', function ($q) {
+            $q->where('std_is_staging', true);
+        })->exists();
+
+        $prevIndikator = $indikator->prevIndikator()->with('orgUnits')->first();
+        $prevData      = [];
+
+        if ($prevIndikator) {
+            foreach ($prevIndikator->orgUnits as $ou) {
+                $prevData[$ou->orgunit_id] = [
+                    'target'        => $ou->pivot->target,
+                    'status'        => $ou->pivot->pengend_status,
+                    'analisis_atsn' => $ou->pivot->pengend_analisis_atsn,
+                ];
+            }
+        }
+
+        return view('pages.pemutu.indikator.create-edit', compact(
+            'title', 'indikator', 'labelParents', 'orgUnits', 'parents', 'pegawais',
+            'renstraOptions', 'selectedDokSubs', 'standardOptions',
+            'isStaging', 'prevData'
+        ));
     }
 
     public function update(IndikatorRequest $request, Indikator $indikator)
     {
         $data = $request->validated();
+
+        // --- GUARD: Periode Penetapan ---
+        $year = $data['periode'] ?? $indikator->periode ?? session('siklus_spmi_tahun');
+        $kelompok = $data['kelompok_indikator'] ?? $indikator->kelompok_indikator ?? session('pemutu_active_kelompok', 'akademik');
+        if (! pemutu_can_modify($year, $kelompok)) {
+            return jsonError('Aksi dibatasi. Masa penetapan periode ini belum dibuka atau sudah berakhir.');
+        }
+        // ---------------------------------
 
         // Handle Assignments Parsing
         if ($request->has('assignments')) {
@@ -413,6 +467,14 @@ class IndikatorController extends Controller
 
     public function destroy(Indikator $indikator)
     {
+        // --- GUARD: Periode Penetapan ---
+        $year = $indikator->periode ?? session('siklus_spmi_tahun');
+        $kelompok = $indikator->kelompok_indikator ?? session('pemutu_active_kelompok', 'akademik');
+        if (! pemutu_can_modify($year, $kelompok)) {
+            return jsonError('Penghapusan dibatasi. Masa penetapan periode ini belum dibuka atau sudah berakhir.');
+        }
+        // ---------------------------------
+
         $noIndikator = $indikator->no_indikator;
         $this->indikatorService->deleteIndikator($indikator->indikator_id);
 

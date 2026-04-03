@@ -16,11 +16,9 @@
     <x-tabler.card>
         <x-tabler.card-header>
             <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
-                <div class="d-flex flex-wrap gap-2">
+                <div class="ms-auto d-flex flex-wrap gap-2">
                     <x-tabler.datatable-page-length dataTableId="pegawai-table" />
                     <x-tabler.datatable-search dataTableId="pegawai-table" />
-                </div>
-                <div class="ms-auto">
                     <x-tabler.datatable-filter dataTableId="pegawai-table" type="button" target="#pegawai-filter-area" />
                 </div>
             </div>

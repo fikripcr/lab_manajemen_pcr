@@ -1,6 +1,7 @@
 @props([
     'approvals' => [],
     'emptyText' => 'Belum ada riwayat approval.',
+    'canModify' => true,
 ])
 
 @php
@@ -56,13 +57,15 @@
                             </div>
                         @endif
 
-                        @if($approval->status === 'Pending' )
+                        @if($canModify)
                             <div class="mt-3">
-                                <button type="button" class="btn btn-sm btn-primary ajax-modal-btn" 
-                                    data-url="{{ route('pemutu.approval.show', $approval->encrypted_sys_approval_id) }}" 
-                                    data-modal-title="Eksekusi Persetujuan">
-                                    <i class="ti ti-edit me-1"></i> Eksekusi Persetujuan
-                                </button>
+                                <x-tabler.button 
+                                    class="btn-sm btn-animate-icon btn-outline ajax-modal-btn" 
+                                    text=" Set Persetujuan" 
+                                    icon="ti ti-edit"
+                                    :data-url="route('pemutu.approval.show', $approval->encrypted_sys_approval_id)"
+                                    data-modal-title="Eksekusi Persetujuan" 
+                                />
                             </div>
                         @endif
                     </x-tabler.card-body>

@@ -64,6 +64,9 @@
                                 </div>
                             </div>
                             <div class="col-auto d-flex gap-2">
+                                <x-tabler.datatable-page-length dataTableId="table-ami" />
+                                <x-tabler.datatable-search dataTableId="table-ami" />
+                                <x-tabler.datatable-filter dataTableId="table-ami" type="button" target="#table-ami-filter-area" />
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="ti ti-file-export me-1"></i> Export
@@ -71,24 +74,21 @@
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
                                             <a href="#" class="dropdown-item export-btn" data-export-type="ptk" data-periode="{{ $periode->encrypted_periodespmi_id }}" data-type="{{ $activeKelompok }}">
-                                                <i class="ti ti-file-text me-2"></i>PTK (DOCX)
+                                                <i class="ti ti-file-text me-2"></i>PTK (.docx)
                                             </a>
                                         </li>
                                         <li>
                                             <a href="#" class="dropdown-item export-btn" data-export-type="temuan-audit" data-periode="{{ $periode->encrypted_periodespmi_id }}" data-type="{{ $activeKelompok }}">
-                                                <i class="ti ti-file-x me-2"></i>Temuan Audit - KTS (XLSX)
+                                                <i class="ti ti-file-x me-2"></i>Temuan Audit - KTS (.xlsx)
                                             </a>
                                         </li>
                                         <li>
                                             <a href="#" class="dropdown-item export-btn" data-export-type="temuan-positif" data-periode="{{ $periode->encrypted_periodespmi_id }}" data-type="{{ $activeKelompok }}">
-                                                <i class="ti ti-file-check me-2"></i>Temuan Positif (XLSX)
+                                                <i class="ti ti-file-check me-2"></i>Temuan Positif (.xlsx)
                                             </a>
                                         </li>
                                     </ul>
                                 </div>
-                                <x-tabler.datatable-page-length dataTableId="table-ami" />
-                                <x-tabler.datatable-filter dataTableId="table-ami" type="button" target="#table-ami-filter-area" />
-                                <x-tabler.datatable-search dataTableId="table-ami" />
                             </div>
                         </div>
                     </x-tabler.card-body>
@@ -136,7 +136,7 @@
                             route="{{ route('pemutu.ami.data', $periode->encrypted_periodespmi_id) }}"
                             :columns="[
                                 ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                                ['data' => 'indikator_full', 'name' => 'indikator_full', 'title' => 'Indikator'],
+                                ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator'],
                                 ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '5%', 'class' => 'text-center'],
                                 ['data' => 'ed_capaian', 'name' => 'ed_capaian', 'title' => 'Capaian', 'width' => '5%', 'class' => 'text-center', 'orderable' => false],
                                 ['data' => 'ed_analisis', 'name' => 'ed_analisis', 'title' => 'Analisis Capaian', 'class' => 'text-left', 'orderable' => false],
@@ -158,8 +158,8 @@
                             </div>
                             <div class="col-auto d-flex gap-2">
                                 <x-tabler.datatable-page-length dataTableId="table-te" />
-                                <x-tabler.datatable-filter dataTableId="table-te" type="button" target="#table-te-filter-area" />
                                 <x-tabler.datatable-search dataTableId="table-te" />
+                                <x-tabler.datatable-filter dataTableId="table-te" type="button" target="#table-te-filter-area" />
                             </div>
                         </div>
                     </x-tabler.card-body>
@@ -198,7 +198,7 @@
                             route="{{ route('pemutu.ami.te-data', $periode->encrypted_periodespmi_id) }}"
                             :columns="[
                                 ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                                ['data' => 'indikator_full', 'name' => 'indikator_full', 'title' => 'Indikator'],
+                                ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator'],
                                 ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%', 'class' => 'text-left'],
                                 ['data' => 'rtp', 'name' => 'rtp', 'title' => 'Rencana (RTP)', 'width' => '15%'],
                                 ['data' => 'ptp', 'name' => 'ptp', 'title' => 'Pelaksanaan (PTP)', 'width' => '15%'],
@@ -219,8 +219,8 @@
                             </div>
                             <div class="col-auto d-flex gap-2">
                                 <x-tabler.datatable-page-length dataTableId="table-rtp-only" />
-                                <x-tabler.datatable-filter dataTableId="table-rtp-only" type="button" target="#table-rtp-only-filter-area" />
                                 <x-tabler.datatable-search dataTableId="table-rtp-only" />
+                                <x-tabler.datatable-filter dataTableId="table-rtp-only" type="button" target="#table-rtp-only-filter-area" />
                             </div>
                         </div>
                     </x-tabler.card-body>
@@ -259,7 +259,7 @@
                             route="{{ route('pemutu.ami.data', [$periode->encrypted_periodespmi_id, 'ami_hasil_akhir' => 0]) }}"
                             :columns="[
                                 ['data' => 'no', 'name' => 'no', 'title' => '#', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                                ['data' => 'indikator_full', 'name' => 'indikator_full', 'title' => 'Indikator'],
+                                ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator'],
                                 ['data' => 'auditor_recom', 'name' => 'auditor_recom', 'title' => 'Rekomendasi Auditor', 'width' => '15%'],
                                 ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%', 'class' => 'text-left'],
                                 ['data' => 'rtp_isi', 'name' => 'rtp_isi', 'title' => 'Rencana Perbaikan', 'width' => '20%', 'class' => 'text-left', 'orderable' => false, 'searchable' => false],

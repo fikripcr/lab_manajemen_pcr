@@ -52,9 +52,8 @@ class ApprovalService
             $updatedNames = [];
             $deletedCount = 0;
             
-            // Get all current pending approval IDs (polymorphic)
-            $currentPendingIds = $model->sysApprovals()
-                ->where('status', 'Pending')
+            // Get all current approval IDs (polymorphic)
+            $currentIds = $model->sysApprovals()
                 ->pluck('sys_approval_id')
                 ->toArray();
             
@@ -70,7 +69,7 @@ class ApprovalService
                     // UPDATE existing approval
                     $approval = SysApproval::find($appData['id']);
                     
-                    if ($approval && $approval->status === 'Pending') {
+                    if ($approval) {
                         $oldPejabat = $approval->pejabat;
                         
                         $approval->update([
@@ -101,7 +100,7 @@ class ApprovalService
             }
 
             // DELETE approvals that are not in the form (removed by user)
-            $toDelete = array_diff($currentPendingIds, $processedIds);
+            $toDelete = array_diff($currentIds, $processedIds);
             if (!empty($toDelete)) {
                 $deletedCount = SysApproval::whereIn('sys_approval_id', $toDelete)->delete();
             }
@@ -184,8 +183,7 @@ class ApprovalService
     public function processApproval(int $approvalId, string $status, ?string $catatan = null): SysApproval
     {
         return DB::transaction(function () use ($approvalId, $status, $catatan) {
-            $approval = SysApproval::where('status', 'Pending')
-                ->findOrFail($approvalId);
+            $approval = SysApproval::findOrFail($approvalId);
 
             $approval->update([
                 'status' => $status,

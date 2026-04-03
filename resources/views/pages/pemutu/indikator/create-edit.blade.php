@@ -1,10 +1,14 @@
 @php
     $isEdit = $indikator->exists;
-    $title = $isEdit ? 'Edit Indikator' : 'Tambah Indikator Baru';
+    $title = $isEdit ? 'Edit Indikator [' . $indikator->no_indikator . ']' : 'Tambah Indikator Baru';
     $route = $isEdit ? route('pemutu.indikator.update', $indikator) : route('pemutu.indikator.store');
     $method = $isEdit ? 'PUT' : 'POST';
 
     $assignedMap = $isEdit ? $indikator->orgUnits->keyBy('orgunit_id') : collect([]);
+
+    $type = old('type', $indikator->type ?? request('type', 'standar'));
+    $isPerforma = $type === 'performa';
+    $isStandar = true; // All indicators are technically standar type
 @endphp
 
 
@@ -12,6 +16,15 @@
 
     @section('header')
     <x-tabler.page-header :title="$title" pretitle="SPMI / Indikator">
+        <span class="status status-{{ $isPerforma ? 'danger' : 'primary' }} fs-3 fw-bold ms-3 px-3 py-1 border shadow-sm">
+            <i class="ti ti-tag me-2"></i>{{ $isPerforma ? 'INDIKATOR PERFORMA' : 'INDIKATOR STANDAR' }}
+        </span>
+
+        @if($isStaging ?? false)
+            <span class="status status-yellow fs-3 fw-bold ms-2 px-3 py-1 border border-yellow shadow-sm">
+                <i class="ti ti-clock-pause me-2"></i>DRAFT / STAGING
+            </span>
+        @endif
         <x-slot:actions>
             <x-tabler.button href="javascript:history.back()" type="back" />
             <x-tabler.button type="submit" :text="$isEdit ? 'Update Indikator' : 'Simpan Indikator'" form="form-indikator" />
@@ -25,12 +38,7 @@
         @if($isEdit) @method('PUT') @endif
         <input type="hidden" name="redirect_to" value="{{ old('redirect_to', request('redirect_to', url()->previous())) }}">
 
-        @php
-            $type = old('type', $indikator->type ?? request('type', 'standar'));
-            $isStandar = true; // All indicators are "standar" type
-            $isPerforma = $type === 'performa';
-            // Note: "Renop" indicators are just Standar indicators with 'renop' label
-        @endphp
+        <input type="hidden" name="type" value="{{ $type }}">
 
         <div class="row row-cards">
             <!-- INFORMASI UMUM & SKALA (KIRI) -->
@@ -55,29 +63,8 @@
                         <div class="tab-content">
                             <!-- TAB: INFORMASI UMUM -->
                             <div class="tab-pane active show" id="tab-informasi-umum">
-                                <input type="hidden" name="type" value="{{ $type }}">
                                 
                                 <div class="row mb-3">
-                                    <div class="col-md-3">
-                                        <label class="form-label text-muted small">Tipe Indikator</label>
-                                        <div class="form-control-plaintext fw-bold text-primary">
-                                            <i class="ti ti-tag me-1"></i>
-                                            @if($isPerforma) Indikator Performa
-                                            @else Indikator Standar
-                                            @endif
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <label class="form-label text-muted small">No Indikator</label>
-                                        <div class="form-control-plaintext">
-                                            @if($isEdit)
-                                                <span class="badge bg-blue-lt">{{ $indikator->no_indikator }}</span>
-                                            @else
-                                                <span class="text-muted"><i class="ti ti-wand me-1"></i> Auto</span>
-                                            @endif
-                                        </div>
-                                    </div>
 
                                     <div class="col-md-3">
                                         <x-tabler.form-select
@@ -136,11 +123,48 @@
 
                                 <x-tabler.form-textarea name="indikator" label="Nama Indikator" rows="2" placeholder="Masukkan nama indikator..." value="{{ old('indikator', $indikator->indikator) }}" />
 
+                                @if(!empty($prevData))
+                                    @php
+                                        // Take example from one of the units (typically uniform) or summarize
+                                        $firstPrev = reset($prevData);
+                                    @endphp
+                                    <div class="alert alert-info border border-info-subtle bg-info-lt shadow-sm mb-4">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="avatar avatar-sm bg-info text-white">
+                                                <i class="ti ti-history"></i>
+                                            </div>
+                                            <div class="flex-fill">
+                                                <div class="fw-bold mb-1">Referensi Periode Sebelumnya ({{ $indikator->prevIndikator->periode ?? 'Lalu' }})</div>
+                                                <div class="row g-3 small">
+                                                    <div class="col-md-4">
+                                                        <span class="text-muted d-block">Target Lama:</span>
+                                                        <span class="fw-semibold">{{ $firstPrev['target'] ?? '-' }}</span>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <span class="text-muted d-block">Status Pengendalian:</span>
+                                                        <span class="status status-{{ $firstPrev['status'] === 'sesuai' ? 'success' : ($firstPrev['status'] === 'penyesuaian' ? 'warning' : 'danger') }} py-0">
+                                                            {{ ucwords($firstPrev['status'] ?? 'N/A') }}
+                                                        </span>
+                                                    </div>
+                                                    @if($firstPrev['analisis_atsn'])
+                                                    <div class="col-md-4">
+                                                        <span class="text-muted d-block">Analisis Atasan:</span>
+                                                        <span class="fst-italic text-truncate d-inline-block mw-100" title="{{ $firstPrev['analisis_atsn'] }}">
+                                                            {{ \Str::limit($firstPrev['analisis_atsn'], 100) }}
+                                                        </span>
+                                                    </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
                                 <x-tabler.form-select name="doksub_ids[]" label="Dokumen Standar" type="select2" class="mb-3" data-placeholder="Pilih dokumen standar...">
                                     <option value="">-- Pilih Dokumen Standar --</option>
                                     @foreach($standardOptions as $so)
                                         @php
-                                            $isSelected = (isset($selectedDokSubs) && $selectedDokSubs->pluck('doksub_id')->contains($so->doksub_id)) || 
+                                            $isSelected = (isset($selectedDokSubs) && collect($selectedDokSubs)->pluck('doksub_id')->contains($so->doksub_id)) || 
                                                           (is_array(old('doksub_ids')) && in_array($so->encrypted_doksub_id, old('doksub_ids'))) ||
                                                           (old('doksub_ids') == $so->encrypted_doksub_id);
                                         @endphp
@@ -165,7 +189,7 @@
                                     <div class="col-md-12">
                                         <x-tabler.form-select name="labels" id="label-selector" type="select2" label="Label" multiple="true" data-placeholder="Pilih Label (bisa pilih banyak)...">
                                             @php
-                                                $selectedLabelIds = $isEdit ? $indikator->labels->pluck('label_id')->toArray() : [];
+                                                $selectedLabelIds = $isEdit ? collect($indikator->labels)->pluck('label_id')->toArray() : [];
                                                 $oldLabels = old('labels', []);
                                                 $oldLabelIds = array_filter(array_map('decryptIdIfEncrypted', is_array($oldLabels) ? $oldLabels : [$oldLabels]));
                                                 $mergedSelectedIds = array_unique(array_merge($selectedLabelIds, $oldLabelIds));

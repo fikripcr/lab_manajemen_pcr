@@ -5,22 +5,14 @@
 @section('header')
 <x-tabler.page-header title="Rekap Capaian" pretitle="Summary Penetapan Siklus {{ $siklus['tahun'] }}">
     <x-slot:actions>
-        <div class="d-flex align-items-center gap-3">
-            <div class="btn-group p-1 bg-light rounded-pill shadow-sm" style="border: 1px solid #e6e8e9;">
-                <a href="{{ route('pemutu.set-kelompok', 'akademik') }}" 
-                   class="btn {{ $activeKelompok === 'akademik' ? 'btn-white shadow-sm fw-bold border-0 active text-primary' : 'btn-ghost-secondary border-0 opacity-75' }} rounded-pill px-4 transition-all duration-200">
-                    <i class="ti ti-school me-2"></i>Akademik
-                </a>
-                <a href="{{ route('pemutu.set-kelompok', 'non_akademik') }}" 
-                   class="btn {{ $activeKelompok === 'non_akademik' ? 'btn-white shadow-sm fw-bold border-0 active text-primary' : 'btn-ghost-secondary border-0 opacity-75' }} rounded-pill px-4 transition-all duration-200">
-                    <i class="ti ti-building-community me-2"></i>Non Akademik
-                </a>
-            </div>
-
-            <a href="{{ route('pemutu.dokumen.index') }}" class="btn btn-outline-primary">
-                <i class="ti ti-arrow-left me-1"></i> Kembali
-            </a>
-        </div>
+        <x-tabler.segmented-control 
+            name="activeKelompok"
+            :active="$activeKelompok"
+            :items="[
+                ['id' => 'akademik', 'label' => 'Akademik', 'icon' => 'ti ti-school', 'href' => route('pemutu.set-kelompok', 'akademik')],
+                ['id' => 'non_akademik', 'label' => 'Non Akademik', 'icon' => 'ti ti-building-community', 'href' => route('pemutu.set-kelompok', 'non_akademik')],
+            ]"
+        />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

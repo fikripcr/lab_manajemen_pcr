@@ -306,7 +306,7 @@ if (! function_exists('pemutuDtColIndikator')) {
         }
 
         // 4. Responsible
-        $resp  = $row->unit_name ?? ($row->unit_code ?? null);
+        $resp = $row->unit_name ?? ($row->unit_code ?? null);
         if (! $resp && isset($row->orgUnits) && ! is_string($row->orgUnits) && $row->orgUnits->isNotEmpty()) {
             $resp = $row->orgUnits->first()->name ?? $row->orgUnits->first()->code;
         }
@@ -485,7 +485,7 @@ if (! function_exists('pemutuDtColStatusPengend')) {
                 if ($statusAtsn !== $status) {
                     $html .= '<span class="badge bg-' . $mAtsn['color'] . ' text-white" title="Keputusan Atasan"><i class="ti ti-crown me-1"></i>' . $mAtsn['label'] . '</span>';
                 } else {
-                    $html .= '<span class="badge bg-secondary-lt text-secondary" style="font-size: 8px;"><i class="ti ti-check me-1"></i>Validated</span>';
+                    $html .= '<span class="badge bg-secondary-lt text-secondary text-small"><i class="ti ti-check me-1"></i>Validated</span>';
                 }
             }
             $html .= '</div>';
@@ -769,5 +769,57 @@ if (! function_exists('pemutuTextScroll')) {
         }
 
         return '<div style="max-height: ' . $maxHeight . '; overflow-y: auto; scrollbar-width: thin; line-height: 1.5;" class="pe-1 small">' . $text . '</div>';
+    }
+}
+
+if (! function_exists('applySpmiDatatableSearch')) {
+    /**
+     * Apply the standard DataTable search filter for SPMI indikator queries.
+     * Centralizes the repeated search block used across ED, AMI, Pengendalian, and Indikator controllers.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    function applySpmiDatatableSearch($query, $request)
+    {
+        if ($request->filled('search')) {
+            $searchValue = $request->input('search.value') ?? $request->input('search');
+            $search = is_array($searchValue) ? ($searchValue['value'] ?? '') : (string) $searchValue;
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('no_indikator', 'LIKE', "%{$search}%")
+                        ->orWhere('indikator', 'LIKE', "%{$search}%")
+                        ->orWhereHas('orgUnits', function ($sq) use ($search) {
+                            $sq->where('hr_struktur_organisasi.name', 'LIKE', "%{$search}%")
+                                ->orWhere('hr_struktur_organisasi.code', 'LIKE', "%{$search}%");
+                        });
+                });
+            }
+        }
+
+        return $query;
+    }
+}
+
+if (! function_exists('parseSpmiFilters')) {
+    /**
+     * Parse SPMI request filters with standard 'all'/empty handling and ID decryption.
+     * Centralizes the repeated filter parsing block used across ED, AMI, Pengendalian controllers.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  array  $keys  Keys to extract from the request
+     * @param  array  $decryptKeys  Keys whose values should be decrypted (default: unit_id, dok_id, orgunit_id)
+     */
+    function parseSpmiFilters($request, array $keys, array $decryptKeys = ['unit_id', 'dok_id', 'orgunit_id']): array
+    {
+        $filters = [];
+        foreach ($request->only($keys) as $key => $value) {
+            if ($value !== null && $value !== '' && $value !== 'all') {
+                $filters[$key] = in_array($key, $decryptKeys) ? decryptIdIfEncrypted($value) : $value;
+            }
+        }
+
+        return $filters;
     }
 }

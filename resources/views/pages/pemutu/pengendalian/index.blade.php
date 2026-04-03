@@ -88,8 +88,8 @@
                             </div>
                             <div class="col-auto d-flex gap-2">
                                 <x-tabler.datatable-page-length dataTableId="table-pengend" />
-                                <x-tabler.datatable-filter dataTableId="table-pengend" type="button" target="#table-pengend-filter-area" />
                                 <x-tabler.datatable-search dataTableId="table-pengend" />
+                                <x-tabler.datatable-filter dataTableId="table-pengend" type="button" target="#table-pengend-filter-area" />
                             </div>
                         </div>
                     </x-tabler.card-body>

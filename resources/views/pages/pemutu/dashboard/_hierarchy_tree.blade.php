@@ -1,259 +1,292 @@
-<div class="hierarchy-tree-container">
-    @if($children->isEmpty() && $rootDokSubs->isEmpty())
-        <div class="text-center py-4 text-muted border border-dashed rounded bg-light">
-            <i class="ti ti-sitemap text-secondary" style="font-size: 2rem;"></i>
-            <p class="mt-2 text-secondary mb-0">Tidak ada struktur turunan (Standar/Indikator) untuk Dokumen Visi ini pada periode aktif.</p>
-        </div>
-    @endif
+@php
+    /**
+     * Helper to compute achievement from DokSub collection
+     */
+    $getStats = function($items) {
+        $total = 0; $achieved = 0;
+        // items can be a collection of dokumens or doksubs
+        foreach($items as $item) {
+            // If it's a Dokumen, we need to sum its children and doksubs
+            if($item instanceof \App\Models\Pemutu\Dokumen) {
+                // DokSubs of this doc
+                foreach($item->dokSubs as $ds) {
+                    foreach($ds->indikators as $ind) {
+                        foreach($ind->orgUnits as $ou) {
+                            $total++;
+                            if(in_array((int) $ou->pivot->ami_hasil_akhir, [1,2])) $achieved++;
+                        }
+                    }
+                }
+                // Plus recursively from children if any (deep depth)
+                // (For simplicity we handle first level of indicators here)
+            } else {
+                // It's a DokSub
+                foreach($item->indikators as $ind) {
+                    foreach($ind->orgUnits as $ou) {
+                        $total++;
+                        if(in_array((int) $ou->pivot->ami_hasil_akhir, [1,2])) $achieved++;
+                    }
+                }
+            }
+        }
+        $pct = $total > 0 ? ($achieved / $total) * 100 : 0;
+        return ['pct' => $pct, 'total' => $total];
+    };
 
-    {{-- Render Children Dokumen (Standar Level) --}}
-    @foreach($children as $child)
-        <div class="card mb-3 shadow-sm border border-azure-lt border-opacity-50">
-            <div class="card-header bg-azure-lt border-0 py-2">
-                <h4 class="card-title w-100 d-flex justify-content-between align-items-center m-0">
-                    <div class="d-flex align-items-center">
-                        <span class="badge bg-azure me-2">{{ $child->kode }}</span>
-                        <div class="fw-bold fs-4 text-azure">{{ $child->judul }}</div>
+    /**
+     * Helper to render badge
+     */
+    $renderBadge = function($pct, $total) {
+        if ($total == 0) return '<span class="status-badge-premium bg-light text-muted border">Empty</span>';
+        
+        $status = 'Critical'; $color = 'danger';
+        if ($pct == 100) { $status = 'Done'; $color = 'success'; }
+        elseif ($pct >= 90) { $status = 'Optimal'; $color = 'success'; }
+        elseif ($pct >= 75) { $status = 'Steady'; $color = 'azure'; }
+        elseif ($pct >= 50) { $status = 'Progress'; $color = 'warning'; }
+        
+        return '<span class="status-badge-premium bg-'.$color.'-lt text-'.$color.' border border-'.$color.'-lt">'.number_format($pct, 1).'% '.$status.'</span>';
+    };
+
+    // Calculate Root Stats
+    // We need a more robust way to aggregate all indicators under the root
+    $rootFullStats = ['total' => 0, 'achieved' => 0];
+    // Start with root's direct doksubs
+    foreach($root->dokSubs as $ds) {
+        foreach($ds->indikators as $ind) {
+            foreach($ind->orgUnits as $ou) {
+                $rootFullStats['total']++;
+                if(in_array((int) $ou->pivot->ami_hasil_akhir, [1,2])) $rootFullStats['achieved']++;
+            }
+        }
+    }
+    // Then all children
+    foreach($root->children as $child) {
+        foreach($child->dokSubs as $ds) {
+            foreach($ds->indikators as $ind) {
+                foreach($ind->orgUnits as $ou) {
+                    $rootFullStats['total']++;
+                    if(in_array((int) $ou->pivot->ami_hasil_akhir, [1,2])) $rootFullStats['achieved']++;
+                }
+            }
+        }
+    }
+    $rootPct = $rootFullStats['total'] > 0 ? ($rootFullStats['achieved'] / $rootFullStats['total']) * 100 : 0;
+@endphp
+
+<div class="roadmap-container">
+    {{-- LEVEL 1 — IDENTITY --}}
+    <div class="roadmap-item">
+        <div class="roadmap-branch" style="top: 30px;"></div>
+        <div class="roadmap-card p-3 border-start border-primary border-4 shadow-sm">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <div class="status-icon-box bg-primary-lt text-primary me-3" style="width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                        <i class="ti ti-eye fs-2"></i>
                     </div>
-                </h4>
+                    <div>
+                        <div class="text-uppercase text-primary fw-bold" style="font-size: 0.65rem; letter-spacing: 0.05rem;">LEVEL 1 — IDENTITY</div>
+                        <h3 class="mb-0 fw-bold">{{ $root->judul }}</h3>
+                    </div>
+                </div>
+                <div>
+                   {!! $renderBadge($rootPct, $rootFullStats['total']) !!}
+                </div>
             </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-vcenter table-hover table-sm m-0">
-                        <thead class="bg-light text-muted">
-                            <tr>
-                                <th style="width: 50%;" class="ps-3">Sub Dokumen / Standar Kriteria</th>
-                                <th class="text-center" style="width: 15%;">Unit Terkait</th>
-                                <th class="text-center" style="width: 15%;">Rata-rata ED</th>
-                                <th class="text-center" style="width: 20%;">Capaian AMI</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($child->dokSubs as $dokSub)
-                                @php
-                                    $indicatorsCount = 0;
-                                    $totalEd = 0;
-                                    $totalAmi = 0;
-                                    $amiAchieved = 0;
-                                    // Aggregate from orgUnits pivot
-                                    foreach($dokSub->indikators as $ind) {
-                                        foreach($ind->orgUnits as $ou) {
-                                            $indicatorsCount++;
-                                            $totalEd += (float) $ou->pivot->ed_skala;
-                                            if ($ou->pivot->ami_hasil_akhir !== null) {
-                                                $totalAmi++;
-                                                if (in_array((int) $ou->pivot->ami_hasil_akhir, [1,2])) $amiAchieved++;
-                                            }
-                                        }
+        </div>
+
+        {{-- LEVEL 2 — MISSION --}}
+        @if($children->isNotEmpty())
+            <div class="mt-4 ms-4 ps-2">
+                @foreach($children as $child)
+                    @php
+                        $childStats = ['total' => 0, 'achieved' => 0];
+                        foreach($child->dokSubs as $ds) {
+                            foreach($ds->indikators as $ind) {
+                                foreach($ind->orgUnits as $ou) {
+                                    $childStats['total']++;
+                                    if(in_array((int) $ou->pivot->ami_hasil_akhir, [1,2])) $childStats['achieved']++;
+                                }
+                            }
+                        }
+                        // Plus grand children
+                        foreach($child->children as $gc) {
+                             foreach($gc->dokSubs as $ds) {
+                                foreach($ds->indikators as $ind) {
+                                    foreach($ind->orgUnits as $ou) {
+                                        $childStats['total']++;
+                                        if(in_array((int) $ou->pivot->ami_hasil_akhir, [1,2])) $childStats['achieved']++;
                                     }
-                                    $avgEd = $indicatorsCount > 0 ? number_format($totalEd / $indicatorsCount, 2) : '-';
-                                    $amiPct = $totalAmi > 0 ? number_format(($amiAchieved / $totalAmi) * 100, 1) : '-';
-                                @endphp
-                                <tr data-bs-toggle="collapse" data-bs-target="#doksub-{{ $dokSub->doksub_id }}" class="cursor-pointer">
-                                    <td class="ps-3">
-                                        <div class="d-flex align-items-start py-1">
-                                            <i class="ti ti-chevron-down text-muted me-2 mt-1"></i>
-                                            <div>
-                                                <div class="fw-bold">{{ $dokSub->isi }}</div>
+                                }
+                            }
+                        }
+                        $childPct = $childStats['total'] > 0 ? ($childStats['achieved'] / $childStats['total']) * 100 : 0;
+                    @endphp
+
+                    <div class="roadmap-item mb-4">
+                        <div class="roadmap-branch" style="left: -32px; top: 24px; bottom: -12px;"></div>
+                        <div class="roadmap-line-horizontal"></div>
+                        
+                        <div class="roadmap-card p-3 shadow-sm">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center overflow-hidden">
+                                    <div class="status-icon-box bg-azure-lt text-azure me-3" style="width: 42px; height: 42px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                        <i class="ti ti-rocket fs-3"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-uppercase text-azure fw-bold" style="font-size: 0.6rem; letter-spacing: 0.05rem;">LEVEL 2 — MISSION</div>
+                                        <h4 class="mb-0 fw-bold text-truncate">{{ $child->judul }}</h4>
+                                    </div>
+                                </div>
+                                <div class="flex-shrink-0 ms-3">
+                                    {!! $renderBadge($childPct, $childStats['total']) !!}
+                                </div>
+                            </div>
+
+                            {{-- LEVEL 3 — RPJP / GRANDCHILDREN OR STANDAR --}}
+                            @if($child->children->isNotEmpty() || $child->dokSubs->isNotEmpty())
+                                <div class="mt-4 ms-4 ps-2 border-start">
+                                    {{-- Render Sub Dokumens first if any (Recursion-like) --}}
+                                    @foreach($child->children as $gc)
+                                        @php
+                                            $gcStats = ['total' => 0, 'achieved' => 0];
+                                            foreach($gc->dokSubs as $ds) {
+                                                foreach($ds->indikators as $ind) {
+                                                    foreach($ind->orgUnits as $ou) {
+                                                        $gcStats['total']++;
+                                                        if(in_array((int) $ou->pivot->ami_hasil_akhir, [1,2])) $gcStats['achieved']++;
+                                                    }
+                                                }
+                                            }
+                                            $gcPct = $gcStats['total'] > 0 ? ($gcStats['achieved'] / $gcStats['total']) * 100 : 0;
+                                        @endphp
+                                        <div class="roadmap-item mb-3">
+                                            <div class="roadmap-branch" style="left: -32px; top: 20px; bottom: -12px;"></div>
+                                            <div class="roadmap-line-horizontal"></div>
+                                            <div class="roadmap-card p-2 shadow-sm border-dashed">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <div class="d-flex align-items-center overflow-hidden">
+                                                        <div class="avatar bg-light text-dark me-2 avatar-sm"><i class="ti ti-calendar"></i></div>
+                                                        <div class="text-truncate">
+                                                            <div class="text-uppercase text-muted fw-bold" style="font-size: 0.55rem;">LEVEL 3 — RPJP / DOKUMEN</div>
+                                                            <div class="fw-bold small text-truncate" title="{{ $gc->judul }}">{{ $gc->judul }}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        {!! $renderBadge($gcPct, $gcStats['total']) !!}
+                                                    </div>
+                                                </div>
+                                                
+                                                {{-- RENSTRA / STANDAR Level 4 --}}
+                                                @if($gc->dokSubs->isNotEmpty())
+                                                    <div class="mt-2 ms-4">
+                                                        @foreach($gc->dokSubs as $ds)
+                                                            @php
+                                                                $dsStats = ['total' => 0, 'achieved' => 0];
+                                                                foreach($ds->indikators as $ind) {
+                                                                    foreach($ind->orgUnits as $ou) {
+                                                                        $dsStats['total']++;
+                                                                        if(in_array((int) $ou->pivot->ami_hasil_akhir, [1,2])) $dsStats['achieved']++;
+                                                                    }
+                                                                }
+                                                                $dsPct = $dsStats['total'] > 0 ? ($dsStats['achieved'] / $dsStats['total']) * 100 : 0;
+                                                            @endphp
+                                                            <div class="d-flex align-items-center justify-content-between py-1 border-bottom border-light">
+                                                                <div class="d-flex align-items-center overflow-hidden">
+                                                                    <span class="p-1 bg-{{ $dsPct >= 90 ? 'success' : ($dsPct >= 50 ? 'azure' : 'danger') }} rounded-circle me-3" style="width: 8px; height: 8px;"></span>
+                                                                    <div class="text-truncate">
+                                                                        <div class="text-uppercase text-muted fw-bold" style="font-size: 0.5rem;">RENSTRA / STANDAR</div>
+                                                                        <div class="small fw-bold text-truncate" style="max-width: 200px;" title="{{ $ds->isi }}">{{ $ds->isi }}</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="ms-3 d-flex align-items-center">
+                                                                    {!! $renderBadge($dsPct, $dsStats['total']) !!}
+                                                                    <a href="#" class="btn btn-sm btn-ghost-primary p-1 border-0 ms-2" title="Lihat Indikator">
+                                                                        <i class="ti ti-arrow-right"></i>
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
                                             </div>
                                         </div>
-                                    </td>
-                                    <td class="text-center"><span class="badge bg-secondary-lt px-2 py-1">{{ $indicatorsCount }} Assign</span></td>
-                                    <td class="text-center fw-bold">{{ $avgEd }}</td>
-                                    <td class="text-center">
-                                        @if($amiPct !== '-')
-                                            <span class="badge bg-{{ (float) $amiPct >= 80 ? 'success' : 'warning' }} px-2 py-1">{{ $amiPct }}%</span>
-                                        @else
-                                            <span class="text-muted fs-5">-</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                                {{-- Expanded Indicators List --}}
-                                <tr id="doksub-{{ $dokSub->doksub_id }}" class="collapse collapse-doksub bg-light border-0">
-                                    <td colspan="4" class="p-0 border-0">
-                                        <div class="p-3 border-start border-azure border-3 ms-2 mb-2 bg-white rounded-end shadow-sm">
-                                            @if($dokSub->indikators->isEmpty())
-                                                <div class="text-muted small fst-italic"><i class="ti ti-info-circle me-1"></i>Tidak ada indikator di dalam standar ini.</div>
-                                            @else
-                                                <div class="text-uppercase text-muted fw-bold mb-2 ps-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Breakdown Indikator</div>
-                                                <div class="table-responsive">
-                                                    <table class="table table-sm table-borderless table-vcenter m-0">
-                                                        <tbody>
-                                                            @foreach($dokSub->indikators as $ind)
-                                                                <tr class="border-bottom border-light">
-                                                                    <td class="ps-1 align-top py-2" style="width: 50%;">
-                                                                        <div class="small">
-                                                                            <span class="badge bg-dark-lt me-1">{{ $ind->kode }}</span> 
-                                                                            {{ $ind->isi }}
-                                                                        </div>
-                                                                    </td>
-                                                                    <td class="align-top py-2" style="width: 50%;">
-                                                                        @if($ind->orgUnits->isEmpty())
-                                                                            <span class="text-muted small fst-italic">Belum di-assign ke unit</span>
-                                                                        @else
-                                                                            <ul class="list-unstyled m-0 small">
-                                                                                @foreach($ind->orgUnits as $ou)
-                                                                                    <li class="d-flex justify-content-between mb-1 pb-1 border-bottom border-light">
-                                                                                        <span class="text-muted text-truncate w-50" title="{{ $ou->name }}">
-                                                                                            <i class="ti ti-building me-1 opacity-50"></i>{{ $ou->name }}
-                                                                                        </span>
-                                                                                        <span class="text-end">
-                                                                                            <span class="badge bg-blue-lt px-1 me-1" title="Evaluasi Diri">ED: {{ $ou->pivot->ed_skala ?? '-' }}</span>
-                                                                                            @php
-                                                                                                $stAmi = match((string)$ou->pivot->ami_hasil_akhir) {
-                                                                                                    '2' => '<span class="text-success fw-bold">M</span>',
-                                                                                                    '1' => '<span class="text-success fw-bold">TMS</span>',
-                                                                                                    '0' => '<span class="text-danger fw-bold">TT</span>',
-                                                                                                    default => '<span class="text-muted">-</span>'
-                                                                                                };
-                                                                                            @endphp
-                                                                                            <span class="badge bg-light text-dark px-1 border" title="Hasil Akhir AMI">AMI: {!! $stAmi !!}</span>
-                                                                                        </span>
-                                                                                    </li>
-                                                                                @endforeach
-                                                                            </ul>
-                                                                        @endif
-                                                                    </td>
-                                                                </tr>
-                                                            @endforeach
-                                                        </tbody>
-                                                    </table>
+                                    @endforeach
+
+                                    {{-- Renstra/Standar directly under Mission Level 2 --}}
+                                    @foreach($child->dokSubs as $dokSub)
+                                        @php
+                                            $dsStats = ['total' => 0, 'achieved' => 0];
+                                            foreach($dokSub->indikators as $ind) {
+                                                foreach($ind->orgUnits as $ou) {
+                                                    $dsStats['total']++;
+                                                    if(in_array((int) $ou->pivot->ami_hasil_akhir, [1,2])) $dsStats['achieved']++;
+                                                }
+                                            }
+                                            $dsPct = $dsStats['total'] > 0 ? ($dsStats['achieved'] / $dsStats['total']) * 100 : 0;
+                                        @endphp
+                                        <div class="roadmap-item mb-2">
+                                            <div class="roadmap-branch" style="left: -32px; top: 18px; bottom: -12px;"></div>
+                                            <div class="roadmap-line-horizontal"></div>
+                                            <div class="roadmap-card p-2 shadow-none border-dashed bg-light-lt">
+                                                 <div class="d-flex align-items-center justify-content-between">
+                                                    <div class="d-flex align-items-center overflow-hidden">
+                                                        <div class="avatar bg-white text-azure shadow-sm me-2 avatar-sm"><i class="ti ti-target fs-3"></i></div>
+                                                        <div class="text-truncate">
+                                                            <div class="text-uppercase text-muted fw-bold" style="font-size: 0.55rem;">RENSTRA / STANDAR</div>
+                                                            <div class="fw-bold small text-truncate" title="{{ $dokSub->isi }}">{{ $dokSub->isi }}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex align-items-center">
+                                                        {!! $renderBadge($dsPct, $dsStats['total']) !!}
+                                                        <a href="#" class="btn btn-sm btn-ghost-primary p-0 border-0 ms-2" title="Lihat Rincian">
+                                                            <i class="ti ti-arrow-right fs-3"></i>
+                                                        </a>
+                                                    </div>
                                                 </div>
-                                            @endif
+                                            </div>
                                         </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                            @if($child->dokSubs->isEmpty())
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted py-3 fst-italic">Standar/Sub ini masih kosong</td>
-                                </tr>
+                                    @endforeach
+                                </div>
                             @endif
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    @endforeach
-
-    {{-- Render Direct DokSubs (If any exist directly on root) --}}
-    @if($rootDokSubs->isNotEmpty())
-        <div class="card mb-3 shadow-sm border border-teal-lt border-opacity-50">
-            <div class="card-header bg-teal-lt border-0 py-2">
-                <h4 class="card-title w-100 d-flex justify-content-between align-items-center m-0">
-                    <div class="d-flex align-items-center">
-                        <i class="ti ti-layers-linked text-teal me-2 fs-2"></i>
-                        <div class="fw-bold fs-4 text-teal">Sub Dokumen Langsung (Root)</div>
+                        </div>
                     </div>
-                </h4>
+                @endforeach
             </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-vcenter table-hover table-sm m-0">
-                        {{-- Same structure as children table --}}
-                        <thead class="bg-light text-muted">
-                            <tr>
-                                <th style="width: 50%;" class="ps-3">Sub Dokumen / Standar Kriteria</th>
-                                <th class="text-center" style="width: 15%;">Unit Terkait</th>
-                                <th class="text-center" style="width: 15%;">Rata-rata ED</th>
-                                <th class="text-center" style="width: 20%;">Capaian AMI</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($rootDokSubs as $dokSub)
-                                @php
-                                    $indicatorsCount = 0;
-                                    $totalEd = 0;
-                                    $totalAmi = 0;
-                                    $amiAchieved = 0;
-                                    foreach($dokSub->indikators as $ind) {
-                                        foreach($ind->orgUnits as $ou) {
-                                            $indicatorsCount++;
-                                            $totalEd += (float) $ou->pivot->ed_skala;
-                                            if ($ou->pivot->ami_hasil_akhir !== null) {
-                                                $totalAmi++;
-                                                if (in_array((int) $ou->pivot->ami_hasil_akhir, [1,2])) $amiAchieved++;
-                                            }
-                                        }
-                                    }
-                                    $avgEd = $indicatorsCount > 0 ? number_format($totalEd / $indicatorsCount, 2) : '-';
-                                    $amiPct = $totalAmi > 0 ? number_format(($amiAchieved / $totalAmi) * 100, 1) : '-';
-                                @endphp
-                                <tr data-bs-toggle="collapse" data-bs-target="#doksub-root-{{ $dokSub->doksub_id }}" class="cursor-pointer">
-                                    <td class="ps-3">
-                                        <div class="d-flex align-items-start py-1">
-                                            <i class="ti ti-chevron-down text-muted me-2 mt-1"></i>
-                                            <div>
-                                                <div class="fw-bold">{{ $dokSub->isi }}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-center"><span class="badge bg-secondary-lt px-2 py-1">{{ $indicatorsCount }} Assign</span></td>
-                                    <td class="text-center fw-bold">{{ $avgEd }}</td>
-                                    <td class="text-center">
-                                        @if($amiPct !== '-')
-                                            <span class="badge bg-{{ (float) $amiPct >= 80 ? 'success' : 'warning' }} px-2 py-1">{{ $amiPct }}%</span>
-                                        @else
-                                            <span class="text-muted fs-5">-</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                                <tr id="doksub-root-{{ $dokSub->doksub_id }}" class="collapse collapse-doksub bg-light border-0">
-                                    <td colspan="4" class="p-0 border-0">
-                                        <div class="p-3 border-start border-teal border-3 ms-2 mb-2 bg-white rounded-end shadow-sm">
-                                            @if($dokSub->indikators->isEmpty())
-                                                <div class="text-muted small fst-italic"><i class="ti ti-info-circle me-1"></i>Tidak ada indikator di dalam standar ini.</div>
-                                            @else
-                                                <div class="text-uppercase text-muted fw-bold mb-2 ps-1" style="font-size: 0.65rem;">Breakdown Indikator</div>
-                                                <div class="table-responsive">
-                                                    <table class="table table-sm table-borderless table-vcenter m-0">
-                                                        <tbody>
-                                                            @foreach($dokSub->indikators as $ind)
-                                                                <tr class="border-bottom border-light">
-                                                                    <td class="ps-1 align-top py-2" style="width: 50%;">
-                                                                        <div class="small"><span class="badge bg-dark-lt me-1">{{ $ind->kode }}</span> {{ $ind->isi }}</div>
-                                                                    </td>
-                                                                    <td class="align-top py-2" style="width: 50%;">
-                                                                        @if($ind->orgUnits->isEmpty())
-                                                                            <span class="text-muted small fst-italic">Belum di-assign ke unit</span>
-                                                                        @else
-                                                                            <ul class="list-unstyled m-0 small">
-                                                                                @foreach($ind->orgUnits as $ou)
-                                                                                    <li class="d-flex justify-content-between mb-1 pb-1 border-bottom border-light">
-                                                                                        <span class="text-muted text-truncate w-50" title="{{ $ou->name }}">
-                                                                                            <i class="ti ti-building me-1 opacity-50"></i>{{ $ou->name }}
-                                                                                        </span>
-                                                                                        <span class="text-end">
-                                                                                            <span class="badge bg-blue-lt px-1 me-1">ED: {{ $ou->pivot->ed_skala ?? '-' }}</span>
-                                                                                            @php
-                                                                                                $stAmi = match((string)$ou->pivot->ami_hasil_akhir) {
-                                                                                                    '2' => '<span class="text-success fw-bold">M</span>',
-                                                                                                    '1' => '<span class="text-success fw-bold">TMS</span>',
-                                                                                                    '0' => '<span class="text-danger fw-bold">TT</span>',
-                                                                                                    default => '<span class="text-muted">-</span>'
-                                                                                                };
-                                                                                            @endphp
-                                                                                            <span class="badge bg-light text-dark px-1 border">AMI: {!! $stAmi !!}</span>
-                                                                                        </span>
-                                                                                    </li>
-                                                                                @endforeach
-                                                                            </ul>
-                                                                        @endif
-                                                                    </td>
-                                                                </tr>
-                                                            @endforeach
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+        @endif
+    </div>
+
+    {{-- Level 2: Direct Standards on Root (Fallback for very flat structures) --}}
+    @if($rootDokSubs->isNotEmpty())
+        <div class="mt-3 ms-4 ps-2 border-start">
+            @foreach($rootDokSubs as $ds)
+                @php
+                    $dsStats = ['total' => 0, 'achieved' => 0];
+                    foreach($ds->indikators as $ind) {
+                        foreach($ind->orgUnits as $ou) {
+                            $dsStats['total']++;
+                            if(in_array((int) $ou->pivot->ami_hasil_akhir, [1,2])) $dsStats['achieved']++;
+                        }
+                    }
+                    $dsPct = $dsStats['total'] > 0 ? ($dsStats['achieved'] / $dsStats['total']) * 100 : 0;
+                @endphp
+                <div class="roadmap-item mb-3">
+                    <div class="roadmap-branch" style="left: -32px; top: 20px; bottom: -12px;"></div>
+                    <div class="roadmap-line-horizontal"></div>
+                    <div class="roadmap-card p-2 bg-light-lt">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <i class="ti ti-layers-linked text-azure me-3 fs-3"></i>
+                                <div>
+                                    <div class="text-uppercase text-azure fw-bold" style="font-size: 0.55rem;">DIRECT STANDAR</div>
+                                    <div class="fw-bold small">{{ $ds->isi }}</div>
+                                </div>
+                            </div>
+                            <span class="badge bg-azure-lt">{{ number_format($dsPct, 1) }}% Done</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            @endforeach
         </div>
     @endif
 </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\PemantauanRequest;
 use App\Models\Event\Rapat;
 use App\Services\Pemutu\IndikatorService;
+use App\Services\Pemutu\PemantauanService;
 use App\Services\Pemutu\PeriodeSpmiService;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -13,6 +14,7 @@ class PelaksanaanController extends Controller
 {
     public function __construct(
         protected IndikatorService $indikatorService,
+        protected PemantauanService $pemantauanService,
         protected PeriodeSpmiService $periodeSpmiService,
     ) {}
 
@@ -31,7 +33,7 @@ class PelaksanaanController extends Controller
      */
     public function pemantauanData()
     {
-        $query = $this->indikatorService->getPemantauanQuery();
+        $query = $this->pemantauanService->getPemantauanQuery();
 
         return DataTables::of($query)
             ->addColumn('no', function ($row) {
@@ -81,7 +83,7 @@ class PelaksanaanController extends Controller
      */
     public function pemantauanStore(PemantauanRequest $request)
     {
-        $this->indikatorService->savePemantauan($request->validated());
+        $this->pemantauanService->savePemantauan($request->validated());
 
         return jsonSuccess('Jadwal pemantauan berhasil dibuat.', url()->previous());
     }
@@ -101,7 +103,7 @@ class PelaksanaanController extends Controller
      */
     public function pemantauanUpdate(PemantauanRequest $request, Rapat $rapat)
     {
-        $this->indikatorService->updatePemantauan($rapat, $request->validated());
+        $this->pemantauanService->updatePemantauan($rapat, $request->validated());
 
         return jsonSuccess('Jadwal pemantauan berhasil diperbarui.', url()->previous());
     }

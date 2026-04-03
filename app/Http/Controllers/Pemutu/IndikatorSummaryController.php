@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
+use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Pemutu\IndikatorSummary;
 use App\Services\Hr\StrukturOrganisasiService;
 use App\Services\Pemutu\PeriodeSpmiService;
@@ -15,7 +16,8 @@ class IndikatorSummaryController extends Controller
 {
     public function __construct(
         protected StrukturOrganisasiService $strukturOrganisasiService,
-        protected PeriodeSpmiService $periodeSpmiService
+        protected PeriodeSpmiService $periodeSpmiService,
+        protected \App\Services\Pemutu\IndikatorSummaryStandarService $standarService
     ) {}
 
     /**
@@ -41,281 +43,48 @@ class IndikatorSummaryController extends Controller
         // Filtering initial counts by cycle
         $tahun = $siklus['tahun'];
 
-        // Global summary statistics untuk Standar
-        $totalIndikator = DB::table('pemutu_indikator')
-            ->where('type', 'standar')
-            ->where('kelompok_indikator', $kelompokLabel)
-            ->whereNull('deleted_at')
-            ->count();
-            
-        $totalIndikatorActive = $totalIndikator;
+        $stats = $this->standarService->getStandarStats($kelompokLabel, $tahun);
 
-        // Summary ED (hanya untuk standar & siklus & kelompok ini)
-        $edTotalUnits = DB::table('pemutu_indikator_orgunit')
-            ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
-            ->join('pemutu_indikator_doksub as ids', function($join) {
-                $join->on('pemutu_indikator.indikator_id', '=', 'ids.source_id')->where('ids.source_type', 'App\Models\Pemutu\Indikator');
-            })
-            ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
-            ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
-            ->where('pemutu_indikator.type', 'standar')
-            ->where('pemutu_indikator.kelompok_indikator', $kelompokLabel)
-            ->where('d.periode', $tahun)
-            ->count();
-
-        $uniqueAssignedStandar = DB::table('pemutu_indikator_orgunit')
-            ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
-            ->join('pemutu_indikator_doksub as ids', function($join) {
-                $join->on('pemutu_indikator.indikator_id', '=', 'ids.source_id')->where('ids.source_type', 'App\Models\Pemutu\Indikator');
-            })
-            ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
-            ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
-            ->where('pemutu_indikator.type', 'standar')
-            ->where('pemutu_indikator.kelompok_indikator', $kelompokLabel)
-            ->where('d.periode', $tahun)
-            ->distinct('pemutu_indikator_orgunit.indikator_id')
-            ->count('pemutu_indikator_orgunit.indikator_id');
-
-        $edFilledUnits = DB::table('pemutu_indikator_orgunit')
-            ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
-            ->join('pemutu_indikator_doksub as ids', function($join) {
-                $join->on('pemutu_indikator.indikator_id', '=', 'ids.source_id')->where('ids.source_type', 'App\Models\Pemutu\Indikator');
-            })
-            ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
-            ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
-            ->where('pemutu_indikator.type', 'standar')
-            ->where('pemutu_indikator.kelompok_indikator', $kelompokLabel)
-            ->where('d.periode', $tahun)
-            ->whereNotNull('pemutu_indikator_orgunit.ed_capaian')
-            ->where('pemutu_indikator_orgunit.ed_capaian', '!=', '')
-            ->count();
-
-        // Summary AMI (hanya untuk standar & siklus & kelompok ini)
-        $amiAssessed = DB::table('pemutu_indikator_orgunit')
-            ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
-            ->join('pemutu_indikator_doksub as ids', function($join) {
-                $join->on('pemutu_indikator.indikator_id', '=', 'ids.source_id')->where('ids.source_type', 'App\Models\Pemutu\Indikator');
-            })
-            ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
-            ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
-            ->where('pemutu_indikator.type', 'standar')
-            ->where('pemutu_indikator.kelompok_indikator', $kelompokLabel)
-            ->where('d.periode', $tahun)
-            ->whereNotNull('pemutu_indikator_orgunit.ami_hasil_akhir')
-            ->count();
-
-        $amiKts = DB::table('pemutu_indikator_orgunit')
-            ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
-            ->join('pemutu_indikator_doksub as ids', function($join) {
-                $join->on('pemutu_indikator.indikator_id', '=', 'ids.source_id')->where('ids.source_type', 'App\Models\Pemutu\Indikator');
-            })
-            ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
-            ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
-            ->where('pemutu_indikator.type', 'standar')
-            ->where('pemutu_indikator.kelompok_indikator', $kelompokLabel)
-            ->where('d.periode', $tahun)
-            ->where('pemutu_indikator_orgunit.ami_hasil_akhir', 0)
-            ->count();
-
-        $amiTerpenuhi = DB::table('pemutu_indikator_orgunit')
-            ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
-            ->join('pemutu_indikator_doksub as ids', function($join) {
-                $join->on('pemutu_indikator.indikator_id', '=', 'ids.source_id')->where('ids.source_type', 'App\Models\Pemutu\Indikator');
-            })
-            ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
-            ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
-            ->where('pemutu_indikator.type', 'standar')
-            ->where('pemutu_indikator.kelompok_indikator', $kelompokLabel)
-            ->where('d.periode', $tahun)
-            ->where('pemutu_indikator_orgunit.ami_hasil_akhir', 1)
-            ->count();
-
-        $amiTerlampaui = DB::table('pemutu_indikator_orgunit')
-            ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
-            ->join('pemutu_indikator_doksub as ids', function($join) {
-                $join->on('pemutu_indikator.indikator_id', '=', 'ids.source_id')->where('ids.source_type', 'App\Models\Pemutu\Indikator');
-            })
-            ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
-            ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
-            ->where('pemutu_indikator.type', 'standar')
-            ->where('pemutu_indikator.kelompok_indikator', $kelompokLabel)
-            ->where('d.periode', $tahun)
-            ->where('pemutu_indikator_orgunit.ami_hasil_akhir', 2)
-            ->count();
-
-        // Summary Pengendalian (hanya untuk standar & siklus & kelompok ini)
-        $pengendFilled = DB::table('pemutu_indikator_orgunit')
-            ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
-            ->join('pemutu_indikator_doksub as ids', function($join) {
-                $join->on('pemutu_indikator.indikator_id', '=', 'ids.source_id')->where('ids.source_type', 'App\Models\Pemutu\Indikator');
-            })
-            ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
-            ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
-            ->where('pemutu_indikator.type', 'standar')
-            ->where('pemutu_indikator.kelompok_indikator', $kelompokLabel)
-            ->where('d.periode', $tahun)
-            ->whereNotNull('pemutu_indikator_orgunit.pengend_status')
-            ->where('pemutu_indikator_orgunit.pengend_status', '!=', '')
-            ->count();
-
-        return view('pages.pemutu.indikator-summary.standar', compact(
+        return view('pages.pemutu.indikator-summary.standar', array_merge(compact(
             'pageTitle',
             'siklus',
-            'activeKelompok',
-            'totalIndikator',
-            'totalIndikatorActive',
-            'edTotalUnits',
-            'edFilledUnits',
-            'amiAssessed',
-            'amiKts',
-            'amiTerpenuhi',
-            'amiTerlampaui',
-            'pengendFilled',
-            'uniqueAssignedStandar'
-        ));
+            'activeKelompok'
+        ), $stats));
     }
 
     /**
      * Display halaman Summary Indikator Performa (KPI).
      */
-    public function performa()
+    public function performa(\App\Services\Pemutu\IndikatorSummaryPerformaService $performaService)
     {
         $pageTitle = 'Summary Indikator Performa (KPI)';
 
         $activeKelompok = session('pemutu_active_kelompok', 'akademik');
         $kelompok = $activeKelompok === 'akademik' ? 'Akademik' : 'Non Akademik';
 
-        // Global summary statistics untuk Performa (Filtered by Kelompok)
-        $queryBase = DB::table('pemutu_indikator')
-            ->where('type', 'performa')
-            ->where('kelompok_indikator', $kelompok);
+        $stats = $performaService->getPerformaStats($kelompok);
+        $pegawais = $performaService->getPegawais();
+        $units = $this->strukturOrganisasiService->getHierarchicalList();
 
-        $totalIndikator = (clone $queryBase)->count();
-        $totalIndikatorActive = (clone $queryBase)->whereNull('deleted_at')->count();
-
-        // Summary KPI
-        $kpiQueryBase = DB::table('pemutu_indikator_pegawai')
-            ->join('pemutu_indikator', 'pemutu_indikator_pegawai.indikator_id', '=', 'pemutu_indikator.indikator_id')
-            ->where('pemutu_indikator.type', 'performa')
-            ->where('pemutu_indikator.kelompok_indikator', $kelompok);
-
-        $kpiTotalPegawai = (clone $kpiQueryBase)
-            ->distinct('pegawai_id')
-            ->count('pegawai_id');
-
-        $kpiAvgScore = (clone $kpiQueryBase)
-            ->avg('pemutu_indikator_pegawai.score');
-
-        $pegawais = \App\Models\Hr\Pegawai::whereHas('latestDataDiri')->get()->sortBy(function ($pegawai) {
-            return $pegawai->nama;
-        });
-
-        $units = \App\Models\Hr\OrgUnit::allWithIndentedName();
-
-        return view('pages.pemutu.indikator-summary.performa', compact(
+        return view('pages.pemutu.indikator-summary.performa', array_merge(compact(
             'pageTitle',
             'kelompok',
             'activeKelompok',
-            'totalIndikator',
-            'totalIndikatorActive',
-            'kpiTotalPegawai',
-            'kpiAvgScore',
             'pegawais',
             'units'
-        ));
+        ), $stats));
     }
+
+
 
     /**
      * Data untuk DataTable - Standar.
      */
     public function dataStandar(Request $request)
     {
-        $query = DB::table('pemutu_indikator_orgunit as io')
-            ->join('vw_pemutu_summary_indikator_standar as v', 'io.indikator_id', '=', 'v.indikator_id')
-            ->leftJoin('hr_struktur_organisasi as so', 'io.org_unit_id', '=', 'so.orgunit_id')
-            ->select(
-                'io.indikorgunit_id', 'io.indikator_id', 'io.org_unit_id', 'io.target', 'io.ed_capaian', 'io.ed_analisis',
-                'io.ami_hasil_akhir',
-                'io.ami_hasil_temuan',
-                'io.ami_hasil_temuan_sebab',
-                'io.ami_hasil_temuan_akibat',
-                'io.ami_hasil_temuan_rekom',
-                'io.ami_rtp_isi', 'io.ed_ptp_isi', 'io.ami_te_isi', 'io.pengend_status',
-                'v.*', 'so.name as unit_name', 'so.code as unit_code'
-            );
+        $query = $this->standarService->getStandarQuery($request);
 
-        // Filter by Kelompok (Context Fallback)
-        $kelompok = $request->query('kelompok_indikator');
-        if (empty($kelompok) || $kelompok === 'all') {
-            $activeKelompok = session('pemutu_active_kelompok', 'akademik');
-            $kelompok = $activeKelompok === 'akademik' ? 'Akademik' : 'Non Akademik';
-        }
-        $query->where('v.kelompok_indikator', $kelompok);
 
-        // Filter by Tahun (Cycle Fallback)
-        $tahun = $request->query('tahun');
-        if (empty($tahun)) {
-            $siklus = $this->periodeSpmiService->getSiklusData();
-            $tahun = $siklus['tahun'];
-        }
-
-        if ($tahun) {
-            $query->whereExists(function ($q) use ($tahun) {
-                $q->select(DB::raw(1))
-                    ->from('pemutu_indikator_doksub as ids_year')
-                    ->join('pemutu_dok_sub as ds_year', 'ids_year.doksub_id', '=', 'ds_year.doksub_id')
-                    ->join('pemutu_dokumen as d_year', 'ds_year.dok_id', '=', 'd_year.dok_id')
-                    ->whereColumn('ids_year.source_id', 'v.indikator_id')
-                    ->where('ids_year.source_type', 'App\Models\Pemutu\Indikator')
-                    ->where('d_year.periode', $tahun);
-            });
-        }
-
-        // Filter by ED Status (skip if 'all')
-        if ($request->filled('ed_status') && $request->ed_status !== '') {
-            if ($request->ed_status === 'filled') {
-                $query->whereNotNull('io.ed_capaian')->where('io.ed_capaian', '!=', '');
-            } elseif ($request->ed_status === 'empty') {
-                $query->where(function ($q) {
-                    $q->whereNull('io.ed_capaian')->orWhere('io.ed_capaian', '');
-                });
-            }
-        }
-
-        // Filter by AMI Hasil (skip if 'all')
-        if ($request->filled('ami_hasil') && $request->ami_hasil !== '') {
-            if ($request->ami_hasil === 'empty') {
-                $query->whereNull('io.ami_hasil_akhir');
-            } else {
-                $query->where('io.ami_hasil_akhir', $request->ami_hasil);
-            }
-        }
-
-        // Filter by Pengendalian Status (skip if 'all')
-        if ($request->filled('pengend_status') && $request->pengend_status !== '') {
-            if ($request->pengend_status === 'filled') {
-                $query->whereNotNull('io.pengend_status')->where('io.pengend_status', '!=', '');
-            } elseif ($request->pengend_status === 'empty') {
-                $query->where(function ($q) {
-                    $q->whereNull('io.pengend_status')->orWhere('io.pengend_status', '');
-                });
-            }
-        }
-
-        // For dynamic summary count, we need the search applied to the query.
-        if ($request->filled('search')) {
-            $searchValue = $request->input('search.value') ?? $request->input('search');
-            $search = is_array($searchValue) ? ($searchValue['value'] ?? '') : (string) $searchValue;
-            if ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('v.no_indikator', 'LIKE', "%{$search}%")
-                        ->orWhere('v.indikator', 'LIKE', "%{$search}%")
-                        ->orWhere('v.parent_no_indikator', 'LIKE', "%{$search}%")
-                        ->orWhere('so.name', 'LIKE', "%{$search}%")
-                        ->orWhere('so.code', 'LIKE', "%{$search}%");
-                });
-            }
-        }
 
         return DataTables::of($query)
             ->addColumn('no', function ($row) {
@@ -376,6 +145,12 @@ class IndikatorSummaryController extends Controller
                 $html .= '</div>';
 
                 return $html;
+            })
+            ->filterColumn('indikator', function ($query, $keyword) {
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('indikator', 'like', "%{$keyword}%")
+                        ->orWhere('no_indikator', 'like', "%{$keyword}%");
+                });
             })
             ->rawColumns([
                 'no',
@@ -516,6 +291,12 @@ class IndikatorSummaryController extends Controller
                 $html .= '</div>';
 
                 return $html;
+            })
+            ->filterColumn('indikator', function ($query, $keyword) {
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('indikator', 'like', "%{$keyword}%")
+                        ->orWhere('no_indikator', 'like', "%{$keyword}%");
+                });
             })
             ->rawColumns([
                 'no',
@@ -662,72 +443,7 @@ class IndikatorSummaryController extends Controller
             ->join('vw_pemutu_summary_indikator_standar as v', 'io.indikator_id', '=', 'v.indikator_id')
             ->leftJoin('hr_struktur_organisasi as so', 'io.org_unit_id', '=', 'so.orgunit_id');
 
-        // Apply same filters as dataStandar (Context Fallback)
-        $kelompok = $request->query('kelompok_indikator');
-        if (empty($kelompok) || $kelompok === 'all') {
-            $activeKelompok = session('pemutu_active_kelompok', 'akademik');
-            $kelompok = $activeKelompok === 'akademik' ? 'Akademik' : 'Non Akademik';
-        }
-        $query->where('v.kelompok_indikator', $kelompok);
-
-        // Filter by Tahun (Cycle Fallback)
-        $tahun = $request->query('tahun');
-        if (empty($tahun)) {
-            $siklus = $this->periodeSpmiService->getSiklusData();
-            $tahun = $siklus['tahun'];
-        }
-
-        if ($tahun) {
-            $query->whereExists(function ($q) use ($tahun) {
-                $q->select(DB::raw(1))
-                    ->from('pemutu_indikator_doksub as ids_year')
-                    ->join('pemutu_dok_sub as ds_year', 'ids_year.doksub_id', '=', 'ds_year.doksub_id')
-                    ->join('pemutu_dokumen as d_year', 'ds_year.dok_id', '=', 'd_year.dok_id')
-                    ->whereColumn('ids_year.source_id', 'v.indikator_id')
-                    ->where('ids_year.source_type', 'App\Models\Pemutu\Indikator')
-                    ->where('d_year.periode', $tahun);
-            });
-        }
-
-        if ($request->filled('ed_status') && $request->ed_status !== '') {
-            if ($request->ed_status === 'filled') {
-                $query->whereNotNull('io.ed_capaian')->where('io.ed_capaian', '!=', '');
-            } elseif ($request->ed_status === 'empty') {
-                $query->where(function ($q) {
-                    $q->whereNull('io.ed_capaian')->orWhere('io.ed_capaian', '');
-                });
-            }
-        }
-
-        if ($request->filled('ami_hasil') && $request->ami_hasil !== '') {
-            if ($request->ami_hasil === 'empty') {
-                $query->whereNull('io.ami_hasil_akhir');
-            } else {
-                $query->where('io.ami_hasil_akhir', $request->ami_hasil);
-            }
-        }
-
-        if ($request->filled('pengend_status') && $request->pengend_status !== '') {
-            if ($request->pengend_status === 'filled') {
-                $query->whereNotNull('io.pengend_status')->where('io.pengend_status', '!=', '');
-            } elseif ($request->pengend_status === 'empty') {
-                $query->where(function ($q) {
-                    $q->whereNull('io.pengend_status')->orWhere('io.pengend_status', '');
-                });
-            }
-        }
-        if ($request->filled('search')) {
-            $search = $request->input('search.value') ?? $request->input('search');
-            if ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('v.no_indikator', 'LIKE', "%{$search}%")
-                        ->orWhere('v.indikator', 'LIKE', "%{$search}%")
-                        ->orWhere('v.parent_no_indikator', 'LIKE', "%{$search}%")
-                        ->orWhere('so.name', 'LIKE', "%{$search}%")
-                        ->orWhere('so.code', 'LIKE', "%{$search}%");
-                });
-            }
-        }
+        $this->applyStandarFilters($query, $request);
 
         $allData = $query->get();
 

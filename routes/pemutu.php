@@ -36,6 +36,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     // 5-Year Historical Summary (PPEPP Timeline)
     Route::get('/five-year-summary', [FiveYearSummaryController::class, 'index'])->name('five-year-summary.index');
     Route::get('/five-year-summary/detail/{rootIndikatorId}', [FiveYearSummaryController::class, 'detail'])->name('five-year-summary.detail');
+    Route::get('/five-year-summary/unit-detail/{unitId}', [FiveYearSummaryController::class, 'unitDetail'])->name('five-year-summary.unit-detail');
     Route::get('/five-year-summary/chart-data', [FiveYearSummaryController::class, 'chartData'])->name('five-year-summary.chart-data');
 
     // Global Siklus SPMI Year Selector (session)
@@ -227,4 +228,9 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::delete('peningkatan/{periode}/standar/{dokumen}', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'deleteStandarTarget'])->name('peningkatan.delete-standar');
     Route::delete('peningkatan/{periode}/standar-bulk', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'deleteStandarTargetBulk'])->name('peningkatan.delete-standar-bulk');
     Route::get('peningkatan/{periode}/review-data', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'reviewData'])->name('peningkatan.review-data');
+    Route::get('peningkatan/history/{id}', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'history'])->name('peningkatan.history');
+    Route::get('peningkatan/review/{id}/edit', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'editReviewItem'])->name('peningkatan.review-edit');
+    Route::put('peningkatan/review/{id}', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'updateReviewItem'])->name('peningkatan.review-update');
+    Route::post('peningkatan/{periode}/approve-staging', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'approveStaging'])->name('peningkatan.approve-staging');
+    Route::get('peningkatan/{periode}/staging-status', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'getStagingStatus'])->name('peningkatan.staging-status');
 });

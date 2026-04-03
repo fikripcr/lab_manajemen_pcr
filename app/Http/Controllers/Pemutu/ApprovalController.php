@@ -98,15 +98,31 @@ class ApprovalController extends Controller
             'status' => 'required|in:Approved,Rejected',
         ]);
 
+        $idDecrypted = (int) decryptIdIfEncrypted($id);
+        $approvalRecord = SysApproval::with('subject')->find($idDecrypted);
+
+        // --- GUARD: Periode Penetapan ---
+        if ($approvalRecord && $approvalRecord->subject instanceof Dokumen) {
+            $year = (int) ($approvalRecord->subject->periode ?? session('siklus_spmi_tahun'));
+            $kelompok = session('pemutu_active_kelompok', 'akademik');
+
+            if (! pemutu_can_modify($year, $kelompok)) {
+                return jsonError('Aksi persetujuan dibatasi. Masa penetapan periode ini belum dibuka atau sudah berakhir.');
+            }
+        }
+        // ---------------------------------
+
         $approval = $this->approvalService->processApproval(
-            (int) decryptIdIfEncrypted($id),
+            $idDecrypted,
             $request->status,
             $request->catatan
         );
 
         logActivity('pemutu', "Pegawai menyetujui dokumen ID {$approval->model_id} (".$request->status.')');
-
-        return jsonSuccess('Persetujuan berhasil '.($request->status == 'Approved' ? 'diterima' : 'ditolak').'.');
+        
+        $message = 'Persetujuan berhasil '.($request->status == 'Approved' ? 'diterima' : 'ditolak').'.';
+        
+        return jsonSuccess($message, request()->header('referer') ?: url()->previous());
     }
 
     /**
