@@ -1,77 +1,33 @@
 <?php
+
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
-use App\Models\Hr\StrukturOrganisasi;
-use App\Models\Pemutu\Dokumen;
-use App\Models\Pemutu\Indikator;
-use App\Models\Pemutu\IndikatorOrgUnit;
+use App\Services\Pemutu\DashboardService;
 use App\Services\Pemutu\DokumenSpmiService;
+use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request)
+    public function __construct(
+        protected DashboardService $dashboardService,
+        protected DokumenSpmiService $dokumenSpmiService,
+        protected PeriodeSpmiService $periodeSpmiService,
+    ) {}
+
+    public function index(Request $request): \Illuminate\View\View
     {
-        $pageTitle = 'Dashboard SPMI';
-
-        $pendingApprovalsCount = 0;
-        if (auth()->check() && auth()->user()->pegawai) {
-            $pendingApprovalsCount = \App\Models\Pemutu\RiwayatApproval::where('status', 'Pending')
-                ->where('pegawai_id', auth()->user()->pegawai->pegawai_id)
-                ->count();
-        }
-
         // Use global siklus year from session
-        $periodeSpmiService = app(\App\Services\Pemutu\PeriodeSpmiService::class);
-        $siklusData         = $periodeSpmiService->getSiklusData();
-        $currentYear        = $siklusData['tahun'];
+        $siklusData  = $this->periodeSpmiService->getSiklusData();
+        $currentYear = $siklusData['tahun'];
+        $lastYear    = (int) $currentYear - 1;
 
-        $lastYear = (int) $currentYear - 1;
+        $pendingApprovalsCount = $this->dashboardService->getPendingApprovalsCount();
 
-        $units     = StrukturOrganisasi::orderBy('name', 'asc')->get();
-        $kriterias = Indikator::whereNotNull('kelompok_indikator')->distinct('kelompok_indikator')->pluck('kelompok_indikator');
-
-        // Base Query Builder for Current Year
-        // Filter by year through indikator's relationship to dokumen (via doksub)
-        $buildQuery = function ($year) {
-            $q = IndikatorOrgUnit::join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
-                ->where('pemutu_indikator.type', 'standar')
-                ->whereNull('pemutu_indikator.deleted_at')
-                ->whereExists(function ($query) use ($year) {
-                    $query->select(\DB::raw(1))
-                        ->from('pemutu_indikator_doksub')
-                        ->join('pemutu_dok_sub', 'pemutu_indikator_doksub.doksub_id', '=', 'pemutu_dok_sub.doksub_id')
-                        ->join('pemutu_dokumen', 'pemutu_dok_sub.dok_id', '=', 'pemutu_dokumen.dok_id')
-                        ->whereColumn('pemutu_indikator_doksub.source_id', 'pemutu_indikator.indikator_id')
-                        ->where('pemutu_indikator_doksub.source_type', 'App\Models\Pemutu\Indikator')
-                        ->where('pemutu_dokumen.periode', 'like', '%' . $year . '%');
-                });
-
-            return $q;
-        };
-
-        $baseCurr = $buildQuery($currentYear);
-        $basePrev = $buildQuery($lastYear);
-
-        // --- KPI CARDS: Tercapai vs Tidak Tercapai ---
-        $kpiCurr = [
-            'tercapai'       => (clone $baseCurr)->whereIn('pemutu_indikator_orgunit.ami_hasil_akhir', [1, 2])->count(),
-            'tidak_tercapai' => (clone $baseCurr)->where('pemutu_indikator_orgunit.ami_hasil_akhir', 0)->count(),
-            'tingkatkan'     => (clone $baseCurr)->where('pemutu_indikator_orgunit.pengend_status', 'peningkatan')->count(),
-            'penyesuaian'    => (clone $baseCurr)->where('pemutu_indikator_orgunit.pengend_status', 'penyesuaian')->count(),
-            'tetap'          => (clone $baseCurr)->where('pemutu_indikator_orgunit.pengend_status', 'tetap')->count(),
-            'nonaktif'       => (clone $baseCurr)->where('pemutu_indikator_orgunit.pengend_status', 'nonaktif')->count(),
-        ];
-
-        $kpiPrev = [
-            'tercapai'       => (clone $basePrev)->whereIn('pemutu_indikator_orgunit.ami_hasil_akhir', [1, 2])->count(),
-            'tidak_tercapai' => (clone $basePrev)->where('pemutu_indikator_orgunit.ami_hasil_akhir', 0)->count(),
-            'tingkatkan'     => (clone $basePrev)->where('pemutu_indikator_orgunit.pengend_status', 'peningkatan')->count(),
-            'penyesuaian'    => (clone $basePrev)->where('pemutu_indikator_orgunit.pengend_status', 'penyesuaian')->count(),
-            'tetap'          => (clone $basePrev)->where('pemutu_indikator_orgunit.pengend_status', 'tetap')->count(),
-            'nonaktif'       => (clone $basePrev)->where('pemutu_indikator_orgunit.pengend_status', 'nonaktif')->count(),
-        ];
+        // --- KPI CARDS ---
+        $kpiCurr = $this->dashboardService->getKpiStandar($currentYear);
+        $kpiPrev = $this->dashboardService->getKpiStandar($lastYear);
 
         $yoy = function ($curr, $prev) {
             if ($prev == 0) {
@@ -93,124 +49,24 @@ class DashboardController extends Controller
             ];
         }
 
-        $trendYears     = collect(range($currentYear - 3, $currentYear));
-        $trendIndikator = [];
-        $trendStandar   = [];
-        foreach ($trendYears as $y) {
-            $q = $buildQuery($y);
+        // --- CHARTS & RANKINGS ---
+        $trendData       = $this->dashboardService->getTrendData($currentYear);
+        $units           = $this->dashboardService->getTopAndBottomUnits($currentYear);
+        $top3Units       = $units['top'];
+        $bottom3Units    = $units['bottom'];
+        $standars        = $this->dashboardService->getTopAndBottomStandar($currentYear);
+        $top3Standar     = $standars['top'];
+        $bottom3Standar  = $standars['bottom'];
+        $jenisKriteriaRaw = $this->dashboardService->getKriteriaDonut($currentYear);
+        $eisenhowerCount  = $this->dashboardService->getEisenhowerMatrix($currentYear);
+        $unitChartData    = $this->dashboardService->getUnitAnalysisBarChart($currentYear);
 
-            // Unique Indicators count
-            $trendIndikator[] = (clone $q)->distinct('pemutu_indikator.indikator_id')->count('pemutu_indikator.indikator_id');
+        // --- Strategic Goals (Visi & Misi) ---
+        $strategicGoals  = $this->dashboardService->getStrategicGoals($currentYear, $this->dokumenSpmiService);
+        $visiStats       = $strategicGoals['visiStats'];
+        $avgMisiRate     = $strategicGoals['avgMisiRate'];
 
-            // Total Standar (Unique Dokumen root)
-            $trendStandar[] = (clone $q)
-                ->join('pemutu_indikator_doksub', 'pemutu_indikator.indikator_id', '=', 'pemutu_indikator_doksub.source_id')
-                ->join('pemutu_dok_sub', 'pemutu_indikator_doksub.doksub_id', '=', 'pemutu_dok_sub.doksub_id')
-                ->distinct('pemutu_dok_sub.dok_id')
-                ->count('pemutu_dok_sub.dok_id');
-        }
-
-        $trendData = [
-            'years'     => $trendYears->toArray(),
-            'indikator' => $trendIndikator,
-            'standar'   => $trendStandar,
-        ];
-
-        // Top 3 Unit
-        $unitRanksRaw = (clone $baseCurr)
-            ->join('hr_struktur_organisasi as so', 'pemutu_indikator_orgunit.org_unit_id', '=', 'so.orgunit_id')
-            ->selectRaw('so.code as unit_name, AVG(pemutu_indikator_orgunit.ed_skala) as avg_skala')
-            ->groupBy('so.code')
-            ->havingRaw('avg_skala IS NOT NULL')
-            ->orderByDesc('avg_skala')
-            ->get();
-
-        $top3Units    = $unitRanksRaw->take(3);
-        $bottom3Units = $unitRanksRaw->sortBy('avg_skala')->take(3)->values();
-
-        // Top 3 Standar
-        $standarRanksRaw = (clone $baseCurr)
-            ->join('pemutu_indikator_doksub as ids', 'pemutu_indikator.indikator_id', '=', 'ids.source_id')
-            ->join('pemutu_dok_sub as ds', 'ids.doksub_id', '=', 'ds.doksub_id')
-            ->join('pemutu_dokumen as d', 'ds.dok_id', '=', 'd.dok_id')
-            ->selectRaw('COALESCE(d.kode, d.judul) as dokumen_name, AVG(pemutu_indikator_orgunit.ed_skala) as avg_skala')
-            ->groupBy('dokumen_name')
-            ->havingRaw('avg_skala IS NOT NULL')
-            ->orderByDesc('avg_skala')
-            ->get();
-
-        $top3Standar    = $standarRanksRaw->take(3);
-        $bottom3Standar = $standarRanksRaw->sortBy('avg_skala')->take(3)->values();
-
-        // Penetapan Jenis Kriteria Donut
-        $jenisKriteriaRaw = (clone $baseCurr)
-            ->selectRaw('pemutu_indikator.kelompok_indikator as label, COUNT(*) as total')
-            ->whereNotNull('pemutu_indikator.kelompok_indikator')
-            ->where('pemutu_indikator.kelompok_indikator', '!=', '')
-            ->groupBy('pemutu_indikator.kelompok_indikator')
-            ->get();
-
-        // Eisenhower Matrix Boxes
-        $eisenhowerCount = [
-            'important_urgent'         => (clone $baseCurr)->where('pengend_important_matrix', '>=', 5)->where('pengend_urgent_matrix', '>=', 5)->count(),
-            'important_not_urgent'     => (clone $baseCurr)->where('pengend_important_matrix', '>=', 5)->where('pengend_urgent_matrix', '<', 5)->count(),
-            'not_important_urgent'     => (clone $baseCurr)->where('pengend_important_matrix', '<', 5)->where('pengend_urgent_matrix', '>=', 5)->count(),
-            'not_important_not_urgent' => (clone $baseCurr)->where('pengend_important_matrix', '<', 5)->where('pengend_urgent_matrix', '<', 5)->count(),
-        ];
-
-        // Analisis Unit Kerja (ED vs AMI Bar Chart)
-        $unitAnalysisRaw = (clone $baseCurr)
-            ->join('hr_struktur_organisasi as so', 'pemutu_indikator_orgunit.org_unit_id', '=', 'so.orgunit_id')
-            ->selectRaw('
-                so.code as unit_name,
-                AVG(pemutu_indikator_orgunit.ed_skala) as avg_ed,
-                AVG(CASE
-                    WHEN pemutu_indikator_orgunit.ami_hasil_akhir = 2 THEN 100
-                    WHEN pemutu_indikator_orgunit.ami_hasil_akhir = 1 THEN 100
-                    WHEN pemutu_indikator_orgunit.ami_hasil_akhir = 0 THEN 0
-                    ELSE NULL END) as avg_ami_pct,
-                SUM(CASE WHEN pemutu_indikator_orgunit.ami_hasil_akhir = 0 THEN 1 ELSE 0 END) as count_kts,
-                SUM(CASE WHEN pemutu_indikator_orgunit.ami_hasil_akhir = 1 THEN 1 ELSE 0 END) as count_terpenuhi,
-                SUM(CASE WHEN pemutu_indikator_orgunit.ami_hasil_akhir = 2 THEN 1 ELSE 0 END) as count_terlampaui
-            ')
-            ->groupBy('so.code')
-            ->orderBy('so.code')
-            ->get();
-
-        $unitChartData = [
-            'categories'     => $unitAnalysisRaw->pluck('unit_name')->toArray(),
-            'ed_series'      => $unitAnalysisRaw->map(fn($item) => round((float) $item->avg_ed, 2))->toArray(),
-            'ami_series'     => $unitAnalysisRaw->map(fn($item) => round((float) $item->avg_ami_pct, 1))->toArray(),
-            'ami_kts'        => $unitAnalysisRaw->pluck('count_kts')->toArray(),
-            'ami_terpenuhi'  => $unitAnalysisRaw->pluck('count_terpenuhi')->toArray(),
-            'ami_terlampaui' => $unitAnalysisRaw->pluck('count_terlampaui')->toArray(),
-        ];
-
-        // Update page title with year
         $pageTitle = "Dashboard SPMI - {$currentYear}";
-
-        // --- Strategic Goals Summary (Visi & Misi) ---
-        $dokumenSpmiService = app(DokumenSpmiService::class);
-        $visiDocs           = Dokumen::where('jenis', 'visi')->where('periode', $currentYear)->get();
-        $misiDocs           = Dokumen::where('jenis', 'misi')->where('periode', $currentYear)->get();
-
-        $visiStats = [];
-        foreach ($visiDocs as $doc) {
-            $visiStats[] = [
-                'id'    => encryptId($doc->dok_id),
-                'judul' => $doc->judul,
-                'stats' => $dokumenSpmiService->getAchievementByDokumen($doc, $currentYear),
-            ];
-        }
-
-        $misiStatsArr  = [];
-        $totalMisiRate = 0;
-        foreach ($misiDocs as $doc) {
-            $res             = $dokumenSpmiService->getAchievementByDokumen($doc, $currentYear);
-            $totalMisiRate  += $res['rate'];
-            $misiStatsArr[]  = $res;
-        }
-        $avgMisiRate = count($misiStatsArr) > 0 ? round($totalMisiRate / count($misiStatsArr), 1) : 0;
 
         return view('pages.pemutu.dashboard.index', compact(
             'pageTitle', 'currentYear',
@@ -219,5 +75,4 @@ class DashboardController extends Controller
             'unitChartData', 'visiStats', 'avgMisiRate'
         ));
     }
-
 }
