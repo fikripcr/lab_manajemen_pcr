@@ -389,7 +389,7 @@ $columns = [
                 @endphp
                 <div class="tab-pane" id="tab-mapping" role="tabpanel">
                     <div class="border px-3">
-                            <div class="my-3 text-muted">Pilih {{ implode(' atau ', array_map('pemutuJenisLabel', $mappableJenis)) }} yang ingin dihubungkan dengan {{ $type === 'poin' ? 'poin' : 'dokumen' }} {{ strtoupper($type === 'poin' ? $item->dokumen->jenis : $item->jenis) }} (opsional):</div>
+                            <div class="my-3 text-muted">Pilih {{ implode(' atau ', array_map(fn ($jenis) => \App\Config\PemutuDokumenConfig::for($jenis)->label(), $mappableJenis)) }} yang ingin dihubungkan dengan {{ $type === 'poin' ? 'poin' : 'dokumen' }} {{ strtoupper($type === 'poin' ? $item->dokumen->jenis : $item->jenis) }} (opsional):</div>
                             <div class="row mb-3">
                                 <div class="col">
                                     <x-tabler.form-select 
@@ -436,7 +436,7 @@ $columns = [
                                         <div>
                                             <div class="fw-bold">{{ $mapped->judul }}</div>
                                             <small class="text-muted">
-                                                {{ pemutuJenisLabel($mapped->jenis ?? $mapped->dokumen->jenis ?? '') }}
+                                                {{ \App\Config\PemutuDokumenConfig::for($mapped->jenis ?? $mapped->dokumen->jenis ?? '')->label() }}
                                                   {{ $mapped->kode ? "· {$mapped->kode}" : '' }}
                                               </small>
                                           </div>
@@ -454,7 +454,7 @@ $columns = [
                                 </div>
                             @else
                                 <div class="text-muted text-center py-2">
-                                    <i class="ti ti-link-off"></i> Belum ada mapping ke poin {{ implode(' atau ', array_map('pemutuJenisLabel', $mappableJenis)) }}.
+                                    <i class="ti ti-link-off"></i> Belum ada mapping ke poin {{ implode(' atau ', array_map(fn ($jenis) => \App\Config\PemutuDokumenConfig::for($jenis)->label(), $mappableJenis)) }}.
                                 </div>
                             @endif
                     </div>

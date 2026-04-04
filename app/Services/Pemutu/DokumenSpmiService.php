@@ -2,6 +2,7 @@
 
 namespace App\Services\Pemutu;
 
+use App\Config\PemutuDokumenConfig;
 use App\Models\Pemutu\DokSub;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
@@ -71,28 +72,27 @@ class DokumenSpmiService
 
             $dokumen = Dokumen::create($data);
 
-            // Auto-create default sub-documents (points) for Standar and Kebijakan
-            if (in_array(strtolower($dokumen->jenis), ['standar', 'kebijakan'])) {
-                if (function_exists('pemutuDefaultSubDocuments')) {
-                    $defaultPoints = pemutuDefaultSubDocuments($dokumen->jenis);
-                    foreach ($defaultPoints as $idx => $judul) {
-                        // is_hasilkan_indikator: True ONLY for Standar point #5
-                        $isHasilkan = (strtolower($dokumen->jenis) === 'standar' && $judul === 'Pernyataan Isi Standar / Indikator Capaian');
+            // Auto-create default sub-documents (points) for types that support it
+            $config = PemutuDokumenConfig::for($dokumen->jenis);
+            if ($config->hasDefaultPoin()) {
+                $defaultPoints = $config->getDefaultPoin();
+                foreach ($defaultPoints as $idx => $judul) {
+                    // is_hasilkan_indikator: True ONLY for Standar point #5
+                    $isHasilkan = (strtolower($dokumen->jenis) === 'standar' && $judul === 'Pernyataan Isi Standar / Indikator Capaian');
 
-                        // Generate Kode if document has one
-                        $subKode = null;
-                        if ($dokumen->kode) {
-                            $subKode = $dokumen->kode.'.'.($idx + 1);
-                        }
-
-                        $dokumen->dokSubs()->create([
-                            'judul' => $judul,
-                            'kode' => $subKode,
-                            'seq' => $idx + 1,
-                            'is_hasilkan_indikator' => $isHasilkan,
-                            'created_by' => $data['created_by'] ?? (auth()->id() ?? 1),
-                        ]);
+                    // Generate Kode if document has one
+                    $subKode = null;
+                    if ($dokumen->kode) {
+                        $subKode = $dokumen->kode.'.'.($idx + 1);
                     }
+
+                    $dokumen->dokSubs()->create([
+                        'judul' => $judul,
+                        'kode' => $subKode,
+                        'seq' => $idx + 1,
+                        'is_hasilkan_indikator' => $isHasilkan,
+                        'created_by' => $data['created_by'] ?? (auth()->id() ?? 1),
+                    ]);
                 }
             }
 

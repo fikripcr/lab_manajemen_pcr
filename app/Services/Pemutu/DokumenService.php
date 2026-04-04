@@ -2,6 +2,7 @@
 
 namespace App\Services\Pemutu;
 
+use App\Config\PemutuDokumenConfig;
 use App\Models\Pemutu\DokSub;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -78,7 +79,7 @@ class DokumenService
      */
     public function getKebijakanByPeriode(int $year): array
     {
-        $jenisList = pemutuKebijakanJenisList();
+        $jenisList = PemutuDokumenConfig::all();
 
         $dokumens = \App\Models\Pemutu\Dokumen::with(['dokSubs.childDokumens', 'dokSubs.mappedTo.dokumen'])
             ->whereIn('jenis', $jenisList)
@@ -99,7 +100,7 @@ class DokumenService
      */
     public function getMappablePoinOptions(string $sourceJenis, int $year): \Illuminate\Support\Collection
     {
-        $targetJenis = pemutuMappableJenis($sourceJenis);
+        $targetJenis = PemutuDokumenConfig::for($sourceJenis)->mappableTo();
 
         if (empty($targetJenis)) {
             return collect();
@@ -123,7 +124,7 @@ class DokumenService
      */
     public function getMappableDokumenOptions(string $sourceJenis, int $year): \Illuminate\Support\Collection
     {
-        $targetJenis = pemutuMappableJenis($sourceJenis);
+        $targetJenis = PemutuDokumenConfig::for($sourceJenis)->mappableTo();
 
         if (empty($targetJenis)) {
             return collect();

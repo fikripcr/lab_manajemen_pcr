@@ -49,6 +49,7 @@ class DokumenSpmiController extends Controller
             'dokumentByJenis' => $dokumentByJenis,
             'activeTab' => $isTreeBased ? 'standar' : 'kebijakan',
             'periode' => $periode,
+            'canModify' => pemutu_can_modify($selectedYe, $activeKelompok),
         ]);
     }
 
@@ -60,9 +61,10 @@ class DokumenSpmiController extends Controller
         if ($type === 'dokumen') {
             $item = Dokumen::with(['mappedDokSubs.dokumen', 'riwayatApprovals'])->findOrFail(decryptIdIfEncrypted($id));
             $parentJenis = strtolower(trim($item->jenis));
-            $childLabel = pemutuChildLabel($parentJenis);
-            $isDokSubBased = pemutuIsDokSubBased($parentJenis);
-            $isKebijakan = in_array($parentJenis, pemutuKebijakanJenisList());
+            $parentConfig = \App\Config\PemutuDokumenConfig::for($parentJenis);
+            $childLabel = $parentConfig->hasPoin() ? 'Poin' : 'Turunan';
+            $isDokSubBased = $parentConfig->isTreeBased();
+            $isKebijakan = in_array($parentJenis, \App\Config\PemutuDokumenConfig::all());
 
             // For Formulir: load available mapping options (targets: Standar or Manual Prosedur parent documents)
             $mappableOptions = collect();
@@ -77,11 +79,12 @@ class DokumenSpmiController extends Controller
         } elseif ($type === 'poin') {
             $item = DokSub::with('dokumen', 'mappedTo.dokumen', 'mappedFrom.dokumen')->findOrFail(decryptIdIfEncrypted($id));
             $parentJenis = strtolower(trim($item->dokumen->jenis ?? ''));
-            $isKebijakan = in_array($parentJenis, pemutuKebijakanJenisList());
+            $isKebijakan = in_array($parentJenis, \App\Config\PemutuDokumenConfig::all());
 
             // For kebijakan poin: load available mapping options
             $mappableOptions = collect();
-            if ($isKebijakan && pemutuMappableJenis($parentJenis)) {
+            $parentConfig = \App\Config\PemutuDokumenConfig::for($parentJenis);
+            if ($isKebijakan && $parentConfig->canGenerateIndikator() === false && $parentConfig->mappableTo()) {
                 $mappableOptions = $this->dokumenService->getMappablePoinOptions(
                     $parentJenis,
                     $item->dokumen->periode ?? (int) date('Y')
@@ -114,7 +117,8 @@ class DokumenSpmiController extends Controller
         if ($request->filled('parent_id')) {
             $parent = Dokumen::find(decryptIdIfEncrypted($request->parent_id));
             if ($parent) {
-                $fixedJenis = pemutuFixedJenis($parent->jenis);
+                $parentConfig = \App\Config\PemutuDokumenConfig::for($parent->jenis);
+                $fixedJenis = $parentConfig->childTypes()[0] ?? null;
             }
         }
         if ($request->filled('parent_doksub_id')) {
@@ -534,7 +538,7 @@ class DokumenSpmiController extends Controller
                 ->addColumn('judul', function ($row) {
                     $html = '<div class="fw-bold">'.e($row->judul).'</div>';
                     if ($row->dokumen) {
-                        $html .= '<small class="text-muted">'.pemutuJenisLabel($row->dokumen->jenis).'</small>';
+                        $html .= '<small class="text-muted">'.\App\Config\PemutuDokumenConfig::for($row->dokumen->jenis)->label().'</small>';
                     }
 
                     return $html;
@@ -586,7 +590,7 @@ class DokumenSpmiController extends Controller
             $relation = $source->mappedTo();
         }
 
-        $expectedTargetJenis = pemutuMappableJenis($sourceJenis);
+        $expectedTargetJenis = \App\Config\PemutuDokumenConfig::for($sourceJenis)->mappableTo();
 
         // Validate target jenis for all IDs
         foreach ($mappedIds as $mId) {
@@ -597,7 +601,10 @@ class DokumenSpmiController extends Controller
             $targetJenis = strtolower(trim(($request->source_type === 'dokumen') ? $target->jenis : ($target->dokumen->jenis ?? '')));
 
             if (! in_array($targetJenis, ($expectedTargetJenis ?: []))) {
-                $targetLabels = implode(' atau ', array_map('pemutuJenisLabel', $expectedTargetJenis ?: []));
+                $targetLabels = implode(' atau ', array_map(
+                    fn ($jenis) => \App\Config\PemutuDokumenConfig::for($jenis)->label(),
+                    $expectedTargetJenis ?: []
+                ));
 
                 return jsonError('Mapping tidak valid. Target harus berupa '.($targetLabels ?: 'tipe yang sesuai').'.');
             }

@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Pemutu;
 
+use App\Config\PemutuDokumenConfig;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\DokumenRequest;
 use App\Models\Pemutu\DokSub;
@@ -339,7 +340,7 @@ class DokumenController extends Controller
 
     private function getIndexUrlByJenis($jenis)
     {
-        $tab = pemutuTabByJenis($jenis);
+        $tab = PemutuDokumenConfig::for($jenis)->category();
 
         return route('pemutu.dokumen.index', ['tabs' => $tab]);
     }

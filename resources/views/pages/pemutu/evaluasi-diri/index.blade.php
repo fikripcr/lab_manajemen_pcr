@@ -13,38 +13,43 @@
     @if($periode)
         <x-pemutu.active-period :periode="$periode" type="ed" />
 
-            <x-tabler.card x-data="{ activeTab: 'ed' }">
+            <x-tabler.card>
             <x-tabler.card-header class="border-bottom px-4 pt-3 pb-3 d-flex justify-content-between align-items-center">
-                <ul class="nav nav-pills card-header-pills" id="ed-tabs" data-bs-toggle="tabs" role="tablist">
+                <ul class="nav nav-pills card-header-pills" id="ed-tabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a href="#tab-ed" class="nav-link active" data-bs-toggle="tab" role="tab" @click="activeTab = 'ed'; $dispatch('tab-changed', { phase: 'ed' })">
+                        <a href="{{ route('pemutu.evaluasi-diri.index', ['tab' => 'ed']) }}" class="nav-link {{ $activeTab === 'ed' ? 'active' : '' }}">
                             <i class="ti ti-checklist me-2"></i>Evaluasi Diri
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a href="#tab-ptp" class="nav-link" data-bs-toggle="tab" role="tab" @click="activeTab = 'ptp'; $dispatch('tab-changed', { phase: 'ptp' })">
+                        <a href="{{ route('pemutu.evaluasi-diri.index', ['tab' => 'ptp']) }}" class="nav-link {{ $activeTab === 'ptp' ? 'active' : '' }}">
                             <i class="ti ti-history me-2"></i>Pelaksanaan Tindakan Perbaikan
                             <span class="text-muted ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="KTS dari periode tahun lalu yang harus dilaporkan perbaikannya."><i class="ti ti-info-circle"></i></span>
                         </a>
                     </li>
                 </ul>
+
                 <div class="card-actions mb-0">
-                    <div class="d-flex gap-2" x-show="activeTab === 'ed'">
+                    @if($activeTab === 'ed')
+                    <div class="d-flex gap-2">
                         <x-tabler.datatable-page-length dataTableId="table-ed" />
                         <x-tabler.datatable-search dataTableId="table-ed" />
                         <x-tabler.datatable-filter dataTableId="table-ed" type="button" target="#table-ed-filter-area" />
                     </div>
-                    <div class="d-flex gap-2" x-show="activeTab === 'ptp'" style="display: none;">
+                    @elseif($activeTab === 'ptp')
+                    <div class="d-flex gap-2">
                         <x-tabler.datatable-page-length dataTableId="table-ptp" />
                         <x-tabler.datatable-search dataTableId="table-ptp" />
                         <x-tabler.datatable-filter dataTableId="table-ptp" type="button" target="#table-ptp-filter-area" />
                     </div>
+                    @endif
                 </div>
             </x-tabler.card-header>
 
-            <div class="tab-content">
+            <div>
                 {{-- SUB-TAB: EVALUASI DIRI --}}
-                <div class="tab-pane active show" id="tab-ed" role="tabpanel">
+                @if($activeTab === 'ed')
+                <div>
                     <div class="collapse" id="table-ed-filter-area">
                         <x-tabler.datatable-filter dataTableId="table-ed" type="bare">
                             <div class="row g-3">
@@ -89,9 +94,11 @@
                         />
                     </div>
                 </div>
+                @endif
 
                 {{-- SUB-TAB: PTP --}}
-                <div class="tab-pane" id="tab-ptp" role="tabpanel">
+                @if($activeTab === 'ptp')
+                <div>
                     <div class="collapse" id="table-ptp-filter-area">
                         <x-tabler.datatable-filter dataTableId="table-ptp" type="bare">
                             <div class="row g-3">
@@ -135,6 +142,7 @@
                         />
                     </div>
                 </div>
+                @endif
             </div>
             </x-tabler.card>
         </div>

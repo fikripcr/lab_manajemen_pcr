@@ -17,29 +17,30 @@
     @if($periode)
         <x-pemutu.active-period :periode="$periode" type="ami" />
 
-            <x-tabler.card x-data="{ activeTab: 'ami' }">
+            <x-tabler.card>
             <x-tabler.card-header class="border-bottom px-4 pt-3 pb-3 d-flex justify-content-between align-items-center">
-                <ul class="nav nav-pills card-header-pills" id="ami-tabs" data-bs-toggle="tabs" role="tablist">
+                <ul class="nav nav-pills card-header-pills" id="ami-tabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a href="#tab-ami" class="nav-link active" data-bs-toggle="tab" role="tab" @click="activeTab = 'ami'; $dispatch('tab-changed', { phase: 'ami' })">
+                        <a href="{{ route('pemutu.ami.index', ['tab' => 'ami']) }}" class="nav-link {{ $activeTab === 'ami' ? 'active' : '' }}">
                             <i class="ti ti-shield-check me-2"></i>Audit Mutu Internal
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a href="#tab-te" class="nav-link" data-bs-toggle="tab" role="tab" @click="activeTab = 'te'; $dispatch('tab-changed', { phase: 'te' })">
+                        <a href="{{ route('pemutu.ami.index', ['tab' => 'te']) }}" class="nav-link {{ $activeTab === 'te' ? 'active' : '' }}">
                             <i class="ti ti-search me-2"></i>Tinjauan Efektivitas ({{ $prevYear }})
                             <span class="text-muted ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Daftar temuan KTS dari periode AMI {{ $prevYear }} yang harus ditinjau perbaikannya."><i class="ti ti-info-circle"></i></span>
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a href="#tab-rtp" class="nav-link" data-bs-toggle="tab" role="tab" @click="activeTab = 'rtp'; $dispatch('tab-changed', { phase: 'rtp' })">
+                        <a href="{{ route('pemutu.ami.index', ['tab' => 'rtp']) }}" class="nav-link {{ $activeTab === 'rtp' ? 'active' : '' }}">
                             <i class="ti ti-pennant me-2"></i>Rencana Tindakan Perbaikan (RTP)
                             <span class="text-muted ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Indikator dengan temuan Audit (KTS) yang memerlukan rencana perbaikan."><i class="ti ti-info-circle"></i></span>
                         </a>
                     </li>
                 </ul>
                 <div class="card-actions mb-0">
-                    <div class="d-flex gap-2" x-show="activeTab === 'ami'">
+                    @if($activeTab === 'ami')
+                    <div class="d-flex gap-2">
                         <x-tabler.datatable-page-length dataTableId="table-ami" />
                         <x-tabler.datatable-search dataTableId="table-ami" />
                         <x-tabler.datatable-filter dataTableId="table-ami" type="button" target="#table-ami-filter-area" />
@@ -66,22 +67,26 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="d-flex gap-2" x-show="activeTab === 'te'" style="display: none;">
+                    @elseif($activeTab === 'te')
+                    <div class="d-flex gap-2">
                         <x-tabler.datatable-page-length dataTableId="table-te" />
                         <x-tabler.datatable-search dataTableId="table-te" />
                         <x-tabler.datatable-filter dataTableId="table-te" type="button" target="#table-te-filter-area" />
                     </div>
-                    <div class="d-flex gap-2" x-show="activeTab === 'rtp'" style="display: none;">
+                    @elseif($activeTab === 'rtp')
+                    <div class="d-flex gap-2">
                         <x-tabler.datatable-page-length dataTableId="table-rtp-only" />
                         <x-tabler.datatable-search dataTableId="table-rtp-only" />
                         <x-tabler.datatable-filter dataTableId="table-rtp-only" type="button" target="#table-rtp-only-filter-area" />
                     </div>
+                    @endif
                 </div>
             </x-tabler.card-header>
 
-            <div class="tab-content">
+            <div>
                 {{-- SUB-TAB: AMI --}}
-                <div class="tab-pane active show" id="tab-ami" role="tabpanel">
+                @if($activeTab === 'ami')
+                <div>
                     <div class="collapse" id="table-ami-filter-area">
                         <x-tabler.datatable-filter dataTableId="table-ami" type="bare">
                             <div class="row g-3">
@@ -137,9 +142,11 @@
                         />
                     </div>
                 </div>
+                @endif
 
                 {{-- SUB-TAB: TE --}}
-                <div class="tab-pane" id="tab-te" role="tabpanel">
+                @if($activeTab === 'te')
+                <div>
                     <div class="collapse" id="table-te-filter-area">
                         <x-tabler.datatable-filter dataTableId="table-te" type="bare">
                             <div class="row g-3">
@@ -185,9 +192,11 @@
                         />
                     </div>
                 </div>
+                @endif
 
                 {{-- SUB-TAB: RTP ONLY (Findings) --}}
-                <div class="tab-pane" id="tab-rtp" role="tabpanel">
+                @if($activeTab === 'rtp')
+                <div>
                     <div class="collapse" id="table-rtp-only-filter-area">
                         <x-tabler.datatable-filter dataTableId="table-rtp-only" type="bare">
                             <div class="row g-3">
@@ -233,6 +242,7 @@
                         />
                     </div>
                 </div>
+                @endif
             </div>
             </x-tabler.card>
         </div>

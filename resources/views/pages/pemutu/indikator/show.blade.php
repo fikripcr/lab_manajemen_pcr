@@ -270,10 +270,10 @@
                 {{-- Other Document Junctions --}}
                 @forelse($indikator->dokSubs as $relSub)
                     @php
-                        $tabName = pemutuTabByJenis($relSub->dokumen->jenis) ?? 'kebijakan';
+                        $tabName = \App\Config\PemutuDokumenConfig::for($relSub->dokumen->jenis)->category();
                     @endphp
                     <a href="{{ route('pemutu.dokumen.index', ['tabs' => $tabName]) }}#tree-node-sub-{{ $relSub->encrypted_doksub_id }}" class="list-group-item list-group-item-action d-flex flex-column align-items-start py-3">
-                        <span class="badge bg-purple-lt mb-2">{{ pemutuJenisLabel($relSub->dokumen->jenis) }}</span>
+                        <span class="badge bg-purple-lt mb-2">{{ \App\Config\PemutuDokumenConfig::for($relSub->dokumen->jenis)->label() }}</span>
                         <div class="d-block w-100 text-truncate text-dark fw-medium">
                             {{ $relSub->dokumen->judul }}
                         </div>

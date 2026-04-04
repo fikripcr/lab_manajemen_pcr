@@ -14,7 +14,7 @@
         <x-pemutu.active-period :periode="$periode" type="pengendalian" />
         
         <x-tabler.card>
-            <x-tabler.card-header class="border-bottom-0 pt-4">
+            <x-tabler.card-header class="border-bottom px-4 pt-3 pb-3 d-flex justify-content-between align-items-center">
                 <ul class="nav nav-pills card-header-pills" id="pengendalian-tabs" data-bs-toggle="tabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <a href="#tab-rtm" class="nav-link active" data-bs-toggle="tab" role="tab" tabindex="-1">
@@ -27,6 +27,14 @@
                         </a>
                     </li>
                 </ul>
+
+                <div class="card-actions mb-0" id="pengendalian-toolbar" style="display: none;">
+                    <div class="d-flex gap-2">
+                        <x-tabler.datatable-page-length dataTableId="table-pengend" />
+                        <x-tabler.datatable-search dataTableId="table-pengend" />
+                        <x-tabler.datatable-filter dataTableId="table-pengend" type="button" target="#table-pengend-filter-area" />
+                    </div>
+                </div>
             </x-tabler.card-header>
 
             <div class="tab-content">
@@ -64,26 +72,6 @@
                 </div>
                 {{-- SUB-TAB: PENGENDALIAN --}}
                 <div class="tab-pane" id="tab-pengendalian" role="tabpanel">
-                    <x-tabler.card-body class="border-top">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h3 class="mb-1">List Indikator - {{ ucfirst(str_replace('_', ' ', $activeKelompok)) }}</h3>
-                                <div class="text-muted small mt-1">
-                                    @php $periodeInfo = pemutuPeriodeStatus($periode->pengendalian_awal, $periode->pengendalian_akhir); @endphp
-                                    @if($periode->pengendalian_awal && $periode->pengendalian_akhir)
-                                        <i class="ti ti-calendar me-1"></i>
-                                        Jadwal: {{ formatTanggalIndo($periode->pengendalian_awal) }} s.d. {{ formatTanggalIndo($periode->pengendalian_akhir) }}
-                                    @endif
-                                    <span class="badge bg-{{ $periodeInfo['color'] }}-lt ms-2">{{ $periodeInfo['status_text'] }}</span>
-                                </div>
-                            </div>
-                            <div class="col-auto d-flex gap-2">
-                                <x-tabler.datatable-page-length dataTableId="table-pengend" />
-                                <x-tabler.datatable-search dataTableId="table-pengend" />
-                                <x-tabler.datatable-filter dataTableId="table-pengend" type="button" target="#table-pengend-filter-area" />
-                            </div>
-                        </div>
-                    </x-tabler.card-body>
                     <div class="collapse" id="table-pengend-filter-area">
                         <x-tabler.datatable-filter dataTableId="table-pengend" type="bare">
                             <div class="row g-3">
@@ -284,6 +272,17 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('ajax-form:success', function () {
         // DataTable reload is handled automatically by core-ajax.js
         // No additional action needed here
+    });
+
+    const pengendalianToolbar = document.getElementById('pengendalian-toolbar');
+    document.querySelectorAll('#pengendalian-tabs .nav-link').forEach(t => {
+        t.addEventListener('shown.bs.tab', function(e) {
+            if (e.target.getAttribute('href') === '#tab-pengendalian') {
+                pengendalianToolbar.style.display = 'block';
+            } else {
+                pengendalianToolbar.style.display = 'none';
+            }
+        });
     });
 });
 </script>

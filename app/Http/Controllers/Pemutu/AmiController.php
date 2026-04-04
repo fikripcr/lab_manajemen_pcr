@@ -31,7 +31,7 @@ class AmiController extends Controller
     /**
      * Daftar periode SPMI untuk AMI.
      */
-    public function index()
+    public function index(Request $request)
     {
         // Bypass old period selection — use global siklus from session
         $siklus = $this->periodeSpmiService->getSiklusData();
@@ -43,6 +43,8 @@ class AmiController extends Controller
         // Fetch root documents for filter
         $rootDoks = $this->dokumenService->getRootsByPeriode($siklus['tahun']);
 
+        $activeTab = $request->query('tab', 'ami');
+
         $data = [
             'pageTitle'      => 'Audit Mutu Internal (AMI)',
             'siklus'         => $siklus,
@@ -50,6 +52,7 @@ class AmiController extends Controller
             'periode'        => $periode,
             'units'          => $this->strukturOrganisasiService->getHierarchicalList(),
             'rootDoks'       => $rootDoks,
+            'activeTab'      => $activeTab,
         ];
 
         return view('pages.pemutu.ami.index', $data);

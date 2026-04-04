@@ -304,13 +304,13 @@ if (! function_exists('generateQrCodeImage')) {
 
         $filePath = $directory.'/'.$filename;
 
-        // Generate QR code using BaconQrCode (as used in TestController)
+        // Generate QR code using BaconQrCode
         $renderer = new GDLibRenderer(200);
         $writer = new Writer($renderer);
-        $qrCodeSvg = $writer->writeString($text);
+        $qrCodeData = $writer->writeString($text);
 
-        // Save the PNG data to file
-        file_put_contents($filePath, $qrCodePng);
+        // Save the QR code data to file
+        file_put_contents($filePath, $qrCodeData);
 
         return $filePath;
     }
@@ -340,6 +340,8 @@ if (! function_exists('generateQrCodeBase64')) {
 if (! function_exists('sysDataTableSearchValue')) {
     /**
      * Standardize extracting search string from DataTables request
+     *
+     * @deprecated Use the search extraction logic directly in your DataTables controller
      *
      * @param  mixed  $searchValue
      * @return string

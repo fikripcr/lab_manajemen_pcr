@@ -40,7 +40,7 @@ if (! function_exists('formatTanggalIndo')) {
 
 if (! function_exists('formatTanggalWaktuIndo')) {
     /**
-     * Alias for formatTanggalIndo to support unified components
+     * @deprecated Use formatTanggalIndo() instead - this is kept for backward compatibility
      *
      * @param  mixed  $tanggal
      * @return string
@@ -143,9 +143,11 @@ if (! function_exists('jsonSuccess')) {
     /**
      * Create standardized success JSON response
      *
-     * Handles two modes:
-     * 1. Smart Array: jsonSuccess(['data' => ..., 'redirect' => ...])
-     * 2. Legacy: jsonSuccess('Message', '/url', ['data'])
+     * Usage:
+     *   jsonSuccess('Message')
+     *   jsonSuccess('Message', '/redirect-url')
+     *   jsonSuccess('Message', '/redirect-url', ['data' => $data])
+     *   jsonSuccess(['data' => $data, 'message' => 'Custom']) // Array mode
      *
      * @param  mixed  $arg1
      * @param  mixed  $arg2
@@ -155,30 +157,18 @@ if (! function_exists('jsonSuccess')) {
      */
     function jsonSuccess($arg1 = 'Success', $arg2 = null, $arg3 = [], $arg4 = 200)
     {
-        // MODE 1: Smart Array Input
+        // Array mode: jsonSuccess(['data' => ..., 'message' => ...])
         if (is_array($arg1)) {
-            $params = $arg1;
-            $reserved = ['message', 'data', 'redirect', 'code'];
-
-            // Check if array contains any reserved control keys
-            $hasControlKeys = ! empty(array_intersect_key($params, array_flip($reserved)));
-
-            if ($hasControlKeys) {
-                // It is a Config Array
-                return jsonResponse(
-                    true,
-                    $params['message'] ?? 'Success',
-                    $params['data'] ?? [],
-                    $params['code'] ?? 200,
-                    $params['redirect'] ?? null
-                );
-            }
-
-            // It is just a Raw Data Array
-            return jsonResponse(true, 'Success', $params);
+            return jsonResponse(
+                true,
+                $arg1['message'] ?? 'Success',
+                $arg1['data'] ?? $arg1,
+                $arg1['code'] ?? 200,
+                $arg1['redirect'] ?? null
+            );
         }
 
-        // MODE 2: Legacy / Standard Input ($message, $redirect, $data, $code)
+        // Standard mode: jsonSuccess('message', 'redirect', $data, $code)
         return jsonResponse(true, $arg1, $arg3, $arg4, $arg2);
     }
 }
