@@ -2,7 +2,6 @@
 
 namespace App\Models\Hr;
 
-use App\Models\Pemutu\Indikator;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -121,11 +120,12 @@ class StrukturOrganisasi extends Model
         return $this->hasOne(StrukturOrganisasi::class, 'successor_id', 'orgunit_id');
     }
 
-    public function indikators()
-    {
-        return $this->belongsToMany(Indikator::class, 'pemutu_indikator_orgunit', 'org_unit_id', 'indikator_id')
-            ->withPivot('target', 'ed_capaian', 'ed_analisis', 'created_at');
-    }
+    // Relationship removed - Pemutu\Indikator model was deleted
+    // public function indikators()
+    // {
+    //     return $this->belongsToMany(Indikator::class, 'pemutu_indikator_orgunit', 'org_unit_id', 'indikator_id')
+    //         ->withPivot('target', 'ed_capaian', 'ed_analisis', 'created_at');
+    // }
 
     public function auditee()
     {

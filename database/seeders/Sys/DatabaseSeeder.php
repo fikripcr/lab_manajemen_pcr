@@ -20,7 +20,6 @@ class DatabaseSeeder extends Seeder
             \Database\Seeders\Sys\RolePermissionSysSeeder::class,
 
             // Permission Seeders (all modules)
-            \Database\Seeders\Pemutu\RolePermissionPemutuSeeder::class,
             \Database\Seeders\Hr\RolePermissionHrSeeder::class,
             \Database\Seeders\Lab\RolePermissionLabSeeder::class,
             \Database\Seeders\Eoffice\RolePermissionEofficeSeeder::class,
@@ -34,8 +33,6 @@ class DatabaseSeeder extends Seeder
             \Database\Seeders\Hr\MainHrSeeder::class,
             \Database\Seeders\Hr\SyncPegawaiCommonColumnsSeeder::class,
             \Database\Seeders\Lab\MainLabSeeder::class,
-            \Database\Seeders\Pemutu\MainPemutuSeeder::class,
-            \Database\Seeders\Pemutu\Spmi20252026Seeder::class,
             \Database\Seeders\Eoffice\MainEofficeSeeder::class,
             \Database\Seeders\Pmb\MainPmbSeeder::class,
             \Database\Seeders\Cbt\MainCbtSeeder::class,

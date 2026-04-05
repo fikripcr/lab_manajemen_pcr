@@ -5,8 +5,7 @@ namespace App\Services\Event;
 use App\Models\Event\Rapat;
 use App\Models\Event\RapatEntitas;
 use App\Models\Hr\StrukturOrganisasi;
-use App\Models\Pemutu\Indikator;
-use App\Models\Pemutu\IndikatorOrgUnit;
+// Pemutu models deleted
 use Illuminate\Support\Facades\DB;
 
 class RapatEntitasService
@@ -55,17 +54,9 @@ class RapatEntitasService
 
             $rawJson = null;
 
-            if ($model === IndikatorOrgUnit::class) {
-                $item = IndikatorOrgUnit::with(['indikator', 'orgUnit'])->find($modelId);
-                if ($item) {
-                    $rawJson = [
-                        'type' => 'Indikator Unit',
-                        'no_indikator' => $item->indikator?->no_indikator,
-                        'indikator' => $item->indikator?->indikator,
-                        'unit_kerja' => $item->orgUnit?->name,
-                    ];
-                }
-            } elseif ($model === StrukturOrganisasi::class) {
+            // Pemutu models deleted - these branches are no longer functional
+            // if ($model === IndikatorOrgUnit::class) { ... }
+            if ($model === StrukturOrganisasi::class) {
                 $item = StrukturOrganisasi::find($modelId);
                 if ($item) {
                     $rawJson = [
@@ -74,16 +65,8 @@ class RapatEntitasService
                         'code' => $item->code,
                     ];
                 }
-            } elseif ($model === Indikator::class) {
-                $item = Indikator::find($modelId);
-                if ($item) {
-                    $rawJson = [
-                        'type' => 'Indikator Mutu',
-                        'no_indikator' => $item->no_indikator,
-                        'indikator' => $item->indikator,
-                    ];
-                }
             }
+            // else if ($model === Indikator::class) { ... }
 
             $data['raw_json'] = $rawJson;
         }
@@ -112,24 +95,12 @@ class RapatEntitasService
             return compact('selectedEntityId', 'selectedEntityText');
         }
 
-        if ($entitas->model === IndikatorOrgUnit::class) {
-            $item = IndikatorOrgUnit::with(['indikator', 'orgUnit'])->find($entitas->model_id);
-            if ($item && $item->indikator) {
-                $unitName = $item->orgUnit?->name ?? 'Unknown';
-                $selectedEntityText = '[Indikator Unit] '.$item->indikator->no_indikator.' - '.$item->indikator->indikator.' ('.$unitName.')';
-                $selectedEntityId = 'IndikatorOrgUnit:'.$item->indikorgunit_id;
-            }
-        } elseif ($entitas->model === StrukturOrganisasi::class) {
+        // Pemutu models deleted - only StrukturOrganisasi remains
+        if ($entitas->model === StrukturOrganisasi::class) {
             $item = StrukturOrganisasi::find($entitas->model_id);
             if ($item) {
                 $selectedEntityText = '[Unit Kerja] '.$item->name.($item->code ? " ({$item->code})" : '');
                 $selectedEntityId = 'StrukturOrganisasi:'.$item->orgunit_id;
-            }
-        } elseif ($entitas->model === Indikator::class) {
-            $item = Indikator::find($entitas->model_id);
-            if ($item) {
-                $selectedEntityText = '[Indikator Mutu] '.$item->no_indikator.' - '.$item->indikator;
-                $selectedEntityId = 'Indikator:'.$item->indikator_id;
             }
         }
 
@@ -143,24 +114,11 @@ class RapatEntitasService
     {
         $modelName = class_basename($row->model);
 
-        if ($row->model === IndikatorOrgUnit::class) {
-            $item = IndikatorOrgUnit::with(['indikator', 'orgUnit'])->find($row->model_id);
-            if ($item && $item->indikator) {
-                $unitName = $item->orgUnit?->name ?? 'Unknown';
-                return '[Indikator Unit] '.$item->indikator->no_indikator.' - '.\Illuminate\Support\Str::limit($item->indikator, 30).' ('.$unitName.')';
-            }
-        }
-
+        // Pemutu models deleted - only StrukturOrganisasi remains
         if ($row->model === StrukturOrganisasi::class) {
             $item = StrukturOrganisasi::find($row->model_id);
 
             return $item ? '[Unit Kerja] '.$item->name : $modelName.' - ID: '.$row->model_id;
-        }
-
-        if ($row->model === Indikator::class) {
-            $item = Indikator::find($row->model_id);
-
-            return $item ? '[Indikator Mutu] '.$item->no_indikator.' - '.\Illuminate\Support\Str::limit($item->indikator, 30) : $modelName.' - ID: '.$row->model_id;
         }
 
         return $modelName.' - ID: '.$row->model_id;

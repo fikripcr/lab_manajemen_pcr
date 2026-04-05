@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Contracts\Hr\StrukturOrganisasiServiceInterface;
 use App\Models\Notification;
+use App\Services\Hr\StrukturOrganisasiService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\Paginator;
@@ -19,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         require_once app_path('Helpers/EofficeHelper.php');
+
+        // Module bindings - simple contract pattern
+        $this->app->bind(StrukturOrganisasiServiceInterface::class, StrukturOrganisasiService::class);
     }
 
     /**

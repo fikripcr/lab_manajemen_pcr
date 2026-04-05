@@ -8,8 +8,7 @@ use App\Models\Event\Rapat;
 use App\Models\Event\RapatEntitas;
 use App\Services\Event\RapatEntitasService;
 use App\Models\Hr\StrukturOrganisasi;
-use App\Models\Pemutu\Indikator;
-use App\Models\Pemutu\IndikatorOrgUnit;
+// Pemutu models deleted
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -54,27 +53,10 @@ class RapatEntitasController extends Controller
 
         $results = collect();
 
-        // 1. IndikatorOrgUnit (Specific Assignments)
-        $indikatorOrgUnits = IndikatorOrgUnit::query()
-            ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
-            ->join('hr_struktur_organisasi', 'pemutu_indikator_orgunit.org_unit_id', '=', 'hr_struktur_organisasi.orgunit_id')
-            ->where(function ($query) use ($q) {
-                $query->where('pemutu_indikator.no_indikator', 'like', "%{$q}%")
-                    ->orWhere('pemutu_indikator.indikator', 'like', "%{$q}%")
-                    ->orWhere('hr_struktur_organisasi.name', 'like', "%{$q}%");
-            })
-            ->select('pemutu_indikator_orgunit.*', 'pemutu_indikator.no_indikator', 'pemutu_indikator.indikator', 'hr_struktur_organisasi.name as unit_name')
-            ->limit(10)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => 'IndikatorOrgUnit:'.$item->indikorgunit_id,
-                    'text' => '[Indikator Unit] '.$item->no_indikator.' - '.$item->indikator.' ('.$item->unit_name.')',
-                ];
-            });
-        $results = $results->concat($indikatorOrgUnits);
+        // Pemutu models deleted - only StrukturOrganisasi remains
+        // IndikatorOrgUnit search removed
 
-        // 2. StrukturOrganisasi (Unit Kerja)
+        // Unit Kerja
         $units = StrukturOrganisasi::query()
             ->where('name', 'like', "%{$q}%")
             ->orWhere('code', 'like', "%{$q}%")
@@ -88,19 +70,7 @@ class RapatEntitasController extends Controller
             });
         $results = $results->concat($units);
 
-        // 3. Indikator (General)
-        $indikators = Indikator::query()
-            ->where('no_indikator', 'like', "%{$q}%")
-            ->orWhere('indikator', 'like', "%{$q}%")
-            ->limit(10)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => 'Indikator:'.$item->indikator_id,
-                    'text' => '[Indikator Mutu] '.$item->no_indikator.' - '.$item->indikator,
-                ];
-            });
-        $results = $results->concat($indikators);
+        // Indikator search removed (Pemutu model deleted)
 
         return response()->json(['results' => $results->take(30)]);
     }

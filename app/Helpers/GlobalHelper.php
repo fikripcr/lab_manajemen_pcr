@@ -188,20 +188,3 @@ if (! function_exists('jsonError')) {
         return jsonResponse(false, $message, $data, $code, $redirect);
     }
 }
-if (! function_exists('pemutu_can_modify')) {
-    /**
-     * Check if a document/indicator can be modified based on the current period's status.
-     *
-     * @param  int  $year
-     * @param  string|null  $kelompok
-     * @return bool
-     */
-    function pemutu_can_modify($year, ?string $kelompok = null): bool
-    {
-        $year = (int) $year;
-        if (! $year) {
-            return false;
-        }
-        return app(\App\Services\Pemutu\PeriodeSpmiService::class)->isPenetapanOpen($year, $kelompok);
-    }
-}

@@ -2,11 +2,12 @@
 
 namespace App\Services\Hr;
 
+use App\Contracts\Hr\StrukturOrganisasiServiceInterface;
 use App\Models\Hr\StrukturOrganisasi;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
-class StrukturOrganisasiService
+class StrukturOrganisasiService implements StrukturOrganisasiServiceInterface
 {
     /**
      * Get query for datatables or lists with filters

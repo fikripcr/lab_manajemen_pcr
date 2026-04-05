@@ -59,7 +59,7 @@ class SysApproval extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'model',                    // Class name (e.g., 'App\Models\Pemutu\Dokumen')
+        'model',                    // Class name (polymorphic relationship)
         'model_id',                 // ID dari model yang di-approve
         'pegawai_id',               // ID approver (pegawai yang ditunjuk)
         'pejabat',                  // Nama approver

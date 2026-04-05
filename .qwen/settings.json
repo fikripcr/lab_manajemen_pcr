@@ -41,7 +41,13 @@
       "Bash(npm run *)",
       "Bash(docker-compose *)",
       "Bash(mv *)",
-      "Bash(grep *)"
+      "Bash(grep *)",
+      "Bash(sudo *)",
+      "Bash(head *)",
+      "Bash(docker ps *)",
+      "Bash(docker *)",
+      "Bash(chmod *)",
+      "Bash(chown *)"
     ]
   }
 }

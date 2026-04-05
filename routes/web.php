@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Route;
 require __DIR__.'/public.php';
 
 require __DIR__.'/lab.php';
-require __DIR__.'/pemutu.php';
 require __DIR__.'/eoffice.php';
 require __DIR__.'/event.php';
 

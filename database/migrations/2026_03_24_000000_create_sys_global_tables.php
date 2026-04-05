@@ -24,7 +24,7 @@ return new class extends Migration
             $table->id('sys_approval_id');
             
             // Polymorphic relationship
-            $table->string('model'); // Class name (e.g., 'App\Models\Pemutu\Dokumen')
+            $table->string('model'); // Class name (e.g., 'App\Models\SomeModel')
             $table->unsignedBigInteger('model_id');
             
             // Approver info

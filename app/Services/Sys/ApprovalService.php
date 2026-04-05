@@ -335,18 +335,13 @@ class ApprovalService
 
     /**
      * Get verify URL based on model type
-     * 
+     *
      * @param  Model  $model
      * @return string
      */
     private function getVerifyUrl(Model $model): string
     {
-        // Default to Pemutu route, can be extended for other modules
-        if ($model instanceof \App\Models\Pemutu\Dokumen) {
-            return route('pemutu.dokumen.verify', $model->encrypted_dok_id ?? $model->id);
-        }
-        
-        // Add more routes for other modules as needed
-        return route('pemutu.dokumen.verify', $model->id);
+        // Pemutu module deleted - fallback to generic path
+        return '/';
     }
 }
