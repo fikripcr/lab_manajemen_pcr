@@ -2,8 +2,7 @@
 
 @php
     $currentRoute = request()->route()?->getName() ?? '';
-    
-    $isPemutu = \Illuminate\Support\Str::startsWith($currentRoute, 'pemutu.');
+
     $isHr = \Illuminate\Support\Str::startsWith($currentRoute, 'hr.');
     $isLab = \Illuminate\Support\Str::startsWith($currentRoute, 'lab.');
     $isKegiatan = \Illuminate\Support\Str::startsWith($currentRoute, 'Kegiatan.');
@@ -15,7 +14,7 @@
     $isCms = \Illuminate\Support\Str::startsWith($currentRoute, 'cms.');
 
     // General context (Dashboard or System pages)
-    $isSys = !$isPemutu && !$isHr && !$isLab && !$isKegiatan && !$isPmb && !$isEoffice && !$isCbt && !$isSurvei && !$isProject && !$isCms;
+    $isSys = !$isHr && !$isLab && !$isKegiatan && !$isPmb && !$isEoffice && !$isCbt && !$isSurvei && !$isProject && !$isCms;
 @endphp
 
 @if($type === 'sidebar')
@@ -36,7 +35,6 @@
             {{-- Inside a Module: Show Module-Specific immersive menu --}}
             <li class="nav-divider my-2"></li>
 
-            @if($isPemutu) <x-tabler.menu-pemutu :type="$type" /> @endif
             @if($isHr) <x-tabler.menu-hr :type="$type" /> @endif
             @if($isLab) <x-tabler.menu-lab :type="$type" /> @endif
             @if($isKegiatan) <x-tabler.menu-kegiatan :type="$type" /> @endif

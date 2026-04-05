@@ -70,6 +70,5 @@ class AppServiceProvider extends ServiceProvider
 
         // Global Notification Composer
         View::composer('layouts.tabler.header', \App\View\Composers\NotificationComposer::class);
-        View::composer('layouts.tabler.header', \App\View\Composers\SiklusSpmiComposer::class);
     }
 }

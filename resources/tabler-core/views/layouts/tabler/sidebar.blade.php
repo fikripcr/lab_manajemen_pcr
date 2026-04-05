@@ -46,11 +46,7 @@
 
         {{-- 4. COLLAPSE with NAVBAR MENU --}}
         <div class="collapse navbar-collapse overflow-y-auto" id="sidebar-menu">
-            @if(request()->routeIs('pemutu.*'))
-                <x-tabler.menu-pemutu type="sidebar" group="pemutu" />
-            @else
-                <x-tabler.menu-renderer type="sidebar" group="admin" />
-            @endif
+            <x-tabler.menu-renderer type="sidebar" group="admin" />
         </div>
     </div>
 </aside>

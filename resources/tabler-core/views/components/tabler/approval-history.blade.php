@@ -59,12 +59,12 @@
 
                         @if($canModify)
                             <div class="mt-3">
-                                <x-tabler.button 
-                                    class="btn-sm btn-animate-icon btn-outline ajax-modal-btn" 
-                                    text=" Set Persetujuan" 
+                                <x-tabler.button
+                                    class="btn-sm btn-animate-icon btn-outline ajax-modal-btn"
+                                    text=" Set Persetujuan"
                                     icon="ti ti-edit"
-                                    :data-url="route('pemutu.approval.show', $approval->encrypted_sys_approval_id)"
-                                    data-modal-title="Eksekusi Persetujuan" 
+                                    :data-url="route('hr.approval.show', $approval->encrypted_sys_approval_id)"
+                                    data-modal-title="Eksekusi Persetujuan"
                                 />
                             </div>
                         @endif

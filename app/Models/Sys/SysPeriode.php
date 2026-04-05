@@ -10,14 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Model SysPeriode - Global Period/Milestone Management
- * 
+ *
  * Digunakan untuk mengelola periode/milestone di berbagai modul:
- * - Pemutu (SPMI, KPI)
  * - PMB (Pendaftaran)
  * - Eoffice (Layanan)
  * - Event (Event periods)
  * - Dan modul lainnya
- * 
+ *
  * ## Usage Example:
  * 
  * ```php

@@ -20,7 +20,6 @@ class DocumentationService
     protected array $allowedDirectories;
 
     protected array $categoryIcons = [
-        'pemutu' => 'ti ti-target',
         'hr' => 'ti ti-users',
         'pmb' => 'ti ti-user-plus',
         'lab' => 'ti ti-flask',
@@ -31,7 +30,6 @@ class DocumentationService
     ];
 
     protected array $categoryNames = [
-        'pemutu' => 'Penjaminan Mutu (SPMI)',
         'hr' => 'Human Resource',
         'pmb' => 'Penerimaan Mahasiswa Baru',
         'lab' => 'Laboratorium',

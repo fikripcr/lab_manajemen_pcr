@@ -8,12 +8,12 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * 
+     *
      * Create consolidated Sys tables for GLOBAL system components:
      * - sys_approvals: Polymorphic approval workflow
      * - sys_periodes: Period/milestone management
-     * 
-     * Used across all modules: Pemutu, HR, PMB, Lab, Event, Eoffice, etc.
+     *
+     * Used across all modules: HR, PMB, Lab, Event, Eoffice, etc.
      */
     public function up(): void
     {

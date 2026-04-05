@@ -11,14 +11,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Model SysApproval - Global Approval System
- * 
+ *
  * Digunakan untuk tracking approval workflow di berbagai modul (polymorphic):
- * - Pemutu (Dokumen SPMI)
  * - HR (Perizinan, Lembur)
  * - PMB (Pendaftaran)
  * - Lab (Request Software, Surat Bebas, Kegiatan)
  * - Dan modul lainnya
- * 
+ *
  * Status Flow:
  * 1. Draft → Approver ditetapkan tapi belum mulai approval
  * 2. Pending → Menunggu approval dari pegawai yang ditunjuk (DEFAULT saat create)

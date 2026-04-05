@@ -31,11 +31,8 @@ class RapatEntitasRequest extends BaseRequest
                 $modelId = $parts[1];
 
                 // Mapping short name to full class name
-                // Pemutu models deleted - only StrukturOrganisasi remains
                 $modelMap = [
-                    // 'IndikatorOrgUnit' => \App\Models\Pemutu\IndikatorOrgUnit::class, // deleted
                     'StrukturOrganisasi' => \App\Models\Hr\StrukturOrganisasi::class,
-                    // 'Indikator' => \App\Models\Pemutu\Indikator::class, // deleted
                 ];
 
                 $modelClass = $modelMap[$modelShortName] ?? $modelShortName;

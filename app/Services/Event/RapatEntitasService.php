@@ -5,7 +5,6 @@ namespace App\Services\Event;
 use App\Models\Event\Rapat;
 use App\Models\Event\RapatEntitas;
 use App\Models\Hr\StrukturOrganisasi;
-// Pemutu models deleted
 use Illuminate\Support\Facades\DB;
 
 class RapatEntitasService
@@ -54,8 +53,6 @@ class RapatEntitasService
 
             $rawJson = null;
 
-            // Pemutu models deleted - these branches are no longer functional
-            // if ($model === IndikatorOrgUnit::class) { ... }
             if ($model === StrukturOrganisasi::class) {
                 $item = StrukturOrganisasi::find($modelId);
                 if ($item) {
@@ -66,7 +63,6 @@ class RapatEntitasService
                     ];
                 }
             }
-            // else if ($model === Indikator::class) { ... }
 
             $data['raw_json'] = $rawJson;
         }
@@ -95,7 +91,6 @@ class RapatEntitasService
             return compact('selectedEntityId', 'selectedEntityText');
         }
 
-        // Pemutu models deleted - only StrukturOrganisasi remains
         if ($entitas->model === StrukturOrganisasi::class) {
             $item = StrukturOrganisasi::find($entitas->model_id);
             if ($item) {
@@ -114,7 +109,6 @@ class RapatEntitasService
     {
         $modelName = class_basename($row->model);
 
-        // Pemutu models deleted - only StrukturOrganisasi remains
         if ($row->model === StrukturOrganisasi::class) {
             $item = StrukturOrganisasi::find($row->model_id);
 

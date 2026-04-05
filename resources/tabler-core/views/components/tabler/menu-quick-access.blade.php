@@ -2,7 +2,6 @@
 
 @php
     $modules = [
-        ['title' => 'Penjaminan Mutu', 'route' => 'pemutu.dashboard', 'icon' => 'shield-check'],
         ['title' => 'SDM / HR', 'route' => 'hr.dashboard', 'icon' => 'users'],
         ['title' => 'Layanan Lab', 'route' => 'lab.dashboard', 'icon' => 'flask'],
         ['title' => 'Kegiatan & Rapat', 'route' => 'Kegiatan.Kegiatans.index', 'icon' => 'calendar-event'],

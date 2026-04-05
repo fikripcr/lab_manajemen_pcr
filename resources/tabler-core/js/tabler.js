@@ -36,8 +36,6 @@ import './core-alerts.js';
 import './core-ajax.js';
 
 // --- Module Helpers ---
-import '../../js/helpers/pemutu-workspace.js';
-import '../../js/helpers/pemutu-indikator.js';
 import '../../js/helpers/projects-kanban.js';
 import '../../js/helpers/hr-pegawai.js';
 import '../../js/helpers/tab-persistence.js';
@@ -460,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         allowClear: true,
                         minimumInputLength: 3,
                         ajax: {
-                            url: config.url || '/pemutu/tim-mutu/search-pegawai',
+                            url: config.url || '/hr/pegawai/search',
                             dataType: 'json',
                             delay: 300,
                             data: function (params) {

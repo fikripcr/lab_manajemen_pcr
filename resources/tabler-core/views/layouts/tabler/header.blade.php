@@ -33,27 +33,6 @@
 
             {{-- Right Side Navigation --}}
             <div class="navbar-nav flex-row order-md-last">
-                {{-- Siklus SPMI Year Selector --}}
-                @if(isset($globalSiklus) && $globalSiklus['years']->isNotEmpty())
-                <div class="nav-item dropdown d-none d-md-flex me-3">
-                    <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1" aria-label="Siklus SPMI">
-                        <x-tabler.icon-svg name="calendar-event" class="icon me-2" />
-                        <span class="d-none d-lg-inline">Siklus/Tahun: <strong>{{ $globalSiklus['tahun'] }}</strong></span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                        <div class="dropdown-header">Pilih Siklus SPMI</div>
-                        @foreach($globalSiklus['years'] as $yr)
-                        <form action="{{ route('pemutu.set-siklus') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="siklus_tahun" value="{{ $yr }}">
-                            <button type="submit" class="dropdown-item {{ $yr == $globalSiklus['tahun'] ? 'active' : '' }}">
-                                Tahun {{ $yr }}
-                            </button>
-                        </form>
-                        @endforeach
-                    </div>
-                </div>
-                @endif
                 {{-- Apps Dropdown --}}
                 <div class="nav-item dropdown flex">
                     <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1" aria-label="Show apps">
@@ -94,12 +73,6 @@
                                         <a href="{{ route('Kegiatan.Kegiatans.index') }}" class="d-flex flex-column align-items-center justify-content-center text-center text-primary py-2 px-2 link-hoverable">
                                             <x-tabler.icon-svg name="calendar-star" class="icon mb-2" />
                                             <h5>Kegiatan</h5>
-                                        </a>
-                                    </div>
-                                    <div class="col-4">
-                                        <a href="{{ route('pemutu.dashboard') }}" class="d-flex flex-column align-items-center justify-content-center text-center text-primary py-2 px-2 link-hoverable">
-                                            <x-tabler.icon-svg name="checkbox" class="icon mb-2" />
-                                            <h5>Pemutu</h5>
                                         </a>
                                     </div>
                                     <div class="col-4">

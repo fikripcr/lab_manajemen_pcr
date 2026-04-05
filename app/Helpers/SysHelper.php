@@ -415,7 +415,7 @@ if (! function_exists('downloadStorageFile')) {
      * Menggantikan pola manual response()->download() yang tersebar di controller.
      * Semua validasi, MIME type detection, dan sanitasi nama file ditangani di sini.
      *
-     * @param  string|null  $storagePath  Path relatif dari hasil ->store() (misal: "public/pemutu/ed-attachments/file.pdf")
+     * @param  string|null  $storagePath  Path relatif dari hasil ->store() (misal: "public/attachments/file.pdf")
      * @param  string|null  $downloadFilename  Nama file yang diterima user saat download. Jika null, gunakan nama asli.
      * @param  bool  $logActivity  Apakah perlu log aktivitas download (default: false)
      * @return \Symfony\Component\HttpFoundation\StreamedResponse

@@ -120,13 +120,6 @@ class StrukturOrganisasi extends Model
         return $this->hasOne(StrukturOrganisasi::class, 'successor_id', 'orgunit_id');
     }
 
-    // Relationship removed - Pemutu\Indikator model was deleted
-    // public function indikators()
-    // {
-    //     return $this->belongsToMany(Indikator::class, 'pemutu_indikator_orgunit', 'org_unit_id', 'indikator_id')
-    //         ->withPivot('target', 'ed_capaian', 'ed_analisis', 'created_at');
-    // }
-
     public function auditee()
     {
         return $this->belongsTo(\App\Models\User::class, 'auditee_user_id', 'id');

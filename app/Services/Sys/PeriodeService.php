@@ -8,14 +8,13 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Global Periode Service - Period/Milestone Management
- * 
+ *
  * Digunakan untuk mengelola periode di berbagai modul:
- * - Pemutu (SPMI, KPI)
  * - PMB (Pendaftaran)
  * - Eoffice (Layanan)
  * - Event (Event periods)
  * - Dan modul lainnya
- * 
+ *
  * @package App\Services\Sys
  */
 class PeriodeService

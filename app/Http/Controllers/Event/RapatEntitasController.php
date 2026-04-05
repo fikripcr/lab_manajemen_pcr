@@ -8,7 +8,6 @@ use App\Models\Event\Rapat;
 use App\Models\Event\RapatEntitas;
 use App\Services\Event\RapatEntitasService;
 use App\Models\Hr\StrukturOrganisasi;
-// Pemutu models deleted
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -53,9 +52,6 @@ class RapatEntitasController extends Controller
 
         $results = collect();
 
-        // Pemutu models deleted - only StrukturOrganisasi remains
-        // IndikatorOrgUnit search removed
-
         // Unit Kerja
         $units = StrukturOrganisasi::query()
             ->where('name', 'like', "%{$q}%")
@@ -69,8 +65,6 @@ class RapatEntitasController extends Controller
                 ];
             });
         $results = $results->concat($units);
-
-        // Indikator search removed (Pemutu model deleted)
 
         return response()->json(['results' => $results->take(30)]);
     }

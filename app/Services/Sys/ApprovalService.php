@@ -9,14 +9,13 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Global Approval Service - Polymorphic Approval Management
- * 
+ *
  * Digunakan untuk mengelola approval workflow di berbagai modul:
- * - Pemutu (Dokumen SPMI)
  * - HR (Perizinan, Lembur)
  * - PMB (Pendaftaran)
  * - Lab (Request Software, Surat Bebas, Kegiatan)
  * - Dan modul lainnya
- * 
+ *
  * ## Usage Example:
  * 
  * ```php
@@ -341,7 +340,7 @@ class ApprovalService
      */
     private function getVerifyUrl(Model $model): string
     {
-        // Pemutu module deleted - fallback to generic path
+        // Fallback to generic path
         return '/';
     }
 }
