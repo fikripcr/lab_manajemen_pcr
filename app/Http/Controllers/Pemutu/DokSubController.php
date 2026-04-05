@@ -16,7 +16,9 @@ class DokSubController extends Controller
     public function __construct(
         protected DokSubService $dokSubService,
         protected DokumenService $dokumenService,
-    ) {}
+    ) {
+        $this->middleware('permission:pemutu.dokumen.view')->only(['show']);
+    }
 
     public function show(DokSub $dokSub)
     {

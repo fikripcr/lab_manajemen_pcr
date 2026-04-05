@@ -2,18 +2,15 @@
 
 use App\Http\Controllers\Pemutu\ApprovalController;
 use App\Http\Controllers\Pemutu\DashboardController;
-use App\Http\Controllers\Pemutu\DokumenApprovalController;
 use App\Http\Controllers\Pemutu\DokumenController;
-use App\Http\Controllers\Pemutu\DokumenSpmiController;
 use App\Http\Controllers\Pemutu\FiveYearSummaryController;
+use App\Http\Controllers\Pemutu\SummaryController;
 use App\Http\Controllers\Pemutu\IndikatorController;
-use App\Http\Controllers\Pemutu\IndikatorSummaryController;
 use App\Http\Controllers\Pemutu\LabelController;
 use App\Http\Controllers\Pemutu\PegawaiController;
 use App\Http\Controllers\Pemutu\PelaksanaanController;
 use App\Http\Controllers\Pemutu\PeriodeKpiController;
 use App\Http\Controllers\Pemutu\PeriodeSpmiController;
-use App\Http\Controllers\Pemutu\RenopController;
 use App\Http\Controllers\Pemutu\StandarController;
 use App\Http\Controllers\Pemutu\TimMutuController;
 use Illuminate\Support\Facades\Route;
@@ -22,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 // 🔹 SPMI (PEMTU) Public Routes
 // ==========================
 Route::prefix('pemutu')->name('pemutu.')->group(function () {
-    Route::get('dokumen/verify/{dokumen}', [\App\Http\Controllers\Pemutu\DokumenApprovalController::class, 'verify'])->name('dokumen.verify');
+    Route::get('dokumen/verify/{dokumen}', [\App\Http\Controllers\Pemutu\DokumenController::class, 'verify'])->name('dokumen.verify');
 });
 
 // ==========================
@@ -34,10 +31,9 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::get('/dashboard/hierarchy/{id}', [DashboardController::class, 'hierarchyNode'])->name('dashboard.hierarchy');
 
     // 5-Year Historical Summary (PPEPP Timeline)
-    Route::get('/five-year-summary', [FiveYearSummaryController::class, 'index'])->name('five-year-summary.index');
-    Route::get('/five-year-summary/detail/{rootIndikatorId}', [FiveYearSummaryController::class, 'detail'])->name('five-year-summary.detail');
-    Route::get('/five-year-summary/unit-detail/{unitId}', [FiveYearSummaryController::class, 'unitDetail'])->name('five-year-summary.unit-detail');
-    Route::get('/five-year-summary/chart-data', [FiveYearSummaryController::class, 'chartData'])->name('five-year-summary.chart-data');
+    Route::get('/five-year-summary', [SummaryController::class, 'fiveYear'])->name('summary.five-year');
+    Route::get('/five-year-summary/detail/{rootIndikatorId}', [SummaryController::class, 'fiveYearDetail'])->name('summary.five-year-detail');
+    Route::get('/five-year-summary/chart-data', [SummaryController::class, 'fiveYearChartData'])->name('summary.five-year-chart');
 
     // Global Siklus SPMI Year Selector (session)
     Route::post('set-siklus', function (\Illuminate\Http\Request $request) {
@@ -62,7 +58,6 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     })->name('set-kelompok');
 
     // Periode KPI
-    Route::get('periode-kpi/data', [PeriodeKpiController::class, 'data'])->name('periode-kpi.data');
     Route::post('periode-kpi/{periodeKpi}/activate', [PeriodeKpiController::class, 'activate'])->name('periode-kpi.activate');
     Route::resource('periode-kpi', PeriodeKpiController::class);
 
@@ -77,47 +72,46 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::match(['get', 'post'], 'pegawai/import', [PegawaiController::class, 'import'])->name('pegawai.import');
     Route::resource('pegawai', PegawaiController::class);
 
-    // Dokumen & Structure (REFACTORED WORKSPACE)
+    // Dokumen & Workspace
     Route::post('dokumen/reorder', [DokumenController::class, 'reorder'])->name('dokumen.reorder');
-    Route::get('dokumen-spmi', [DokumenSpmiController::class, 'index'])->name('dokumen.index');
-    Route::get('dokumen-spmi/create', [DokumenSpmiController::class, 'create'])->name('dokumen-spmi.create');
-    Route::post('dokumen-spmi/store', [DokumenSpmiController::class, 'store'])->name('dokumen-spmi.store');
-    Route::get('dokumen-spmi/{type}/{id}', [DokumenSpmiController::class, 'show'])->name('dokumen-spmi.show');
-    Route::get('dokumen-spmi/{type}/{id}/edit', [DokumenSpmiController::class, 'edit'])->name('dokumen-spmi.edit');
-    Route::put('dokumen-spmi/{type}/{id}', [DokumenSpmiController::class, 'update'])->name('dokumen-spmi.update');
-    Route::delete('dokumen-spmi/{type}/{id}', [DokumenSpmiController::class, 'destroy'])->name('dokumen-spmi.destroy');
-    Route::get('dokumen-spmi/{type}/{id}/children', [DokumenSpmiController::class, 'childrenData'])->name('dokumen-spmi.children-data');
-    Route::post('dokumen-spmi/mapping-sync', [DokumenSpmiController::class, 'mappingSync'])->name('dokumen-spmi.mapping-sync');
-    Route::post('dokumen-spmi/{type}/{id}/upload-file', [DokumenSpmiController::class, 'uploadFile'])->name('dokumen-spmi.upload-file');
-    Route::delete('dokumen-spmi/{type}/{id}/file/{mediaId}', [DokumenSpmiController::class, 'deleteFile'])->name('dokumen-spmi.delete-file');
-    Route::get('dokumen-spmi/summary', [DokumenSpmiController::class, 'summary'])->name('dokumen-spmi.summary');
-    Route::get('dokumen-spmi/summary/{type}/{id}', [DokumenSpmiController::class, 'summaryData'])->name('dokumen-spmi.summary-data');
+    Route::get('dokumen', [DokumenController::class, 'index'])->name('dokumen.index');
+    Route::get('dokumen/create', [DokumenController::class, 'create'])->name('dokumen.create');
+    Route::post('dokumen', [DokumenController::class, 'store'])->name('dokumen.store');
+    Route::get('dokumen/{type}/{id}', [DokumenController::class, 'show'])->name('dokumen.show');
+    Route::get('dokumen/{type}/{id}/edit', [DokumenController::class, 'edit'])->name('dokumen.edit');
+    Route::put('dokumen/{type}/{id}', [DokumenController::class, 'update'])->name('dokumen.update');
+    Route::delete('dokumen/{type}/{id}', [DokumenController::class, 'destroy'])->name('dokumen.destroy');
+    Route::get('dokumen/{type}/{id}/children', [DokumenController::class, 'childrenData'])->name('dokumen.children-data');
+    Route::post('dokumen/mapping-sync', [DokumenController::class, 'mappingSync'])->name('dokumen.mapping-sync');
+    Route::post('dokumen/{type}/{id}/upload-file', [DokumenController::class, 'uploadFile'])->name('dokumen.upload-file');
+    Route::delete('dokumen/{type}/{id}/file/{mediaId}', [DokumenController::class, 'deleteFile'])->name('dokumen.delete-file');
+    Route::get('dokumen/{type}/{id}/export', [DokumenController::class, 'export'])->name('dokumen.export');
+    Route::get('dokumen/summary', [DokumenController::class, 'summary'])->name('dokumen.summary');
+    Route::get('dokumen/summary/{type}/{id}', [DokumenController::class, 'summaryData'])->name('dokumen.summary-data');
 
-    // Sub-Documents (DokSub) - Handled dynamically by DokumenSpmiController now
-    // Route::get('dok-subs/{dokumen}/data', [DokSubController::class, 'data'])->name('dok-subs.data');
-    // Route::resource('dok-subs', DokSubController::class);
+    // Document Approvals
+    Route::get('dokumen/{dokumen}/approve', [DokumenController::class, 'approveCreate'])->name('dokumen.approve.create');
+    Route::post('dokumen/{dokumen}/approve', [DokumenController::class, 'approveStore'])->name('dokumen.approve');
+    Route::delete('dokumen/approval/{approval}', [DokumenController::class, 'approveDestroy'])->name('dokumen.approval.destroy');
+    Route::get('dokumen/verify/{dokumen}', [DokumenController::class, 'verify'])->name('dokumen.verify');
 
     // Indikator
     Route::get('api/indikator', [IndikatorController::class, 'data'])->name('indikator.data');
     Route::get('api/indikator/search-doksub', [IndikatorController::class, 'searchDoksub'])->name('indikator.search-doksub');
     Route::resource('indikator', IndikatorController::class);
 
-    // Indikator Summary (NEW - with separate routes for Standar and Performa)
-    Route::get('indikator-summary', [IndikatorSummaryController::class, 'index'])->name('indikator-summary.index');
-
-    // Indikator Standar (ED, AMI, Pengendalian)
-    Route::get('indikator-summary/standar', [IndikatorSummaryController::class, 'standar'])->name('indikator-summary.standar');
-    Route::get('indikator-summary/standar/data', [IndikatorSummaryController::class, 'dataStandar'])->name('indikator-summary.data-standar');
-    Route::get('indikator-summary/standar/count', [IndikatorSummaryController::class, 'summaryCount'])->name('indikator-summary.summary-count');
-
-    // Indikator Performa (KPI)
-    Route::get('indikator-summary/performa', [IndikatorSummaryController::class, 'performa'])->name('indikator-summary.performa');
-    Route::get('indikator-summary/performa/data', [IndikatorSummaryController::class, 'dataPerforma'])->name('indikator-summary.data-performa');
-    Route::get('indikator-summary/performa/count', [IndikatorSummaryController::class, 'summaryCountPerforma'])->name('indikator-summary.performa.summary-count');
-
-    // Shared routes
-    Route::get('indikator-summary/export', [IndikatorSummaryController::class, 'export'])->name('indikator-summary.export');
-    Route::get('indikator-summary/{indikator}', [IndikatorSummaryController::class, 'detail'])->name('indikator-summary.detail');
+    // Indikator Summary
+    Route::prefix('summary')->name('summary.')->group(function () {
+        Route::get('/', [SummaryController::class, 'index'])->name('index');
+        Route::get('/standar', [SummaryController::class, 'standar'])->name('standar');
+        Route::get('/standar/data', [SummaryController::class, 'dataStandar'])->name('data-standar');
+        Route::get('/standar/count', [SummaryController::class, 'summaryCount'])->name('summary-count');
+        Route::get('/performa', [SummaryController::class, 'performaIndex'])->name('performa');
+        Route::get('/performa/data', [SummaryController::class, 'dataPerforma'])->name('data-performa');
+        Route::get('/performa/count', [SummaryController::class, 'summaryCountPerforma'])->name('summary-count-performa');
+        Route::get('/export', [SummaryController::class, 'export'])->name('export');
+        Route::get('/{indikator}', [SummaryController::class, 'detail'])->name('detail');
+    });
 
     // Standar (Indikator Standar)
     Route::get('api/standar', [StandarController::class, 'data'])->name('standar.data');
@@ -126,19 +120,12 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::post('standar/{id}/assign', [App\Http\Controllers\Pemutu\StandarController::class, 'storeAssignment'])->name('standar.assign.store');
     Route::resource('standar', App\Http\Controllers\Pemutu\StandarController::class);
 
-    // Document Approvals
-    Route::get('dokumen/{dokumen}/approve', [DokumenApprovalController::class, 'create'])->name('dokumen.approve.create');
-    // ...
-    Route::post('dokumen/{dokumen}/approve', [DokumenApprovalController::class, 'store'])->name('dokumen.approve');
-    Route::delete('dokumen/approval/{approval}', [DokumenApprovalController::class, 'destroy'])->name('dokumen.approval.destroy');
-
     // Pegawai Approval Inbox
     Route::get('approval', [ApprovalController::class, 'index'])->name('approval.index');
     Route::get('approval/{id}', [ApprovalController::class, 'show'])->name('approval.show');
     Route::post('approval/{id}/process', [ApprovalController::class, 'process'])->name('approval.process');
 
     // Period SPMI (PEPP Cycle)
-    Route::get('api/periode-spmi', [PeriodeSpmiController::class, 'data'])->name('periode-spmi.data');
     Route::resource('periode-spmi', PeriodeSpmiController::class);
 
     // Tim Mutu
@@ -149,11 +136,6 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::post('tim-mutu/{periode}/unit/{unit}/auditee', [TimMutuController::class, 'storeAuditee'])->name('tim-mutu.store-auditee');
     Route::get('tim-mutu/{periode}/unit/{unit}/edit-auditor', [TimMutuController::class, 'editAuditor'])->name('tim-mutu.edit-auditor');
     Route::post('tim-mutu/{periode}/unit/{unit}/auditor', [TimMutuController::class, 'storeAuditor'])->name('tim-mutu.store-auditor');
-
-    // Renop (Rencana Operasional)
-    Route::get('renop/create', [RenopController::class, 'create'])->name('renop.create');
-    Route::post('renop', [RenopController::class, 'store'])->name('renop.store');
-    Route::get('renop', [RenopController::class, 'index'])->name('renop.index');
 
     // Pemantauan (Shortened URI)
     Route::get('pemantauan', [PelaksanaanController::class, 'pemantauanIndex'])->name('pemantauan.index');

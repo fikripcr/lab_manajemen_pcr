@@ -13,12 +13,15 @@ use App\Services\Pemutu\AmiExportService;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\IndikatorOrgUnitService;
 use App\Services\Pemutu\PeriodeSpmiService;
+use App\Traits\ScopesTimMutu;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class AmiController extends Controller
 {
+    use ScopesTimMutu;
+
     public function __construct(
         protected AmiExportService $amiExportService,
         protected PeriodeSpmiService $periodeSpmiService,
@@ -26,7 +29,14 @@ class AmiController extends Controller
         protected IndikatorOrgUnitService $indikatorOrgUnitService,
         protected StrukturOrganisasiService $strukturOrganisasiService,
         protected DokumenService $dokumenService,
-    ) {}
+    ) {
+        $this->middleware('permission:pemutu.ami.view')->only(['index', 'data', 'detail', 'teData']);
+        $this->middleware('permission:pemutu.ami.fill')->only(['submitNilai']);
+        $this->middleware('permission:pemutu.ami.rtp-edit')->only(['editRtp', 'updateRtp']);
+        $this->middleware('permission:pemutu.ami.te-fill')->only(['editTe', 'updateTe']);
+        $this->middleware('permission:pemutu.ami.diskusi')->only(['diskusi']);
+        $this->middleware('permission:pemutu.ami.export')->only(['exportPtk', 'exportTemuanAudit', 'exportTemuanPositif']);
+    }
 
     /**
      * Daftar periode SPMI untuk AMI.
@@ -112,11 +122,13 @@ class AmiController extends Controller
             ->addColumn('action', function ($row) use ($periode) {
                 $pivot        = $row->orgUnits->first()?->pivot;
                 $indikorgunit = $pivot?->indikorgunit_id;
+                $unitId       = $pivot?->org_unit_id;
                 $periodeInfo  = pemutuPeriodeStatus($periode->ami_awal, $periode->ami_akhir);
+                $canEdit      = $this->canEditUnit($unitId);
 
                 if ($indikorgunit) {
                     $url = route('pemutu.ami.detail', encryptId($indikorgunit));
-                    if ($periodeInfo['is_active']) {
+                    if ($periodeInfo['is_active'] && $canEdit) {
                         return '<a href="' . $url . '" class="btn btn-sm btn-primary"><i class="ti ti-edit me-1"></i>Isi</a>';
                     } else {
                         return '<a href="' . $url . '?readonly=1" class="btn btn-sm btn-outline-secondary"><i class="ti ti-eye me-1"></i>Detail</a>';
@@ -139,9 +151,11 @@ class AmiController extends Controller
             })
             ->addColumn('action_rtp', function ($row) use ($periode) {
                 $pivot = $row->orgUnits->first()?->pivot;
+                $unitId = $pivot?->org_unit_id;
+                $canEdit = $this->canEditUnit($unitId);
 
                 // Hanya muncul jika hasil AMI adalah KTS (0)
-                if ($pivot?->ami_hasil_akhir === 0) {
+                if ($pivot?->ami_hasil_akhir === 0 && $canEdit) {
                     $indikorgunit = $pivot->indikorgunit_id;
                     $hasRtp       = ! empty($pivot->ami_rtp_isi);
                     $periodeInfo  = pemutuPeriodeStatus($periode->ami_awal, $periode->ami_akhir);
@@ -191,7 +205,14 @@ class AmiController extends Controller
      */
     public function submitNilai(AmiRequest $request, string $id)
     {
-        $indOrg = $this->indikatorOrgUnitService->updatePivotData($id, $request->validated(), 'Submit penilaian AMI');
+        $indOrg = IndikatorOrgUnit::findOrFail(decryptIdIfEncrypted($id));
+
+        // Check if user can edit this unit based on Tim Mutu assignments
+        if (! $this->canEditUnit($indOrg->org_unit_id)) {
+            return jsonError('Anda tidak memiliki akses untuk mengisi AMI unit ini.');
+        }
+
+        $indOrg = $this->indikatorOrgUnitService->updatePivotData($indOrg->indikorgunit_id, $request->validated(), 'Submit penilaian AMI');
 
         return jsonSuccess('Penilaian AMI berhasil disimpan.', route('pemutu.ami.detail', $indOrg->encrypted_indorgunit_id));
     }
@@ -209,7 +230,14 @@ class AmiController extends Controller
      */
     public function updateRtp(RtpRequest $request, string $id)
     {
-        $this->indikatorOrgUnitService->updatePivotData($id, $request->validated(), 'Update RTP AMI');
+        $indOrg = IndikatorOrgUnit::findOrFail(decryptIdIfEncrypted($id));
+
+        // Check if user can edit this unit based on Tim Mutu assignments
+        if (! $this->canEditUnit($indOrg->org_unit_id)) {
+            return jsonError('Anda tidak memiliki akses untuk mengisi RTP unit ini.');
+        }
+
+        $this->indikatorOrgUnitService->updatePivotData($indOrg->indikorgunit_id, $request->validated(), 'Update RTP AMI');
 
         return jsonSuccess('Rencana Tindakan Perbaikan (RTP) berhasil disimpan.');
     }
@@ -252,13 +280,19 @@ class AmiController extends Controller
             })
             ->addColumn('action', function ($row) {
                 $indOrgId = $row->orgUnits->first()->pivot->indikorgunit_id;
+                $unitId = $row->orgUnits->first()->pivot->org_unit_id ?? null;
+                $canEdit = $this->canEditUnit($unitId);
 
-                return '<button type="button" class="btn btn-sm btn-info ajax-modal-btn"
-                    data-url="' . route('pemutu.ami.te-edit', encryptId($indOrgId)) . '"
-                    data-modal-title="Isi Tinjauan Efektivitas (TE)"
-                    data-modal-size="modal-lg">
-                    <i class="ti ti-check me-1"></i>Isi
-                </button>';
+                if ($canEdit) {
+                    return '<button type="button" class="btn btn-sm btn-info ajax-modal-btn"
+                        data-url="' . route('pemutu.ami.te-edit', encryptId($indOrgId)) . '"
+                        data-modal-title="Isi Tinjauan Efektivitas (TE)"
+                        data-modal-size="modal-lg">
+                        <i class="ti ti-check me-1"></i>Isi
+                    </button>';
+                }
+
+                return '<span class="text-muted small">-</span>';
             })
             ->rawColumns(['no', 'indikator_full', 'target', 'rtp', 'ptp', 'te', 'action'])
             ->make(true);
@@ -277,8 +311,13 @@ class AmiController extends Controller
      */
     public function updateTe(TeRequest $request, string $id)
     {
-        // Add updateTe method to IndikatorService if not exists
-        $indOrg = $this->indikatorOrgUnitService->findIndikatorOrgUnit($id);
+        $indOrg = IndikatorOrgUnit::findOrFail(decryptIdIfEncrypted($id));
+
+        // Check if user can edit this unit based on Tim Mutu assignments
+        if (! $this->canEditUnit($indOrg->org_unit_id)) {
+            return jsonError('Anda tidak memiliki akses untuk mengisi TE unit ini.');
+        }
+
         $indOrg->update(['ami_te_isi' => $request->validated()['ami_te_isi']]);
 
         return jsonSuccess('Tinjauan Efektivitas (TE) berhasil disimpan.');

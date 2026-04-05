@@ -80,14 +80,19 @@ $columns = [
                                 data-approval="true"
                             />
                         @endif
-                        
+
+                        {{-- Export DOCX Button --}}
+                        <a href="{{ route('pemutu.dokumen.export', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id]) }}" class="btn btn-sm btn-outline-primary" title="Export ke DOCX">
+                            <i class="ti ti-file-export me-1"></i> Export
+                        </a>
+
                         @if($canModify)
                             {{-- Edit Button --}}
                             <x-tabler.button 
                                 type="edit" 
                                 class="btn-sm btn-secondary ajax-modal-btn me-0" 
                                 icon="ti ti-edit"
-                                :data-url="route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id, 'mode' => 'title'])"
+                                :data-url="route('pemutu.dokumen.edit', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id, 'mode' => 'title'])"
                                 data-modal-title="Ubah Judul Dokumen" 
                             />
                             
@@ -96,7 +101,7 @@ $columns = [
                                 type="delete" 
                                 class="btn-sm ajax-delete" 
                                 icon="ti ti-trash"
-                                :data-url="route('pemutu.dokumen-spmi.destroy', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id])"
+                                :data-url="route('pemutu.dokumen.destroy', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id])"
                                 data-title="Hapus Dokumen ini?" 
                             />
                         @endif
@@ -125,7 +130,7 @@ $columns = [
                                 class="btn-sm btn-secondary ajax-modal-btn me-0" 
                                 text="" 
                                 icon="ti ti-edit"
-                                :data-url="route('pemutu.dokumen-spmi.edit', ['type' => 'poin', 'id' => $item->encrypted_doksub_id])"
+                                :data-url="route('pemutu.dokumen.edit', ['type' => 'poin', 'id' => $item->encrypted_doksub_id])"
                                 data-modal-title="Ubah Poin"
                                 data-modal-size="modal-xl" 
                             />
@@ -136,7 +141,7 @@ $columns = [
                                 class="btn-sm ajax-delete" 
                                 text="" 
                                 icon="ti ti-trash"
-                                :data-url="route('pemutu.dokumen-spmi.destroy', ['type' => 'poin', 'id' => $item->encrypted_doksub_id])"
+                                :data-url="route('pemutu.dokumen.destroy', ['type' => 'poin', 'id' => $item->encrypted_doksub_id])"
                                 data-title="Hapus Poin ini?" 
                             />
                         @endif
@@ -210,7 +215,7 @@ $columns = [
                         <h4 class="m-0 text-muted fw-medium">Isi {{ $type === 'poin' ? 'Poin' : 'Dokumen' }}</h4>
                         @if($canModify)
                             <x-tabler.button type="edit" class="btn-sm btn-outline-secondary ajax-modal-btn me-0" 
-                                data-url="{{ route('pemutu.dokumen-spmi.edit', ['type' => $type, 'id' => ($type === 'poin' ? $item->encrypted_doksub_id : $item->encrypted_dok_id), 'mode' => 'content']) }}"
+                                data-url="{{ route('pemutu.dokumen.edit', ['type' => $type, 'id' => ($type === 'poin' ? $item->encrypted_doksub_id : $item->encrypted_dok_id), 'mode' => 'content']) }}"
                                 data-modal-title="Ubah Isi {{ $type === 'poin' ? 'Poin' : 'Dokumen' }}"
                                 data-modal-size="modal-xl" />
                         @endif
@@ -260,7 +265,7 @@ $columns = [
                                             <x-tabler.button icon="ti ti-download" class="btn-sm btn-outline-secondary px-2" href="{{ $media->getUrl() }}" target="_blank" title="Download" />
                                             @if($canModify)
                                                 <x-tabler.button type="delete" class="btn-sm btn-outline-danger btn-delete-file" 
-                                                    data-url="{{ route('pemutu.dokumen-spmi.delete-file', ['type' => $type, 'id' => ($type === 'poin' ? $item->encrypted_doksub_id : $item->encrypted_dok_id), 'mediaId' => $media->id]) }}" />
+                                                    data-url="{{ route('pemutu.dokumen.delete-file', ['type' => $type, 'id' => ($type === 'poin' ? $item->encrypted_doksub_id : $item->encrypted_dok_id), 'mediaId' => $media->id]) }}" />
                                             @endif
                                         </td>
                                     </tr>
@@ -283,7 +288,7 @@ $columns = [
                     <x-slot:footer>
                         <x-tabler.button type="cancel" data-bs-dismiss="modal" />
                         <x-tabler.button class="btn-primary ms-auto" icon="ti ti-upload" text="Upload" id="btn-upload-file" 
-                            data-url="{{ route('pemutu.dokumen-spmi.upload-file', ['type' => $type, 'id' => ($type === 'poin' ? $item->encrypted_doksub_id : $item->encrypted_dok_id)]) }}" />
+                            data-url="{{ route('pemutu.dokumen.upload-file', ['type' => $type, 'id' => ($type === 'poin' ? $item->encrypted_doksub_id : $item->encrypted_dok_id)]) }}" />
                     </x-slot:footer>
                 </x-tabler.form-modal>
             </div>
@@ -305,7 +310,7 @@ $columns = [
                             <x-tabler.card-header title="Daftar Indikator RENOP"/>
                             <x-tabler.datatable
                                 id="indikator-renop-table"
-                                :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'renop_indikator', 'id' => $item->encrypted_dok_id])"
+                                :url="route('pemutu.dokumen.children-data', ['type' => 'renop_indikator', 'id' => $item->encrypted_dok_id])"
                                 :columns="$columns['indikator']"
                                 ajax-load />
                         </x-tabler.card>
@@ -317,7 +322,7 @@ $columns = [
                             @if($canModify)
                                 <x-tabler.button type="create" class="ajax-modal-btn"
                                         text="Tambah {{ $childLabel ?? 'Turunan' }}"
-                                        data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => $isDokSubBased ? 'poin' : 'dokumen', 'parent_id' => $item->encrypted_dok_id]) }}"
+                                        data-url="{{ route('pemutu.dokumen.create', ['type' => $isDokSubBased ? 'poin' : 'dokumen', 'parent_id' => $item->encrypted_dok_id]) }}"
                                         data-modal-title="Tambah {{ $childLabel ?? 'Turunan' }}"
                                         data-modal-size="{{ $isDokSubBased ? 'modal-lg' : 'modal-md' }}"
                                         size="sm" />
@@ -325,7 +330,7 @@ $columns = [
                         </div>
                         <x-tabler.datatable
                             id="children-table"
-                            :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id])"
+                            :url="route('pemutu.dokumen.children-data', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id])"
                             :columns="$columns['children']"
                             ajax-load />
                     </div>
@@ -352,7 +357,7 @@ $columns = [
                                 </x-tabler.card-header>
                                 <x-tabler.datatable
                                     id="indikators-table"
-                                    :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'poin_indikator', 'id' => $item->encrypted_doksub_id])"
+                                    :url="route('pemutu.dokumen.children-data', ['type' => 'poin_indikator', 'id' => $item->encrypted_doksub_id])"
                                     :columns="$columns['indikator']"
                                     ajax-load />
                             </x-tabler.card>
@@ -365,14 +370,14 @@ $columns = [
                                         @if($canModify)
                                             <x-tabler.button type="create" class="ajax-modal-btn"
                                                 text="Tambah Dokumen Turunan"
-                                                data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'parent_doksub_id' => $item->encrypted_doksub_id, 'parent_id' => $item->encrypted_dok_id]) }}"
+                                                data-url="{{ route('pemutu.dokumen.create', ['type' => 'dokumen', 'parent_doksub_id' => $item->encrypted_doksub_id, 'parent_id' => $item->encrypted_dok_id]) }}"
                                                 data-modal-title="Tambah Dokumen Turunan" size="sm" />
                                         @endif
                                     </x-slot:actions>
                                 </x-tabler.card-header>
                                 <x-tabler.datatable
                                     id="poin-children-table"
-                                    :url="route('pemutu.dokumen-spmi.children-data', ['type' => 'poin_dokumen', 'id' => $item->encrypted_doksub_id])"
+                                    :url="route('pemutu.dokumen.children-data', ['type' => 'poin_dokumen', 'id' => $item->encrypted_doksub_id])"
                                     :columns="$columns['poinChildren']"
                                     ajax-load />
                             </x-tabler.card>
@@ -420,7 +425,7 @@ $columns = [
                                         <button type="button" class="btn btn-primary" id="btn-add-mapping"
                                             data-source-id="{{ $sourceId }}"
                                             data-source-type="{{ $type }}"
-                                            data-url="{{ route('pemutu.dokumen-spmi.mapping-sync') }}">
+                                            data-url="{{ route('pemutu.dokumen.mapping-sync') }}">
                                             <i class="ti ti-link"></i> Petakan
                                         </button>
                                     </div>
@@ -445,7 +450,7 @@ $columns = [
                                                   data-source-id="{{ $sourceId }}"
                                                   data-source-type="{{ $type }}"
                                                   data-mapped-id="{{ $mappedId }}"
-                                                  data-url="{{ route('pemutu.dokumen-spmi.mapping-sync') }}">
+                                                  data-url="{{ route('pemutu.dokumen.mapping-sync') }}">
                                                   <i class="ti ti-unlink"></i> Lepas
                                               </button>
                                           @endif
@@ -601,7 +606,7 @@ $columns = [
 @if($mappableJenis && (($type === 'poin' && $isKebijakan) || ($type === 'dokumen' && $item->jenis === 'formulir')))
 <script>
 (function() {
-    const mappingSyncUrl = @json(route('pemutu.dokumen-spmi.mapping-sync'));
+    const mappingSyncUrl = @json(route('pemutu.dokumen.mapping-sync'));
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
 

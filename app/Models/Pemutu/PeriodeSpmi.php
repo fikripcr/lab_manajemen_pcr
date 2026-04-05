@@ -44,6 +44,8 @@ class PeriodeSpmi extends Model
         'jenis_periode',
         'penetapan_awal',
         'penetapan_akhir',
+        'pelaksanaan_awal',
+        'pelaksanaan_akhir',
         'ed_awal',
         'ed_akhir',
         'ami_awal',
@@ -57,6 +59,8 @@ class PeriodeSpmi extends Model
     protected $casts = [
         'penetapan_awal' => 'date',
         'penetapan_akhir' => 'date',
+        'pelaksanaan_awal' => 'date',
+        'pelaksanaan_akhir' => 'date',
         'ed_awal' => 'date',
         'ed_akhir' => 'date',
         'ami_awal' => 'date',
@@ -118,7 +122,7 @@ class PeriodeSpmi extends Model
 
     /**
      * Convert to SysPeriode format
-     * 
+     *
      * @return array
      */
     public function toSysPeriodeData(): array
@@ -134,6 +138,8 @@ class PeriodeSpmi extends Model
                 'jenis_periode' => $this->jenis_periode,
                 'penetapan_awal' => $this->penetapan_awal?->toDateString(),
                 'penetapan_akhir' => $this->penetapan_akhir?->toDateString(),
+                'pelaksanaan_awal' => $this->pelaksanaan_awal?->toDateString(),
+                'pelaksanaan_akhir' => $this->pelaksanaan_akhir?->toDateString(),
                 'ed_awal' => $this->ed_awal?->toDateString(),
                 'ed_akhir' => $this->ed_akhir?->toDateString(),
                 'ami_awal' => $this->ami_awal?->toDateString(),

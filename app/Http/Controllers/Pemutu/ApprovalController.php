@@ -11,12 +11,22 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ApprovalController extends Controller
 {
-    public function __construct(protected ApprovalService $approvalService) {}
+    public function __construct(protected ApprovalService $approvalService)
+    {
+        $this->middleware('permission:pemutu.approval.view')->only(['index', 'show']);
+        $this->middleware('permission:pemutu.approval.process')->only(['process']);
+    }
 
     public function index(Request $request)
     {
         if ($request->ajax()) {
             $query = $this->approvalService->getApprovalsByTypeQuery(\App\Models\Pemutu\Dokumen::class);
+
+            // Filter: only show approvals assigned to current user or all if admin
+            $user = auth()->user();
+            if ($user && $user->pegawai && ! $user->hasRole(['Administrator', 'Admin SPMI'])) {
+                $query->where('pegawai_id', $user->pegawai->pegawai_id);
+            }
 
             if ($request->filled('status') && $request->status !== 'all') {
                 $query->where('status', (string) $request->status);
@@ -101,8 +111,28 @@ class ApprovalController extends Controller
         $idDecrypted = (int) decryptIdIfEncrypted($id);
         $approvalRecord = SysApproval::with('subject')->find($idDecrypted);
 
-        // --- GUARD: Periode Penetapan ---
-        if ($approvalRecord && $approvalRecord->subject instanceof Dokumen) {
+        if (! $approvalRecord) {
+            return jsonError('Approval record tidak ditemukan.');
+        }
+
+        // --- GUARD 1: Approval Ownership ---
+        $user = auth()->user();
+        if ($user && $user->pegawai) {
+            if ($approvalRecord->pegawai_id !== $user->pegawai->pegawai_id) {
+                // Allow admins to process any approval
+                if (! $user->hasRole(['Administrator', 'Admin SPMI'])) {
+                    return jsonError('Anda bukan approver yang ditugaskan untuk approval ini.');
+                }
+            }
+        }
+
+        // --- GUARD 2: Already processed ---
+        if ($approvalRecord->status !== 'Pending') {
+            return jsonError('Approval ini sudah diproses sebelumnya (status: '.$approvalRecord->status.').');
+        }
+
+        // --- GUARD 3: Periode Penetapan ---
+        if ($approvalRecord->subject instanceof Dokumen) {
             $year = (int) ($approvalRecord->subject->periode ?? session('siklus_spmi_tahun'));
             $kelompok = session('pemutu_active_kelompok', 'akademik');
 
@@ -118,10 +148,10 @@ class ApprovalController extends Controller
             $request->catatan
         );
 
-        logActivity('pemutu', "Pegawai menyetujui dokumen ID {$approval->model_id} (".$request->status.')');
-        
+        logActivity('pemutu', "Pegawai memproses approval dokumen ID {$approval->model_id} (".$request->status.')');
+
         $message = 'Persetujuan berhasil '.($request->status == 'Approved' ? 'diterima' : 'ditolak').'.';
-        
+
         return jsonSuccess($message, request()->header('referer') ?: url()->previous());
     }
 

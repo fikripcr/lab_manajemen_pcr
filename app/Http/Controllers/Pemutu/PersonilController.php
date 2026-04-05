@@ -12,7 +12,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PersonilController extends Controller
 {
-    public function __construct(protected PersonilService $personilService) {}
+    public function __construct(protected PersonilService $personilService)
+    {
+        $this->middleware('permission:pemutu.pegawai.view')->only(['index', 'data']);
+        $this->middleware('permission:pemutu.pegawai.manage')->only(['create', 'store', 'edit', 'update', 'destroy', 'import']);
+    }
 
     public function index()
     {

@@ -15,8 +15,10 @@ class EvaluasiKpiController extends Controller
     public function __construct(
         protected IndikatorService $indikatorService,
         protected IndikatorPegawaiService $indikatorPegawaiService
-    )
-    {}
+    ) {
+        $this->middleware('permission:pemutu.evaluasi-kpi.view')->only(['index', 'data']);
+        $this->middleware('permission:pemutu.evaluasi-kpi.fill')->only(['edit', 'update', 'uploadFile', 'deleteFile']);
+    }
 
     public function index()
     {

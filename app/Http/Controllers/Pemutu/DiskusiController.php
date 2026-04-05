@@ -12,7 +12,9 @@ class DiskusiController extends Controller
 {
     public function __construct(
         protected DiskusiService $DiskusiService,
-    ) {}
+    ) {
+        $this->middleware('permission:pemutu.ami.diskusi')->only(['storeAmi']);
+    }
 
     /**
      * Kirim pesan diskusi baru untuk AMI.

@@ -28,10 +28,15 @@
                 <div class="text-muted" style="font-size: 0.75rem;">
                     Seluruh pimpinan terkait telah memufakati dokumen ini.
                 </div>
-                <div class="mt-2 text-nowrap">
+                <div class="mt-2 text-nowrap d-flex gap-2">
                     <a href="{{ route('pemutu.dokumen.verify', $approval->subject->encrypted_dok_id) }}" target="_blank" class="btn btn-sm btn-success btn-pill py-1">
-                        Verifikasi Publik 
+                        Verifikasi Publik
                     </a>
+                    @if($approval->subject instanceof \App\Models\Pemutu\Dokumen)
+                        <a href="{{ route('pemutu.dokumen.export', ['type' => 'dokumen', 'id' => $approval->subject->encrypted_dok_id]) }}" class="btn btn-sm btn-outline-primary btn-pill py-1">
+                            <i class="ti ti-file-export me-1"></i> Export DOCX
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>

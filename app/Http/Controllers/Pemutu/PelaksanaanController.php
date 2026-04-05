@@ -16,7 +16,10 @@ class PelaksanaanController extends Controller
         protected IndikatorService $indikatorService,
         protected PemantauanService $pemantauanService,
         protected PeriodeSpmiService $periodeSpmiService,
-    ) {}
+    ) {
+        $this->middleware('permission:pemutu.pemantauan.view')->only(['pemantauanIndex', 'pemantauanData']);
+        $this->middleware('permission:pemutu.pemantauan.manage')->only(['pemantauanCreate', 'pemantauanStore', 'pemantauanEdit', 'pemantauanUpdate']);
+    }
 
     /**
      * Display list of Pemantauan meetings.

@@ -1,95 +1,140 @@
-# Sistem Penjaminan Mutu Internal (SPMI) - Dokumentasi Lengkap
+# Sistem Penjaminan Mutu Internal (SPMI)
 
-**Last Updated:** March 2026  
-**Module:** Pemutu (Penjaminan Mutu)  
-**Framework:** Laravel 12.46.0  
+Dokumentasi modul Pemutu — versi terbaru.
 
 ---
 
-## 📋 Daftar Isi
+## Siklus SPMI (PPEPP)
 
-### Bagian 1: General & Konsep Dasar
-- [00-general-overview.md](./00-general-overview.md) - Gambaran umum sistem
-- [01-dokumen-hierarchy.md](./01-dokumen-hierarchy.md) - Hierarki dokumen SPMI
-- [02-indikator-types.md](./02-indikator-types.md) - Jenis-jenis indikator
+```
+Penetapan → Pelaksanaan → Evaluasi → Pengendalian → Peningkatan
+   ↑                                                    │
+   └───────────── kembali ke Penetapan ─────────────────┘
+```
 
-### Bagian 2: Penetapan (Planning)
-- [10-penetapan-overview.md](./10-penetapan-overview.md) - Overview Penetapan
-- [11-dokumen-visi-misi.md](./11-dokumen-visi-misi.md) - Dokumen Visi, Misi, Tujuan
-- [12-rjp-rpjp.md](./12-rjp-rpjp.md) - Rencana Jangka Panjang
-- [13-renstra.md](./13-renstra.md) - Rencana Strategis
-- [14-renop.md](./14-renop.md) - Rencana Operasional
-- [15-standar-spmi.md](./15-standar-spmi.md) - Standar SPMI
-
-### Bagian 3: Pelaksanaan (Implementation)
-- [20-pelaksanaan-overview.md](./20-pelaksanaan-overview.md) - Overview Pelaksanaan
-- [21-evaluasi-diri.md](./21-evaluasi-diri.md) - Evaluasi Diri (ED)
-- [22-kpi-assignment.md](./22-kpi-assignment.md) - Penugasan Indikator ke Pegawai
-
-### Bagian 4: Evaluasi (Evaluation)
-- [30-evaluasi-overview.md](./30-evaluasi-overview.md) - Overview Evaluasi
-- [31-ami-audit.md](./31-ami-audit.md) - Audit Mutu Internal (AMI)
-- [32-indikator-summary.md](./32-indikator-summary.md) - Summary Indikator
-
-### Bagian 5: Pengendalian (Control)
-- [40-pengendalian-overview.md](./40-pengendalian-overview.md) - Overview Pengendalian
-- [41-rtm-pengendalian.md](./41-rtm-pengendalian.md) - Rapat Tinjauan Manajemen
-- [42-matrix-analysis.md](./42-matrix-analysis.md) - Matriks Penting & Mendesak
-
-### Bagian 6: Peningkatan (Improvement)
-- [50-peningkatan-overview.md](./50-peningkatan-overview.md) - Overview Peningkatan
-- [51-rtm-peningkatan.md](./51-rtm-peningkatan.md) - Tindak Lanjut Peningkatan
-- [52-duplikasi-indikator.md](./52-duplikasi-indikator.md) - Duplikasi Indikator ke Periode Berikutnya
-
-### Lampiran
-- [90-approval-workflow.md](./90-approval-workflow.md) - Workflow Approval
-- [91-periode-management.md](./91-periode-management.md) - Manajemen Periode SPMI & KPI
-- [92-data-structures.md](./92-data-structures.md) - Struktur Database & Relationship
+| Fase | Apa yang dilakukan |
+|------|-------------------|
+| **1. Penetapan** | Buat Visi, Misi, Renstra, Renop, Standar, dan Indikator |
+| **2. Pelaksanaan** | Unit melaksanakan kegiatan + isi Evaluasi Diri (ED) |
+| **3. Evaluasi** | Tim Mutu audit (AMI), isi temuan & rekomendasi |
+| **4. Pengendalian** | Unit isi tindak lanjut, Pimpinan validasi, RTM |
+| **5. Peningkatan** | Duplikasi ke periode baru, approval staging |
 
 ---
 
-## 🎯 Quick Reference
-
-### SPMI Cycle (PPEPP)
+## Hierarki Dokumen
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    SIKLUS SPMI (PPEPP)                      │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  1. PENETAPAN → 2. PELAKSANAAN → 3. EVALUASI               │
-│       ↑                              │                      │
-│       │                              ↓                      │
-│  5. PENINGKATAN ← 4. PENGENDALIAN ←─┘                      │
-│       │                              │                      │
-│       └───────────→ Next Cycle ──────┘                      │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+Visi → Misi → RJP → Renstra → Renop → Standar
+                                          ↓
+                                       Indikator
+                                    ├── per Unit (OrgUnit)
+                                    └── per Pegawai (KPI)
 ```
-
-### Dokumen Hierarchy
-
-```
-Visi → Misi → RJP → Renstra → Renop → Standar → Indikator
-```
-
-### Indikator Types
-
-| Type | Deskripsi | Source |
-|------|-----------|--------|
-| `renop` | Indikator Rencana Operasional | Turunan dari Renop |
-| `standar` | Indikator Standar SPMI | Turunan dari Standar |
-| `performa` | Indikator Performa Individu | Assignment ke Pegawai |
 
 ---
 
-## 📞 Support & Documentation
+## Roles & Permissions
 
-- **Technical Lead:** [Your Name]
-- **Module Owner:** Tim Penjaminan Mutu
-- **Documentation Repo:** `/docs/pemutu/`
-- **Code Location:** `app/Models/Pemutu/`, `app/Services/Pemutu/`
+Ada 7 role di sistem ini. User yang tidak punya role **tidak bisa login**.
+
+| Role | Bisa Apa |
+|------|----------|
+| **Admin SPMI** | Semua fitur — kelola dokumen, approval, periode, export |
+| **Pimpinan Unit** | Lihat data unit sendiri + validasi pengendalian + approve dokumen |
+| **Auditee** | Isi ED, KPI, Pengendalian — **hanya untuk unit yang di-assign** |
+| **Auditor Internal** | Isi AMI, Tinjauan Efektivitas — **hanya untuk unit yang di-assign** |
+| **Pegawai** | Lihat semua data + export (read-only) |
+| **Guest** | Lihat semua data (read-only, **tidak bisa export**) |
+| **Auditor Eksternal** | Belum ada permission spesifik — bisa ditambahkan nanti |
+
+### Cara Kerja Unit Assignment
+
+Via menu **Tim Mutu**, admin menetapkan siapa auditee & auditor untuk setiap unit:
+
+- **Auditee** hanya bisa edit data unit tempat dia ditugaskan
+- **Auditor** hanya bisa isi AMI unit tempat dia ditugaskan
+- **Semua role** bisa **melihat** data unit lain (read-only)
+- **Admin SPMI** tidak ada batasan — bisa edit semua unit
 
 ---
 
-**© 2026 Sistem Penjaminan Mutu - All Rights Reserved**
+## Fitur Penting
+
+### Export Dokumen (DOCX)
+
+Tombol **Export** ada di halaman dokumen. Hasil DOCX berisi:
+- Info dokumen (kode, judul, jenis, periode)
+- Isi dokumen
+- Tabel daftar approver (nama, jabatan, status, tanggal)
+- QR Code verifikasi (jika semua approver sudah approve)
+
+QR Code bisa di-scan → mengarah ke halaman verifikasi publik.
+
+> **Syarat:** PHP extension `gd` harus aktif (sudah ada di hampir semua server).
+
+### Approval Dokumen
+
+Setiap dokumen bisa punya banyak approver (paralel, bukan berurutan):
+- Semua approver harus **Approved** → dokumen sah
+- Ada QR Code + tombol "Buka Pranala Asli"
+- Tombol Export muncul setelah dokumen sah
+
+### Periode SPMI & KPI
+
+| | Periode SPMI | Periode KPI |
+|--|-------------|-------------|
+| **Tujuan** | Siklus PPEPP (Akademik/Non Akademik) | Penilaian KPI tahunan |
+| **Isi** | Tanggal tiap fase (Penetapan, Pelaksanaan, ED, AMI, dll) | Nama, tahun, tanggal mulai/selesai |
+| **Aktif** | Bisa ada 2 (Akademik + Non Akademik) | Hanya 1 yang aktif |
+
+---
+
+## Struktur Kode Singkat
+
+```
+app/
+├── Models/Pemutu/          # Model utama: Dokumen, Indikator, PeriodeSpmi, TimMutu
+├── Services/Pemutu/        # Business logic per fitur
+├── Http/Controllers/Pemutu/ # 25 controller, semua pakai middleware permission
+├── Traits/ScopesTimMutu.php # Trait untuk cek unit access
+└── Helpers/                 # Helper global (format tanggal, dll)
+
+routes/pemutu.php            # Semua route Pemutu
+resources/views/pages/pemutu/ # Blade views
+```
+
+---
+
+## Yang Perlu Diperbaiki di Sistem
+
+| Issue | Lokasi | Apa yang Salah |
+|-------|--------|---------------|
+| **Approval route tidak konsisten** | `DokumenApprovalController` | Route `pemutu.dokumen.approve.create` dipakai di view tapi tidak ada di routes |
+| **IndikatorSummaryController** | Controller vs docs | Di docs disebut sebagai "model", padahal ini controller |
+| **Services tidak sesuai docs** | `00-general-overview.md` | Doc sebut `AmiService`, `PengendalianService` — yang ada sebenarnya `IndikatorOrgUnitService`, `AmiExportService`, dll |
+| **Missing migration execution** | Semua migration baru | Migration sudah dibuat tapi belum dijalankan di database |
+
+---
+
+## Cara Deploy
+
+```bash
+# 1. Jalankan semua migration baru
+php artisan migrate
+
+# 2. Sync data pegawai yang sudah ada
+php artisan db:seed --class=SyncPegawaiCommonColumnsSeeder
+
+# 3. Setup permissions & roles
+php artisan db:seed --class=RolePermissionPemutuSeeder
+
+# 4. Clear cache
+php artisan cache:clear && php artisan view:clear && php artisan config:clear
+```
+
+---
+
+**File dokumentasi lain yang tersedia:**
+- `COMPLETE_DOCUMENTATION.md` — dokumentasi lengkap semua fitur
+- `../../docs/GLOBAL_APPROVAL_SERVICE.md` — cara kerja approval global

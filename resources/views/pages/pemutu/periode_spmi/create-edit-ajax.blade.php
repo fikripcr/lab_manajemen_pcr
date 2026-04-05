@@ -45,7 +45,7 @@
         {{-- 1. Penetapan --}}
         <div class="col-12">
             <label class="form-label fw-bold text-primary mb-2">
-                <i class="ti ti-checkbox me-1"></i> 1. Penetapan
+                <i class="ti ti-gavel me-1"></i> 1. Penetapan
             </label>
             <div class="row g-2">
                 <div class="col-6">
@@ -62,7 +62,14 @@
             <label class="form-label fw-bold text-teal mb-2">
                 <i class="ti ti-player-play me-1"></i> 2. Pelaksanaan
             </label>
-            <div class="text-muted small fst-italic ms-3">Sepanjang Tahun</div>
+            <div class="row g-2">
+                <div class="col-6">
+                    <x-tabler.form-input name="pelaksanaan_awal" placeholder="Tanggal Awal" type="date" value="{{ $periodeSpmi->pelaksanaan_awal ? $periodeSpmi->pelaksanaan_awal->format('Y-m-d') : '' }}" class="mb-0" />
+                </div>
+                <div class="col-6">
+                    <x-tabler.form-input name="pelaksanaan_akhir" placeholder="Tanggal Akhir" type="date" value="{{ $periodeSpmi->pelaksanaan_akhir ? $periodeSpmi->pelaksanaan_akhir->format('Y-m-d') : '' }}" class="mb-0" />
+                </div>
+            </div>
         </div>
 
         {{-- 3. Evaluasi Diri (ED) & Pelaksanaan Tindakan Perbaikan (PTP) --}}

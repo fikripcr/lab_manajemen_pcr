@@ -25,7 +25,12 @@ class IndikatorController extends Controller
         protected PelaksanaanService $pelaksanaanService,
         protected DokumenService $dokumenService,
         protected PeriodeSpmiService $periodeSpmiService
-    ) {}
+    ) {
+        $this->middleware('permission:pemutu.indikator.view')->only(['index', 'data', 'searchDoksub']);
+        $this->middleware('permission:pemutu.indikator.create')->only(['create', 'store']);
+        $this->middleware('permission:pemutu.indikator.update')->only(['edit', 'update']);
+        $this->middleware('permission:pemutu.indikator.delete')->only(['destroy']);
+    }
 
     public function index(Request $request)
     {

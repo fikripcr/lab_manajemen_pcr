@@ -12,9 +12,11 @@ class PegawaiRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'nama' => 'required|string|max:100',
-            'email' => 'nullable|email|max:100',
-            'jenis' => 'nullable|string|max:20',
+            'nama' => 'required|string|max:255',
+            'nip' => 'nullable|string|max:50',
+            'email' => 'nullable|email|max:255',
+            'orgunit_departemen_id' => 'nullable|exists:hr_struktur_organisasi,orgunit_id',
+            'user_id' => 'nullable|exists:users,id',
         ];
     }
 
@@ -22,9 +24,10 @@ class PegawaiRequest extends BaseRequest
     {
         return [
             'nama' => 'Nama',
+            'nip' => 'NIP',
             'email' => 'Email',
-            'org_unit_id' => 'Unit Organisasi',
-            'jenis' => 'Jenis',
+            'orgunit_departemen_id' => 'Unit Organisasi',
+            'user_id' => 'User',
         ];
     }
 }

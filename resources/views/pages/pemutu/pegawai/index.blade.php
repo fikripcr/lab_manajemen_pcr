@@ -27,19 +27,12 @@
             <div class="collapse" id="pegawai-filter-area">
                 <x-tabler.datatable-filter dataTableId="pegawai-table" type="bare">
                     <div class="row g-3">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <x-tabler.form-select name="org_unit_id" label="Unit / Area" placeholder="Semua Unit">
                                 <option value="all">Semua Unit</option>
                                 @foreach($units as $unit)
                                     <option value="{{ encryptId($unit->orgunit_id) }}">{!! $unit->indented_name !!}</option>
                                 @endforeach
-                            </x-tabler.form-select>
-                        </div>
-                        <div class="col-md-6">
-                            <x-tabler.form-select name="jenis" label="Jenis Pegawai" placeholder="Semua Jenis">
-                                <option value="all">Semua Jenis</option>
-                                <option value="Dosen">Dosen</option>
-                                <option value="Tendik">Tendik</option>
                             </x-tabler.form-select>
                         </div>
                     </div>
@@ -51,9 +44,9 @@
                 :columns="[
                     ['title' => '#', 'data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                     ['title' => 'Nama', 'data' => 'nama', 'name' => 'nama'],
+                    ['title' => 'NIP', 'data' => 'nip', 'name' => 'nip'],
                     ['title' => 'Email', 'data' => 'email', 'name' => 'email'],
-                    ['title' => 'Unit', 'data' => 'org_unit_id', 'name' => 'orgUnit.name'],
-                    ['title' => 'Jenis', 'data' => 'jenis', 'name' => 'jenis'],
+                    ['title' => 'Unit', 'data' => 'orgunit_departemen_id', 'name' => 'departemen.name'],
                     ['title' => 'Linked', 'data' => 'user_id', 'name' => 'user_id', 'class' => 'text-center'],
                     ['title' => 'Actions', 'data' => 'action', 'name' => 'action', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                 ]"

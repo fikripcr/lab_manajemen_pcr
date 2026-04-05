@@ -12,6 +12,14 @@ use Illuminate\Support\Facades\DB;
 
 class IndikatorStandarController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:pemutu.indikator.view')->only(['index']);
+        $this->middleware('permission:pemutu.indikator.create')->only(['create', 'store']);
+        $this->middleware('permission:pemutu.indikator.update')->only(['edit', 'update']);
+        $this->middleware('permission:pemutu.indikator.delete')->only(['destroy']);
+    }
+
     public function index()
     {
         // Fetch indicators with type 'standar' or 'performa'

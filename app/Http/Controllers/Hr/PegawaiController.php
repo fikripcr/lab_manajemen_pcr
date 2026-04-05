@@ -29,11 +29,9 @@ class PegawaiController extends Controller
     public function select2Search(SearchRequest $request)
     {
         $search = $request->validated('q', '');
-        $query = Pegawai::with('latestDataDiri')
-            ->whereHas('latestDataDiri', function ($q) use ($search) {
-                $q->where('nama', 'like', "%{$search}%")
-                    ->orWhere('nip', 'like', "%{$search}%");
-            })
+        $query = Pegawai::query()
+            ->where('nama', 'like', "%{$search}%")
+            ->orWhere('nip', 'like', "%{$search}%")
             ->limit(20)
             ->get();
 

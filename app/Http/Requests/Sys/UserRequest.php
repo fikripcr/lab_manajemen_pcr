@@ -18,9 +18,15 @@ class UserRequest extends BaseRequest
      */
     public function rules(): array
     {
+        // Determine if this is an update operation.
+        // POST = create (password required), PUT/PATCH = update (password optional).
+        $isUpdate = in_array($this->method(), ['PUT', 'PATCH']);
 
-        $userId = $this->route('user'); // Get the user ID from the route parameter
-        $userId = $userId ? decryptId($userId) : null;
+        // Try to resolve user ID for unique email validation.
+        $userId = null;
+        if ($isUpdate) {
+            $userId = decryptIdIfEncrypted($this->route('user'));
+        }
 
         return [
             'name' => ['required', 'string', 'max:255'],
@@ -32,12 +38,12 @@ class UserRequest extends BaseRequest
             'role' => ['required', 'array'],
             'role.*' => ['exists:sys_roles,name'],
             'password' => [
-                $userId ? 'nullable' : 'required',
+                $isUpdate ? 'nullable' : 'required',
                 'string',
                 'min:8',
                 'confirmed',
             ],
-            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // 2MB max
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'expired_at' => ['nullable', 'date'],
         ];
     }

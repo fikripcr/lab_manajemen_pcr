@@ -15,7 +15,10 @@ class PegawaiController extends Controller
     public function __construct(
         protected PegawaiService $pegawaiService,
         protected StrukturOrganisasiService $strukturOrganisasiService,
-    ) {}
+    ) {
+        $this->middleware('permission:pemutu.pegawai.view')->only(['index', 'data', 'edit']);
+        $this->middleware('permission:pemutu.pegawai.manage')->only(['create', 'store', 'update', 'destroy', 'import']);
+    }
 
     public function index()
     {
@@ -31,8 +34,8 @@ class PegawaiController extends Controller
 
         return DataTables::of($query)
             ->addIndexColumn()
-            ->editColumn('org_unit_id', function ($row) {
-                return $row->orgUnit ? $row->orgUnit->name : '-';
+            ->editColumn('orgunit_departemen_id', function ($row) {
+                return $row->departemen ? $row->departemen->name : '-';
             })
             ->editColumn('user_id', function ($row) {
                 return $row->user ? '<span class="badge bg-success-lt">Linked</span>' : '<span class="badge bg-secondary-lt">Unlinked</span>';
@@ -53,7 +56,7 @@ class PegawaiController extends Controller
         $pegawai = new \App\Models\Hr\Pegawai;
         $units = StrukturOrganisasi::orderBy('name')->get();
 
-        return view('pages.pemutu.pegawai.create-edit-ajax', compact('hr_pegawai', 'units'));
+        return view('pages.pemutu.pegawai.create-edit-ajax', compact('pegawai', 'units'));
     }
 
     public function store(PegawaiRequest $request)
@@ -69,7 +72,7 @@ class PegawaiController extends Controller
     {
         $units = StrukturOrganisasi::orderBy('name')->get();
 
-        return view('pages.pemutu.pegawai.create-edit-ajax', compact('hr_pegawai', 'units'));
+        return view('pages.pemutu.pegawai.create-edit-ajax', compact('pegawai', 'units'));
     }
 
     public function update(PegawaiRequest $request, \App\Models\Hr\Pegawai $pegawai)

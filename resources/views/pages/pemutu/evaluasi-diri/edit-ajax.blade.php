@@ -41,7 +41,7 @@
                         @foreach($indukDokumenTree as $docNode)
                             <div class="list-group-item px-3 py-2 {{ $loop->last ? 'bg-light fw-medium list-group-item-light text-dark' : 'text-muted' }}">
                                 @if(isset($docNode['dok_id']) && $docNode['type'] === 'dokumen')
-                                    <a href="{{ route('pemutu.dokumen-spmi.show', ['type' => 'standar', 'id' => encryptId($docNode['dok_id'])]) }}" target="_blank" class="text-decoration-none d-flex align-items-center">
+                                    <a href="{{ route('pemutu.dokumen.show', ['type' => 'standar', 'id' => encryptId($docNode['dok_id'])]) }}" target="_blank" class="text-decoration-none d-flex align-items-center">
                                         {{ !empty($docNode['kode']) ? $docNode['kode'] . ' - ' : '' }}{{ $docNode['judul'] }}
                                         <i class="ti ti-external-link ms-auto text-muted" style="width:14px;height:14px;"></i>
                                     </a>
@@ -63,7 +63,7 @@
             <div class="mb-3">
                 <span class="text-muted text-uppercase fw-bold fs-5">Dokumen Terkait</span>
                 <div class="mt-1 bg-light p-2 rounded small border">
-                    <a href="{{ route('pemutu.dokumen-spmi.show', ['type' => 'renstra', 'id' => encryptId($renstraPoin->dok_id)]) }}" target="_blank" class="text-decoration-none fw-bold d-flex align-items-center">
+                    <a href="{{ route('pemutu.dokumen.show', ['type' => 'renstra', 'id' => encryptId($renstraPoin->dok_id)]) }}" target="_blank" class="text-decoration-none fw-bold d-flex align-items-center">
                         <i class="ti ti-external-link me-1"></i>
                         {{ $renstraPoin->dokumen->judul ?? 'Renstra' }}
                     </a>

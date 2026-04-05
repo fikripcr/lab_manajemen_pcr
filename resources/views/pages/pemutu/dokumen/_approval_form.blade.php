@@ -16,9 +16,12 @@
                 <div class="text-muted small">
                     Dokumen ini telah disetujui secara mufakat oleh seluruh pejabat struktural terkait. Kode QR di samping dapat dipindai untuk meluncurkan laman verifikasi orisinalitas publik.
                 </div>
-                <div class="mt-2 text-nowrap">
+                <div class="mt-2 text-nowrap d-flex gap-2">
                     <a href="{{ route('pemutu.dokumen.verify', $dokumen->encrypted_dok_id) }}" target="_blank" class="btn btn-sm btn-success btn-pill">
-                        <i class="ti ti-external-link me-1"></i> Buka Pranala Asli 
+                        <i class="ti ti-external-link me-1"></i> Buka Pranala Asli
+                    </a>
+                    <a href="{{ route('pemutu.dokumen.export', ['type' => 'dokumen', 'id' => $dokumen->encrypted_dok_id]) }}" class="btn btn-sm btn-outline-primary btn-pill">
+                        <i class="ti ti-file-export me-1"></i> Export DOCX
                     </a>
                 </div>
             </div>

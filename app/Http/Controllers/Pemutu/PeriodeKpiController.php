@@ -6,11 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\PeriodeKpiRequest;
 use App\Models\Pemutu\PeriodeKpi;
 use App\Services\Pemutu\PeriodeService;
-use Yajra\DataTables\DataTables;
 
 class PeriodeKpiController extends Controller
 {
-    public function __construct(protected PeriodeService $periodeService) {}
+    public function __construct(protected PeriodeService $periodeService)
+    {
+        $this->middleware('permission:pemutu.periode-kpi.view')->only(['index']);
+        $this->middleware('permission:pemutu.periode-kpi.create')->only(['create', 'store']);
+        $this->middleware('permission:pemutu.periode-kpi.update')->only(['edit', 'update']);
+        $this->middleware('permission:pemutu.periode-kpi.delete')->only(['destroy']);
+        $this->middleware('permission:pemutu.periode-kpi.activate')->only(['activate']);
+    }
 
     public function index()
     {
@@ -18,15 +24,6 @@ class PeriodeKpiController extends Controller
         $periodes = $this->periodeService->getAll();
 
         return view('pages.pemutu.periode_kpi.index', compact('pageTitle', 'periodes'));
-    }
-
-    public function data()
-    {
-        $query = $this->periodeService->getBaseQuery();
-
-        return DataTables::of($query)
-            ->addIndexColumn()
-            ->make(true);
     }
 
     public function create()

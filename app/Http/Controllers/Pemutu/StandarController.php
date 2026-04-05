@@ -18,7 +18,13 @@ class StandarController extends Controller
     public function __construct(
         protected IndikatorService $indikatorService,
         protected \App\Services\Hr\StrukturOrganisasiService $StrukturOrganisasiService
-    ) {}
+    ) {
+        $this->middleware('permission:pemutu.standar.view')->only(['index']);
+        $this->middleware('permission:pemutu.standar.create')->only(['create', 'store']);
+        $this->middleware('permission:pemutu.standar.update')->only(['edit', 'update']);
+        $this->middleware('permission:pemutu.standar.delete')->only(['destroy']);
+        $this->middleware('permission:pemutu.standar.assign')->only(['assign', 'storeAssignment']);
+    }
 
     public function index()
     {

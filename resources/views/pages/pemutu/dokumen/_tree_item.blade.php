@@ -24,7 +24,7 @@ $canModify = pemutu_can_modify($itemYear);
             <span class="text-muted me-2 mt-1" style="width: 20px; display: inline-block; text-align: center;">&bull;</span>
         @endif
 
-        <a href="#" class="tree-item-link w-100" data-url="{{ route('pemutu.dokumen-spmi.show', ['type' => 'dokumen', 'id' => $dok->encrypted_dok_id]) }}" data-jenis="{{ $dok->jenis }}">
+        <a href="#" class="tree-item-link w-100" data-url="{{ route('pemutu.dokumen.show', ['type' => 'dokumen', 'id' => $dok->encrypted_dok_id]) }}" data-jenis="{{ $dok->jenis }}">
             <div class="d-flex align-items-center mb-1">
                 <div class="row align-items-center w-100 gx-2">
                     <div class="col-auto">
@@ -68,7 +68,7 @@ $canModify = pemutu_can_modify($itemYear);
                         @else
                             <span class="text-muted me-2 mt-1" style="width: 20px; display: inline-block; text-align: center;">&bull;</span>
                         @endif
-                        <a href="#" class="tree-item-link w-100" data-url="{{ route('pemutu.dokumen-spmi.show', ['type' => 'poin', 'id' => $sub->encrypted_doksub_id]) }}" data-jenis="doksub">
+                        <a href="#" class="tree-item-link w-100" data-url="{{ route('pemutu.dokumen.show', ['type' => 'poin', 'id' => $sub->encrypted_doksub_id]) }}" data-jenis="doksub">
                             <div class="d-flex align-items-center mb-1">
                                 <div class="row align-items-center w-100 gx-2">
                                     <div class="col-auto">

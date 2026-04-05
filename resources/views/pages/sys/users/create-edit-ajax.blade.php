@@ -26,9 +26,10 @@
         </div>
 
         <div class="col-md-12">
-            <x-tabler.form-select 
-                name="role[]" 
-                label="Role / Peran" 
+            <x-tabler.form-select
+                name="role[]"
+                label="Role / Peran"
+                type="select2"
                 multiple
                 required
                 id="user_roles">
@@ -92,14 +93,14 @@
 
 <script>
     (function() {
-        if (typeof window.loadSelect2 === 'function') {
-            window.loadSelect2('#user_roles');
-        }
+        // initFilePond for avatar upload
         if (typeof window.initFilePond === 'function') {
             window.initFilePond();
         }
+        // initFlatpickr for expired_at date picker
         if (typeof window.initFlatpickr === 'function') {
             window.initFlatpickr();
         }
+        // Note: initOfflineSelect2 is already called by core-ajax.js after modal loads
     })();
 </script>

@@ -82,7 +82,7 @@ $rootDoc = $isTreeBased ? null : $dokData->first();
                             type="create" 
                             :text="'Tambah ' . $config->labelFull()" 
                             class="btn-primary w-100 ajax-modal-btn"
-                            :data-url="route('pemutu.dokumen-spmi.create', [
+                            :data-url="route('pemutu.dokumen.create', [
                                 'type' => 'dokumen',
                                 'tabs' => $config->category(),
                                 'fixed_jenis' => $activeJenis
@@ -117,7 +117,7 @@ $rootDoc = $isTreeBased ? null : $dokData->first();
                                             type="create" 
                                             :text="'Tambah ' . $config->labelFull()" 
                                             class="btn-sm btn-outline-primary ajax-modal-btn mt-2"
-                                            :data-url="route('pemutu.dokumen-spmi.create', [
+                                            :data-url="route('pemutu.dokumen.create', [
                                                 'type' => 'dokumen',
                                                 'tabs' => $config->category(),
                                                 'fixed_jenis' => $activeJenis
@@ -135,7 +135,7 @@ $rootDoc = $isTreeBased ? null : $dokData->first();
                             <div class="mb-1">
                                 <div class="tree-node-row rounded" id="tree-node-dok-{{ $dok->encrypted_dok_id }}">
                                     <a href="#" class="tree-item-link w-100 d-flex align-items-center text-decoration-none px-2 py-1"
-                                       data-url="{{ route('pemutu.dokumen-spmi.show', ['type' => 'dokumen', 'id' => $dok->encrypted_dok_id]) }}"
+                                       data-url="{{ route('pemutu.dokumen.show', ['type' => 'dokumen', 'id' => $dok->encrypted_dok_id]) }}"
                                        data-jenis="{{ $dok->jenis }}">
                                         <span class="avatar avatar-sm rounded bg-primary text-white me-3">
                                             {{ substr($dok->judul, 0, 1) }}
@@ -160,7 +160,7 @@ $rootDoc = $isTreeBased ? null : $dokData->first();
                                     <li class="mb-1" id="tree-node-sub-{{ $sub->encrypted_doksub_id }}">
                                         <div class="tree-node-row rounded">
                                             <a href="#" class="tree-item-link w-100 d-flex align-items-center text-decoration-none px-2 py-1"
-                                               data-url="{{ route('pemutu.dokumen-spmi.show', ['type' => 'poin', 'id' => $sub->encrypted_doksub_id]) }}"
+                                               data-url="{{ route('pemutu.dokumen.show', ['type' => 'poin', 'id' => $sub->encrypted_doksub_id]) }}"
                                                data-jenis="doksub">
                                                 <span class="avatar avatar-xs rounded bg-secondary-lt me-2 flex-shrink-0">{{ $sub->seq ?? substr($sub->judul, 0, 1) }}</span>
                                                 <div class="text-truncate">
@@ -186,7 +186,7 @@ $rootDoc = $isTreeBased ? null : $dokData->first();
                                 <div>Dokumen {{ $allTabs[$activeJenis] }} belum dibuat.</div>
                                 @if($canModify)
                                     <x-tabler.button type="create" text="Tambah Dokumen Induk" class="btn-sm btn-outline-primary ajax-modal-btn mt-3" 
-                                        data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'tabs' => 'kebijakan', 'fixed_jenis' => $activeJenis]) }}" 
+                                        data-url="{{ route('pemutu.dokumen.create', ['type' => 'dokumen', 'tabs' => 'kebijakan', 'fixed_jenis' => $activeJenis]) }}" 
                                         data-modal-title="Tambah Dokumen {{ $allTabs[$activeJenis] }}" />
                                 @endif
                             </div>

@@ -42,11 +42,11 @@ class IndikatorSummaryPerformaService
     }
 
     /**
-     * Get Pegawai data for filtering that have DataDiri.
+     * Get Pegawai data for filtering that have names.
      */
     public function getPegawais()
     {
-        return \App\Models\Hr\Pegawai::whereHas('latestDataDiri')->get()->sortBy(function ($pegawai) {
+        return \App\Models\Hr\Pegawai::whereNotNull('nama')->get()->sortBy(function ($pegawai) {
             return $pegawai->nama;
         });
     }

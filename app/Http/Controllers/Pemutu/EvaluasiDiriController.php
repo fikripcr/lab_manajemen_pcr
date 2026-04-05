@@ -4,24 +4,32 @@ namespace App\Http\Controllers\Pemutu;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\EvaluasiDiriRequest;
 use App\Http\Requests\Pemutu\PtpRequest;
+use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Services\Hr\StrukturOrganisasiService;
 use App\Services\Pemutu\DokumenService;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\IndikatorOrgUnitService;
 use App\Services\Pemutu\PeriodeSpmiService;
+use App\Traits\ScopesTimMutu;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class EvaluasiDiriController extends Controller
 {
+    use ScopesTimMutu;
+
     public function __construct(
         protected PeriodeSpmiService $periodeSpmiService,
         protected IndikatorService $indikatorService,
         protected IndikatorOrgUnitService $indikatorOrgUnitService,
         protected StrukturOrganisasiService $strukturOrganisasiService,
         protected DokumenService $dokumenService,
-    ) {}
+    ) {
+        $this->middleware('permission:pemutu.evaluasi-diri.view')->only(['index', 'data', 'ptpData']);
+        $this->middleware('permission:pemutu.evaluasi-diri.fill')->only(['edit', 'update', 'uploadFile', 'deleteFile']);
+        $this->middleware('permission:pemutu.evaluasi-diri.ptp-edit')->only(['editPtp', 'updatePtp']);
+    }
 
     public function index(Request $request)
     {
@@ -87,7 +95,9 @@ class EvaluasiDiriController extends Controller
                 }
 
                 $periodeInfo = pemutuPeriodeStatus($periodeModel->ed_awal, $periodeModel->ed_akhir);
-                if ($periodeInfo['is_active']) {
+                $canEdit = $periodeInfo['is_active'] && $this->canEditUnit($targetUnit);
+
+                if ($canEdit) {
                     return '<button type="button" class="btn btn-sm btn-outline-primary ajax-modal-btn"
                         data-url="' . $url . '"
                         data-modal-title="Isi Evaluasi Diri"
@@ -127,6 +137,11 @@ class EvaluasiDiriController extends Controller
     public function update(EvaluasiDiriRequest $request, string $id): JsonResponse
     {
         $targetUnitId = $this->indikatorService->getTargetUnitId(auth()->user(), $request->input('target_unit_id'));
+
+        // Check if user can edit this unit based on Tim Mutu assignments
+        if (! $this->canEditUnit($targetUnitId)) {
+            return jsonError('Anda tidak memiliki akses untuk mengisi evaluasi diri unit ini.');
+        }
 
         $this->indikatorOrgUnitService->saveEvaluasiDiri(
             $id,
@@ -190,14 +205,20 @@ class EvaluasiDiriController extends Controller
             })
             ->addColumn('action', function ($row) {
                 $indOrgId = $row->orgUnits->first()->pivot->indikorgunit_id;
+                $unitId = $row->orgUnits->first()->pivot->org_unit_id ?? null;
+                $canEdit = $this->canEditUnit($unitId);
 
-                return '<button type="button" class="btn btn-sm btn-outline-warning ajax-modal-btn"
-                    data-url="' . route('pemutu.evaluasi-diri.ptp-edit', encryptId($indOrgId)) . '"
-                    data-modal-title="Isi Pelaksanaan Tindakan Perbaikan (PTP)"
-                    data-modal-size="modal-lg">
-                    <i class="ti ti-edit me-1"></i>
-                    Isi
-                </button>';
+                if ($canEdit) {
+                    return '<button type="button" class="btn btn-sm btn-outline-warning ajax-modal-btn"
+                        data-url="' . route('pemutu.evaluasi-diri.ptp-edit', encryptId($indOrgId)) . '"
+                        data-modal-title="Isi Pelaksanaan Tindakan Perbaikan (PTP)"
+                        data-modal-size="modal-lg">
+                        <i class="ti ti-edit me-1"></i>
+                        Isi
+                    </button>';
+                }
+
+                return '<span class="text-muted small">-</span>';
             })
             ->filterColumn('indikator', function ($query, $keyword) {
                 $query->where(function ($q) use ($keyword) {
@@ -219,7 +240,14 @@ class EvaluasiDiriController extends Controller
 
     public function updatePtp(PtpRequest $request, string $id): JsonResponse
     {
-        $this->indikatorOrgUnitService->updatePtp($id, $request->validated());
+        $indOrg = IndikatorOrgUnit::findOrFail(decryptIdIfEncrypted($id));
+
+        // Check if user can edit this unit based on Tim Mutu assignments
+        if (! $this->canEditUnit($indOrg->org_unit_id)) {
+            return jsonError('Anda tidak memiliki akses untuk mengisi PTP unit ini.');
+        }
+
+        $this->indikatorOrgUnitService->updatePtp($indOrg, $request->validated());
 
         return jsonSuccess('Pelaksanaan Tindakan Perbaikan (PTP) berhasil disimpan.');
     }

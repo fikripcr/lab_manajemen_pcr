@@ -265,7 +265,7 @@
                             <div class="row g-3">
                                 {{-- AVG MISI --}}
                                 <div class="col-12">
-                                    <a href="{{ route('pemutu.dokumen-spmi.summary', ['jenis' => 'misi']) }}" class="text-decoration-none h-100 d-block">
+                                    <a href="{{ route('pemutu.dokumen.summary', ['jenis' => 'misi']) }}" class="text-decoration-none h-100 d-block">
                                         <div class="p-3 border rounded roadmap-card d-flex align-items-center justify-content-between">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar bg-blue-lt me-3 shadow-sm"><i class="ti ti-rocket"></i></div>
@@ -286,7 +286,7 @@
                                 {{-- Individual VISI --}}
                                 @foreach($visiStats as $visi)
                                 <div class="col-12">
-                                    <a href="{{ route('pemutu.dokumen-spmi.summary', ['jenis' => 'visi', 'id' => $visi['id']]) }}" class="text-decoration-none h-100 d-block">
+                                    <a href="{{ route('pemutu.dokumen.summary', ['jenis' => 'visi', 'id' => $visi['id']]) }}" class="text-decoration-none h-100 d-block">
                                         <div class="p-3 border rounded roadmap-card d-flex align-items-center justify-content-between">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar bg-primary-lt me-3 shadow-sm"><i class="ti ti-eye"></i></div>

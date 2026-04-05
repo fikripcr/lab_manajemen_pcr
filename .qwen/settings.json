@@ -39,7 +39,9 @@
       "Bash(php *)",
       "Bash(docker exec *)",
       "Bash(npm run *)",
-      "Bash(docker-compose *)"
+      "Bash(docker-compose *)",
+      "Bash(mv *)",
+      "Bash(grep *)"
     ]
   }
 }

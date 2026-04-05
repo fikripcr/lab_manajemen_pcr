@@ -14,12 +14,11 @@
 
     <x-tabler.card>
         <x-tabler.card-header>
-            <div class="d-flex flex-wrap gap-2">
-                <div>
+            <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
+                <div class="ms-auto d-flex flex-wrap gap-2">
                     <x-tabler.datatable-page-length :dataTableId="'users-table'" />
-                </div>
-                <div>
                     <x-tabler.datatable-search :dataTableId="'users-table'" />
+                    <x-tabler.datatable-filter dataTableId="users-table" type="button" target="#users-filter-area" />
                 </div>
             </div>
             <x-slot:actions>
@@ -35,6 +34,28 @@
             </x-slot:actions>
         </x-tabler.card-header>
         <x-tabler.card-body class="p-0">
+
+            <div class="collapse" id="users-filter-area">
+                <x-tabler.datatable-filter dataTableId="users-table" type="bare">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <x-tabler.form-select name="role" label="Role" placeholder="Semua Role">
+                                <option value="all">Semua Role</option>
+                                @foreach($roles as $role)
+                                    <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
+                                @endforeach
+                            </x-tabler.form-select>
+                        </div>
+                        <div class="col-md-4">
+                            <x-tabler.form-select name="status" label="Status" placeholder="Semua Status">
+                                <option value="all">Semua Status</option>
+                                <option value="active">Active</option>
+                                <option value="expired">Expired</option>
+                            </x-tabler.form-select>
+                        </div>
+                    </div>
+                </x-tabler.datatable-filter>
+            </div>
 
             <x-tabler.datatable
                 id="users-table" route="{{ route('sys.users.data') }}" :columns="[

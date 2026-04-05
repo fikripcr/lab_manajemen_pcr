@@ -19,8 +19,10 @@ class TimMutuController extends Controller
         protected PeriodeSpmiService $periodeSpmiService,
         protected StrukturOrganisasiService $strukturOrganisasiService,
     ) {
-        // $this->authorizeResourcePermissions('pemutu.tim-mutu');
-        // $this->middleware('permission:pemutu.tim-mutu.update')->only(['editAuditee', 'storeAuditee', 'editAuditor', 'storeAuditor', 'manage']);
+        $this->middleware('permission:pemutu.tim-mutu.view')->only(['index']);
+        $this->middleware('permission:pemutu.tim-mutu.assign-auditee')->only(['editAuditee', 'storeAuditee']);
+        $this->middleware('permission:pemutu.tim-mutu.assign-auditor')->only(['editAuditor', 'storeAuditor']);
+        $this->middleware('permission:pemutu.tim-mutu.manage')->only(['manage']);
     }
 
     /**

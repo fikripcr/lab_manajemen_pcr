@@ -14,10 +14,14 @@ use App\Services\Pemutu\DokumenService;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\IndikatorOrgUnitService;
 use App\Services\Pemutu\PeriodeSpmiService;
+use App\Traits\ScopesTimMutu;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class PengendalianController extends Controller
 {
+    use ScopesTimMutu;
+
     public function __construct(
         protected PeriodeSpmiService $periodeSpmiService,
         protected IndikatorService $indikatorService,
@@ -25,7 +29,12 @@ class PengendalianController extends Controller
         protected StrukturOrganisasiService $strukturOrganisasiService,
         protected DokumenService $dokumenService,
         protected \App\Services\Pemutu\PegawaiService $pegawaiService,
-    ) {}
+    ) {
+        $this->middleware('permission:pemutu.pengendalian.view')->only(['index', 'data']);
+        $this->middleware('permission:pemutu.pengendalian.fill')->only(['editModal', 'update', 'updateMatrix']);
+        $this->middleware('permission:pemutu.pengendalian.validate')->only(['validasiModal', 'validasi']);
+        $this->middleware('permission:pemutu.pengendalian.rtm-manage')->only(['createRtm', 'storeRtm', 'editRtm', 'updateRtm']);
+    }
 
     /**
      * Daftar periode SPMI untuk Pengendalian.
@@ -106,6 +115,7 @@ class PengendalianController extends Controller
             ->addColumn('action', function ($row) use ($periode) {
                 $pivot        = $row->orgUnits->first()?->pivot;
                 $indikorgunit = $pivot?->indikorgunit_id;
+                $unitId       = $pivot?->org_unit_id;
 
                 if (! $indikorgunit) {
                     return '<span class="text-muted small">-</span>';
@@ -115,17 +125,35 @@ class PengendalianController extends Controller
                 $urlIsi      = route('pemutu.pengendalian.edit-modal', $encId);
                 $urlValidasi = route('pemutu.pengendalian.validasi-modal', $encId);
                 $periodeInfo = pemutuPeriodeStatus($periode->pengendalian_awal, $periode->pengendalian_akhir);
+                $canEdit     = $this->canEditUnit($unitId);
+
+                // Check if user has validate permission (Pimpinan Unit or Admin)
+                $canValidate = auth()->user()->can('pemutu.pengendalian.validate');
 
                 if ($periodeInfo['is_active']) {
-                    return '<div class="d-flex flex-column gap-1">'
-                        . '<button class="btn btn-sm btn-primary ajax-modal-btn" data-modal-size="modal-lg" data-url="' . $urlIsi . '"><i class="ti ti-pencil me-1"></i>Isi</button>'
-                        . '<button class="btn btn-sm btn-outline-purple ajax-modal-btn" data-modal-size="modal-lg" data-url="' . $urlValidasi . '"><i class="ti ti-crown me-1"></i>Validasi</button>'
-                        . '</div>';
+                    $buttons = '<div class="d-flex flex-column gap-1">';
+
+                    if ($canEdit) {
+                        $buttons .= '<button class="btn btn-sm btn-primary ajax-modal-btn" data-modal-size="modal-lg" data-url="' . $urlIsi . '"><i class="ti ti-pencil me-1"></i>Isi</button>';
+                    }
+                    if ($canValidate) {
+                        $buttons .= '<button class="btn btn-sm btn-outline-purple ajax-modal-btn" data-modal-size="modal-lg" data-url="' . $urlValidasi . '"><i class="ti ti-crown me-1"></i>Validasi</button>';
+                    }
+
+                    $buttons .= '</div>';
+                    return $buttons;
                 } else {
-                    return '<div class="d-flex flex-column gap-1">'
-                        . '<button class="btn btn-sm btn-outline-secondary ajax-modal-btn" data-modal-size="modal-lg" data-url="' . $urlIsi . '?readonly=1"><i class="ti ti-eye me-1"></i>Detail</button>'
-                        . '<button class="btn btn-sm btn-outline-secondary ajax-modal-btn" data-modal-size="modal-lg" data-url="' . $urlValidasi . '?readonly=1"><i class="ti ti-eye me-1"></i>Detail Validasi</button>'
-                        . '</div>';
+                    $buttons = '<div class="d-flex flex-column gap-1">';
+
+                    if ($canEdit) {
+                        $buttons .= '<button class="btn btn-sm btn-outline-secondary ajax-modal-btn" data-modal-size="modal-lg" data-url="' . $urlIsi . '?readonly=1"><i class="ti ti-eye me-1"></i>Detail</button>';
+                    }
+                    if ($canValidate) {
+                        $buttons .= '<button class="btn btn-sm btn-outline-secondary ajax-modal-btn" data-modal-size="modal-lg" data-url="' . $urlValidasi . '?readonly=1"><i class="ti ti-eye me-1"></i>Detail Validasi</button>';
+                    }
+
+                    $buttons .= '</div>';
+                    return $buttons;
                 }
             })
             ->filterColumn('indikator', function ($query, $keyword) {
@@ -154,7 +182,14 @@ class PengendalianController extends Controller
      */
     public function update(PengendalianRequest $request, string $id)
     {
-        $this->indikatorOrgUnitService->updatePivotData($id, $request->validated(), 'Submit pengendalian');
+        $indOrg = IndikatorOrgUnit::findOrFail(decryptIdIfEncrypted($id));
+
+        // Check if user can edit this unit based on Tim Mutu assignments
+        if (! $this->canEditUnit($indOrg->org_unit_id)) {
+            return jsonError('Anda tidak memiliki akses untuk mengisi pengendalian unit ini.');
+        }
+
+        $this->indikatorOrgUnitService->updatePivotData($indOrg->indikorgunit_id, $request->validated(), 'Submit pengendalian');
 
         return jsonSuccess('Data pengendalian berhasil disimpan.');
     }
@@ -181,7 +216,14 @@ class PengendalianController extends Controller
      */
     public function validasi(ValidasiPengendalianRequest $request, string $id)
     {
-        $this->indikatorOrgUnitService->updatePivotData($id, $request->validated(), 'Validasi pengendalian atasan');
+        $indOrg = IndikatorOrgUnit::findOrFail(decryptIdIfEncrypted($id));
+
+        // Check if user can validate this unit (Pimpinan Unit or Admin)
+        if (! $this->canEditUnit($indOrg->org_unit_id)) {
+            return jsonError('Anda tidak memiliki akses untuk memvalidasi pengendalian unit ini.');
+        }
+
+        $this->indikatorOrgUnitService->updatePivotData($indOrg->indikorgunit_id, $request->validated(), 'Validasi pengendalian atasan');
 
         return jsonSuccess('Validasi pengendalian berhasil disimpan.');
     }
@@ -191,7 +233,14 @@ class PengendalianController extends Controller
      */
     public function updateMatrix(UpdateMatrixRequest $request, string $id)
     {
-        $this->indikatorOrgUnitService->updatePivotData($id, $request->only(['pengend_important_matrix', 'pengend_urgent_matrix']));
+        $indOrg = IndikatorOrgUnit::findOrFail(decryptIdIfEncrypted($id));
+
+        // Check if user can edit this unit based on Tim Mutu assignments
+        if (! $this->canEditUnit($indOrg->org_unit_id)) {
+            return jsonError('Anda tidak memiliki akses untuk mengubah matrix unit ini.');
+        }
+
+        $this->indikatorOrgUnitService->updatePivotData($indOrg->indikorgunit_id, $request->only(['pengend_important_matrix', 'pengend_urgent_matrix']));
 
         return jsonSuccess('Matrix berhasil diperbarui.');
     }

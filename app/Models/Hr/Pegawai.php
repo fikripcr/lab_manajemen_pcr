@@ -27,6 +27,26 @@ class Pegawai extends Model
 
     protected $fillable = [
         'user_id',
+        // Denormalized common columns (from RiwayatDataDiri)
+        'nama',
+        'nip',
+        'email',
+        'inisial',
+        'no_hp',
+        'jenis_kelamin',
+        'tempat_lahir',
+        'tgl_lahir',
+        'orgunit_posisi_id',
+        'orgunit_departemen_id',
+        'nidn',
+        'no_ktp',
+        'alamat',
+        'status_nikah',
+        'agama',
+        'gelar_depan',
+        'gelar_belakang',
+        'bidang_ilmu',
+        // Pointer columns to latest history records
         'latest_riwayatdatadiri_id',
         'latest_riwayatpendidikan_id',
         'latest_riwayatstatpegawai_id',
@@ -110,6 +130,16 @@ class Pegawai extends Model
             'latest_riwayatjabstruktural_id',
             'org_unit_id'
         );
+    }
+
+    public function posisi()
+    {
+        return $this->belongsTo(\App\Models\Hr\StrukturOrganisasi::class, 'orgunit_posisi_id', 'orgunit_id');
+    }
+
+    public function departemen()
+    {
+        return $this->belongsTo(\App\Models\Hr\StrukturOrganisasi::class, 'orgunit_departemen_id', 'orgunit_id');
     }
 
     // ----------------------------------------------------------------
@@ -229,26 +259,26 @@ class Pegawai extends Model
     }
 
     // ----------------------------------------------------------------
-    // Accessors (proxied via latestDataDiri)
+    // Accessors (direct column access with fallback to latestDataDiri)
     // ----------------------------------------------------------------
 
     public function getNamaAttribute()
     {
-        return $this->latestDataDiri->nama ?? '-';
+        return $this->attributes['nama'] ?? $this->latestDataDiri?->nama ?? '-';
     }
 
     public function getNipAttribute()
     {
-        return $this->latestDataDiri->nip ?? '-';
+        return $this->attributes['nip'] ?? $this->latestDataDiri?->nip ?? '-';
     }
 
     public function getEmailAttribute()
     {
-        return $this->latestDataDiri->email ?? '-';
+        return $this->attributes['email'] ?? $this->latestDataDiri?->email ?? '-';
     }
 
     public function getInisialAttribute()
     {
-        return $this->latestDataDiri->inisial ?? '-';
+        return $this->attributes['inisial'] ?? $this->latestDataDiri?->inisial ?? '-';
     }
 }

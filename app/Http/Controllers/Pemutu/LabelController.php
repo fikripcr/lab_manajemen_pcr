@@ -10,7 +10,13 @@ use Yajra\DataTables\DataTables;
 
 class LabelController extends Controller
 {
-    public function __construct(protected LabelService $labelService) {}
+    public function __construct(protected LabelService $labelService)
+    {
+        $this->middleware('permission:pemutu.label.view')->only(['index', 'data']);
+        $this->middleware('permission:pemutu.label.create')->only(['create', 'store']);
+        $this->middleware('permission:pemutu.label.update')->only(['edit', 'update']);
+        $this->middleware('permission:pemutu.label.delete')->only(['destroy']);
+    }
 
     public function index()
     {

@@ -11,24 +11,25 @@ use Maatwebsite\Excel\Facades\Excel;
 class PegawaiService
 {
     /**
-     * Get all users with their pegawai and latestDataDiri for dropdowns.
+     * Get all users with their pegawai for dropdowns.
+     * No longer needs latestDataDiri since common columns are on Pegawai.
      */
     public function getUsersWithPegawaiData()
     {
-        return \App\Models\User::with('pegawai.latestDataDiri')->get();
+        return \App\Models\User::with('pegawai')->get();
     }
 
+    /**
+     * Get filtered query for DataTables.
+     * Uses direct columns on hr_pegawai - no joins needed.
+     */
     public function getFilteredQuery(array $filters = [])
     {
-        $query = Pegawai::with(['orgUnit', 'user']);
+        $query = Pegawai::query();
 
-        if (! empty($filters['org_unit_id'])) {
+        if (! empty($filters['org_unit_id']) && $filters['org_unit_id'] !== 'all') {
             $unitId = decryptId($filters['org_unit_id']);
-            $query->where('org_unit_id', $unitId);
-        }
-
-        if (! empty($filters['jenis'])) {
-            $query->where('jenis', $filters['jenis']);
+            $query->where('orgunit_departemen_id', $unitId);
         }
 
         return $query;

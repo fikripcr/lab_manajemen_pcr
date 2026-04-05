@@ -63,7 +63,11 @@
                                 <x-tabler.card-body class="p-2">
                                     <div class="fw-bold">2. Pelaksanaan</div>
                                     <div class="text-muted small">
-                                        Sepanjang Tahun
+                                        @if($periode->pelaksanaan_awal)
+                                            {{ formatTanggalIndo($periode->pelaksanaan_awal) }} s/d {{ formatTanggalIndo($periode->pelaksanaan_akhir) }}
+                                        @else
+                                            <span class="fst-italic">Belum diatur</span>
+                                        @endif
                                     </div>
                                 </x-tabler.card-body>
                             </div>

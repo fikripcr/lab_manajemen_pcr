@@ -28,7 +28,14 @@ class PeningkatanController extends Controller
         protected StrukturOrganisasiService $strukturOrganisasiService,
         protected DokumenService $dokumenService,
         protected \App\Services\Pemutu\PegawaiService $pegawaiService,
-    ) {}
+    ) {
+        $this->middleware('permission:pemutu.peningkatan.view')->only(['index']);
+        $this->middleware('permission:pemutu.peningkatan.duplicate')->only(['standarList', 'duplicateStandar']);
+        $this->middleware('permission:pemutu.peningkatan.review-edit')->only(['reviewData', 'editReviewItem', 'updateReviewItem']);
+        $this->middleware('permission:pemutu.peningkatan.delete-standar')->only(['deleteStandarTarget', 'deleteStandarTargetBulk']);
+        $this->middleware('permission:pemutu.peningkatan.approve-staging')->only(['approveStaging']);
+        $this->middleware('permission:pemutu.peningkatan.rtm-manage')->only(['createRtm', 'storeRtm', 'editRtm', 'updateRtm']);
+    }
 
     /**
      * Daftar periode SPMI untuk Peningkatan.

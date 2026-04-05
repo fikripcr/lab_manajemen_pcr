@@ -8,7 +8,10 @@ use Illuminate\Support\Facades\DB;
 
 class RiwayatDataDiriService
 {
-    public function __construct(protected ApprovalService $approvalService) {}
+    public function __construct(
+        protected ApprovalService $approvalService,
+        protected PegawaiService $pegawaiService
+    ) {}
 
     public function requestChange(Pegawai $pegawai, array $data)
     {
@@ -35,7 +38,15 @@ class RiwayatDataDiriService
 
             $model = RiwayatDataDiri::findOrFail($approval->model_id);
             $pegawai = Pegawai::findOrFail($model->pegawai_id);
-            $pegawai->update(['latest_riwayatdatadiri_id' => $model->riwayatdatadiri_id]);
+            
+            // If approved, sync common columns to Pegawai table
+            if ($status === 'Approved') {
+                $this->pegawaiService->syncCommonColumns($pegawai, $model);
+            } else {
+                // For non-approved status, just update the pointer
+                $pegawai->update(['latest_riwayatdatadiri_id' => $model->riwayatdatadiri_id]);
+            }
+            
             logActivity('hr', "Memproses ({$status}) Data Diri: {$pegawai->nama}", $pegawai);
 
             return $approval;

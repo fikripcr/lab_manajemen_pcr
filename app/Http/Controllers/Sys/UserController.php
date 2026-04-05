@@ -27,7 +27,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('pages.sys.users.index');
+        $roles = $this->roleService->getAllRoles();
+
+        return view('pages.sys.users.index', compact('roles'));
     }
 
     /**
@@ -47,6 +49,24 @@ class UserController extends Controller
     public function data(Request $request)
     {
         $users = $this->userService->getBaseQuery();
+
+        // Filter by role
+        if ($request->filled('role') && $request->role !== 'all') {
+            $users->whereHas('roles', function ($q) use ($request) {
+                $q->where('name', $request->role);
+            });
+        }
+
+        // Filter by status (active/expired)
+        if ($request->filled('status') && $request->status !== 'all') {
+            if ($request->status === 'active') {
+                $users->where(function ($q) {
+                    $q->whereNull('expired_at')->orWhere('expired_at', '>', now());
+                });
+            } elseif ($request->status === 'expired') {
+                $users->whereNotNull('expired_at')->where('expired_at', '<=', now());
+            }
+        }
 
         return DataTables::of($users)
             ->addIndexColumn()
@@ -109,9 +129,9 @@ class UserController extends Controller
                     'extraActions' => [
                         [
                             'icon' => 'ti-lock',
-                            'text' => 'Reset Password',
+                            'text' => 'Ubah Password',
                             'class' => 'ajax-modal-btn',
-                            'attributes' => 'data-url="'.route('sys.users.reset-password', $user->encrypted_id).'" data-modal-title="Reset Password: '.addslashes($user->name).'"',
+                            'attributes' => 'data-url="'.route('sys.users.reset-password', $user->encrypted_id).'" data-modal-title="Ubah Password: '.addslashes($user->name).'"',
                         ],
                     ],
                 ])->render();

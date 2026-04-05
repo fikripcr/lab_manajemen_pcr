@@ -41,6 +41,26 @@ return new class extends Migration
         Schema::create('hr_pegawai', function (Blueprint $table) {
             $table->id('pegawai_id');
             $table->unsignedBigInteger('user_id')->nullable()->comment('Foreign key to users table');
+            // Denormalized common columns from RiwayatDataDiri (for fast access by other modules)
+            $table->string('nama', 255)->nullable();
+            $table->string('nip', 50)->nullable();
+            $table->string('email', 255)->nullable();
+            $table->string('inisial', 20)->nullable();
+            $table->string('no_hp', 30)->nullable();
+            $table->string('jenis_kelamin', 10)->nullable();
+            $table->string('tempat_lahir', 100)->nullable();
+            $table->date('tgl_lahir')->nullable();
+            $table->unsignedBigInteger('orgunit_posisi_id')->nullable();
+            $table->unsignedBigInteger('orgunit_departemen_id')->nullable();
+            $table->string('nidn', 50)->nullable();
+            $table->string('no_ktp', 30)->nullable();
+            $table->text('alamat')->nullable();
+            $table->string('status_nikah', 20)->nullable();
+            $table->string('agama', 20)->nullable();
+            $table->string('gelar_depan', 50)->nullable();
+            $table->string('gelar_belakang', 50)->nullable();
+            $table->string('bidang_ilmu', 100)->nullable();
+            // Pointer columns to latest history records
             $table->unsignedBigInteger('latest_riwayatdatadiri_id')->nullable();
             $table->unsignedBigInteger('latest_riwayatstatpegawai_id')->nullable();
             $table->unsignedBigInteger('latest_riwayatstataktifitas_id')->nullable();
@@ -59,6 +79,8 @@ return new class extends Migration
             $table->string('deleted_by')->nullable();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('orgunit_posisi_id')->references('orgunit_id')->on('hr_struktur_organisasi')->nullOnDelete();
+            $table->foreign('orgunit_departemen_id')->references('orgunit_id')->on('hr_struktur_organisasi')->nullOnDelete();
         });
 
         Schema::create('hr_personil', function (Blueprint $table) {

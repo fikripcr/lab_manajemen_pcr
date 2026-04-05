@@ -6,7 +6,6 @@ use App\Models\Event\Rapat;
 use App\Models\Event\RapatEntitas;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Services\Event\RapatService;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class PeriodeSpmiService
@@ -14,6 +13,7 @@ class PeriodeSpmiService
     public function __construct(
         protected RapatService $rapatService,
     ) {}
+
     /**
      * Resolve PeriodeSpmi by ID.
      */
@@ -35,17 +35,7 @@ class PeriodeSpmiService
     }
 
     /**
-     * Ambil semua periode SPMI dengan pagination (untuk halaman index).
-     */
-    public function getPeriodes(int $perPage = 12): LengthAwarePaginator
-    {
-        return PeriodeSpmi::orderBy('periode', 'desc')
-            ->orderBy('jenis_periode', 'asc')
-            ->paginate($perPage);
-    }
-
-    /**
-     * Ambil semua periode sebagai Collection — untuk dropdown/select.
+     * Ambil semua periode sebagai Collection — untuk card grid view.
      */
     public function getAll(?int $year = null)
     {
@@ -74,16 +64,6 @@ class PeriodeSpmiService
         }
 
         return collect($years);
-    }
-
-    /**
-     * Kembalikan base query Builder untuk DataTables.
-     */
-    public function getBaseQuery()
-    {
-        return PeriodeSpmi::query()
-            ->orderBy('periode', 'desc')
-            ->orderBy('jenis_periode', 'asc');
     }
 
     public function store(array $data): PeriodeSpmi
@@ -227,8 +207,8 @@ class PeriodeSpmiService
 
     /**
      * Check if a specific phase is currently open for a given year and group.
-     * 
-     * @param  string  $phase  Phase name (e.g., 'penetapan', 'ed', 'ami', 'pengendalian', 'peningkatan')
+     *
+     * @param  string  $phase  Phase name (e.g., 'penetapan', 'pelaksanaan', 'ed', 'ami', 'pengendalian', 'peningkatan')
      * @param  int  $year  The cycle year (e.g., 2024)
      * @param  string|null  $kelompok  'Akademik' or 'Non Akademik'. Default to current session.
      * @return bool

@@ -6,6 +6,7 @@ use App\Models\Hr\Pegawai;
 use App\Models\Hr\StrukturOrganisasi;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Models\Pemutu\TimMutu;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class TimMutuService
@@ -94,8 +95,12 @@ class TimMutuService
 
             if ($auditeeId) {
                 $inserts[] = $this->buildInsertPayload($periodeId, $unitId, $auditeeId, 'auditee');
+                $this->syncRoleForPegawai($auditeeId, 'Auditee');
             }
-            $inserts = array_merge($inserts, $this->buildBulkInserts($periodeId, $unitId, $anggotaIds, 'anggota'));
+            foreach ($anggotaIds as $anggotaId) {
+                $inserts[] = $this->buildInsertPayload($periodeId, $unitId, $anggotaId, 'anggota');
+                $this->syncRoleForPegawai($anggotaId, 'Auditee');
+            }
 
             if (! empty($inserts)) {
                 TimMutu::insert($inserts);
@@ -125,8 +130,12 @@ class TimMutuService
 
             if ($ketuaAuditorId) {
                 $inserts[] = $this->buildInsertPayload($periodeId, $unitId, $ketuaAuditorId, 'ketua_auditor');
+                $this->syncRoleForPegawai($ketuaAuditorId, 'Auditor Internal');
             }
-            $inserts = array_merge($inserts, $this->buildBulkInserts($periodeId, $unitId, $auditorIds, 'auditor'));
+            foreach ($auditorIds as $auditorId) {
+                $inserts[] = $this->buildInsertPayload($periodeId, $unitId, $auditorId, 'auditor');
+                $this->syncRoleForPegawai($auditorId, 'Auditor Internal');
+            }
 
             if (! empty($inserts)) {
                 TimMutu::insert($inserts);
@@ -143,11 +152,9 @@ class TimMutuService
      */
     public function searchPegawai($search)
     {
-        return Pegawai::with('latestDataDiri')
-            ->whereHas('latestDataDiri', function ($q) use ($search) {
-                $q->where('nama', 'like', "%{$search}%")
-                    ->orWhere('nip', 'like', "%{$search}%");
-            })
+        return Pegawai::query()
+            ->where('nama', 'like', "%{$search}%")
+            ->orWhere('nip', 'like', "%{$search}%")
             ->limit(20)
             ->get()
             ->map(function ($p) {
@@ -189,5 +196,29 @@ class TimMutuService
         }
 
         return $inserts;
+    }
+
+    /**
+     * Assign a Spatie role to a pegawai's user account.
+     * Uses assignRole() which ADDS the role without removing existing roles.
+     * This way, if a user is removed from Tim Mutu, they keep their role
+     * in case they get reassigned in a future period.
+     */
+    private function syncRoleForPegawai(int $pegawaiId, string $roleName): void
+    {
+        $pegawai = Pegawai::find($pegawaiId);
+        if (! $pegawai || ! $pegawai->user_id) {
+            return;
+        }
+
+        $user = User::find($pegawai->user_id);
+        if (! $user) {
+            return;
+        }
+
+        // assignRole() only adds the role if not already assigned — does NOT remove existing roles
+        if (! $user->hasRole($roleName)) {
+            $user->assignRole($roleName);
+        }
     }
 }

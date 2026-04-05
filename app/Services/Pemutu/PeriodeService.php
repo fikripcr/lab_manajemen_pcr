@@ -9,27 +9,11 @@ use Illuminate\Support\Facades\DB;
 class PeriodeService
 {
     /**
-     * Ambil semua periode KPI dengan pagination.
-     */
-    public function getPeriodes(int $perPage = 20)
-    {
-        return PeriodeKpi::orderBy('tahun', 'desc')->paginate($perPage);
-    }
-
-    /**
-     * Ambil semua periode KPI sebagai collection (untuk dropdown/select).
+     * Ambil semua periode KPI sebagai collection (untuk card grid view).
      */
     public function getAll()
     {
         return PeriodeKpi::orderBy('tahun', 'desc')->get();
-    }
-
-    /**
-     * Kembalikan base query Builder untuk DataTables.
-     */
-    public function getBaseQuery()
-    {
-        return PeriodeKpi::query()->orderBy('tahun', 'desc');
     }
 
     /**

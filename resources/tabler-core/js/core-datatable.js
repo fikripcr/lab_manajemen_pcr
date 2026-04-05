@@ -134,6 +134,14 @@ export default class CustomDataTables {
 
             // Sync UI in next tick to ensure table instance is available
             setTimeout(() => {
+                // Sync search input
+                const searchInput = document.getElementById(`${this.tableId}-search`);
+                if (searchInput && state.search && state.search.search) {
+                    searchInput.value = state.search.search;
+                    const clearBtn = document.getElementById(`${this.tableId}-clear-search`);
+                    if (clearBtn) clearBtn.classList.toggle('d-none', !state.search.search);
+                }
+
                 // Sync filter form
                 const form = document.getElementById(`${this.tableId}-filter`);
                 if (form && state.customFilter) {

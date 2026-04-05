@@ -14,7 +14,9 @@ class DashboardController extends Controller
         protected DashboardService $dashboardService,
         protected DokumenSpmiService $dokumenSpmiService,
         protected PeriodeSpmiService $periodeSpmiService,
-    ) {}
+    ) {
+        $this->middleware('permission:pemutu.dashboard.view');
+    }
 
     public function index(Request $request): \Illuminate\View\View
     {
